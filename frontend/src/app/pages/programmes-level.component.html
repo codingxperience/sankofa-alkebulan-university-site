@@ -1,0 +1,124 @@
+<section class="programme-shell">
+  <div class="container">
+    <div class="programme-hero">
+      <p class="eyebrow">Sankofa Alkebulan University</p>
+      <div class="programme-hero__top">
+        <div>
+          <p class="programme-hero__crumb">Home / {{ category().shortLabel }}</p>
+          <h1>{{ category().shortLabel }} &middot; Sankofa Alkebulan University</h1>
+          <p class="programme-hero__summary">{{ levelMeta().sub }}</p>
+        </div>
+      </div>
+    </div>
+
+    @if (isPhdLayout()) {
+      <div class="programme-layout programme-layout--phd">
+        <div class="phd-intro">
+          <div>
+            <h2>{{ levelMeta().hero }}</h2>
+            <p class="phd-hero-copy">{{ levelMeta().sub }}</p>
+          </div>
+          <div class="phd-hero-meta">
+            @for (stat of levelMeta().stats; track stat) {
+              <div>
+                <strong>{{ stat.split(' ')[0] }}</strong
+                ><span>{{ stat.slice(stat.indexOf(' ') + 1) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="phd-grid">
+          <aside class="phd-sidebar">
+            <ul class="phd-nav-list">
+              @for (section of phdSections; track section.id) {
+                <li>
+                  <button
+                    type="button"
+                    class="phd-nav-link"
+                    [class.active]="activePhdSectionId() === section.id"
+                    (click)="setActivePhdSection(section.id)"
+                  >
+                    {{ section.title }}
+                  </button>
+                </li>
+              }
+            </ul>
+          </aside>
+
+          <article class="phd-main">
+            <section class="phd-section-panel">
+              <h3>{{ activePhdSection().title }}</h3>
+              <p>{{ activePhdSection().description }}</p>
+              @if (activePhdSection().items?.length) {
+                <ul>
+                  @for (item of activePhdSection().items; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              }
+            </section>
+            <section class="programme-cta programme-cta--phd">
+              <h4>Ready to begin?</h4>
+              <p>
+                Submit your concept brief and research direction to be matched with supervisors and
+                funded doctoral cohorts.
+              </p>
+              <div class="programme-cta__actions">
+                <a routerLink="/admissions" class="btn">Start PhD Inquiry</a>
+                <a routerLink="/contact" class="btn btn--secondary">Book an advisors call</a>
+              </div>
+            </section>
+          </article>
+        </div>
+      </div>
+    } @else {
+      <div class="programme-layout programme-layout--masters">
+        <section class="masters-hero">
+          <div>
+            <p class="eyebrow">{{ category().shortLabel }}</p>
+            <h2>{{ levelMeta().hero }}</h2>
+            <p>{{ levelMeta().sub }}</p>
+          </div>
+          <div class="masters-hero-stats">
+            @for (stat of levelMeta().stats; track stat) {
+              <div class="stat-card">
+                <strong>{{ stat.split(' ')[0] }}</strong
+                ><span>{{ stat.slice(stat.indexOf(' ') + 1) }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="masters-program-grid">
+          @if (programmes().length) {
+            <div class="programme-grid">
+              @for (program of programmes(); track program.title) {
+                <article class="programme-card">
+                  <div class="programme-card__header">
+                    <h3>{{ program.title }}</h3>
+                    <span class="programme-card__badge">{{ program.college }}</span>
+                  </div>
+                  <p>{{ program.summary }}</p>
+                  <div class="programme-card__meta">
+                    <span>{{ program.duration }}</span>
+                    <span>{{ program.tuition }}</span>
+                  </div>
+                  <a [routerLink]="program.detailPath" class="programme-card__btn">
+                    View Details
+                  </a>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="programme-empty">
+              <h3>No programmes listed yet</h3>
+              <p>{{ category().emptyState }}</p>
+              <a routerLink="/contact" class="btn btn--secondary">Request Programme Update</a>
+            </div>
+          }
+        </section>
+      </div>
+    }
+  </div>
+</section>

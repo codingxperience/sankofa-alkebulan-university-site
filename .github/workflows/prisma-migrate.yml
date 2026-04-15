@@ -1,0 +1,27 @@
+name: Prisma Migrate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Install deps
+        run: |
+          cd sankofa-modern/backend
+          npm ci
+      - name: Run prisma migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd sankofa-modern/backend
+          npx prisma generate
+          npx prisma migrate deploy

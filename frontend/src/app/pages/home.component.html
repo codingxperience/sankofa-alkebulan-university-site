@@ -1,0 +1,225 @@
+<div class="home-shell">
+  <section class="hero section">
+    <div class="container">
+      <div class="hero-shell">
+        <div class="hero-carousel">
+          <div class="hero-stack hero-stack--primary">
+            @for (slide of heroSlides; track slide.primary.title; let idx = $index) {
+              <article class="hero-card hero-card--primary" [class.hero-card--active]="idx === activeBannerIndex()">
+                <img
+                  [ngSrc]="slide.primary.image"
+                  [alt]="slide.primary.title"
+                  width="1600"
+                  height="900"
+                  [priority]="idx === 0"
+                />
+                <div class="hero-card__veil"></div>
+                <div class="hero-card__industrial"></div>
+
+                <div class="hero-card__content">
+                  <p class="hero-card__eyebrow">Sankofa Alkebulan University</p>
+                  <p class="hero-card__badge">{{ slide.primary.badge }}</p>
+                  <h1>{{ slide.primary.title }}</h1>
+                  <p class="hero-card__subtitle">{{ slide.primary.subtitle }}</p>
+                  <p class="hero-card__tagline">RETURN &bull; RESTORE &bull; REIMAGINE</p>
+
+                  <div class="hero-card__actions">
+                    <a [routerLink]="slide.primary.ctaPath" class="btn btn--gold">{{ slide.primary.ctaLabel }}</a>
+                    <a routerLink="/faculties-schools" class="btn btn--secondary btn--ghost-light">Explore Faculties</a>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+
+          <div class="hero-stack hero-stack--secondary">
+            @for (slide of heroSlides; track slide.secondary.title; let idx = $index) {
+              <article class="hero-card hero-card--secondary" [class.hero-card--active]="idx === activeBannerIndex()">
+                <img
+                  [ngSrc]="slide.secondary.image"
+                  [alt]="slide.secondary.title"
+                  width="1280"
+                  height="900"
+                  [priority]="false"
+                />
+                <div class="hero-card__veil"></div>
+                <div class="hero-card__industrial"></div>
+
+                <div class="hero-card__content hero-card__content--compact">
+                  <p class="hero-card__badge">{{ slide.secondary.badge }}</p>
+                  <h2>{{ slide.secondary.title }}</h2>
+                  <p class="hero-card__subtitle">{{ slide.secondary.subtitle }}</p>
+                  <a [routerLink]="slide.secondary.ctaPath" class="btn btn--secondary btn--ghost-light btn--ghost-light-inline">
+                    {{ slide.secondary.ctaLabel }}
+                  </a>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+
+        <div class="hero-controls">
+          <button type="button" class="hero-control-btn" aria-label="Previous slide" (click)="previousBanner()">
+            &#10094;
+          </button>
+          <button type="button" class="hero-control-btn" aria-label="Next slide" (click)="nextBanner()">
+            &#10095;
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-rails-panel">
+        <div class="hero-rail">
+          @for (item of activeSlide().rail; track item.title) {
+            <a [routerLink]="item.path" class="hero-rail__item">
+              <span class="hero-rail__icon"><i [class]="item.iconClass" aria-hidden="true"></i></span>
+              <span class="hero-rail__text">
+                <strong>{{ item.title }}</strong>
+                <small>{{ item.description }}</small>
+              </span>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Admissions and Program Access</h2>
+        <p>Domestic and international pathways with admissions guidance and funding support.</p>
+      </div>
+      <div class="card-grid card-grid--three">
+        @for (feature of quickApply; track feature.title) {
+          <article class="surface-card">
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+            <a [routerLink]="feature.path" class="inline-link">Continue</a>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>News and Announcements</h2>
+      </div>
+      <div class="card-grid card-grid--three">
+        @for (post of announcements; track post.title) {
+          <article class="surface-card">
+            <p class="stamp">{{ post.date }}</p>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.summary }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tone">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Featured Research and Innovation Spotlights</h2>
+      </div>
+      <div class="card-grid card-grid--three">
+        @for (item of researchSpotlights; track item.title) {
+          <article class="surface-card">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+            <a [routerLink]="item.path" class="inline-link">Read University Brief</a>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <article class="surface-card surface-card--full">
+        <h2>Student Success Highlights</h2>
+        <div class="ticker">
+          @for (highlight of aiHighlights; track highlight) {
+            <span>{{ highlight }}</span>
+          }
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section section--tone">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Faculties and Schools (18)</h2>
+        <p>Explore every faculty through curated programs, outcomes, and research-aligned learning.</p>
+      </div>
+      <div class="department-carousel">
+        <div class="department-carousel__controls">
+          <button
+            type="button"
+            aria-label="Previous departments"
+            (click)="previousDepartmentPage()"
+            [disabled]="departmentPageIndex() === 0"
+          >
+            &lsaquo;
+          </button>
+          <button
+            type="button"
+            aria-label="Next departments"
+            (click)="nextDepartmentPage()"
+            [disabled]="departmentPageIndex() === departmentPageCount() - 1"
+          >
+            &rsaquo;
+          </button>
+        </div>
+
+        <div class="department-carousel__track">
+          @for (department of safeDepartments(); track department.title) {
+            <article class="dept-card">
+              <span class="dept-card__icon" aria-hidden="true">
+                <fa-icon [icon]="department.icon" [fixedWidth]="true"></fa-icon>
+              </span>
+              <h3>{{ department.title }}</h3>
+              <p>{{ department.description }}</p>
+              <a [routerLink]="department.path" class="dept-card__link">
+                READ MORE <span aria-hidden="true">&rarr;</span>
+              </a>
+            </article>
+          }
+        </div>
+        <div class="department-carousel__dots" role="tablist" aria-label="Department carousel navigation">
+          @for (page of departmentPages(); track page) {
+            <button
+              type="button"
+              class="department-carousel__dot"
+              [class.department-carousel__dot--active]="page === departmentPageIndex()"
+              [attr.aria-selected]="page === departmentPageIndex()"
+              [attr.aria-label]="'Show departments page ' + (page + 1)"
+              (click)="setDepartmentPage(page)"
+            ></button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <article class="surface-card surface-card--full contact-block">
+        <h2>Contact and Administrative Access</h2>
+        <p>
+          Email:
+          <a href="mailto:sankofalkebulanuniversity@outlook.com">sankofalkebulanuniversity@outlook.com</a>
+        </p>
+        <div class="quick-row">
+          <a routerLink="/contact" class="btn btn--gold">Open Contact Center</a>
+          <a routerLink="/admissions" class="btn btn--secondary">Apply Now</a>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>
+
+

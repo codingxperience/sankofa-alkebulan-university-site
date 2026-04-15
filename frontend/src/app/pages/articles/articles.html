@@ -1,0 +1,413 @@
+<div class="articles">
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="articles__hero">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">Articles & Blog</h1>
+          <p class="hero-subtitle">
+            Exploring African scholarship, cultural heritage, and contemporary discourse through
+            rigorous academic inquiry and thoughtful analysis.
+          </p>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-pattern">
+            <svg
+              width="120"
+              height="120"
+              viewBox="0 0 120 120"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M60 10 L90 40 L60 70 L30 40 Z"
+                stroke="var(--accent-color)"
+                stroke-width="2"
+                fill="none"
+                opacity="0.3"
+              />
+              <circle
+                cx="60"
+                cy="40"
+                r="25"
+                stroke="var(--primary-color)"
+                stroke-width="1"
+                fill="none"
+                opacity="0.2"
+              />
+              <path
+                d="M45 35 Q60 25 75 35"
+                stroke="var(--accent-color)"
+                stroke-width="1"
+                fill="none"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="articles__nav">
+      <div class="nav-tabs">
+        <button
+          class="nav-tab"
+          [class.active]="activeSection === 'articles'"
+          (click)="setActiveSection('articles')"
+        >
+          <span class="tab-text">Articles</span>
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="activeSection === 'publications'"
+          (click)="setActiveSection('publications')"
+        >
+          <span class="tab-text">Publications</span>
+        </button>
+        <button
+          class="nav-tab"
+          [class.active]="activeSection === 'blogs'"
+          (click)="setActiveSection('blogs')"
+        >
+          <span class="tab-text">Blogs</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Content Area -->
+    <div class="articles__content">
+      <!-- View Controls -->
+      <div class="view-controls" *ngIf="activeSection === 'articles'">
+        <div class="view-modes">
+          <button
+            class="view-mode"
+            [class.active]="viewMode === 'timeline'"
+            (click)="setViewMode('timeline')"
+          >
+            <span>Timeline</span>
+          </button>
+          <button
+            class="view-mode"
+            [class.active]="viewMode === 'academic'"
+            (click)="setViewMode('academic')"
+          >
+            <span>Academic</span>
+          </button>
+          <button
+            class="view-mode"
+            [class.active]="viewMode === 'blog'"
+            (click)="setViewMode('blog')"
+          >
+            <span>Modern</span>
+          </button>
+        </div>
+
+        <!-- Archive Toggle -->
+        <button
+          class="archive-toggle"
+          (click)="showArchive = !showArchive"
+          [class.active]="showArchive"
+        >
+          <span>Archive</span>
+        </button>
+      </div>
+
+      <!-- Archive Panel -->
+      <div class="archive-panel" *ngIf="showArchive && activeSection === 'articles'" [@slideInOut]>
+        <div class="archive-header">
+          <h3 class="archive-title">Publication Archive</h3>
+          <div class="archive-filters">
+            <select [(ngModel)]="archiveYear" (change)="filterByYear()" class="filter-select">
+              <option value="all">All Years</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+            <select [(ngModel)]="archiveMonth" (change)="filterByMonth()" class="filter-select">
+              <option value="all">All Months</option>
+              <option value="01">January</option>
+              <option value="02">February</option>
+              <option value="03">March</option>
+              <option value="04">April</option>
+              <option value="05">May</option>
+              <option value="06">June</option>
+              <option value="07">July</option>
+              <option value="08">August</option>
+              <option value="09">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+        </div>
+        <div class="archive-grid">
+          <article class="archive-item" *ngFor="let post of archivedPosts" [@fadeInOut]>
+            <div class="archive-item__meta">
+              <time class="archive-date">{{ formatDate(post.published_at) }}</time>
+              <span class="archive-category" *ngIf="post.categories.length">{{
+                post.categories[0]
+              }}</span>
+            </div>
+            <h4 class="archive-title">
+              <a [routerLink]="['/articles', post.slug]">{{ post.title }}</a>
+            </h4>
+            <p class="archive-excerpt">{{ post.excerpt }}</p>
+            <div class="archive-tags" *ngIf="post.tags">
+              <span class="tag" *ngFor="let tag of post.tags.slice(0, 2)">{{ tag }}</span>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="content-controls">
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search publications..."
+            [(ngModel)]="searchQuery"
+            (input)="onSearchChange()"
+            class="search-input"
+          />
+          <div class="search-icon">🔍</div>
+        </div>
+
+        <div class="filters">
+          <select [(ngModel)]="selectedTag" (change)="setTag(selectedTag)" class="filter-select">
+            <option value="all">All Topics</option>
+            <option *ngFor="let tag of tags" [value]="tag">{{ tag }}</option>
+          </select>
+
+          <div class="filter-buttons">
+            <button
+              class="filter-btn"
+              [class.active]="activeFilter === 'all'"
+              (click)="setFilter('all')"
+            >
+              All
+            </button>
+            <button
+              class="filter-btn"
+              [class.active]="activeFilter === 'editors pick'"
+              (click)="setFilter('editors pick')"
+            >
+              Featured
+            </button>
+            <button
+              class="filter-btn"
+              [class.active]="activeFilter === 'trends'"
+              (click)="setFilter('trends')"
+            >
+              Trending
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Post (Blog Mode) -->
+      <div class="articles__featured" *ngIf="viewMode === 'blog' && featuredPost">
+        <div class="featured-post card">
+          <div class="featured-post__content">
+            <div class="featured-post__meta">
+              <span class="featured-post__badge">Featured</span>
+              <span class="featured-post__date">{{
+                featuredPost.published_at | date : 'longDate'
+              }}</span>
+            </div>
+            <h2 class="featured-post__title">
+              <a [routerLink]="['/articles', featuredPost.slug]" class="featured-post__link">
+                {{ featuredPost.title }}
+              </a>
+            </h2>
+            <p class="featured-post__excerpt">{{ featuredPost.excerpt }}</p>
+            <a [routerLink]="['/articles', featuredPost.slug]" class="btn btn--primary"
+              >Read Full Article</a
+            >
+          </div>
+          <div class="featured-post__image">
+            <img
+              src="/wp-content/uploads/2025/10/1000625693.jpg"
+              alt="Featured post"
+              class="img-responsive"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="content-grid">
+        <!-- Timeline View -->
+        <div class="posts-timeline" *ngIf="viewMode === 'timeline'">
+          <article
+            class="post-card"
+            *ngFor="let post of filteredPosts; let i = index; trackBy: trackBySlug"
+          >
+            <div class="post-card__content">
+              <div class="post-meta">
+                <time class="post-date">{{ post.published_at | date : 'mediumDate' }}</time>
+                <span class="post-category" *ngIf="post.categories && post.categories.length">
+                  {{ post.categories[0] }}
+                </span>
+              </div>
+              <h3 class="post-title">
+                <a [routerLink]="['/articles', post.slug]" class="post-link">{{ post.title }}</a>
+              </h3>
+              <p class="post-excerpt">{{ post.excerpt }}</p>
+              <div class="post-tags" *ngIf="post.tags">
+                <span class="tag" *ngFor="let tag of post.tags.slice(0, 3)">{{ tag }}</span>
+              </div>
+              <a [routerLink]="['/articles', post.slug]" class="read-more">Read Article →</a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Academic View -->
+        <div class="posts-academic" *ngIf="viewMode === 'academic'">
+          <div class="academic-header">
+            <h2>Academic Publications</h2>
+            <p>Peer-reviewed research and scholarly analysis</p>
+          </div>
+          <div class="academic-grid">
+            <article
+              class="academic-paper"
+              *ngFor="let post of filteredPosts; trackBy: trackBySlug"
+            >
+              <div class="paper-content">
+                <div class="paper-citation">
+                  <span class="paper-author">{{ post.author }}</span>
+                  <span class="paper-year">({{ post.published_at | date : 'yyyy' }})</span>
+                </div>
+                <h3 class="paper-title">
+                  <a [routerLink]="['/articles', post.slug]" class="paper-link">{{ post.title }}</a>
+                </h3>
+                <p class="paper-abstract">{{ post.excerpt }}</p>
+                <div class="paper-subjects" *ngIf="post.tags">
+                  <span class="subject-tag" *ngFor="let tag of post.tags.slice(0, 3)">{{
+                    tag
+                  }}</span>
+                </div>
+                <a [routerLink]="['/articles', post.slug]" class="paper-cta">Access Paper</a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Modern/Blog View -->
+        <div class="posts-modern" *ngIf="viewMode === 'blog'">
+          <!-- Featured Article -->
+          <div class="featured-article" *ngIf="featuredPost">
+            <div class="featured-layout">
+              <div class="featured-content">
+                <div class="featured-meta">
+                  <span class="featured-badge">Featured Publication</span>
+                  <time class="featured-date">{{
+                    featuredPost.published_at | date : 'longDate'
+                  }}</time>
+                </div>
+                <h2 class="featured-title">
+                  <a [routerLink]="['/articles', featuredPost.slug]">{{ featuredPost.title }}</a>
+                </h2>
+                <p class="featured-excerpt">{{ featuredPost.excerpt }}</p>
+                <div class="featured-actions">
+                  <a [routerLink]="['/articles', featuredPost.slug]" class="btn-primary"
+                    >Read Full Article</a
+                  >
+                  <div class="article-stats">
+                    <span class="stat">{{ getRandomViews() }} views</span>
+                    <span class="stat">{{ getRandomComments() }} comments</span>
+                  </div>
+                </div>
+              </div>
+              <div class="featured-image">
+                <img [src]="getPostImage(0)" alt="Featured article" class="img-fluid" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Article Grid -->
+          <div class="modern-grid">
+            <article
+              class="modern-card"
+              *ngFor="let post of filteredPosts; let i = index; trackBy: trackBySlug"
+            >
+              <div class="card-image">
+                <img [src]="getPostImage(i)" [alt]="post.title" class="img-fluid" />
+                <div class="card-overlay"></div>
+              </div>
+              <div class="card-content">
+                <div class="card-meta">
+                  <time class="card-date">{{ post.published_at | date : 'mediumDate' }}</time>
+                  <span class="card-category" *ngIf="post.categories.length">{{
+                    post.categories[0]
+                  }}</span>
+                </div>
+                <h3 class="card-title">
+                  <a [routerLink]="['/articles', post.slug]">{{ post.title }}</a>
+                </h3>
+                <p class="card-excerpt">{{ post.excerpt }}</p>
+                <div class="card-footer">
+                  <a [routerLink]="['/articles', post.slug]" class="read-link">Continue Reading</a>
+                  <div class="card-stats">
+                    <span>{{ getRandomViews() }}</span>
+                    <span>{{ getRandomComments() }}</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="content-sidebar" *ngIf="viewMode === 'blog'">
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">Categories</h3>
+          <ul class="category-list">
+            <li *ngFor="let category of categories">
+              <a href="#" class="category-link"
+                >{{ category.name }} <span class="count">({{ category.count }})</span></a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">Popular Articles</h3>
+          <div class="popular-articles">
+            <div class="popular-item" *ngFor="let post of popularPosts; let i = index">
+              <img [src]="getPopularPostImage(i)" [alt]="post.title" class="popular-image" />
+              <div class="popular-content">
+                <h4>
+                  <a href="#" class="popular-link">{{ post.title }}</a>
+                </h4>
+                <time class="popular-date">{{ post.date }}</time>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">Research Topics</h3>
+          <div class="topic-cloud">
+            <span class="topic-tag" *ngFor="let tag of tags" (click)="setTag(tag)">{{ tag }}</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+      <div class="newsletter-card">
+        <div class="newsletter-content">
+          <h3>Stay Informed</h3>
+          <p>
+            Receive the latest scholarly publications and research insights directly in your inbox.
+          </p>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Enter your email address" class="newsletter-input" />
+            <button class="newsletter-btn">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

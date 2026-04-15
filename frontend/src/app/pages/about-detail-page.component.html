@@ -1,0 +1,113 @@
+@if (page(); as detailPage) {
+  <div class="about-detail-page">
+    <section class="about-detail-page__hero" aria-labelledby="about-detail-title">
+      <img
+        class="about-detail-page__hero-image"
+        ngSrc="/assets/hero/hero-campus-source.jpg"
+        width="5184"
+        height="3456"
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        priority
+      />
+      <div class="about-detail-page__hero-overlay"></div>
+      <div class="container about-detail-page__hero-content">
+        <p class="about-detail-page__eyebrow">About</p>
+        <h1 id="about-detail-title">{{ detailPage.title }}</h1>
+        <nav class="about-detail-page__breadcrumb" aria-label="Breadcrumb">
+          <a routerLink="/home">Home</a>
+          <span aria-hidden="true">/</span>
+          <span>{{ detailPage.title }}</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="about-detail-page__body">
+      <div class="container about-detail-page__layout">
+        <article class="about-detail-page__content">
+          <header class="about-detail-page__intro">
+            <p class="about-detail-page__kicker">About</p>
+            <p class="about-detail-page__summary">{{ detailPage.summary }}</p>
+          </header>
+
+          <div class="about-detail-page__copy">
+            @for (paragraph of detailPage.intro; track $index) {
+              <p>{{ paragraph }}</p>
+            }
+          </div>
+
+          @if (detailPage.sections?.length) {
+            <div class="about-detail-page__section-stack">
+              @for (section of detailPage.sections; track section.heading) {
+                <section class="about-detail-page__section-card">
+                  <h2>{{ section.heading }}</h2>
+                  @if (section.paragraphs?.length) {
+                    @for (paragraph of section.paragraphs; track $index) {
+                      <p>{{ paragraph }}</p>
+                    }
+                  }
+                  @if (section.items?.length) {
+                    <ul class="about-detail-page__accent-list">
+                      @for (item of section.items; track item) {
+                        <li>{{ item }}</li>
+                      }
+                    </ul>
+                  }
+                </section>
+              }
+            </div>
+          }
+        </article>
+
+        <aside class="about-detail-page__aside">
+          <section class="about-detail-page__panel">
+            <p class="about-detail-page__kicker">In This Section</p>
+            <ul class="about-detail-page__link-list">
+              @for (link of sectionLinks; track link.label) {
+                <li>
+                  <a [routerLink]="link.path" [fragment]="link.fragment">{{ link.label }}</a>
+                </li>
+              }
+            </ul>
+          </section>
+
+          <section class="about-detail-page__panel">
+            <p class="about-detail-page__kicker">Related Links</p>
+            <ul class="about-detail-page__link-list">
+              @for (link of relatedLinks; track link.label) {
+                <li>
+                  <a [routerLink]="link.path">{{ link.label }}</a>
+                </li>
+              }
+            </ul>
+          </section>
+
+          <section class="about-detail-page__panel about-detail-page__panel--accent">
+            <p class="about-detail-page__kicker">Key Highlights</p>
+            <ul class="about-detail-page__accent-list">
+              @for (item of detailPage.highlights; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </div>
+} @else {
+  <section class="about-detail-page__missing">
+    <div class="container">
+      <nav class="about-detail-page__breadcrumb about-detail-page__breadcrumb--plain" aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>About Page Not Found</span>
+      </nav>
+
+      <div class="about-detail-page__intro">
+        <p class="about-detail-page__summary">The requested About page could not be resolved.</p>
+        <a routerLink="/about">Return to About</a>
+      </div>
+    </div>
+  </section>
+}

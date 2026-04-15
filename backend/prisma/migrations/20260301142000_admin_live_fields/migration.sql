@@ -1,0 +1,10 @@
+-- AlterTable
+ALTER TABLE "Product"
+ADD COLUMN "stock" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN "status" TEXT NOT NULL DEFAULT 'available',
+ADD COLUMN "category" TEXT DEFAULT 'General';
+
+-- AlterTable
+ALTER TABLE "Event"
+ADD COLUMN "attendees" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN "status" TEXT NOT NULL DEFAULT 'draft';

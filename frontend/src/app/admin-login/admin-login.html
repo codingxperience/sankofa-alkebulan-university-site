@@ -1,0 +1,313 @@
+<div class="admin-login-container" @fadeInOut>
+  <div class="admin-login-card" [@shake]="shakeState()">
+    <!-- Security Header -->
+    <div class="security-header">
+      <div class="security-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          />
+        </svg>
+      </div>
+      <h1>Administrator Access</h1>
+      <p>Restricted area - Authorized personnel only</p>
+    </div>
+
+    <!-- Lockout Warning -->
+    @if (isLocked()) {
+    <div class="lockout-banner">
+      <div class="lockout-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <div class="lockout-content">
+        <h3>Account Temporarily Locked</h3>
+        <p>
+          Too many failed login attempts. Please wait {{ formatLockoutTime(lockoutTime()) }} before
+          trying again.
+        </p>
+        <div class="lockout-timer">{{ formatLockoutTime(lockoutTime()) }}</div>
+      </div>
+    </div>
+    }
+
+    <!-- Login Form -->
+    <form class="admin-login-form" (ngSubmit)="onSubmit()" [class.locked]="isLocked()">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="admin-email" class="form-label">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+            />
+          </svg>
+          Administrator Email
+        </label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="admin-email"
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+            name="email"
+            placeholder="admin@sankofaalkebulan.com"
+            [disabled]="isLocked() || isLoading()"
+            (input)="onEmailInput()"
+            autocomplete="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="admin-password" class="form-label">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <circle cx="12" cy="16" r="1" />
+            <path d="m9 11 3-3 3 3" />
+          </svg>
+          Security Password
+        </label>
+        <div class="input-wrapper">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            id="admin-password"
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)"
+            name="password"
+            placeholder="Enter security password"
+            [disabled]="isLocked() || isLoading()"
+            (input)="onPasswordInput()"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [disabled]="isLocked() || isLoading()"
+            tabindex="-1"
+          >
+            <svg *ngIf="!showPassword()" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+            <svg *ngIf="showPassword()" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Remember Me -->
+      <div class="form-group remember-group">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [ngModel]="rememberMe()"
+            (ngModelChange)="rememberMe.set($event)"
+            name="rememberMe"
+            [disabled]="isLocked() || isLoading()"
+          />
+          <span class="checkmark"></span>
+          <span class="checkbox-text">Remember this device</span>
+        </label>
+      </div>
+
+      <!-- Login Attempts Warning -->
+      @if (loginAttempts() > 0 && !isLocked()) {
+      <div class="attempts-warning">
+        <svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+          />
+        </svg>
+        <span>{{ maxAttempts - loginAttempts() }} attempts remaining</span>
+      </div>
+      }
+
+      <!-- Error Message -->
+      @if (error()) {
+      <div class="error-message">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+        <span>{{ error() }}</span>
+      </div>
+      }
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="admin-login-btn"
+        [disabled]="isLocked() || isLoading()"
+        [class.loading]="isLoading()"
+      >
+        @if (isLoading()) {
+        <div class="loading-spinner">
+          <svg viewBox="0 0 24 24">
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+              fill="none"
+              stroke-dasharray="31.416"
+              stroke-dashoffset="31.416"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                dur="1s"
+                values="31.416;0"
+                repeatCount="indefinite"
+              />
+            </circle>
+          </svg>
+        </div>
+        <span>Authenticating...</span>
+        } @else {
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+          />
+        </svg>
+        <span>Access Admin Panel</span>
+        }
+      </button>
+    </form>
+
+    <!-- Security Footer -->
+    <div class="security-footer">
+      <div class="security-notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          />
+        </svg>
+        <span>All access attempts are logged and monitored</span>
+      </div>
+      <a routerLink="/login" class="back-to-user-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Back to User Login
+      </a>
+    </div>
+  </div>
+
+  <!-- Advanced Security Background -->
+  <div class="security-background">
+    <div class="security-pattern">
+      <svg width="100%" height="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern
+            id="securityGrid"
+            x="0"
+            y="0"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse"
+          >
+            <rect width="40" height="40" fill="none" />
+            <circle cx="20" cy="20" r="1" fill="rgba(44, 62, 80, 0.1)" />
+            <line
+              x1="0"
+              y1="20"
+              x2="40"
+              y2="20"
+              stroke="rgba(44, 62, 80, 0.1)"
+              stroke-width="0.5"
+            />
+            <line
+              x1="20"
+              y1="0"
+              x2="20"
+              y2="40"
+              stroke="rgba(44, 62, 80, 0.1)"
+              stroke-width="0.5"
+            />
+          </pattern>
+          <radialGradient id="securityGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color: rgba(44, 62, 80, 0.1); stop-opacity: 1" />
+            <stop offset="100%" style="stop-color: rgba(44, 62, 80, 0.05); stop-opacity: 0" />
+          </radialGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#securityGrid)" />
+        <circle cx="200" cy="200" r="150" fill="url(#securityGlow)" />
+      </svg>
+    </div>
+
+    <!-- Floating Security Elements -->
+    <div class="floating-elements">
+      <div class="security-badge" style="top: 10%; left: 10%">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          />
+        </svg>
+      </div>
+      <div class="security-badge" style="top: 20%; right: 15%">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <circle cx="12" cy="16" r="1" />
+          <path d="m9 11 3-3 3 3" />
+        </svg>
+      </div>
+      <div class="security-badge" style="bottom: 15%; left: 20%">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>

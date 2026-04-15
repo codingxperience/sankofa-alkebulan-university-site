@@ -1,0 +1,564 @@
+.admin-login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 1rem;
+}
+
+.admin-login-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(44, 62, 80, 0.2);
+
+  &.locked {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+// Security Header
+.security-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  .security-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+  }
+
+  h1 {
+    color: #2c3e50;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+// Lockout Banner
+.lockout-banner {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+
+  .lockout-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .lockout-content {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0 0 1rem 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+  }
+
+  .lockout-timer {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+  }
+}
+
+// Form Styles
+.admin-login-form {
+  .form-group {
+    margin-bottom: 1.75rem;
+
+    &.remember-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+
+      .field-icon {
+        width: 18px;
+        height: 18px;
+        color: #3498db;
+        flex-shrink: 0;
+      }
+    }
+
+    .input-wrapper {
+      position: relative;
+
+      input {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow:
+            0 0 0 3px rgba(52, 152, 219, 0.1),
+            0 4px 12px rgba(52, 152, 219, 0.15);
+          background: white;
+        }
+
+        &:disabled {
+          background: #f8f9fa;
+          color: #6c757d;
+          cursor: not-allowed;
+        }
+
+        &::placeholder {
+          color: #adb5bd;
+          font-weight: 400;
+        }
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+          color: #3498db;
+          background: rgba(52, 152, 219, 0.1);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #2c3e50;
+      font-weight: 500;
+
+      input[type="checkbox"] {
+        display: none;
+      }
+
+      .checkmark {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e9ecef;
+        border-radius: 4px;
+        position: relative;
+        transition: all 0.2s ease;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 6px;
+          top: 2px;
+          width: 6px;
+          height: 10px;
+          border: solid white;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg) scale(0);
+          transition: all 0.2s ease;
+        }
+      }
+
+      input:checked ~ .checkmark {
+        background: #3498db;
+        border-color: #3498db;
+
+        &::after {
+          transform: rotate(45deg) scale(1);
+        }
+      }
+
+      &:hover .checkmark {
+        border-color: #3498db;
+      }
+    }
+  }
+
+  .attempts-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+
+    .warning-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+  }
+
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+
+    .error-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+  }
+
+  .admin-login-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow:
+        0 15px 35px rgba(44, 62, 80, 0.3),
+        0 5px 15px rgba(44, 62, 80, 0.2);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &.loading {
+      pointer-events: none;
+    }
+
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+
+      svg {
+        width: 100%;
+        height: 100%;
+        animation: spin 1s linear infinite;
+      }
+    }
+
+    .btn-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// Security Footer
+.security-footer {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(44, 62, 80, 0.1);
+
+  .security-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      color: #27ae60;
+    }
+  }
+
+  .back-to-user-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #3498db;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(52, 152, 219, 0.1);
+      color: #2980b9;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// Security Background
+.security-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+
+  .security-pattern {
+    width: 100%;
+    height: 100%;
+    opacity: 0.4;
+  }
+
+  .floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    .security-badge {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: float 6s ease-in-out infinite;
+
+      svg {
+        width: 24px;
+        height: 24px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      &:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      &:nth-child(2) {
+        animation-delay: 2s;
+      }
+
+      &:nth-child(3) {
+        animation-delay: 4s;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(240deg);
+  }
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .admin-login-card {
+    margin: 1rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .security-header {
+    .security-icon {
+      width: 60px;
+      height: 60px;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+
+  .lockout-banner {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+
+    .lockout-icon {
+      width: 40px;
+      height: 40px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .admin-login-btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-login-container {
+    padding: 1rem;
+  }
+
+  .admin-login-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .security-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .form-group .input-wrapper input {
+    padding: 0.875rem 1rem;
+    font-size: 16px; // Prevent zoom on iOS
+  }
+}

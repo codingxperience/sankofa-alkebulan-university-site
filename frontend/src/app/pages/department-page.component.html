@@ -1,0 +1,171 @@
+@if (page()) {
+  <section class="school-page">
+    <div class="container">
+      <nav class="school-page__breadcrumbs" aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span class="school-page__delimiter">&rsaquo;</span>
+        <span>{{ pageLabel() }}</span>
+      </nav>
+
+      <h1 class="sr-only">{{ pageLabel() }}</h1>
+
+      <section class="school-page__intro">
+        <aside class="leadership-card">
+          <div class="leadership-card__image-shell">
+            <img [src]="leadershipImagePath()" [alt]="leaderOfficeLabel()" class="leadership-card__image" />
+          </div>
+          <h2>{{ leaderOfficeLabel() }}</h2>
+          <p>{{ leaderTitle() }}</p>
+          <a routerLink="/contact" class="leadership-card__button">Contact Office</a>
+        </aside>
+
+        <div class="school-page__copy">
+          @for (paragraph of introParagraphs(); track $index) {
+            <p>{{ paragraph }}</p>
+          }
+
+          <div class="school-page__copy-block">
+            <h2>Our Vision</h2>
+            <p>{{ visionStatement() }}</p>
+          </div>
+
+          <div class="school-page__copy-block">
+            <h2>Our Mission</h2>
+            <p>{{ missionStatement() }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="school-tabs">
+        <div class="school-tabs__primary" role="tablist" aria-label="School sections">
+          <button
+            type="button"
+            class="school-tabs__primary-button"
+            [class.active]="activePrimaryTab() === 'programmes'"
+            [attr.aria-selected]="activePrimaryTab() === 'programmes'"
+            (click)="setPrimaryTab('programmes')"
+          >
+            Programmes
+          </button>
+          <button
+            type="button"
+            class="school-tabs__primary-button"
+            [class.active]="activePrimaryTab() === 'heads'"
+            [attr.aria-selected]="activePrimaryTab() === 'heads'"
+            (click)="setPrimaryTab('heads')"
+          >
+            Heads of Departments
+          </button>
+          <button
+            type="button"
+            class="school-tabs__primary-button"
+            [class.active]="activePrimaryTab() === 'staff'"
+            [attr.aria-selected]="activePrimaryTab() === 'staff'"
+            (click)="setPrimaryTab('staff')"
+          >
+            Academic Staff
+          </button>
+        </div>
+
+        <div class="school-tabs__panel">
+          @if (activePrimaryTab() === 'programmes') {
+            <div class="school-tabs__secondary" role="tablist" aria-label="Departments">
+              @for (department of departmentTabs(); track department) {
+                <button
+                  type="button"
+                  class="school-tabs__secondary-button"
+                  [class.active]="activeDepartment() === department"
+                  [attr.aria-selected]="activeDepartment() === department"
+                  (click)="setActiveDepartment(department)"
+                >
+                  {{ department.replace('Department of ', '') }}
+                </button>
+              }
+            </div>
+
+            @if (departmentProgrammeNotice()) {
+              <section class="school-tabs__notice">
+                <h2>{{ activeDepartment() }}</h2>
+                <p>{{ departmentProgrammeNotice() }}</p>
+              </section>
+            } @else {
+              <div class="programme-table-stack">
+                @for (group of programmeGroups(); track group.id) {
+                  <section class="programme-group">
+                    <div class="programme-group__heading">
+                      <span>{{ group.title }}</span>
+                    </div>
+                    <div class="programme-group__table-wrap">
+                      <table class="programme-table">
+                        <thead>
+                          <tr>
+                            <th class="programme-table__index">#</th>
+                            <th>Programme</th>
+                            <th>Duration</th>
+                            <th>Tuition</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (program of group.programmes; track program.title; let index = $index) {
+                            <tr>
+                              <td class="programme-table__index">{{ index + 1 }}</td>
+                              <td>
+                                <a [routerLink]="getProgramDetailPath(program)" class="programme-table__link">
+                                  {{ program.title }}
+                                </a>
+                              </td>
+                              <td>{{ program.duration }}</td>
+                              <td>{{ program.tuition[0] || 'Contact admissions' }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+                }
+              </div>
+            }
+          } @else if (activePrimaryTab() === 'heads') {
+            <div class="directory-grid">
+              @for (profile of headProfiles(); track profile.title) {
+                <article class="directory-card">
+                  <h2>{{ profile.title }}</h2>
+                  <p class="directory-card__subtitle">{{ profile.subtitle }}</p>
+                  <p>{{ profile.description }}</p>
+                  <a routerLink="/contact" class="directory-card__link">Contact Office</a>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="directory-grid">
+              @for (profile of academicStaffProfiles(); track profile.title) {
+                <article class="directory-card">
+                  <h2>{{ profile.title }}</h2>
+                  <p class="directory-card__subtitle">{{ profile.subtitle }}</p>
+                  <p>{{ profile.description }}</p>
+                  <a routerLink="/contact" class="directory-card__link">Request Directory Support</a>
+                </article>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </section>
+} @else {
+  <section class="school-page">
+    <div class="container">
+      <nav class="school-page__breadcrumbs" aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span class="school-page__delimiter">&rsaquo;</span>
+        <span>Department Not Found</span>
+      </nav>
+
+      <section class="school-tabs__notice school-tabs__notice--standalone">
+        <h1>Department Not Found</h1>
+        <p>The requested school or institute page could not be resolved.</p>
+        <a routerLink="/home" class="directory-card__link">Return Home</a>
+      </section>
+    </div>
+  </section>
+}

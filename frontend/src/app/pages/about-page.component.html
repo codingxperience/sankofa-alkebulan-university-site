@@ -1,0 +1,167 @@
+<div class="about-page">
+  <section class="about-hero" aria-labelledby="about-page-title">
+    <img
+      class="about-hero__image"
+      ngSrc="/assets/hero/hero-campus-source.jpg"
+      width="5184"
+      height="3456"
+      sizes="100vw"
+      alt=""
+      aria-hidden="true"
+      priority
+    />
+    <div class="about-hero__overlay"></div>
+    <div class="container about-hero__content">
+      <p class="about-hero__eyebrow">Sankofa Alkebulan University</p>
+      <h1 id="about-page-title">About</h1>
+      <p class="about-hero__summary">
+        A Sankofa-centered university model rooted in African knowledge systems, rigorous scholarship, and ethical leadership.
+      </p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>About</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="about-section about-welcome" id="about-sankofa">
+    <div class="container">
+      <header class="section-heading section-heading--center">
+        <p class="section-kicker">About Sankofa</p>
+        <h2>Welcome Message</h2>
+        <p class="section-lead">
+          Sankofa Alkebulan University exists to recover wisdom, renew scholarship, and strengthen African-centered
+          intellectual leadership for the present and the future.
+        </p>
+      </header>
+
+      <div class="about-welcome__grid">
+        <div class="about-welcome__copy">
+          @for (paragraph of overviewParagraphs; track $index) {
+            <p>{{ paragraph }}</p>
+          }
+        </div>
+
+        <figure class="about-media-card">
+          <img
+            class="about-media-card__image"
+            ngSrc="/wp-content/uploads/2025/10/sankofa_hero_big.jpg"
+            width="1080"
+            height="720"
+            sizes="(max-width: 920px) 100vw, 42vw"
+            alt="Sankofa Alkebulan University lecture and welcome session"
+          />
+          <span class="about-media-card__play" aria-hidden="true"></span>
+          <figcaption>Founding vision and public scholarship at Sankofa Alkebulan University.</figcaption>
+        </figure>
+      </div>
+
+      <figure class="about-quote">
+        <blockquote>Knowledge must serve both truth and human flourishing.</blockquote>
+        <figcaption>Sankofa Alkebulan University Charter</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="about-section about-purpose" id="mission">
+    <div class="container about-purpose__grid">
+      <figure class="about-purpose__figure">
+        <img
+          ngSrc="/assets/about/sankofa-founder.jpeg"
+          width="900"
+          height="1120"
+          sizes="(max-width: 920px) 100vw, 32vw"
+          alt="Founder and Chancellor of Sankofa Alkebulan University"
+        />
+        <figcaption>Founder and Chancellor guiding Sankofa Alkebulan University with memory, renewal, and scholarly confidence.</figcaption>
+      </figure>
+
+      <div class="about-purpose__content">
+        <header class="section-heading">
+          <p class="section-kicker">Our Vision, Mission and Core Functions</p>
+          <h2>Purpose with Intellectual Direction</h2>
+        </header>
+
+        <div class="purpose-card-grid">
+          @for (card of purposeCards; track card.title) {
+            <article class="purpose-card">
+              <h3>{{ card.title }}</h3>
+              <p>{{ card.text }}</p>
+            </article>
+          }
+        </div>
+
+        <div class="about-values">
+          <h3>Our Core Values</h3>
+          <ul>
+            @for (value of coreValues; track value.title) {
+              <li>
+                <span><strong>{{ value.title }}:</strong> {{ value.description }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section about-philosophy" id="philosophy">
+    <div class="container">
+      <header class="section-heading section-heading--center">
+        <p class="section-kicker">Our Philosophy</p>
+        <h2>Guided by the Sankofa Principle</h2>
+        <p class="section-lead">
+          The University's academic culture is shaped by historical memory, multidisciplinary scholarship, ethical
+          leadership, intellectual independence, and global engagement.
+        </p>
+      </header>
+
+      <div class="philosophy-layout">
+        <div class="philosophy-tabs" role="tablist" aria-label="Sankofa philosophy">
+          @for (item of philosophyItems; track item.title; let idx = $index) {
+            <button
+              type="button"
+              class="philosophy-tab"
+              [class.is-active]="activePhilosophyIndex() === idx"
+              [attr.aria-selected]="activePhilosophyIndex() === idx"
+              [attr.aria-controls]="'philosophy-panel'"
+              (click)="setPhilosophy(idx)"
+              role="tab"
+            >
+              {{ item.title }}
+            </button>
+          }
+        </div>
+
+        <article class="philosophy-panel" id="philosophy-panel" role="tabpanel">
+          <p class="philosophy-panel__eyebrow">Sankofa Philosophy</p>
+          <h3>{{ philosophyItems[activePhilosophyIndex()].title }}</h3>
+          <p>{{ philosophyItems[activePhilosophyIndex()].summary }}</p>
+          <ul class="accent-list">
+            @for (item of philosophyItems[activePhilosophyIndex()].focusAreas; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+          <p>{{ philosophyItems[activePhilosophyIndex()].details }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section about-cta">
+    <div class="container">
+      <div class="cta-panel">
+        <div>
+          <p class="section-kicker">Join Us</p>
+          <h2>Join Sankofa Alkebulan University</h2>
+          <p>
+            Become part of a University committed to reclaiming knowledge, renewing wisdom, and building ethical
+            leadership across Africa and beyond.
+          </p>
+        </div>
+        <a routerLink="/admissions" class="btn btn--accent">Apply Now</a>
+      </div>
+    </div>
+  </section>
+</div>

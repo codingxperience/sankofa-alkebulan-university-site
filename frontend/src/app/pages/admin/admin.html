@@ -1,0 +1,649 @@
+<div class="admin-container" [attr.data-theme]="currentTheme()">
+  <!-- Header -->
+  <header class="admin-header" @fadeInOut>
+    <div class="header-left">
+      <button
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        [class.collapsed]="sidebarCollapsed()"
+      >
+        <span class="hamburger"></span>
+      </button>
+      <h1 class="admin-title">Admin Dashboard</h1>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" (click)="toggleTheme()">
+        <span class="theme-icon">{{ currentTheme() === 'light' ? '🌙' : '☀️' }}</span>
+      </button>
+      <div class="user-menu">
+        <span class="user-avatar">👤</span>
+        <span class="user-name">Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" [class.collapsed]="sidebarCollapsed()" @slideInRight>
+      <nav class="sidebar-nav">
+        <a
+          class="nav-item"
+          [class.active]="activeTab() === 'dashboard'"
+          (click)="setTab('dashboard')"
+        >
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a class="nav-item" [class.active]="activeTab() === 'posts'" (click)="setTab('posts')">
+          <span class="nav-icon">📝</span>
+          <span class="nav-text">Posts</span>
+        </a>
+        <a class="nav-item" [class.active]="activeTab() === 'events'" (click)="setTab('events')">
+          <span class="nav-icon">📅</span>
+          <span class="nav-text">Events</span>
+        </a>
+        <a
+          class="nav-item"
+          [class.active]="activeTab() === 'products'"
+          (click)="setTab('products')"
+        >
+          <span class="nav-icon">🛍️</span>
+          <span class="nav-text">Products</span>
+        </a>
+        <a class="nav-item" [class.active]="activeTab() === 'orders'" (click)="setTab('orders')">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Orders</span>
+        </a>
+        <a class="nav-item" [class.active]="activeTab() === 'users'" (click)="setTab('users')">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Users</span>
+        </a>
+        <a class="nav-item" [class.active]="activeTab() === 'media'" (click)="setTab('media')">
+          <span class="nav-icon">🖼️</span>
+          <span class="nav-text">Media</span>
+        </a>
+        <a
+          class="nav-item"
+          [class.active]="activeTab() === 'settings'"
+          (click)="setTab('settings')"
+        >
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Dashboard Tab -->
+      <div *ngIf="activeTab() === 'dashboard'" class="dashboard-content" @fadeInOut>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card" @bounceIn>
+            <div class="stat-icon">📝</div>
+            <div class="stat-content">
+              <h3>{{ dashboardStats().totalPosts }}</h3>
+              <p>Total Posts</p>
+            </div>
+            <div class="stat-trend positive">+12%</div>
+          </div>
+          <div class="stat-card" @bounceIn>
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+              <h3>{{ dashboardStats().totalEvents }}</h3>
+              <p>Total Events</p>
+            </div>
+            <div class="stat-trend positive">+8%</div>
+          </div>
+          <div class="stat-card" @bounceIn>
+            <div class="stat-icon">🛍️</div>
+            <div class="stat-content">
+              <h3>{{ dashboardStats().totalProducts }}</h3>
+              <p>Total Products</p>
+            </div>
+            <div class="stat-trend positive">+15%</div>
+          </div>
+          <div class="stat-card" @bounceIn>
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+              <h3>{{ formatCurrency(dashboardStats().totalRevenue) }}</h3>
+              <p>Total Revenue</p>
+            </div>
+            <div class="stat-trend positive">+23%</div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+          <div class="chart-container">
+            <h3>Revenue Overview</h3>
+            <div class="chart-placeholder">
+              <canvas id="revenueChart"></canvas>
+              <!-- Chart would be implemented with Chart.js -->
+              <div class="chart-mock">
+                <div class="chart-bar" style="height: 60%"></div>
+                <div class="chart-bar" style="height: 80%"></div>
+                <div class="chart-bar" style="height: 40%"></div>
+                <div class="chart-bar" style="height: 90%"></div>
+                <div class="chart-bar" style="height: 70%"></div>
+                <div class="chart-bar" style="height: 100%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-container">
+            <h3>User Growth</h3>
+            <div class="chart-placeholder">
+              <canvas id="userGrowthChart"></canvas>
+              <div class="chart-mock">
+                <div class="chart-line">
+                  <div class="line-point" style="left: 0%; top: 80%"></div>
+                  <div class="line-point" style="left: 20%; top: 60%"></div>
+                  <div class="line-point" style="left: 40%; top: 40%"></div>
+                  <div class="line-point" style="left: 60%; top: 30%"></div>
+                  <div class="line-point" style="left: 80%; top: 20%"></div>
+                  <div class="line-point" style="left: 100%; top: 10%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <h3>Recent Activity</h3>
+          <div class="activity-list">
+            <div
+              *ngFor="let activity of dashboardStats().recentActivity"
+              class="activity-item"
+              @fadeInOut
+            >
+              <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
+              <div class="activity-content">
+                <p class="activity-title">{{ activity.title }}</p>
+                <p class="activity-meta">
+                  {{ activity.user }} • {{ formatDate(activity.timestamp) }}
+                </p>
+              </div>
+              <div class="activity-action">{{ activity.action }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Posts Tab -->
+      <div *ngIf="activeTab() === 'posts'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>Posts Management</h2>
+          <div class="header-actions">
+            <input
+              type="text"
+              placeholder="Search posts..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              class="search-input"
+            />
+            <button class="btn-primary" (click)="createItem()">Add Post</button>
+          </div>
+        </div>
+
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" (change)="toggleSelectAll()" /></th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let post of posts()" @fadeInOut>
+                <td>
+                  <input
+                    type="checkbox"
+                    [checked]="selectedItems().includes(post.id)"
+                    (change)="toggleSelectItem(post.id)"
+                  />
+                </td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.author }}</td>
+                <td>
+                  <span class="status-badge" [class]="'status-' + getStatusColor(post.status)">{{
+                    post.status
+                  }}</span>
+                </td>
+                <td>{{ formatDate(post.created_at) }}</td>
+                <td class="actions">
+                  <button class="btn-icon" (click)="editItem(post)">✏️</button>
+                  <button class="btn-icon danger" (click)="deleteItem(post)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bulk-actions" *ngIf="selectedItems().length > 0">
+          <span>{{ selectedItems().length }} items selected</span>
+          <button class="btn-danger" (click)="bulkDelete()">Delete Selected</button>
+        </div>
+      </div>
+
+      <!-- Events Tab -->
+      <div *ngIf="activeTab() === 'events'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>Events Management</h2>
+          <div class="header-actions">
+            <input
+              type="text"
+              placeholder="Search events..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              class="search-input"
+            />
+            <button class="btn-primary" (click)="createItem()">Add Event</button>
+          </div>
+        </div>
+
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" (change)="toggleSelectAll()" /></th>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of events()" @fadeInOut>
+                <td>
+                  <input
+                    type="checkbox"
+                    [checked]="selectedItems().includes(event.id)"
+                    (change)="toggleSelectItem(event.id)"
+                  />
+                </td>
+                <td>{{ event.title }}</td>
+                <td>{{ formatDate(event.date) }}</td>
+                <td>{{ event.location }}</td>
+                <td>
+                  <span class="status-badge" [class]="'status-' + getStatusColor(event.status)">{{
+                    event.status
+                  }}</span>
+                </td>
+                <td class="actions">
+                  <button class="btn-icon" (click)="editItem(event)">✏️</button>
+                  <button class="btn-icon danger" (click)="deleteItem(event)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Products Tab -->
+      <div *ngIf="activeTab() === 'products'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>Products Management</h2>
+          <div class="header-actions">
+            <input
+              type="text"
+              placeholder="Search products..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              class="search-input"
+            />
+            <button class="btn-primary" (click)="createItem()">Add Product</button>
+          </div>
+        </div>
+
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" (change)="toggleSelectAll()" /></th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of products()" @fadeInOut>
+                <td>
+                  <input
+                    type="checkbox"
+                    [checked]="selectedItems().includes(product.id)"
+                    (change)="toggleSelectItem(product.id)"
+                  />
+                </td>
+                <td>{{ product.name }}</td>
+                <td>{{ formatCurrency(product.price) }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.stock }}</td>
+                <td>
+                  <span class="status-badge" [class]="'status-' + getStatusColor(product.status)">{{
+                    product.status
+                  }}</span>
+                </td>
+                <td class="actions">
+                  <button class="btn-icon" (click)="editItem(product)">✏️</button>
+                  <button class="btn-icon danger" (click)="deleteItem(product)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div *ngIf="activeTab() === 'orders'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>Orders Management</h2>
+          <div class="header-actions">
+            <input
+              type="text"
+              placeholder="Search orders..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              class="search-input"
+            />
+          </div>
+        </div>
+
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" (change)="toggleSelectAll()" /></th>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders()" @fadeInOut>
+                <td>
+                  <input
+                    type="checkbox"
+                    [checked]="selectedItems().includes(order.id)"
+                    (change)="toggleSelectItem(order.id)"
+                  />
+                </td>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.customer }}</td>
+                <td>{{ formatCurrency(order.total) }}</td>
+                <td>
+                  <span class="status-badge" [class]="'status-' + getStatusColor(order.status)">{{
+                    order.status
+                  }}</span>
+                </td>
+                <td>{{ formatDate(order.created_at) }}</td>
+                <td class="actions">
+                  <button class="btn-icon" (click)="editItem(order)">👁️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div *ngIf="activeTab() === 'users'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>Users Management</h2>
+          <div class="header-actions">
+            <input
+              type="text"
+              placeholder="Search users..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              class="search-input"
+            />
+            <button class="btn-primary" (click)="createItem()">Add User</button>
+          </div>
+        </div>
+
+        <div class="data-table">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" (change)="toggleSelectAll()" /></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users()" @fadeInOut>
+                <td>
+                  <input
+                    type="checkbox"
+                    [checked]="selectedItems().includes(user.id)"
+                    (change)="toggleSelectItem(user.id)"
+                  />
+                </td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="role-badge" [class]="'role-' + user.role">{{ user.role }}</span>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="'status-' + getStatusColor(user.status)">{{
+                    user.status
+                  }}</span>
+                </td>
+                <td>{{ formatDate(user.joined_at) }}</td>
+                <td class="actions">
+                  <button class="btn-icon" (click)="editItem(user)">✏️</button>
+                  <button class="btn-icon danger" (click)="deleteItem(user)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Media Tab -->
+      <div *ngIf="activeTab() === 'media'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>Media Library</h2>
+          <div class="header-actions">
+            <div class="filter-buttons">
+              <button
+                class="filter-btn"
+                [class.active]="mediaCategory() === 'all'"
+                (click)="filterByCategory('all')"
+              >
+                All
+              </button>
+              <button
+                class="filter-btn"
+                [class.active]="mediaCategory() === 'images'"
+                (click)="filterByCategory('images')"
+              >
+                Images
+              </button>
+              <button
+                class="filter-btn"
+                [class.active]="mediaCategory() === 'videos'"
+                (click)="filterByCategory('videos')"
+              >
+                Videos
+              </button>
+              <button
+                class="filter-btn"
+                [class.active]="mediaCategory() === 'documents'"
+                (click)="filterByCategory('documents')"
+              >
+                Documents
+              </button>
+            </div>
+            <input
+              type="file"
+              #fileInput
+              multiple
+              (change)="onFileSelected($event)"
+              style="display: none"
+            />
+            <button class="btn-primary" (click)="fileInput.click()">Upload Files</button>
+          </div>
+        </div>
+
+        <div class="upload-progress" *ngIf="isUploading()">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="uploadProgress()"></div>
+          </div>
+          <span>{{ uploadProgress() }}% uploaded</span>
+        </div>
+
+        <div class="media-grid">
+          <div *ngFor="let file of filteredMediaFiles()" class="media-item" @fadeInOut>
+            <div class="media-preview">
+              <img
+                *ngIf="file.mimetype.startsWith('image')"
+                [src]="file.url"
+                [alt]="file.originalName"
+              />
+              <div *ngIf="!file.mimetype.startsWith('image')" class="file-icon">
+                {{ getFileIcon(file.type) }}
+              </div>
+            </div>
+            <div class="media-info">
+              <h4>{{ file.originalName }}</h4>
+              <p>{{ formatDate(file.uploadedAt) }}</p>
+              <p>{{ (file.size / 1024 / 1024).toFixed(2) }} MB</p>
+            </div>
+            <div class="media-actions">
+              <button class="btn-icon" (click)="playMedia(file)">👁️</button>
+              <button class="btn-icon">📥</button>
+              <button class="btn-icon danger" (click)="deleteMedia(file)">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div *ngIf="activeTab() === 'settings'" class="content-section" @fadeInOut>
+        <div class="section-header">
+          <h2>System Settings</h2>
+        </div>
+
+        <div class="settings-grid">
+          <div class="settings-section">
+            <h3>General Settings</h3>
+            <div class="setting-item">
+              <label>Site Title</label>
+              <input type="text" value="Sankofa Modern" />
+            </div>
+            <div class="setting-item">
+              <label>Site Description</label>
+              <textarea>Modern web platform for cultural preservation</textarea>
+            </div>
+            <div class="setting-item">
+              <label>Admin Email</label>
+              <input type="email" value="admin@sankofa.com" />
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Security Settings</h3>
+            <div class="setting-item">
+              <label>Session Timeout (minutes)</label>
+              <input type="number" value="60" />
+            </div>
+            <div class="setting-item">
+              <label>Enable Two-Factor Auth</label>
+              <input type="checkbox" checked />
+            </div>
+            <div class="setting-item">
+              <label>Password Policy</label>
+              <select>
+                <option>Basic</option>
+                <option>Strong</option>
+                <option>Very Strong</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Email Settings</h3>
+            <div class="setting-item">
+              <label>SMTP Host</label>
+              <input type="text" value="smtp.gmail.com" />
+            </div>
+            <div class="setting-item">
+              <label>SMTP Port</label>
+              <input type="number" value="587" />
+            </div>
+            <div class="setting-item">
+              <label>From Email</label>
+              <input type="email" value="noreply@sankofa.com" />
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-actions">
+          <button class="btn-primary">Save Settings</button>
+          <button class="btn-secondary">Reset to Defaults</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading()">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal-overlay" *ngIf="showCreateModal() || showEditModal() || showDeleteModal()">
+    <div class="modal" @bounceIn>
+      <div class="modal-header">
+        <h3>
+          {{
+            showDeleteModal() ? 'Confirm Delete' : showEditModal() ? 'Edit Item' : 'Create New Item'
+          }}
+        </h3>
+        <button
+          class="modal-close"
+          (click)="showCreateModal.set(false); showEditModal.set(false); showDeleteModal.set(false)"
+        >
+          ×
+        </button>
+      </div>
+      <div class="modal-body">
+        <p *ngIf="showDeleteModal()">
+          Are you sure you want to delete this item? This action cannot be undone.
+        </p>
+        <!-- Form content would go here -->
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn-secondary"
+          (click)="showCreateModal.set(false); showEditModal.set(false); showDeleteModal.set(false)"
+        >
+          Cancel
+        </button>
+        <button class="btn-primary" *ngIf="!showDeleteModal()" (click)="/* Save logic */">
+          Save
+        </button>
+        <button class="btn-danger" *ngIf="showDeleteModal()" (click)="confirmDelete()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,174 @@
+<main class="program-detail-page">
+  <div class="container">
+    <nav class="breadcrumb-row" aria-label="Breadcrumb">
+      <a routerLink="/home" class="breadcrumb-link">Home</a>
+      <span class="delimiter">/</span>
+      <a [routerLink]="['/home', level() || 'bachelors']" class="breadcrumb-link">
+        {{ levelLabel() }}
+      </a>
+      <span class="delimiter">/</span>
+      <span class="current">{{ program()?.title || 'Programme not found' }}</span>
+    </nav>
+
+    @if (program(); as program) {
+      <section class="program-intro">
+        <h1>{{ program.title }}</h1>
+        @for (paragraph of overviewParagraphs(); track $index) {
+          <p>{{ paragraph }}</p>
+        }
+      </section>
+
+      <section class="program-detail-layout">
+        <aside class="program-nav" aria-label="Programme section navigation">
+          <ul class="nav-list">
+            @for (section of sections(); track section.id) {
+              <li>
+                <button
+                  type="button"
+                  class="nav-link"
+                  [class.active]="isActiveSection(section.id)"
+                  (click)="setSection(section.id)"
+                  [attr.aria-current]="isActiveSection(section.id) ? 'page' : null"
+                >
+                  {{ section.title }}
+                </button>
+              </li>
+            }
+          </ul>
+        </aside>
+
+        <article class="program-main" aria-live="polite">
+          <header class="section-head">
+            <h2>{{ sectionHeading() }}</h2>
+            <p class="section-intro">{{ sectionIntro() }}</p>
+          </header>
+
+          @switch (activeSection()) {
+            @case ('overview') {
+              <section class="section-block">
+                @if (overviewHighlights().length) {
+                  <ol class="highlight-list">
+                    @for (point of overviewHighlights(); track point) {
+                      <li>
+                        <strong>{{ point.title }}</strong>
+                        <span>{{ point.description }}</span>
+                      </li>
+                    }
+                  </ol>
+                }
+                <div class="overview-grid">
+                  <div class="overview-card">
+                    <span>Duration</span>
+                    <strong>{{ program.duration }}</strong>
+                  </div>
+                  <div class="overview-card">
+                    <span>Award</span>
+                    <strong>{{ program.award }}</strong>
+                  </div>
+                  <div class="overview-card">
+                    <span>Next Intake</span>
+                    <strong>{{ intakeTerm() }}</strong>
+                  </div>
+                  <div class="overview-card">
+                    <span>Tuition</span>
+                    <strong>{{ program.tuition[0] || 'Contact admissions' }}</strong>
+                  </div>
+                </div>
+              </section>
+            }
+            @case ('objectives') {
+              <section class="section-block">
+                <ul>
+                  @for (objective of programmeObjectives(); track objective) {
+                    <li>{{ objective }}</li>
+                  }
+                </ul>
+              </section>
+            }
+            @case ('outcomes') {
+              <section class="section-block">
+                <ul>
+                  @for (outcome of programmeOutcomes(); track outcome) {
+                    <li>{{ outcome }}</li>
+                  }
+                </ul>
+              </section>
+            }
+            @case ('admissions') {
+              <section class="section-block">
+                <ul>
+                  @for (requirement of program.admissions; track requirement) {
+                    <li>{{ requirement }}</li>
+                  }
+                </ul>
+              </section>
+            }
+            @case ('duration') {
+              <section class="section-block">
+                <p>{{ program.duration }}</p>
+                <p><strong>Typical intake:</strong> {{ intakeTerm() }}</p>
+              </section>
+            }
+            @case ('tuition') {
+              <section class="section-block">
+                <ul>
+                  @for (item of program.tuition; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </section>
+            }
+            @case ('curriculum') {
+              <section class="section-block">
+                @if (program.outline.length) {
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Year</th>
+                          <th>Course</th>
+                          <th>Credits</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (outline of program.outline; track outline.title) {
+                          @for (item of outline.items; track item) {
+                            <tr>
+                              <td>{{ outline.title }}</td>
+                              <td>{{ item }}</td>
+                              <td>3</td>
+                            </tr>
+                          }
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <p>Curriculum details will be shared by the department.</p>
+                }
+              </section>
+            }
+            @case ('contact') {
+              <section class="section-block">
+                <p>{{ programmeMoreInfo() }}</p>
+              </section>
+            }
+            @default {
+              <section class="section-block">
+                <p>{{ program.overview }}</p>
+              </section>
+            }
+          }
+        </article>
+      </section>
+    } @else {
+      <section class="not-found">
+        <h2>Programme details unavailable</h2>
+        <p>We could not find the requested programme details. Please return to your level page.</p>
+        <a [routerLink]="['/home', level() || 'bachelors']" class="not-found__link">
+          Return to programmes
+        </a>
+      </section>
+    }
+  </div>
+</main>

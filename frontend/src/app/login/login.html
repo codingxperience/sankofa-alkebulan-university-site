@@ -1,0 +1,201 @@
+<div class="auth-shell login-shell">
+  <section class="auth-visual">
+    <div class="visual-gradient"></div>
+    <div class="visual-pattern"></div>
+    <div class="visual-content">
+      <img
+        class="brand-mark"
+        src="/wp-content/uploads/2025/10/sankofa_large_logo-final.png"
+        alt="Sankofa Alkebulan"
+      />
+      <p class="eyebrow">Sankofa Alkebulan</p>
+      <h1>Knowledge Rooted In Africa, Shared With The World.</h1>
+      <p class="visual-copy">
+        Access your library, checkout securely, and continue where you left off.
+      </p>
+      <div class="trust-grid">
+        <div class="trust-item">
+          <strong>Verified Access</strong>
+          <span>Role-based protection for admin and members</span>
+        </div>
+        <div class="trust-item">
+          <strong>Secure Payments</strong>
+          <span>Stripe and Mobile Money support</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-panel">
+    <header class="panel-header">
+      <p class="eyebrow">Sign In</p>
+      <h2>Welcome back</h2>
+      <p>Use email, social login, or phone OTP to continue.</p>
+    </header>
+
+    @if (checkoutIntent()) {
+    <div class="context-banner">
+      <strong>Checkout paused</strong>
+      <span>Sign in to continue your payment flow securely.</span>
+    </div>
+    }
+
+    <div class="social-login">
+      <button type="button" class="social-btn social-btn--google" (click)="loginWithGoogle()">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path
+            fill="#4285F4"
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+          />
+          <path
+            fill="#34A853"
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+          />
+          <path
+            fill="#EA4335"
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+          />
+        </svg>
+        Continue with Google
+      </button>
+
+      <button type="button" class="social-btn social-btn--facebook" (click)="loginWithFacebook()">
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path
+            fill="#1877F2"
+            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+          />
+        </svg>
+        Continue with Facebook
+      </button>
+
+      <button
+        type="button"
+        class="social-btn social-btn--phone"
+        (click)="showPhoneLogin.set(!showPhoneLogin())"
+      >
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path
+            fill="#2F9E44"
+            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+          />
+        </svg>
+        Continue with Phone
+      </button>
+    </div>
+
+    @if (showPhoneLogin()) {
+    <div class="phone-login">
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          [ngModel]="phoneNumber()"
+          (ngModelChange)="phoneNumber.set($event)"
+          name="phone"
+          placeholder="+2567XXXXXXXX"
+          required
+        />
+      </div>
+
+      @if (!verificationSent()) {
+      <button type="button" class="btn btn--muted" (click)="sendVerificationCode()" [disabled]="isLoading()">
+        {{ isLoading() ? 'Sending...' : 'Send OTP' }}
+      </button>
+      }
+
+      @if (verificationSent()) {
+      <div class="verification-section">
+        <div class="form-group">
+          <label for="verificationCode">Verification Code</label>
+          <input
+            type="text"
+            id="verificationCode"
+            [ngModel]="verificationCode()"
+            (ngModelChange)="verificationCode.set($event)"
+            name="verificationCode"
+            placeholder="Enter 6-digit OTP"
+            maxlength="6"
+            required
+          />
+        </div>
+
+        <div class="resend-section">
+          @if (resendTimer() > 0) {
+          <span class="resend-timer">Resend in {{ resendTimer() }}s</span>
+          } @else {
+          <button type="button" class="resend-btn" (click)="resendVerificationCode()" [disabled]="isLoading()">
+            Resend OTP
+          </button>
+          }
+        </div>
+
+        <button type="button" class="btn btn--primary" (click)="loginWithPhone()" [disabled]="isLoading()">
+          {{ isLoading() ? 'Verifying...' : 'Verify & Sign In' }}
+        </button>
+      </div>
+      }
+    </div>
+    }
+
+    <div class="divider"><span>or use email</span></div>
+
+    <form class="login-form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          name="email"
+          placeholder="you@example.com"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      @if (error()) {
+      <div class="error-message">{{ error() }}</div>
+      }
+      @if (verificationPending()) {
+      <div class="context-banner">
+        <strong>Verification required</strong>
+        <span>Your account must be approved before first access. Please contact support if this takes too long.</span>
+      </div>
+      }
+
+      <button type="submit" class="btn btn--primary btn--full" [disabled]="isLoading()">
+        {{ isLoading() ? 'Signing In...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <footer class="panel-footer">
+      <p>
+        First time here?
+        <a [routerLink]="['/register']" [queryParams]="{ returnUrl: returnUrl(), checkout: checkoutIntent() ? '1' : null }">Create account</a>
+      </p>
+      <p>
+        Are you an administrator?
+        <a routerLink="/admin-login">Go to Admin Login</a>
+      </p>
+    </footer>
+  </section>
+</div>

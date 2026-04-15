@@ -1,0 +1,577 @@
+:host {
+  display: block;
+  --about-ink: #0f2f4d;
+  --about-text: #36526d;
+  --about-accent: #d4a22f;
+  --about-accent-deep: #a87b18;
+  --about-blue: #0f4c81;
+  --about-blue-deep: #082841;
+  --about-border: #d6e2ec;
+  --about-surface: #ffffff;
+  --about-muted-surface: #f5f7f0;
+  --about-panel: #f9fbfd;
+  --about-shadow: 0 18px 36px rgba(8, 40, 65, 0.1);
+}
+
+.about-page {
+  background: linear-gradient(180deg, #f6f8fb 0%, #fbfbf6 100%);
+  color: var(--about-ink);
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+.about-page [id] {
+  scroll-margin-top: 120px;
+}
+
+.about-hero {
+  position: relative;
+  min-height: clamp(280px, 38vw, 380px);
+  overflow: hidden;
+  color: #ffffff;
+}
+
+.about-hero__image,
+.about-media-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-purpose__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.about-hero__image {
+  position: absolute;
+  inset: 0;
+}
+
+.about-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8, 40, 65, 0.9) 0%, rgba(15, 76, 129, 0.72) 46%, rgba(15, 76, 129, 0.28) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), transparent 45%);
+}
+
+.about-hero__content {
+  position: relative;
+  min-height: clamp(280px, 38vw, 380px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: clamp(2.4rem, 5vw, 4.2rem) 0;
+}
+
+.about-hero__eyebrow,
+.section-kicker,
+.panel__kicker,
+.philosophy-panel__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.about-hero__eyebrow {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.about-hero h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.2rem, 4.8vw, 4rem);
+}
+
+.about-hero__summary {
+  margin: 0;
+  max-width: 56rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  line-height: 1.8;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.about-page-nav {
+  background: var(--about-surface);
+  border-bottom: 1px solid var(--about-border);
+}
+
+.about-page-nav__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(220px, 0.95fr) minmax(220px, 0.95fr);
+  gap: 2rem;
+  padding: 1.6rem 0;
+}
+
+.about-page-nav__intro p:last-child {
+  margin: 0;
+  color: var(--about-text);
+  line-height: 1.85;
+  font-size: 1.06rem;
+}
+
+.about-page-nav__column ul,
+.about-values ul,
+.people-list,
+.accent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about-page-nav__column ul {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.about-page-nav__column a {
+  color: var(--about-blue);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.about-page-nav__column a:hover {
+  color: var(--about-accent-deep);
+}
+
+.about-section {
+  padding: clamp(2.6rem, 5vw, 4.4rem) 0;
+}
+
+.about-welcome,
+.about-charter,
+.about-policies,
+.about-cta {
+  background: var(--about-surface);
+}
+
+.about-purpose,
+.about-history,
+.about-law {
+  background: var(--about-muted-surface);
+}
+
+.about-governance,
+.about-statute,
+.about-philosophy {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 250, 252, 0.92));
+}
+
+.section-heading {
+  margin-bottom: 1.6rem;
+}
+
+.section-heading--center {
+  text-align: center;
+}
+
+.section-kicker,
+.panel__kicker,
+.philosophy-panel__eyebrow {
+  color: var(--about-accent-deep);
+}
+
+.section-heading h2,
+.cta-panel h2 {
+  margin: 0;
+  color: var(--about-ink);
+  font-size: clamp(1.9rem, 3vw, 2.8rem);
+}
+
+.section-lead {
+  margin: 0.7rem auto 0;
+  max-width: 58rem;
+  color: var(--about-text);
+  line-height: 1.8;
+}
+
+.about-welcome__grid,
+.about-history__grid,
+.split-grid,
+.about-purpose__grid {
+  display: flex;
+  flex-wrap: wrap;
+  display: grid;
+  gap: 1.6rem;
+}
+
+.about-welcome__grid > *,
+.about-history__grid > *,
+.split-grid > *,
+.about-purpose__grid > * {
+  min-width: 0;
+  flex: 1 1 280px;
+}
+
+.about-welcome__grid,
+.split-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  align-items: start;
+}
+
+.about-history__grid,
+.about-purpose__grid {
+  grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.about-welcome__copy p,
+.body-copy p,
+.panel p,
+.cta-panel p,
+.philosophy-panel p {
+  color: var(--about-text);
+  line-height: 1.85;
+}
+
+.about-media-card,
+.about-purpose__figure,
+.panel,
+.purpose-card,
+.philosophy-panel,
+.philosophy-tab,
+.cta-panel {
+  border-radius: 18px;
+}
+
+.about-media-card,
+.about-purpose__figure,
+.panel,
+.purpose-card,
+.philosophy-panel,
+.cta-panel {
+  border: 1px solid var(--about-border);
+  box-shadow: var(--about-shadow);
+}
+
+.about-media-card,
+.about-purpose__figure {
+  position: relative;
+  overflow: hidden;
+  background: var(--about-surface);
+}
+
+.about-media-card {
+  min-height: 100%;
+}
+
+.about-media-card__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+}
+
+.about-media-card__play {
+  position: absolute;
+  inset: auto auto 1.1rem 1.1rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 999px;
+  background: rgba(15, 76, 129, 0.92);
+  border: 2px solid rgba(255, 255, 255, 0.88);
+}
+
+.about-media-card__play::before {
+  content: '';
+  position: absolute;
+  left: 1.4rem;
+  top: 1.1rem;
+  width: 0;
+  height: 0;
+  border-top: 0.65rem solid transparent;
+  border-bottom: 0.65rem solid transparent;
+  border-left: 1rem solid #ffffff;
+}
+
+.about-media-card figcaption,
+.about-purpose__figure figcaption {
+  padding: 1rem 1.1rem 1.15rem;
+  color: var(--about-text);
+  background: var(--about-surface);
+  line-height: 1.7;
+}
+
+.about-quote {
+  margin: 1.7rem auto 0;
+  max-width: 54rem;
+  text-align: center;
+  padding: 1.1rem 1rem 0;
+  border-top: 1px solid var(--about-border);
+}
+
+.about-quote blockquote {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  color: var(--about-blue-deep);
+}
+
+.about-quote figcaption {
+  margin-top: 0.6rem;
+  color: var(--about-accent-deep);
+  font-weight: 700;
+}
+
+.purpose-card-grid,
+.governance-grid,
+.leadership-grid,
+.content-grid {
+  display: flex;
+  flex-wrap: wrap;
+  display: grid;
+  gap: 1rem;
+}
+
+.purpose-card-grid > *,
+.governance-grid > *,
+.leadership-grid > *,
+.content-grid > * {
+  min-width: 0;
+  flex: 1 1 220px;
+}
+
+.purpose-card-grid,
+.content-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.governance-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 1.2rem;
+}
+
+.leadership-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.purpose-card,
+.panel,
+.philosophy-panel,
+.cta-panel {
+  background: var(--about-surface);
+  padding: 1.2rem 1.25rem;
+}
+
+.panel--tinted,
+.panel--accent {
+  background: linear-gradient(180deg, rgba(15, 76, 129, 0.06), rgba(212, 162, 47, 0.1));
+}
+
+.purpose-card {
+  border: 1px solid var(--about-border);
+  border-top: 4px solid var(--about-accent);
+}
+
+.purpose-card h3,
+.panel h3,
+.governance-card h3,
+.leadership-card h3,
+.philosophy-panel h3,
+.about-values h3 {
+  margin: 0 0 0.6rem;
+  color: var(--about-ink);
+  font-size: 1.12rem;
+}
+
+.purpose-card p,
+.panel p:last-child,
+.about-law__note {
+  margin-bottom: 0;
+}
+
+.about-values {
+  margin-top: 1.25rem;
+}
+
+.about-values ul,
+.people-list,
+.accent-list {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.about-values li,
+.accent-list li,
+.people-list li {
+  display: grid;
+  grid-template-columns: 0.8rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  color: var(--about-text);
+  line-height: 1.75;
+}
+
+.about-values li::before,
+.accent-list li::before,
+.people-list li::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-top: 0.5rem;
+  border-radius: 999px;
+  background: var(--about-accent);
+}
+
+.about-values strong {
+  color: var(--about-blue-deep);
+}
+
+.philosophy-layout {
+  display: flex;
+  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(230px, 0.42fr) minmax(0, 1fr);
+  gap: 1.15rem;
+}
+
+.philosophy-layout > * {
+  min-width: 0;
+  flex: 1 1 280px;
+}
+
+.philosophy-tabs {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.philosophy-tab {
+  border: 1px solid var(--about-border);
+  background: #eef4f9;
+  color: var(--about-blue);
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.philosophy-tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 76, 129, 0.35);
+}
+
+.philosophy-tab.is-active {
+  background: linear-gradient(135deg, var(--about-blue-deep), var(--about-blue));
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.cta-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  background: linear-gradient(120deg, rgba(15, 76, 129, 0.08), rgba(212, 162, 47, 0.15));
+}
+
+@media (max-width: 1180px) {
+  .about-page-nav__grid,
+  .about-welcome__grid,
+  .about-history__grid,
+  .split-grid,
+  .about-purpose__grid,
+  .philosophy-layout,
+  .content-grid,
+  .governance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .purpose-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .about-page-nav__grid,
+  .purpose-card-grid,
+  .leadership-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-section {
+    padding: 2.4rem 0;
+  }
+
+  .about-hero__content {
+    min-height: 300px;
+  }
+
+  .cta-panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero {
+    min-height: 260px;
+  }
+
+  .about-hero__content {
+    min-height: 260px;
+    gap: 0.55rem;
+    padding: 2rem 0 1.7rem;
+  }
+
+  .about-hero__summary,
+  .section-lead,
+  .about-welcome__copy p,
+  .cta-panel p,
+  .philosophy-panel p {
+    line-height: 1.68;
+  }
+
+  .about-media-card__play {
+    width: 3rem;
+    height: 3rem;
+    inset: auto auto 0.85rem 0.85rem;
+  }
+
+  .about-media-card__play::before {
+    left: 1.15rem;
+    top: 0.85rem;
+    border-top-width: 0.55rem;
+    border-bottom-width: 0.55rem;
+    border-left-width: 0.85rem;
+  }
+
+  .about-media-card figcaption,
+  .about-purpose__figure figcaption,
+  .purpose-card,
+  .panel,
+  .philosophy-panel,
+  .cta-panel {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .about-values li,
+  .accent-list li,
+  .people-list li {
+    gap: 0.6rem;
+  }
+}

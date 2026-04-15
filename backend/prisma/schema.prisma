@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                 String        @id @default(cuid())
+  email              String        @unique
+  name               String?
+  role               String        @default("user")
+  verificationStatus String        @default("approved")
+  verificationNote   String?
+  verifiedAt         DateTime?
+  password           String
+  authId             String?       @map("auth_id")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  posts              Post[]
+  comments           Comment[]
+  likes              Like[]
+  orders             Order[]
+  media              Media[]
+  booksCreated       Book[]        @relation("BooksCreated")
+  entitlements       Entitlement[] @relation("UserEntitlements")
+  grantedEntitlements Entitlement[] @relation("GrantedEntitlements")
+  paymentEvents      PaymentEvent[]
+  eventRegistrations EventRegistration[]
+
+  @@map("app_user")
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  title     String
+  slug      String    @unique
+  content   String
+  published Boolean   @default(false)
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  url          String
+  filename     String
+  mimetype     String?
+  size         Int?
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  priceCents  Int
+  stock       Int         @default(0)
+  status      String      @default("available")
+  category    String?     @default("General")
+  sku         String?     @unique
+  createdAt   DateTime    @default(now())
+  orderItems  OrderItem[]
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  productId  String
+  quantity   Int
+  priceCents Int
+  order      Order   @relation(fields: [orderId], references: [id])
+  product    Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  totalCents Int
+  status     String      @default("pending")
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  startsAt    DateTime
+  endsAt      DateTime?
+  location    String?
+  description String?
+  attendees   Int       @default(0)
+  status      String    @default("draft")
+  registrations EventRegistration[]
+  createdAt   DateTime  @default(now())
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String
+  name      String
+  phone     String?
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, email])
+  @@index([eventId, createdAt])
+}
+
+model Book {
+  id           String         @id @default(cuid())
+  title        String
+  slug         String         @unique
+  description  String?
+  accessType   BookAccessType @default(FREE)
+  sourceType   BookSourceType @default(INTERNAL)
+  isPublished  Boolean        @default(false)
+  isActive     Boolean        @default(true)
+  priceCents   Int?
+  currency     String         @default("USD")
+  license      String?
+  externalId   String?
+  externalUrl  String?
+  coverImageUrl String?
+  createdById  String?
+  createdBy    User?          @relation("BooksCreated", fields: [createdById], references: [id])
+  files        BookFile[]
+  entitlements Entitlement[]
+  paymentEvents PaymentEvent[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([isPublished, accessType])
+  @@index([sourceType])
+}
+
+model BookFile {
+  id        String   @id @default(cuid())
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bucket    String
+  path      String
+  mimeType  String?
+  fileSize  Int?
+  checksum  String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([bucket, path])
+  @@index([bookId, isPrimary])
+}
+
+model Entitlement {
+  id           String                 @id @default(cuid())
+  userId       String
+  user         User                   @relation("UserEntitlements", fields: [userId], references: [id], onDelete: Cascade)
+  bookId       String
+  book         Book                   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  grantedById  String?
+  grantedBy    User?                  @relation("GrantedEntitlements", fields: [grantedById], references: [id], onDelete: SetNull)
+  source       EntitlementGrantSource @default(PURCHASE)
+  orderRef     String?
+  expiresAt    DateTime?
+  paymentEvents PaymentEvent[]
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  @@unique([userId, bookId])
+  @@index([bookId, userId])
+  @@index([expiresAt])
+}
+
+model PaymentEvent {
+  id             String          @id @default(cuid())
+  provider       PaymentProvider
+  status         PaymentStatus   @default(PENDING)
+  eventType      String
+  providerEventId String
+  idempotencyKey String?
+  amountCents    Int?
+  currency       String?
+  userId         String?
+  user           User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  bookId         String?
+  book           Book?           @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  entitlementId  String?
+  entitlement    Entitlement?    @relation(fields: [entitlementId], references: [id], onDelete: SetNull)
+  metadata       Json?
+  processedAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([provider, providerEventId])
+  @@unique([idempotencyKey])
+  @@index([status, createdAt])
+}
+
+enum BookAccessType {
+  FREE
+  PAID
+}
+
+enum BookSourceType {
+  INTERNAL
+  EXTERNAL
+}
+
+enum EntitlementGrantSource {
+  PURCHASE
+  ADMIN_GRANT
+  PROMOTION
+}
+
+enum PaymentProvider {
+  STRIPE
+  FLUTTERWAVE
+  MTN
+  AIRTEL
+  MANUAL
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
