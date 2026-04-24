@@ -1,39 +1,134 @@
 @if (page(); as section) {
-  <section class="section-shell">
+  <section class="section-shell" [class.section-shell--academics]="isFacultiesPage()">
     <div class="container">
-      <div class="section-hero">
-        <p class="eyebrow">Sankofa Alkebulan University</p>
-        <h1>{{ section.title }}</h1>
-        <p>{{ section.description }}</p>
-      </div>
+      @if (isFacultiesPage()) {
+        <div class="academics-landing">
+          <section class="academics-hero" aria-labelledby="academics-title">
+            <video
+              class="academics-hero__media"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster="/assets/hero/hero-campus-africa.jpg"
+              aria-label="Students collaborating in a modern learning space"
+            >
+              <source src="/assets/academics/academic-students-tablet.mp4" type="video/mp4" />
+            </video>
+            <div class="academics-hero__veil"></div>
+            <div class="academics-hero__content">
+              <p class="eyebrow">Academics at Sankofa</p>
+              <h1 id="academics-title">{{ section.title }}</h1>
+              <p>
+                Clear academic homes for heritage, science, leadership, enterprise, health,
+                law, and creative futures.
+              </p>
+              <div class="academics-hero__actions">
+                <a routerLink="/programs" class="btn">Explore programs</a>
+                <a routerLink="/admissions" class="btn btn--secondary">Apply now</a>
+              </div>
+            </div>
+            <div class="academics-hero__ticker" aria-hidden="true">
+              <span>Heritage</span>
+              <span>Science</span>
+              <span>Leadership</span>
+              <span>Health</span>
+              <span>AI</span>
+              <span>Law</span>
+            </div>
+          </section>
 
-      <div class="highlight-grid">
-        @for (stat of section.highlights; track stat.label) {
-          <article class="highlight-card">
-            <p class="highlight-card__value">{{ stat.value }}</p>
-            <p class="highlight-card__label">{{ stat.label }}</p>
-          </article>
-        }
-      </div>
+          <section class="academic-pathways" aria-label="Academic pathways">
+            @for (pathway of academicPathways; track pathway.title) {
+              <a [routerLink]="pathway.path" class="academic-pathway">
+                <span class="academic-pathway__icon" aria-hidden="true"><i [class]="pathway.iconClass"></i></span>
+                <span class="academic-pathway__body">
+                  <span>{{ pathway.eyebrow }}</span>
+                  <strong>{{ pathway.title }}</strong>
+                  <small>{{ pathway.description }}</small>
+                </span>
+                <span class="academic-pathway__arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            }
+          </section>
 
-      <div class="module-grid">
-        @for (module of section.modules; track module.heading) {
-          <article class="module-card">
-            <h2>{{ module.heading }}</h2>
-            <ul>
-              @for (item of module.items; track item) {
-                <li>
-                  @if (isFacultiesPage() && getDepartmentSlug(item)) {
-                    <a [routerLink]="['/faculties-schools', getDepartmentSlug(item)]">{{ item }}</a>
-                  } @else {
-                    <span>{{ item }}</span>
-                  }
-                </li>
+          <section class="academic-clusters" aria-labelledby="academic-clusters-title">
+            <div class="academic-section-heading">
+              <p class="eyebrow">Academic Worlds</p>
+              <h2 id="academic-clusters-title">Explore by ambition, not by bureaucracy.</h2>
+              <p>Four clear doors into Sankofa's wider school system.</p>
+            </div>
+
+            <div class="academic-cluster-grid">
+              @for (cluster of academicClusters; track cluster.title) {
+                <a
+                  [routerLink]="cluster.path"
+                  class="academic-cluster"
+                  [style.--cluster-image-position]="cluster.imagePosition"
+                >
+                  <img [src]="cluster.image" [alt]="cluster.title" loading="lazy" />
+                  <span class="academic-cluster__shade"></span>
+                  <span class="academic-cluster__content">
+                    <strong>{{ cluster.title }}</strong>
+                    <small>{{ cluster.description }}</small>
+                    <em>Explore world</em>
+                  </span>
+                </a>
               }
-            </ul>
-          </article>
-        }
-      </div>
+            </div>
+          </section>
+
+          <section class="academic-showcase" aria-labelledby="academic-showcase-title">
+            <div class="academic-section-heading">
+              <p class="eyebrow">Schools</p>
+              <h2 id="academic-showcase-title">Six gateways into the full academic system.</h2>
+              <p>Start with featured colleges, then move into all eighteen schools when ready.</p>
+            </div>
+
+            <div class="featured-school-grid">
+              @for (school of featuredSchools; track school.slug) {
+                <a [routerLink]="['/faculties-schools', school.slug]" class="featured-school">
+                  <span>{{ school.tag }}</span>
+                  <strong>{{ school.title }}</strong>
+                  <small>{{ school.description }}</small>
+                </a>
+              }
+            </div>
+          </section>
+
+        </div>
+      } @else {
+        <div class="section-hero">
+          <p class="eyebrow">Sankofa Alkebulan University</p>
+          <h1>{{ section.title }}</h1>
+          <p>{{ section.description }}</p>
+        </div>
+
+        <div class="highlight-grid">
+          @for (stat of section.highlights; track stat.label) {
+            <article class="highlight-card">
+              <p class="highlight-card__value">{{ stat.value }}</p>
+              <p class="highlight-card__label">{{ stat.label }}</p>
+            </article>
+          }
+        </div>
+
+        <div class="module-grid">
+          @for (module of section.modules; track module.heading) {
+            <article class="module-card">
+              <h2>{{ module.heading }}</h2>
+              <ul>
+                @for (item of module.items; track item) {
+                  <li>
+                    <span>{{ item }}</span>
+                  </li>
+                }
+              </ul>
+            </article>
+          }
+        </div>
+      }
 
       @if (isAdmissionsPage()) {
         <section class="flow-card">
@@ -186,10 +281,12 @@
         </section>
       }
 
-      <div class="cta-band">
-        <a routerLink="/admissions" class="btn">Apply to the University</a>
-        <a routerLink="/contact" class="btn btn--secondary">Contact Administration</a>
-      </div>
+      @if (!isFacultiesPage()) {
+        <div class="cta-band">
+          <a routerLink="/admissions" class="btn">Apply to the University</a>
+          <a routerLink="/contact" class="btn btn--secondary">Contact Administration</a>
+        </div>
+      }
     </div>
   </section>
 } @else {

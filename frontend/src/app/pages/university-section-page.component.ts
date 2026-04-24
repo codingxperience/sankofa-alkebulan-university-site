@@ -6,6 +6,29 @@ import { DEPARTMENT_PAGES } from '../university/department-pages';
 import { InquiriesService } from '../core/inquiries.service';
 import { firstValueFrom } from 'rxjs';
 
+interface AcademicPathway {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly description: string;
+  readonly iconClass: string;
+  readonly path: string;
+}
+
+interface FeaturedSchool {
+  readonly title: string;
+  readonly slug: string;
+  readonly description: string;
+  readonly tag: string;
+}
+
+interface AcademicCluster {
+  readonly title: string;
+  readonly description: string;
+  readonly image: string;
+  readonly imagePosition: string;
+  readonly path: string;
+}
+
 @Component({
   selector: 'app-university-section-page',
   imports: [RouterLink, ReactiveFormsModule],
@@ -31,12 +54,85 @@ export class UniversitySectionPageComponent {
   readonly isContactPage = computed(() => this.page()?.slug === 'contact');
   readonly isFacultiesPage = computed(() => this.page()?.slug === 'faculties-schools');
 
+  readonly academicPathways: readonly AcademicPathway[] = [
+    {
+      eyebrow: 'Start',
+      title: 'Programs',
+      description: 'Certificates, diplomas, degrees, masters, and doctoral routes.',
+      iconClass: 'pi pi-book',
+      path: '/programs',
+    },
+    {
+      eyebrow: 'Build',
+      title: 'Schools',
+      description: 'Focused academic homes with distinct disciplines and identities.',
+      iconClass: 'pi pi-sitemap',
+      path: '/faculties-schools',
+    },
+    {
+      eyebrow: 'Advance',
+      title: 'Research',
+      description: 'Applied inquiry across AI, health, governance, climate, and culture.',
+      iconClass: 'pi pi-globe',
+      path: '/research-innovation',
+    },
+  ];
+
+  readonly featuredSchools: readonly FeaturedSchool[] = DEPARTMENT_PAGES.slice(0, 6).map(
+    (school, index) => ({
+      title: school.title,
+      slug: school.slug,
+      description: this.summarizeAcademicSchool(school.overview),
+      tag: ['Heritage', 'Theology', 'Culture', 'Governance', 'Innovation', 'Global'][index] ?? 'School',
+    }),
+  );
+
+  readonly academicClusters: readonly AcademicCluster[] = [
+    {
+      title: 'Heritage and Civilization',
+      description: 'African knowledge systems, theology, humanities, culture, and public memory.',
+      image: '/assets/academics/world-heritage-civilization.jpg',
+      imagePosition: '52% center',
+      path: '/faculties-schools/college-of-african-civilizational-studies',
+    },
+    {
+      title: 'Governance and Justice',
+      description: 'Leadership, law, human rights, policy, peace, and continental institutions.',
+      image: '/assets/academics/world-governance-justice.jpg',
+      imagePosition: '48% center',
+      path: '/faculties-schools/school-of-law-and-human-rights',
+    },
+    {
+      title: 'Science and Intelligence',
+      description: 'Engineering, data science, AI, space, mathematics, and applied technologies.',
+      image: '/assets/academics/world-science-intelligence.jpg',
+      imagePosition: '50% center',
+      path: '/faculties-schools/school-of-mathematics-data-science-and-ai',
+    },
+    {
+      title: 'Health and Earth Futures',
+      description: 'Biomedical studies, public health, agriculture, climate, and sustainability.',
+      image: '/assets/academics/world-health-earth.jpg',
+      imagePosition: '48% center',
+      path: '/faculties-schools/college-of-health-sciences-and-biomedical-studies',
+    },
+  ];
+
   private readonly departmentSlugByTitle = new Map(
     DEPARTMENT_PAGES.map((page) => [page.title, page.slug]),
   );
 
   getDepartmentSlug(title: string): string | null {
     return this.departmentSlugByTitle.get(title) ?? null;
+  }
+
+  private summarizeAcademicSchool(overview: string): string {
+    const sentence = overview.trim().split('. ')[0] ?? overview.trim();
+    if (sentence.length <= 118) {
+      return sentence.endsWith('.') ? sentence : `${sentence}.`;
+    }
+
+    return `${sentence.slice(0, 115).trim()}...`;
   }
 
   readonly admissionsLevels = [

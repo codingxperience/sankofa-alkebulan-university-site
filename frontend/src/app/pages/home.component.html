@@ -1,83 +1,115 @@
 <div class="home-shell">
   <section class="hero section">
     <div class="container">
-      <div class="hero-shell">
-        <div class="hero-carousel">
-          <div class="hero-stack hero-stack--primary">
-            @for (slide of heroSlides; track slide.primary.title; let idx = $index) {
-              <article class="hero-card hero-card--primary" [class.hero-card--active]="idx === activeBannerIndex()">
-                <img
-                  [ngSrc]="slide.primary.image"
-                  [alt]="slide.primary.title"
-                  width="1600"
-                  height="900"
-                  [priority]="idx === 0"
-                />
-                <div class="hero-card__veil"></div>
-                <div class="hero-card__industrial"></div>
+      <div class="hero-stage">
+        <div class="hero-stage__banner">
+          @for (slide of heroSlides; track slide.title; let idx = $index) {
+            <article
+              class="hero-banner"
+              [class.hero-banner--active]="idx === activeBannerIndex()"
+              [class.hero-banner--content-right]="slide.contentSide === 'right'"
+              [attr.data-tone]="slide.tone"
+              [style.--hero-object-position]="slide.imagePosition"
+              [style.--hero-content-width]="slide.contentWidth || null"
+              [style.--hero-title-width]="slide.titleWidth || null"
+              [style.--hero-summary-width]="slide.summaryWidth || null"
+              [style.--hero-pan-x]="slide.panX || null"
+              [style.--hero-pan-y]="slide.panY || null"
+            >
+              <img
+                [ngSrc]="slide.image"
+                [alt]="slide.title"
+                width="1600"
+                height="900"
+                [priority]="idx === 0"
+              />
+              <div class="hero-banner__veil"></div>
+              <div class="hero-banner__pattern"></div>
 
-                <div class="hero-card__content">
-                  <p class="hero-card__eyebrow">Sankofa Alkebulan University</p>
-                  <p class="hero-card__badge">{{ slide.primary.badge }}</p>
-                  <h1>{{ slide.primary.title }}</h1>
-                  <p class="hero-card__subtitle">{{ slide.primary.subtitle }}</p>
-                  <p class="hero-card__tagline">RETURN &bull; RESTORE &bull; REIMAGINE</p>
+              <div class="hero-banner__content">
+                <p class="hero-kicker">Sankofa Alkebulan University</p>
+                <p class="hero-label">{{ slide.badge }}</p>
+                <h1>{{ slide.title }}</h1>
+                <p class="hero-summary">{{ slide.subtitle }}</p>
 
-                  <div class="hero-card__actions">
-                    <a [routerLink]="slide.primary.ctaPath" class="btn btn--gold">{{ slide.primary.ctaLabel }}</a>
-                    <a routerLink="/faculties-schools" class="btn btn--secondary btn--ghost-light">Explore Faculties</a>
-                  </div>
+                <p class="hero-tagline">
+                  <span>Return</span>
+                  <span>Restore</span>
+                  <span>Reimagine</span>
+                </p>
+
+                <div class="hero-actions">
+                  <a [routerLink]="slide.ctaPath" class="btn btn--hero-primary">{{ slide.ctaLabel }}</a>
+                  @if (slide.secondaryLabel && slide.secondaryPath) {
+                    <a [routerLink]="slide.secondaryPath" class="btn btn--hero-secondary">
+                      {{ slide.secondaryLabel }}
+                    </a>
+                  }
                 </div>
-              </article>
-            }
-          </div>
+              </div>
+            </article>
+          }
+        </div>
 
-          <div class="hero-stack hero-stack--secondary">
-            @for (slide of heroSlides; track slide.secondary.title; let idx = $index) {
-              <article class="hero-card hero-card--secondary" [class.hero-card--active]="idx === activeBannerIndex()">
-                <img
-                  [ngSrc]="slide.secondary.image"
-                  [alt]="slide.secondary.title"
-                  width="1280"
-                  height="900"
-                  [priority]="false"
-                />
-                <div class="hero-card__veil"></div>
-                <div class="hero-card__industrial"></div>
-
-                <div class="hero-card__content hero-card__content--compact">
-                  <p class="hero-card__badge">{{ slide.secondary.badge }}</p>
-                  <h2>{{ slide.secondary.title }}</h2>
-                  <p class="hero-card__subtitle">{{ slide.secondary.subtitle }}</p>
-                  <a [routerLink]="slide.secondary.ctaPath" class="btn btn--secondary btn--ghost-light btn--ghost-light-inline">
-                    {{ slide.secondary.ctaLabel }}
-                  </a>
-                </div>
-              </article>
+        <div class="hero-stage__controls">
+          <div class="hero-pips" role="tablist" aria-label="Homepage hero slides">
+            @for (slide of heroSlides; track slide.title; let idx = $index) {
+              <button
+                type="button"
+                class="hero-pip"
+                [class.hero-pip--active]="idx === activeBannerIndex()"
+                [attr.aria-label]="'Show hero slide ' + (idx + 1)"
+                [attr.aria-selected]="idx === activeBannerIndex()"
+                (click)="selectBanner(idx)"
+              ></button>
             }
           </div>
         </div>
 
-        <div class="hero-controls">
-          <button type="button" class="hero-control-btn" aria-label="Previous slide" (click)="previousBanner()">
-            &#10094;
-          </button>
-          <button type="button" class="hero-control-btn" aria-label="Next slide" (click)="nextBanner()">
-            &#10095;
-          </button>
-        </div>
+        <button type="button" class="hero-control-btn hero-control-btn--left" aria-label="Previous slide" (click)="previousBanner()">
+          &#10094;
+        </button>
+        <button type="button" class="hero-control-btn hero-control-btn--right" aria-label="Next slide" (click)="nextBanner()">
+          &#10095;
+        </button>
       </div>
 
-      <div class="hero-rails-panel">
-        <div class="hero-rail">
-          @for (item of activeSlide().rail; track item.title) {
-            <a [routerLink]="item.path" class="hero-rail__item">
-              <span class="hero-rail__icon"><i [class]="item.iconClass" aria-hidden="true"></i></span>
-              <span class="hero-rail__text">
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.description }}</small>
-              </span>
-            </a>
+      <div class="launch-grid">
+        @for (pathway of pathwayCards; track pathway.title) {
+          <a [routerLink]="pathway.path" class="launch-card">
+            <span class="launch-card__icon" aria-hidden="true"><i [class]="pathway.iconClass"></i></span>
+            <span class="launch-card__body">
+              <span class="launch-card__eyebrow">{{ pathway.eyebrow }}</span>
+              <strong>{{ pathway.title }}</strong>
+              <span>{{ pathway.description }}</span>
+            </span>
+            <span class="launch-card__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--quiet">
+    <div class="container">
+      <div class="story-shell">
+        <div class="story-copy">
+          <p class="section-kicker">Why Sankofa</p>
+          <h2>An academic home for restoration, imagination, and rigorous scholarship.</h2>
+          <p>
+            Sankofa Alkebulan University brings African civilizational thought, modern science, public
+            leadership, and spiritual inquiry into one ambitious institution. The experience is serious,
+            global, and rooted.
+          </p>
+        </div>
+
+        <div class="story-pillars">
+          @for (pillar of promisePillars; track pillar.index) {
+            <article class="story-pillar">
+              <p class="story-pillar__index">{{ pillar.index }}</p>
+              <h3>{{ pillar.title }}</h3>
+              <p>{{ pillar.description }}</p>
+            </article>
           }
         </div>
       </div>
@@ -86,75 +118,17 @@
 
   <section class="section">
     <div class="container">
-      <div class="section-heading">
-        <h2>Admissions and Program Access</h2>
-        <p>Domestic and international pathways with admissions guidance and funding support.</p>
-      </div>
-      <div class="card-grid card-grid--three">
-        @for (feature of quickApply; track feature.title) {
-          <article class="surface-card">
-            <h3>{{ feature.title }}</h3>
-            <p>{{ feature.description }}</p>
-            <a [routerLink]="feature.path" class="inline-link">Continue</a>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="section-heading">
-        <h2>News and Announcements</h2>
-      </div>
-      <div class="card-grid card-grid--three">
-        @for (post of announcements; track post.title) {
-          <article class="surface-card">
-            <p class="stamp">{{ post.date }}</p>
-            <h3>{{ post.title }}</h3>
-            <p>{{ post.summary }}</p>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--tone">
-    <div class="container">
-      <div class="section-heading">
-        <h2>Featured Research and Innovation Spotlights</h2>
-      </div>
-      <div class="card-grid card-grid--three">
-        @for (item of researchSpotlights; track item.title) {
-          <article class="surface-card">
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.description }}</p>
-            <a [routerLink]="item.path" class="inline-link">Read University Brief</a>
-          </article>
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <article class="surface-card surface-card--full">
-        <h2>Student Success Highlights</h2>
-        <div class="ticker">
-          @for (highlight of aiHighlights; track highlight) {
-            <span>{{ highlight }}</span>
-          }
+      <div class="section-heading section-heading--split">
+        <div>
+          <p class="section-kicker">Academics</p>
+          <h2>Choose a school with a clear academic identity.</h2>
         </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="section section--tone">
-    <div class="container">
-      <div class="section-heading">
-        <h2>Faculties and Schools (18)</h2>
-        <p>Explore every faculty through curated programs, outcomes, and research-aligned learning.</p>
+        <p>
+          Browse focused colleges across heritage, theology, governance, technology, law, health,
+          engineering, agriculture, and the creative arts.
+        </p>
       </div>
+
       <div class="department-carousel">
         <div class="department-carousel__controls">
           <button
@@ -175,7 +149,7 @@
           </button>
         </div>
 
-        <div class="department-carousel__track">
+        <div class="department-carousel__track" [style.--department-columns]="departmentsPerPage()">
           @for (department of safeDepartments(); track department.title) {
             <article class="dept-card">
               <span class="dept-card__icon" aria-hidden="true">
@@ -184,11 +158,12 @@
               <h3>{{ department.title }}</h3>
               <p>{{ department.description }}</p>
               <a [routerLink]="department.path" class="dept-card__link">
-                READ MORE <span aria-hidden="true">&rarr;</span>
+                Read more <span aria-hidden="true">&rarr;</span>
               </a>
             </article>
           }
         </div>
+
         <div class="department-carousel__dots" role="tablist" aria-label="Department carousel navigation">
           @for (page of departmentPages(); track page) {
             <button
@@ -205,21 +180,104 @@
     </div>
   </section>
 
+  <section class="section section--quiet">
+    <div class="container">
+      <div class="section-heading section-heading--split">
+        <div>
+          <p class="section-kicker">Research, News, and Events</p>
+          <h2>Current pathways into the university.</h2>
+        </div>
+        <p>
+          A lean set of entry points for what matters now: admissions, research, events, and academic
+          discovery.
+        </p>
+      </div>
+
+      <div class="signal-grid">
+        @for (signal of currentSignals; track signal.title) {
+          <article class="signal-card" [attr.data-theme]="signal.theme">
+            <div class="signal-card__top">
+              <p class="signal-card__stamp">{{ signal.stamp }}</p>
+              <span class="signal-card__icon" aria-hidden="true"><i [class]="signal.iconClass"></i></span>
+            </div>
+            <h3>{{ signal.title }}</h3>
+            <p>{{ signal.description }}</p>
+            <a [routerLink]="signal.path" class="signal-card__link">
+              {{ signal.ctaLabel }} <span aria-hidden="true">&rarr;</span>
+            </a>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container">
-      <article class="surface-card surface-card--full contact-block">
-        <h2>Contact and Administrative Access</h2>
-        <p>
-          Email:
-          <a href="mailto:sankofalkebulanuniversity@outlook.com">sankofalkebulanuniversity@outlook.com</a>
-        </p>
+      <div class="experience-shell">
+        <div class="experience-copy">
+          <p class="section-kicker">Student Experience</p>
+          <h2>A campus experience designed to feel guided, calm, and globally connected.</h2>
+          <p>
+            Sankofa pairs rigorous academic pathways with mentorship, digital learning, career direction,
+            and support systems that keep the journey human.
+          </p>
+
+          <div class="experience-list">
+            @for (item of experienceCards; track item.title) {
+              <a [routerLink]="item.path" class="experience-item">
+                <span class="experience-item__icon" aria-hidden="true"><i [class]="item.iconClass"></i></span>
+                <span class="experience-item__body">
+                  <strong>{{ item.title }}</strong>
+                  <span>{{ item.description }}</span>
+                </span>
+              </a>
+            }
+          </div>
+        </div>
+
+        <div class="experience-media">
+          <figure class="experience-media__frame experience-media__frame--primary">
+            <img
+              ngSrc="/assets/hero/hero-campus-banner.png"
+              alt="Students in a vibrant learning environment"
+              width="1200"
+              height="900"
+            />
+          </figure>
+          <figure class="experience-media__frame experience-media__frame--secondary">
+            <img
+              ngSrc="/assets/hero/hero-lab-banner.png"
+              alt="Research and laboratory innovation"
+              width="900"
+              height="900"
+            />
+          </figure>
+          <div class="experience-media__note">
+            <p>Digital campus</p>
+            <strong>Live chat, virtual tools, and AI guidance</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sm">
+    <div class="container">
+      <article class="final-cta">
+        <div class="final-cta__copy">
+          <p class="section-kicker section-kicker--light">Contact</p>
+          <h2>Ready to explore Sankofa?</h2>
+          <p>
+            Email:
+            <a href="mailto:sankofalkebulanuniversity@outlook.com">sankofalkebulanuniversity@outlook.com</a>
+          </p>
+        </div>
+
         <div class="quick-row">
-          <a routerLink="/contact" class="btn btn--gold">Open Contact Center</a>
-          <a routerLink="/admissions" class="btn btn--secondary">Apply Now</a>
+          <a routerLink="/contact" class="btn btn--hero-primary">Open contact center</a>
+          <a routerLink="/admissions" class="btn btn--hero-secondary">Apply now</a>
         </div>
       </article>
     </div>
   </section>
 </div>
-
-

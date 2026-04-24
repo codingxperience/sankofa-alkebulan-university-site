@@ -11,9 +11,10 @@ import { RouterLink } from '@angular/router';
 import { DEPARTMENT_PAGES, getDepartmentPagePath } from '../university/department-pages';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
+  IconDefinition,
   faBalanceScale,
-  faBriefcase,
   faBrain,
+  faBriefcase,
   faChurch,
   faCog,
   faDesktop,
@@ -25,48 +26,57 @@ import {
   faQuestionCircle,
   faRocket,
   faUsers,
-  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 
-interface HomeFeature {
+interface HeroSlide {
+  readonly badge: string;
   readonly title: string;
-  readonly description: string;
-  readonly path: string;
+  readonly subtitle: string;
+  readonly image: string;
+  readonly imagePosition: string;
+  readonly tone: 'warm' | 'cool' | 'neutral';
+  readonly ctaLabel: string;
+  readonly ctaPath: string;
+  readonly secondaryLabel?: string;
+  readonly secondaryPath?: string;
+  readonly contentSide?: 'left' | 'right';
+  readonly contentWidth?: string;
+  readonly titleWidth?: string;
+  readonly summaryWidth?: string;
+  readonly panX?: string;
+  readonly panY?: string;
 }
 
-interface HomePost {
-  readonly title: string;
-  readonly date: string;
-  readonly summary: string;
-}
-
-interface HeroRailItem {
+interface PathwayCard {
+  readonly eyebrow: string;
   readonly title: string;
   readonly description: string;
   readonly iconClass: string;
   readonly path: string;
 }
 
-interface HeroSlideCard {
+interface PromisePillar {
+  readonly index: string;
   readonly title: string;
-  readonly subtitle: string;
-  readonly badge: string;
+  readonly description: string;
+}
+
+interface SignalCard {
+  readonly stamp: string;
+  readonly title: string;
+  readonly description: string;
   readonly ctaLabel: string;
-  readonly ctaPath: string;
-  readonly image: string;
-  readonly creditLabel: string;
-  readonly creditUrl: string;
+  readonly path: string;
+  readonly iconClass: string;
+  readonly theme: 'light' | 'warm' | 'cool' | 'ink';
 }
 
-interface HeroSlide {
-  readonly primary: HeroSlideCard;
-  readonly secondary: HeroSlideCard;
-  readonly rail: readonly HeroRailItem[];
+interface ExperienceCard {
+  readonly title: string;
+  readonly description: string;
+  readonly iconClass: string;
+  readonly path: string;
 }
-
-
-
-
 
 interface DepartmentCard {
   readonly title: string;
@@ -236,246 +246,170 @@ export class HomeComponent implements OnInit, OnDestroy {
     return visible.length ? visible : this.departmentCards.slice(0, this.departmentsPerPage());
   });
 
-  readonly quickApply: readonly HomeFeature[] = [
-    {
-      title: 'Undergraduate Admissions',
-      description:
-        "Apply for certificates, diplomas, and bachelor's programs with step-by-step guidance.",
-      path: '/admissions',
-    },
-    {
-      title: 'Postgraduate Admissions',
-      description:
-        "Master's and doctoral pathways with research supervision matching and proposal support.",
-      path: '/admissions',
-    },
-    {
-      title: 'Scholarships and Funding',
-      description: 'Explore bursaries, financial aid, and mobility funding aligned with your program.',
-      path: '/admissions',
-    },
-  ];
-
-  readonly announcements: readonly HomePost[] = [
-    {
-      title: 'Admissions 2026 Intake Now Open',
-      date: 'March 2026',
-      summary:
-        'Domestic and international applicants can submit documents, track status, and book admissions support.',
-    },
-    {
-      title: 'Pan-African Research Seed Fund: Round 1',
-      date: 'March 2026',
-      summary:
-        'Interdisciplinary faculty teams can submit proposals in health, governance, climate, and AI.',
-    },
-    {
-      title: 'Virtual Open Day Schedule Released',
-      date: 'April 2026',
-      summary:
-        'Prospective students can join faculty showcases, admissions workshops, and live Q and A sessions.',
-    },
-  ];
-
-  readonly researchSpotlights: readonly HomeFeature[] = [
-    {
-      title: 'AI and Robotics for Social Development',
-      description: 'Human-centered AI research with policy and deployment pathways across African contexts.',
-      path: '/research-innovation',
-    },
-    {
-      title: 'Water, Agriculture, and Food Security Innovation',
-      description:
-        'Applied research labs connecting climate intelligence, agronomy, and resilient food systems.',
-      path: '/research-innovation',
-    },
-    {
-      title: 'Policy, Peace, and Conflict Resolution Studio',
-      description:
-        'Data-informed governance and peacebuilding models for local, national, and continental action.',
-      path: '/research-innovation',
-    },
-  ];
-
-  readonly aiHighlights: readonly string[] = [
-    'Career coaching and placement support',
-    'Scholarship advising and financial aid guidance',
-    'Peer mentoring and alumni network access',
-    'Wellbeing, counseling, and accessibility services',
-  ];
-
   readonly heroSlides: readonly HeroSlide[] = [
     {
-      primary: {
-        title: 'Admissions 2026 Intake Is Open',
-        subtitle: 'Domestic and international admissions for 2026 are now open.',
-        badge: 'Admissions',
-        ctaLabel: 'Apply for 2026',
-        ctaPath: '/admissions',
-        image: '/assets/hero/hero-campus-banner.png',
-        creditLabel: 'Pexels / Akb Issue',
-        creditUrl:
-          'https://www.pexels.com/photo/group-of-students-with-books-and-notebook-computers-29558436/',
-      },
-      secondary: {
-        title: 'Pan-African Innovation Labs',
-        subtitle: '18 institutes advancing health, governance, AI, and climate resilience.',
-        badge: 'Research Highlight',
-        ctaLabel: 'Open Research Labs',
-        ctaPath: '/research-innovation',
-        image: '/assets/hero/hero-lab-banner.png',
-        creditLabel: 'Pexels / Retha Ferguson',
-        creditUrl: 'https://www.pexels.com/photo/person-holding-black-and-white-microscope-3825434/',
-      },
-      rail: [
-        {
-          title: 'Launch Your Application',
-          description: 'Domestic and international pipelines',
-          iconClass: 'pi pi-send',
-          path: '/admissions',
-        },
-        {
-          title: 'Compare Programs',
-          description: 'Certificates to doctorates',
-          iconClass: 'pi pi-book',
-          path: '/programs',
-        },
-        {
-          title: 'Plan Campus Experience',
-          description: 'Virtual tour and interactive map',
-          iconClass: 'pi pi-map',
-          path: '/digital-learning',
-        },
-      ],
+      badge: 'Admissions 2026',
+      title: 'Pan-African scholars start here.',
+      subtitle:
+        'Undergraduate, postgraduate, and doctoral admissions in one guided digital journey.',
+      image: '/assets/hero/hero-admissions-africa.jpg',
+      imagePosition: '77% 34%',
+      tone: 'warm',
+      ctaLabel: 'Apply now',
+      ctaPath: '/admissions',
+      secondaryLabel: 'Explore programs',
+      secondaryPath: '/programs',
+      contentWidth: '40rem',
+      titleWidth: '22ch',
+      summaryWidth: '31rem',
+      panX: '-1.3%',
+      panY: '-0.8%',
     },
     {
-      primary: {
-        title: 'Research Highlight: Pan-African Innovation Labs',
-        subtitle: 'Collaborative programs with funding, policy translation, and industry links.',
-        badge: 'Research',
-        ctaLabel: 'Open Research Labs',
-        ctaPath: '/research-innovation',
-        image: '/assets/hero/hero-lab-banner.png',
-        creditLabel: 'Pexels / Retha Ferguson',
-        creditUrl: 'https://www.pexels.com/photo/person-holding-black-and-white-microscope-3825434/',
-      },
-      secondary: {
-        title: 'Conferences and Public Scholarship',
-        subtitle: 'Hybrid events and public scholarship connecting scholars and policy leaders.',
-        badge: 'Events',
-        ctaLabel: 'Join Events',
-        ctaPath: '/events-conferences',
-        image: '/assets/hero/hero-campus-banner.png',
-        creditLabel: 'Pexels / Akb Issue',
-        creditUrl:
-          'https://www.pexels.com/photo/group-of-students-with-books-and-notebook-computers-29558436/',
-      },
-      rail: [
-        {
-          title: 'Join Open Day Webinars',
-          description: 'Admissions briefs and Q and A',
-          iconClass: 'pi pi-video',
-          path: '/admissions',
-        },
-        {
-          title: 'Submit Conference Abstract',
-          description: 'Hybrid and VR-ready sessions',
-          iconClass: 'pi pi-megaphone',
-          path: '/events-conferences',
-        },
-        {
-          title: 'Browse Research Institutes',
-          description: '18 centers and institutes',
-          iconClass: 'pi pi-sparkles',
-          path: '/research-innovation',
-        },
-      ],
+      badge: 'Research and Innovation',
+      title: 'Research with continental consequence.',
+      subtitle:
+        'Inquiry shaped for public impact across health, AI, climate, governance, and culture.',
+      image: '/assets/hero/hero-research-africa.jpg',
+      imagePosition: '24% 32%',
+      tone: 'cool',
+      ctaLabel: 'Explore research',
+      ctaPath: '/research-innovation',
+      secondaryLabel: 'View institutes',
+      secondaryPath: '/research-innovation',
+      contentSide: 'right',
+      contentWidth: '38rem',
+      titleWidth: '20ch',
+      summaryWidth: '31rem',
+      panX: '1.1%',
+      panY: '-0.7%',
     },
     {
-      primary: {
-        title: 'Global Conferences and Hybrid Learning',
-        subtitle: 'Virtual and on-campus collaboration for global classrooms and applied research.',
-        badge: 'Hybrid Campus',
-        ctaLabel: 'Join Hybrid Events',
-        ctaPath: '/events-conferences',
-        image: '/assets/hero/hero-campus-banner.png',
-        creditLabel: 'Pexels / Akb Issue',
-        creditUrl:
-          'https://www.pexels.com/photo/group-of-students-with-books-and-notebook-computers-29558436/',
-      },
-      secondary: {
-        title: 'Digital Learning and AI Advising',
-        subtitle: 'Adaptive LMS, secure assessments, and AI mentorship for student success.',
-        badge: 'Virtual Campus',
-        ctaLabel: 'Enter Virtual Campus',
-        ctaPath: '/digital-learning',
-        image: '/assets/hero/hero-lab-banner.png',
-        creditLabel: 'Pexels / Retha Ferguson',
-        creditUrl: 'https://www.pexels.com/photo/person-holding-black-and-white-microscope-3825434/',
-      },
-      rail: [
-        {
-          title: 'Access Learning Platform',
-          description: 'Adaptive courses and mentoring',
-          iconClass: 'pi pi-desktop',
-          path: '/digital-learning',
-        },
-        {
-          title: 'Explore AI Campus Guide',
-          description: 'Instant support and routing',
-          iconClass: 'pi pi-comments',
-          path: '/ai-advanced-tools',
-        },
-        {
-          title: 'Check Event Calendar',
-          description: 'Conferences and seminars',
-          iconClass: 'pi pi-calendar',
-          path: '/events-conferences',
-        },
-      ],
+      badge: 'Campus and Community',
+      title: 'A modern campus experience, on site and online.',
+      subtitle:
+        'Hybrid learning, digital guidance, and student support built for ambitious futures.',
+      image: '/assets/hero/hero-campus-africa.jpg',
+      imagePosition: '35% 48%',
+      tone: 'neutral',
+      ctaLabel: 'Visit virtual campus',
+      ctaPath: '/digital-learning',
+      secondaryLabel: 'See student life',
+      secondaryPath: '/student-life',
+      contentSide: 'right',
+      contentWidth: '39rem',
+      titleWidth: '22ch',
+      summaryWidth: '31rem',
+      panX: '-0.9%',
+      panY: '-0.5%',
+    },
+  ];
+
+  readonly pathwayCards: readonly PathwayCard[] = [
+    {
+      eyebrow: 'Start here',
+      title: 'Apply',
+      description: 'Undergraduate, postgraduate, and international admissions.',
+      iconClass: 'pi pi-send',
+      path: '/admissions',
     },
     {
-      primary: {
-        title: 'Strategic Partnerships Across Africa and Beyond',
-        subtitle: 'University alliances for exchange, mobility, funding, and innovation.',
-        badge: 'Global Relations',
-        ctaLabel: 'View Partnerships',
-        ctaPath: '/partnerships-global',
-        image: '/assets/hero/hero-lab-banner.png',
-        creditLabel: 'Pexels / Retha Ferguson',
-        creditUrl: 'https://www.pexels.com/photo/person-holding-black-and-white-microscope-3825434/',
-      },
-      secondary: {
-        title: 'Funding, Scholarships, and Development',
-        subtitle: 'Integrated donor, scholarship, and project tracking for sustainable growth.',
-        badge: 'Institutional Growth',
-        ctaLabel: 'Open Funding Hub',
-        ctaPath: '/institutional-development',
-        image: '/assets/hero/hero-campus-banner.png',
-        creditLabel: 'Pexels / Akb Issue',
-        creditUrl:
-          'https://www.pexels.com/photo/group-of-students-with-books-and-notebook-computers-29558436/',
-      },
-      rail: [
-        {
-          title: 'View Partner Network',
-          description: 'Universities and institutions',
-          iconClass: 'pi pi-globe',
-          path: '/partnerships-global',
-        },
-        {
-          title: 'Discover Scholarships',
-          description: 'Bursaries and mobility tracks',
-          iconClass: 'pi pi-wallet',
-          path: '/admissions',
-        },
-        {
-          title: 'Support University Growth',
-          description: 'Endowment and donor portal',
-          iconClass: 'pi pi-chart-line',
-          path: '/institutional-development',
-        },
-      ],
+      eyebrow: 'Explore',
+      title: 'Find a program',
+      description: 'Certificates, degrees, and doctoral tracks across the university.',
+      iconClass: 'pi pi-book',
+      path: '/programs',
+    },
+    {
+      eyebrow: 'Plan',
+      title: 'Shape your experience',
+      description: 'Virtual campus, live support, and guided next steps.',
+      iconClass: 'pi pi-map',
+      path: '/digital-learning',
+    },
+  ];
+
+  readonly promisePillars: readonly PromisePillar[] = [
+    {
+      index: '01',
+      title: 'Pan-African scholarship',
+      description: 'Rooted in heritage, serious in method, and future-facing in scope.',
+    },
+    {
+      index: '02',
+      title: 'Interdisciplinary ambition',
+      description: 'From theology and governance to AI, health, law, and engineering.',
+    },
+    {
+      index: '03',
+      title: 'Applied public impact',
+      description: 'Teaching and research designed for society, not shelves alone.',
+    },
+  ];
+
+  readonly currentSignals: readonly SignalCard[] = [
+    {
+      stamp: 'Admissions',
+      title: '2026 intake is open',
+      description: 'A guided entry path for domestic, international, and graduate applicants.',
+      ctaLabel: 'Start application',
+      path: '/admissions',
+      iconClass: 'pi pi-arrow-up-right',
+      theme: 'warm',
+    },
+    {
+      stamp: 'Research',
+      title: 'Labs with public impact',
+      description: 'Health, AI, climate, policy, and culture connected through applied inquiry.',
+      ctaLabel: 'Explore research',
+      path: '/research-innovation',
+      iconClass: 'pi pi-globe',
+      theme: 'light',
+    },
+    {
+      stamp: 'News and Events',
+      title: 'Open days and faculty showcases',
+      description: 'Focused sessions for applicants, partners, researchers, and alumni communities.',
+      ctaLabel: 'View events',
+      path: '/events-conferences',
+      iconClass: 'pi pi-calendar',
+      theme: 'cool',
+    },
+    {
+      stamp: 'Academics',
+      title: 'Schools shaped around clear identities',
+      description: 'Eighteen academic gateways from civilizational studies to engineering and AI.',
+      ctaLabel: 'Browse schools',
+      path: '/faculties-schools',
+      iconClass: 'pi pi-book',
+      theme: 'ink',
+    },
+  ];
+
+  readonly experienceCards: readonly ExperienceCard[] = [
+    {
+      title: 'Mentorship and advising',
+      description: 'Guided academic support from admissions through graduation.',
+      iconClass: 'pi pi-users',
+      path: '/student-life',
+    },
+    {
+      title: 'Career and enterprise',
+      description: 'Career coaching, placements, and entrepreneurship pathways.',
+      iconClass: 'pi pi-briefcase',
+      path: '/student-life',
+    },
+    {
+      title: 'Hybrid classrooms',
+      description: 'Digital learning, virtual campus tools, and live academic support.',
+      iconClass: 'pi pi-desktop',
+      path: '/digital-learning',
+    },
+    {
+      title: 'Wellbeing and access',
+      description: 'Wellness, accessibility, and inclusive student services.',
+      iconClass: 'pi pi-heart',
+      path: '/student-life',
     },
   ];
 
@@ -484,25 +418,25 @@ export class HomeComponent implements OnInit, OnDestroy {
   private resizeListener: (() => void) | null = null;
 
   ngOnInit(): void {
-    if (typeof window === 'undefined' || this.heroSlides.length <= 1) {
+    if (typeof window === 'undefined') {
       return;
     }
 
-    this.bannerRotationTimer = setInterval(() => {
-      const next = (this.activeBannerIndex() + 1) % this.heroSlides.length;
-      this.activeBannerIndex.set(next);
-    }, 5500);
-
-    if (typeof window !== 'undefined') {
-      this.updateDepartmentsPerPage();
-      this.departmentRotationTimer = setInterval(() => {
-        const next = (this.departmentPageIndex() + 1) % this.departmentPageCount();
-        this.departmentPageIndex.set(next);
-      }, 9000);
-
-      this.resizeListener = () => this.updateDepartmentsPerPage();
-      window.addEventListener('resize', this.resizeListener);
+    if (this.heroSlides.length > 1) {
+      this.bannerRotationTimer = setInterval(() => {
+        const next = (this.activeBannerIndex() + 1) % this.heroSlides.length;
+        this.activeBannerIndex.set(next);
+      }, 6200);
     }
+
+    this.updateDepartmentsPerPage();
+    this.departmentRotationTimer = setInterval(() => {
+      const next = (this.departmentPageIndex() + 1) % this.departmentPageCount();
+      this.departmentPageIndex.set(next);
+    }, 9000);
+
+    this.resizeListener = () => this.updateDepartmentsPerPage();
+    window.addEventListener('resize', this.resizeListener);
   }
 
   ngOnDestroy(): void {
@@ -526,13 +460,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     const width = window.innerWidth;
     let perPage = 4;
 
-    if (width >= 1400) {
+    if (width >= 1440) {
       perPage = 5;
-    } else if (width >= 1200) {
+    } else if (width >= 1120) {
       perPage = 4;
-    } else if (width >= 980) {
+    } else if (width >= 820) {
       perPage = 3;
-    } else if (width >= 720) {
+    } else if (width >= 620) {
       perPage = 2;
     } else {
       perPage = 1;
@@ -572,14 +506,3 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
