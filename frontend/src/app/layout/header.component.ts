@@ -14,7 +14,8 @@ import { MEGA_MENU_ITEMS } from '../university/university-data';
 
 interface NavLink {
   readonly label: string;
-  readonly path: string;
+  readonly path: string | null;
+  readonly disabled?: boolean;
 }
 
 interface MegaLink {
@@ -52,14 +53,18 @@ interface MegaColumn {
 
           <nav class="utility-nav" aria-label="Utility navigation">
             @for (item of utilityLinks; track item.label) {
-              <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
+              @if (item.disabled) {
+                <span class="nav-disabled" aria-disabled="true">{{ item.label }}</span>
+              } @else {
+                <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
+              }
             }
           </nav>
 
-          <a routerLink="/contact" class="utility-chat">
+          <span class="utility-chat utility-chat--disabled" aria-disabled="true">
             <span class="live-dot" aria-hidden="true"></span>
             Live Chat
-          </a>
+          </span>
 
           <button
             type="button"
@@ -79,7 +84,7 @@ interface MegaColumn {
       <div class="primary-row">
         <div class="container primary-row__inner">
           <nav class="primary-nav" aria-label="Primary navigation">
-            @for (item of primaryLinks; track item.path) {
+            @for (item of primaryLinks; track item.label) {
               @if (item.label === 'Academics') {
                 <div
                   class="nav-flyout"
@@ -177,16 +182,20 @@ interface MegaColumn {
                   </div>
                 </div>
               } @else {
-                <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
+                @if (item.disabled) {
+                  <span class="nav-disabled nav-disabled--primary" aria-disabled="true">{{ item.label }}</span>
+                } @else {
+                  <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
+                }
               }
             }
             <button
               type="button"
               class="all-sections"
-              [class.all-sections--active]="isMegaMenuOpen()"
-              [attr.aria-expanded]="isMegaMenuOpen()"
+              disabled
+              aria-disabled="true"
+              [attr.aria-expanded]="false"
               aria-controls="mega-menu-panel"
-              (click)="toggleMegaMenu()"
             >
               All Sections
             </button>
@@ -210,19 +219,65 @@ interface MegaColumn {
         <div class="container mobile-menu__inner">
           <a routerLink="/home" routerLinkActive="is-active" (click)="closeMenus()">Home</a>
           @for (item of primaryLinks; track item.label) {
-            <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">
-              {{ item.label }}
-            </a>
+            @if (item.path === '/about') {
+              <details class="mobile-menu__group">
+                <summary>About</summary>
+                <div class="mobile-subnav">
+                  <a routerLink="/about" routerLinkActive="is-active" (click)="closeMenus()">About Overview</a>
+                  @for (link of aboutSectionLinks; track link.label) {
+                    <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                      {{ link.label }}
+                    </a>
+                  }
+                  <span class="mobile-subnav__label">Related</span>
+                  @for (link of aboutRelatedLinks; track link.label) {
+                    <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                      {{ link.label }}
+                    </a>
+                  }
+                </div>
+              </details>
+            } @else if (item.label === 'Academics') {
+              <details class="mobile-menu__group">
+                <summary>Academics</summary>
+                <div class="mobile-subnav">
+                  <a routerLink="/faculties-schools" routerLinkActive="is-active" (click)="closeMenus()">
+                    Academics Overview
+                  </a>
+                  @for (column of academicsMega; track column.title) {
+                    <span class="mobile-subnav__label">{{ column.title }}</span>
+                    @for (link of column.links; track link.label) {
+                      <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                        {{ link.label }}
+                      </a>
+                    }
+                  }
+                </div>
+              </details>
+            } @else {
+              @if (item.disabled) {
+                <span class="mobile-link-disabled" aria-disabled="true">{{ item.label }}</span>
+              } @else {
+                <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">
+                  {{ item.label }}
+                </a>
+              }
+            }
           }
+          <span class="mobile-link-disabled" aria-disabled="true">All Sections</span>
           @for (item of utilityLinks; track item.label) {
-            <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">
-              {{ item.label }}
-            </a>
+            @if (item.disabled) {
+              <span class="mobile-link-disabled" aria-disabled="true">{{ item.label }}</span>
+            } @else {
+              <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">
+                {{ item.label }}
+              </a>
+            }
           }
-          <a routerLink="/contact" class="mobile-live-chat" (click)="closeMenus()">
+          <span class="mobile-live-chat mobile-link-disabled" aria-disabled="true">
             <span class="live-dot" aria-hidden="true"></span>
             Live Chat Online
-          </a>
+          </span>
           <a routerLink="/admissions" class="apply-btn apply-btn--mobile" (click)="closeMenus()">
             Apply Now
           </a>
@@ -316,6 +371,20 @@ interface MegaColumn {
       letter-spacing: -0.02em;
     }
 
+    .nav-disabled {
+      display: inline-flex;
+      align-items: center;
+      color: #6f8496;
+      font-size: 0.77rem;
+      padding: 0.34rem 0.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-family: var(--font-family-heading);
+      letter-spacing: -0.02em;
+      cursor: default;
+      opacity: 0.68;
+    }
+
     .utility-nav a:hover,
     .utility-nav a.is-active {
       background: #eef6fd;
@@ -344,6 +413,11 @@ interface MegaColumn {
       background: #eaf4fd;
       color: #0d436f;
       text-decoration: none;
+    }
+
+    .utility-chat--disabled {
+      cursor: default;
+      opacity: 0.72;
     }
 
     .live-dot {
@@ -602,9 +676,21 @@ interface MegaColumn {
       letter-spacing: -0.02em;
     }
 
+    .nav-disabled--primary {
+      color: #25475f;
+      font-size: 0.84rem;
+      padding: 0.36rem 0.54rem;
+      opacity: 0.76;
+    }
+
+    .all-sections:disabled {
+      cursor: default;
+      opacity: 0.58;
+    }
+
     .primary-nav a:hover,
     .primary-nav a.is-active,
-    .all-sections:hover,
+    .all-sections:not(:disabled):hover,
     .all-sections--active {
       background: rgba(255, 255, 255, 0.36);
       color: #0b3454;
@@ -716,7 +802,9 @@ interface MegaColumn {
     }
 
     .mobile-menu--open {
-      max-height: 860px;
+      max-height: calc(100vh - 62px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
       border-top-color: #dce8f3;
     }
 
@@ -727,7 +815,9 @@ interface MegaColumn {
       padding-bottom: 0.9rem;
     }
 
-    .mobile-menu__inner a {
+    .mobile-menu__inner a,
+    .mobile-menu__group > summary,
+    .mobile-link-disabled {
       border: 1px solid #d5e6f4;
       border-radius: 10px;
       background: #fff;
@@ -737,6 +827,108 @@ interface MegaColumn {
       padding: 0.58rem 0.72rem;
       font-family: var(--font-family-heading);
       letter-spacing: -0.02em;
+    }
+
+    .mobile-link-disabled {
+      display: block;
+      opacity: 0.62;
+      cursor: default;
+    }
+
+    .mobile-menu__group {
+      min-width: 0;
+      border-radius: 12px;
+    }
+
+    .mobile-menu__group > summary {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      list-style: none;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .mobile-menu__group > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .mobile-menu__group > summary::after {
+      content: '';
+      width: 0.5rem;
+      height: 0.5rem;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+      transition: transform 160ms ease;
+      opacity: 0.75;
+      flex: 0 0 auto;
+      margin-left: 0.8rem;
+    }
+
+    .mobile-menu__group[open] > summary {
+      border-color: #99bddc;
+      background: #e8f3fd;
+      color: #0d426f;
+    }
+
+    .mobile-menu__group[open] > summary::after {
+      transform: rotate(225deg) translate(-2px, -1px);
+    }
+
+    .mobile-subnav {
+      display: grid;
+      gap: 0.38rem;
+      margin-top: 0.42rem;
+      padding: 0.54rem;
+      border: 1px solid #d9e8f4;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f7fd 100%);
+    }
+
+    .mobile-subnav a {
+      border-radius: 9px;
+      background: #f8fcff;
+      border-color: #e1edf6;
+      font-size: 0.82rem;
+      padding: 0.52rem 0.62rem;
+      line-height: 1.3;
+    }
+
+    .mobile-subnav a:hover,
+    .mobile-subnav a:focus {
+      border-color: #a8c8e2;
+      background: #ffffff;
+      color: #0d426f;
+      text-decoration: none;
+    }
+
+    .mobile-subnav__label {
+      margin-top: 0.28rem;
+      color: #a87b18;
+      font-family: var(--font-family-heading);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.25rem;
+    }
+
+    .mobile-subnav--sections a {
+      display: grid;
+      gap: 0.18rem;
+    }
+
+    .mobile-subnav--sections strong {
+      color: #123f62;
+      font-size: 0.84rem;
+    }
+
+    .mobile-subnav--sections span {
+      color: #5c768c;
+      font-size: 0.72rem;
+      line-height: 1.35;
     }
 
     .mobile-menu__inner a.is-active {
@@ -895,34 +1087,33 @@ export class HeaderComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly utilityLinks: readonly NavLink[] = [
-    { label: 'Students', path: '/student-life' },
-    { label: 'Faculty & Staff', path: '/faculty-staff' },
-    { label: 'Recruitment', path: '/faculty-staff' },
-    { label: 'Visit', path: '/about' },
-    { label: 'Media', path: '/media-public-scholarship' },
-    { label: 'Give', path: '/institutional-development' },
-    { label: 'Portal', path: '/contact' },
+    { label: 'Students', path: null, disabled: true },
+    { label: 'Faculty & Staff', path: null, disabled: true },
+    { label: 'Recruitment', path: null, disabled: true },
+    { label: 'Visit', path: null, disabled: true },
+    { label: 'Media', path: null, disabled: true },
+    { label: 'Give', path: null, disabled: true },
+    { label: 'Portal', path: null, disabled: true },
   ];
 
   readonly primaryLinks: readonly NavLink[] = [
     { label: 'About', path: '/about' },
     { label: 'Academics', path: '/faculties-schools' },
     { label: 'Research', path: '/research-innovation' },
-    { label: 'News & Events', path: '/events-conferences' },
-    { label: 'Campus', path: '/digital-learning' },
+    { label: 'News & Events', path: null, disabled: true },
+    { label: 'Campus', path: null, disabled: true },
   ];
 
   readonly aboutMenuSummary =
     'Sankofa Alkebulan University advances African knowledge systems through research, scholarship, partnerships, and public engagement rooted in the Sankofa principle.';
 
   readonly aboutSectionLinks: readonly MegaLink[] = [
-    { label: 'History of Sankofa', path: '/about/history-of-sankofa' },
-    { label: 'Governance Structure', path: '/about/governance-structure' },
+    { label: 'Founders & Chancellor', path: '/about', fragment: 'founders-chancellor-team' },
+    { label: 'Executive Team', path: '/about/executive-team' },
     { label: 'Board of Governance', path: '/about/board-of-governance' },
-    { label: 'Founder & Chancellor', path: '/about/founder-chancellor' },
-    { label: 'University Council', path: '/about/university-council' },
-    { label: 'Academic Senate', path: '/about/academic-senate' },
-    { label: 'Executive Directors', path: '/about/executive-directors' },
+    { label: 'Advisory Council', path: '/about/advisory-council' },
+    { label: 'Research & Scholarly Team', path: '/about/research-scholarly-team' },
+    { label: 'History of Sankofa', path: '/about/history-of-sankofa' },
   ];
 
   readonly aboutRelatedLinks: readonly MegaLink[] = [

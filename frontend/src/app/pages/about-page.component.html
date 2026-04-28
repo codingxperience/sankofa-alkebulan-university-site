@@ -1,16 +1,18 @@
 <div class="about-page">
   <section class="about-hero" aria-labelledby="about-page-title">
-    <img
-      class="about-hero__image"
-      ngSrc="/assets/hero/hero-campus-source.jpg"
-      width="5184"
-      height="3456"
-      sizes="100vw"
-      alt=""
-      aria-hidden="true"
-      priority
-    />
-    <div class="about-hero__overlay"></div>
+    <div class="about-hero__media" aria-hidden="true">
+      <video
+        class="about-hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      >
+        <source src="/assets/illustrations/about-hero-illustrator.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="about-hero__shade"></div>
     <div class="container about-hero__content">
       <p class="about-hero__eyebrow">Sankofa Alkebulan University</p>
       <h1 id="about-page-title">About</h1>
@@ -57,52 +59,121 @@
         </figure>
       </div>
 
-      <figure class="about-quote">
-        <blockquote>Knowledge must serve both truth and human flourishing.</blockquote>
-        <figcaption>Sankofa Alkebulan University Charter</figcaption>
-      </figure>
     </div>
   </section>
 
   <section class="about-section about-purpose" id="mission">
-    <div class="container about-purpose__grid">
-      <figure class="about-purpose__figure">
-        <img
-          ngSrc="/assets/about/sankofa-founder.jpeg"
-          width="900"
-          height="1120"
-          sizes="(max-width: 920px) 100vw, 32vw"
-          alt="Founder and Chancellor of Sankofa Alkebulan University"
-        />
-        <figcaption>Founder and Chancellor guiding Sankofa Alkebulan University with memory, renewal, and scholarly confidence.</figcaption>
-      </figure>
-
-      <div class="about-purpose__content">
-        <header class="section-heading">
+    <div class="container">
+      <div class="purpose-editorial">
+        <header class="purpose-editorial__intro">
           <p class="section-kicker">Our Vision, Mission and Core Functions</p>
-          <h2>Purpose with Intellectual Direction</h2>
+          <h2>Clarity before scale.</h2>
+          <p>
+            A focused university model built around three commitments: recover African knowledge,
+            produce rigorous scholarship, and shape ethical leadership.
+          </p>
         </header>
 
-        <div class="purpose-card-grid">
-          @for (card of purposeCards; track card.title) {
-            <article class="purpose-card">
-              <h3>{{ card.title }}</h3>
-              <p>{{ card.text }}</p>
-            </article>
-          }
-        </div>
-
-        <div class="about-values">
-          <h3>Our Core Values</h3>
-          <ul>
-            @for (value of coreValues; track value.title) {
-              <li>
-                <span><strong>{{ value.title }}:</strong> {{ value.description }}</span>
-              </li>
+        <div class="purpose-editorial__body">
+          <div class="purpose-statement-list">
+            @for (card of purposeCards; track card.title; let idx = $index) {
+              <article class="purpose-statement">
+                <span>0{{ idx + 1 }}</span>
+                <div>
+                  <h3>{{ card.title }}</h3>
+                  <p>{{ card.text }}</p>
+                </div>
+              </article>
             }
-          </ul>
+          </div>
+
+          <section class="values-strip" aria-labelledby="core-values-title">
+            <div class="values-strip__heading">
+              <p class="section-kicker">Our Core Values</p>
+              <h3 id="core-values-title">Non-negotiables</h3>
+            </div>
+
+            <ul class="values-strip__list">
+              @for (value of coreValues; track value.title) {
+                <li>
+                  <strong>{{ value.title }}</strong>
+                  <span>{{ value.description }}</span>
+                </li>
+              }
+            </ul>
+          </section>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="about-section about-team" id="leadership-team" aria-labelledby="leadership-team-title">
+    <div class="container">
+      <header class="section-heading section-heading--center">
+        <p class="section-kicker">Founding Leadership</p>
+        <h2 id="leadership-team-title">Founders & Chancellor</h2>
+        <p class="section-lead">
+          The founding custodians remain on the About page. Executive, governance, and advisory teams now have focused
+          pages for a cleaner leadership experience.
+        </p>
+      </header>
+
+      <div class="team-showcase">
+        @for (group of teamGroups; track group.id) {
+          <section
+            class="team-category-block"
+            [id]="group.anchor"
+            [attr.aria-labelledby]="group.anchor + '-title'"
+          >
+            <div class="team-category-block__header">
+              <div>
+                <h3 [id]="group.anchor + '-title'">{{ group.label }}</h3>
+              </div>
+              <span>{{ group.members.length }} {{ group.members.length === 1 ? 'member' : 'members' }}</span>
+            </div>
+
+            <div class="team-card-grid">
+              @for (member of group.members; track member.slug) {
+                <article class="team-member-card">
+                  <div class="team-member-card__portrait">
+                    <img
+                      [ngSrc]="member.image"
+                      width="320"
+                      height="320"
+                      sizes="(max-width: 640px) 38vw, (max-width: 1020px) 22vw, 13vw"
+                      [alt]="member.name"
+                      [style.object-position]="member.objectPosition || '50% 32%'"
+                    />
+                  </div>
+
+                  <div class="team-member-card__body">
+                    @if (member.role !== group.label && !(group.label === 'Founders & Chancellor' && member.role === 'Founder & Chancellor')) {
+                      <p class="team-member-card__role">{{ member.role }}</p>
+                    }
+                    <h4>{{ member.name }}</h4>
+                    <p>{{ member.summary }}</p>
+                    <a
+                      class="team-profile-link"
+                      [routerLink]="['/about/team', member.slug]"
+                    >
+                      View profile
+                    </a>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+      </div>
+
+      <nav class="team-directory-links" aria-label="Other leadership teams">
+        @for (link of teamDirectoryLinks; track link.path) {
+          <a [routerLink]="link.path">
+            <span>{{ link.label }}</span>
+            <small>{{ link.text }}</small>
+          </a>
+        }
+      </nav>
     </div>
   </section>
 

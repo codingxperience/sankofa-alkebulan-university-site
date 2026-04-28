@@ -93,7 +93,7 @@ interface HighlightItem {
                   ngSrc="/wp-content/uploads/2025/10/sankofa_hero_big.jpg"
                   width="1080"
                   height="720"
-                  sizes="(max-width: 900px) 100vw, 420px"
+                  sizes="(max-width: 900px) 100vw, 32vw"
                   alt="Sankofa Alkebulan University lecture series"
                 />
                 <button type="button" class="video-card__play" aria-label="Play welcome message video"></button>
@@ -141,7 +141,7 @@ interface HighlightItem {
               ngSrc="/wp-content/uploads/2025/10/miss_mimie.jpg"
               width="1080"
               height="1080"
-              sizes="(max-width: 900px) 100vw, 360px"
+              sizes="(max-width: 900px) 100vw, 28vw"
               alt="Sankofa student"
             />
             <figcaption>Scholarship grounded in heritage and renewal.</figcaption>

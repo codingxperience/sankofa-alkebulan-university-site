@@ -3,6 +3,8 @@ import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './pages/home.component';
 import { AboutPageComponent } from './pages/about-page.component';
 import { AboutDetailPageComponent } from './pages/about-detail-page.component';
+import { TeamCategoryPageComponent } from './pages/team-category-page.component';
+import { TeamProfilePageComponent } from './pages/team-profile-page.component';
 import { DepartmentPageComponent } from './pages/department-page.component';
 import { ProgrammesLevelComponent } from './pages/programmes-level.component';
 import { ProgramDetailComponent } from './pages/program-detail.component';
@@ -120,7 +122,18 @@ export const routes: Routes = [
       { path: '', redirectTo: '/home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
       { path: 'about', component: AboutPageComponent },
+      { path: 'about/executive-team', component: TeamCategoryPageComponent, data: { categoryId: 'executive' } },
+      { path: 'about/board-of-governance', component: TeamCategoryPageComponent, data: { categoryId: 'board' } },
+      { path: 'about/advisory-council', component: TeamCategoryPageComponent, data: { categoryId: 'advisory' } },
+      { path: 'about/research-scholarly-team', component: TeamCategoryPageComponent, data: { categoryId: 'research-scholarly' } },
+      { path: 'about/team/:slug', component: TeamProfilePageComponent },
       { path: 'about/:slug', component: AboutDetailPageComponent },
+      { path: 'student-life', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'faculty-staff', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'events-conferences', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'digital-learning', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'media-public-scholarship', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'institutional-development', redirectTo: '/home', pathMatch: 'full' },
       ...departmentShortcutRoutes,
       { path: 'home/:level/:programSlug', component: ProgramDetailComponent },
       { path: 'home/:level', component: ProgrammesLevelComponent },

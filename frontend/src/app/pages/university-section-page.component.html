@@ -1,7 +1,120 @@
 @if (page(); as section) {
-  <section class="section-shell" [class.section-shell--academics]="isFacultiesPage()">
+  <section
+    class="section-shell"
+    [class.section-shell--academics]="isFacultiesPage()"
+    [class.section-shell--research]="isResearchPage()"
+  >
     <div class="container">
-      @if (isFacultiesPage()) {
+      @if (isResearchPage()) {
+        <div class="research-landing">
+          <section class="research-hero" aria-labelledby="research-title">
+            <div class="research-hero__copy">
+              <p class="eyebrow">Research at Sankofa</p>
+              <h1 id="research-title">Research with continental consequence.</h1>
+              <p>
+                Compact institutes. Serious fieldwork. Open knowledge that moves from African
+                questions to public action.
+              </p>
+              <div class="research-hero__actions">
+                <a routerLink="/research-innovation" class="btn">Explore institutes</a>
+                <a routerLink="/partnerships-global" class="btn btn--secondary">Partner with us</a>
+              </div>
+            </div>
+
+            <figure class="research-media">
+              <img
+                src="/assets/hero/hero-lab-source.jpg"
+                alt="Researcher conducting laboratory work"
+                loading="eager"
+              />
+              <figcaption>
+                <span>Research network</span>
+                <strong>Health, AI, climate, governance, and cultural knowledge.</strong>
+              </figcaption>
+            </figure>
+          </section>
+
+          <section class="research-signal-grid" aria-label="Featured research directions">
+            @for (signal of researchSignals; track signal.title) {
+              <a [routerLink]="signal.path" class="research-signal-card">
+                <span>{{ signal.eyebrow }}</span>
+                <strong>{{ signal.title }}</strong>
+                <small>{{ signal.description }}</small>
+              </a>
+            }
+          </section>
+
+          <section class="research-catalog" aria-labelledby="research-catalog-title">
+            <div class="research-section-heading">
+              <p class="eyebrow">Research and Publications</p>
+              <h2 id="research-catalog-title">A cleaner way to browse research records.</h2>
+              <p>Guidelines, publications, proposals, and institute records in one organized view.</p>
+            </div>
+
+            <div class="research-catalog__shell">
+              <aside class="research-catalog__rail" aria-label="Research record categories">
+                @for (catalog of researchCatalogs; track catalog.label; let idx = $index) {
+                  <button
+                    type="button"
+                    [class.active]="idx === activeResearchCatalogIndex()"
+                    [attr.aria-pressed]="idx === activeResearchCatalogIndex()"
+                    (click)="setResearchCatalog(idx)"
+                  >
+                    {{ catalog.label }}
+                  </button>
+                }
+              </aside>
+
+              @if (selectedResearchCatalog(); as catalog) {
+                <div class="research-catalog__panel">
+                  <div class="research-catalog__panel-head">
+                    <div>
+                      <p class="eyebrow">{{ catalog.label }}</p>
+                      <h3>{{ catalog.summary }}</h3>
+                    </div>
+                    <span>{{ catalog.records.length }} records</span>
+                  </div>
+
+                  <div class="research-table" role="table" [attr.aria-label]="catalog.label + ' records'">
+                    <div class="research-table__head" role="row">
+                      <span role="columnheader">Year</span>
+                      <span role="columnheader">Title</span>
+                      <span role="columnheader">Nature</span>
+                      <span role="columnheader">Field</span>
+                    </div>
+
+                    @for (record of catalog.records; track record.title) {
+                      <article class="research-table__row" role="row">
+                        <span role="cell" data-label="Year">{{ record.year }}</span>
+                        <strong role="cell" data-label="Title">{{ record.title }}</strong>
+                        <span role="cell" data-label="Nature">{{ record.nature }}</span>
+                        <span role="cell" data-label="Field">{{ record.field }}</span>
+                      </article>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+
+          <section class="research-transfer" aria-labelledby="research-transfer-title">
+            <div class="research-transfer__intro">
+              <p class="eyebrow">Impact Pipeline</p>
+              <h2 id="research-transfer-title">From original question to public value.</h2>
+            </div>
+
+            <div class="research-step-grid">
+              @for (step of researchSteps; track step.label) {
+                <article class="research-step">
+                  <span>{{ step.label }}</span>
+                  <strong>{{ step.title }}</strong>
+                  <p>{{ step.description }}</p>
+                </article>
+              }
+            </div>
+          </section>
+        </div>
+      } @else if (isFacultiesPage()) {
         <div class="academics-landing">
           <section class="academics-hero" aria-labelledby="academics-title">
             <video
@@ -98,6 +211,28 @@
           </section>
 
         </div>
+      } @else if (isAdmissionsPage()) {
+        <section class="admissions-hero" aria-labelledby="admissions-title">
+          <img
+            class="admissions-hero__image"
+            ngSrc="/assets/illustrations/about-illustrator.png"
+            width="1800"
+            height="720"
+            sizes="100vw"
+            alt=""
+            aria-hidden="true"
+            priority
+          />
+          <div class="admissions-hero__shade"></div>
+          <div class="admissions-hero__content">
+            <p class="eyebrow">Sankofa Alkebulan University</p>
+            <h1 id="admissions-title">Admissions</h1>
+            <p>
+              Apply through a clear pathway for domestic, international, undergraduate,
+              postgraduate, and certificate applicants.
+            </p>
+          </div>
+        </section>
       } @else {
         <div class="section-hero">
           <p class="eyebrow">Sankofa Alkebulan University</p>
@@ -131,79 +266,304 @@
       }
 
       @if (isAdmissionsPage()) {
-        <section class="flow-card">
-          <h2>Admissions Inquiry Form</h2>
-          <p>
-            Submit your domestic or international interest directly to admissions. Online form delivery is enabled,
-            with optional email fallback.
-          </p>
+        <section class="flow-card flow-card--application" aria-labelledby="admissions-application-title">
+          <div class="application-tabs" aria-label="Application categories">
+            @for (mode of applicationModes; track mode.label) {
+              <button
+                type="button"
+                class="application-tab"
+                [class.application-tab--active]="activeApplicationMode() === mode.label"
+                (click)="setApplicationMode(mode)"
+              >
+                {{ mode.label }}
+              </button>
+            }
+            <button type="button" class="application-tab application-tab--outline" (click)="useEmailFallbackForAdmissions()">
+              Download Forms
+            </button>
+          </div>
+
+          <div class="application-card-header">
+            <div>
+              <p class="application-card-header__eyebrow">Prospective Students</p>
+              <h2 id="admissions-application-title">Start your application pathway.</h2>
+              <p>
+                Share your study interest and admissions will guide the next step, document requirements,
+                and funding options.
+              </p>
+            </div>
+            <span class="application-card-header__mark" aria-hidden="true">Sankofa</span>
+          </div>
 
           <form [formGroup]="admissionsForm" (ngSubmit)="submitAdmissionsForm()" class="flow-form">
-            <label>
-              Full Name
-              <input type="text" formControlName="fullName" />
-              @if (admissionsForm.controls.fullName.touched && admissionsForm.controls.fullName.invalid) {
-                <span class="error-text">Provide a valid full name.</span>
-              }
-            </label>
+            <fieldset class="form-section span-full">
+              <legend>Personal Details</legend>
 
-            <label>
-              Email Address
-              <input type="email" formControlName="email" />
-              @if (admissionsForm.controls.email.touched && admissionsForm.controls.email.invalid) {
-                <span class="error-text">Provide a valid email.</span>
-              }
-            </label>
-
-            <label>
-              Country of Residence
-              <input type="text" formControlName="country" />
-              @if (admissionsForm.controls.country.touched && admissionsForm.controls.country.invalid) {
-                <span class="error-text">Country is required.</span>
-              }
-            </label>
-
-            <label>
-              Preferred Study Level
-              <select formControlName="studyLevel">
-                <option value="">Select level</option>
-                @for (level of admissionsLevels; track level) {
-                  <option [value]="level">{{ level }}</option>
+              <label class="span-full">
+                Full Name
+                <input type="text" formControlName="fullName" />
+                @if (admissionsForm.controls.fullName.touched && admissionsForm.controls.fullName.invalid) {
+                  <span class="error-text">Provide a valid full name.</span>
                 }
-              </select>
-              @if (admissionsForm.controls.studyLevel.touched && admissionsForm.controls.studyLevel.invalid) {
-                <span class="error-text">Select a study level.</span>
-              }
-            </label>
+              </label>
 
-            <label>
-              Preferred School or Program
-              <input type="text" formControlName="preferredSchool" />
-              @if (
-                admissionsForm.controls.preferredSchool.touched &&
-                admissionsForm.controls.preferredSchool.invalid
-              ) {
-                <span class="error-text">Enter a school or program preference.</span>
-              }
-            </label>
+              <label>
+                Email Address
+                <input type="email" formControlName="email" />
+                @if (admissionsForm.controls.email.touched && admissionsForm.controls.email.invalid) {
+                  <span class="error-text">Provide a valid email.</span>
+                }
+              </label>
 
-            <label class="span-full">
-              Notes (Optional)
-              <textarea rows="4" formControlName="notes"></textarea>
-            </label>
+              <label>
+                WhatsApp / Phone Number
+                <input type="tel" formControlName="phone" />
+                @if (admissionsForm.controls.phone.touched && admissionsForm.controls.phone.invalid) {
+                  <span class="error-text">Phone number is required.</span>
+                }
+              </label>
+
+              <label>
+                Alternative Phone Number
+                <input type="tel" formControlName="alternatePhone" />
+              </label>
+
+              <div class="radio-field">
+                <p>Gender <span>*</span></p>
+                <label><input type="radio" formControlName="gender" value="Female" /> Female</label>
+                <label><input type="radio" formControlName="gender" value="Male" /> Male</label>
+              </div>
+
+              <div class="date-field">
+                <p>Date of Birth <span>*</span></p>
+                <select formControlName="dateOfBirthDay" aria-label="Birth day">
+                  <option value="">DD</option>
+                  @for (day of birthDays; track day) {
+                    <option [value]="day">{{ day }}</option>
+                  }
+                </select>
+                <select formControlName="dateOfBirthMonth" aria-label="Birth month">
+                  <option value="">MM</option>
+                  @for (month of birthMonths; track month) {
+                    <option [value]="month">{{ month }}</option>
+                  }
+                </select>
+                <input type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" formControlName="dateOfBirthYear" aria-label="Birth year" />
+              </div>
+
+              <label>
+                Country of Residence
+                <input type="text" formControlName="country" />
+                @if (admissionsForm.controls.country.touched && admissionsForm.controls.country.invalid) {
+                  <span class="error-text">Country is required.</span>
+                }
+              </label>
+
+              <label>
+                Nationality
+                <input type="text" formControlName="nationality" />
+              </label>
+
+              <div class="radio-field">
+                <p>Do you have a disability? <span>*</span></p>
+                <label><input type="radio" formControlName="disabilitySupport" value="Yes - admissions should contact me" /> Yes</label>
+                <label><input type="radio" formControlName="disabilitySupport" value="No" /> No</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section span-full">
+              <legend>Next of Kin Contact Details</legend>
+
+              <label>
+                Next of Kin Name
+                <input type="text" formControlName="nextOfKinName" />
+                @if (admissionsForm.controls.nextOfKinName.touched && admissionsForm.controls.nextOfKinName.invalid) {
+                  <span class="error-text">Next of kin name is required.</span>
+                }
+              </label>
+
+              <label>
+                Relationship with Next of Kin
+                <input type="text" formControlName="nextOfKinRelationship" />
+              </label>
+
+              <label>
+                Next of Kin Email
+                <input type="email" formControlName="nextOfKinEmail" />
+              </label>
+
+              <label>
+                Next of Kin Telephone
+                <input type="tel" formControlName="nextOfKinPhone" />
+                @if (admissionsForm.controls.nextOfKinPhone.touched && admissionsForm.controls.nextOfKinPhone.invalid) {
+                  <span class="error-text">Next of kin telephone is required.</span>
+                }
+              </label>
+            </fieldset>
+
+            <fieldset class="form-section span-full">
+              <legend>Choice of Programme</legend>
+
+              <label>
+                Preferred Study Level
+                <select formControlName="studyLevel">
+                  <option value="">Select level</option>
+                  @for (level of admissionsLevels; track level) {
+                    <option [value]="level">{{ level }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                Intake
+                <select formControlName="intake">
+                  <option value="">Select intake</option>
+                  <option value="May">May</option>
+                  <option value="September">September</option>
+                  <option value="January">January</option>
+                </select>
+                @if (admissionsForm.controls.intake.touched && admissionsForm.controls.intake.invalid) {
+                  <span class="error-text">Select an intake.</span>
+                }
+              </label>
+
+              <label class="span-full">
+                1st Programme Choice
+                <input type="text" formControlName="preferredSchool" />
+                @if (admissionsForm.controls.preferredSchool.touched && admissionsForm.controls.preferredSchool.invalid) {
+                  <span class="error-text">Enter a first programme choice.</span>
+                }
+              </label>
+
+              <label>
+                2nd Programme Choice
+                <input type="text" formControlName="secondChoice" />
+              </label>
+
+              <label>
+                3rd Programme Choice
+                <input type="text" formControlName="thirdChoice" />
+              </label>
+
+              <label>
+                Scholarship Type
+                <select formControlName="scholarshipType">
+                  <option value="">Select scholarship type</option>
+                  <option value="Self-funded">Self-funded</option>
+                  <option value="Bursary or financial aid">Bursary or financial aid</option>
+                  <option value="Mobility or partner scholarship">Mobility or partner scholarship</option>
+                </select>
+              </label>
+
+              <div class="radio-field">
+                <p>Have you previously been enrolled at Sankofa? <span>*</span></p>
+                <label><input type="radio" formControlName="previouslyEnrolled" value="Yes" /> Yes</label>
+                <label><input type="radio" formControlName="previouslyEnrolled" value="No" /> No</label>
+              </div>
+
+              <div class="radio-field radio-field--wide">
+                <p>Preferred Mode of Study <span>*</span></p>
+                <label><input type="radio" formControlName="studyMode" value="Weekend physical" /> Weekend (Physical)</label>
+                <label><input type="radio" formControlName="studyMode" value="Weekend online" /> Weekend (Online)</label>
+                <label><input type="radio" formControlName="studyMode" value="Hybrid" /> Hybrid</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section span-full">
+              <legend>Education Background</legend>
+
+              <label class="span-full">
+                State Your Previous Degree / Diploma Programme
+                <input type="text" formControlName="previousEducation" />
+                @if (admissionsForm.controls.previousEducation.touched && admissionsForm.controls.previousEducation.invalid) {
+                  <span class="error-text">Education background is required.</span>
+                }
+              </label>
+
+              <label class="span-full">
+                Class of Degree / Diploma
+                <input type="text" formControlName="classOfDegree" />
+                @if (admissionsForm.controls.classOfDegree.touched && admissionsForm.controls.classOfDegree.invalid) {
+                  <span class="error-text">Class of degree or diploma is required.</span>
+                }
+              </label>
+            </fieldset>
+
+            <fieldset class="form-section span-full">
+              <legend>Academic Documents</legend>
+              <p class="form-note">
+                Certified copies of transcripts, result slips/certificates, identification, and relevant academic
+                records should be prepared for admissions verification.
+              </p>
+
+              <label class="upload-field span-full">
+                <span>Academic Documents</span>
+                <input type="file" multiple />
+                <small>Click or drag files to this area to upload. You can upload up to 3 files.</small>
+              </label>
+
+              <label class="span-full">
+                Academic Documents Notes
+                <textarea rows="3" formControlName="academicDocumentsNote" placeholder="List the academic documents you are ready to provide."></textarea>
+              </label>
+
+              <label class="upload-field span-full">
+                <span>Valid National ID or Passport</span>
+                <input type="file" />
+                <small>Attach a valid National ID or Passport copy.</small>
+              </label>
+
+              <label class="span-full">
+                National ID / Passport Notes
+                <input type="text" formControlName="nationalIdNote" placeholder="National ID, passport, or document status" />
+              </label>
+            </fieldset>
+
+            <fieldset class="form-section span-full">
+              <legend>Credit Transfer</legend>
+              <p class="form-note">
+                Courses previously studied may be considered for credit transfer if equivalent to courses at Sankofa.
+              </p>
+
+              <div class="radio-field">
+                <p>Apply for credit transfer? <span>*</span></p>
+                <label><input type="radio" formControlName="creditTransfer" value="Yes" /> Yes</label>
+                <label><input type="radio" formControlName="creditTransfer" value="No" /> No</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section span-full">
+              <legend>How Did You Get to Know Sankofa?</legend>
+
+              <div class="radio-field radio-field--grid span-full">
+                <label><input type="radio" formControlName="referralSource" value="Search engine" /> Online Search Engines</label>
+                <label><input type="radio" formControlName="referralSource" value="Social media" /> Social Media</label>
+                <label><input type="radio" formControlName="referralSource" value="Referral or recommendation" /> Referral / Recommendation</label>
+                <label><input type="radio" formControlName="referralSource" value="Media or brochure" /> Marketing Flyer / Brochure</label>
+                <label><input type="radio" formControlName="referralSource" value="Television" /> Television</label>
+                <label><input type="radio" formControlName="referralSource" value="Radio" /> Radio</label>
+              </div>
+
+              <label class="confirmation-field">
+                Please confirm: 14 * 3 =
+                <input type="text" inputmode="numeric" formControlName="confirmationAnswer" />
+                @if (admissionsForm.controls.confirmationAnswer.touched && admissionsForm.controls.confirmationAnswer.invalid) {
+                  <span class="error-text">Enter 42 to confirm.</span>
+                }
+              </label>
+
+              <label class="span-full">
+                Additional Notes
+                <textarea rows="4" formControlName="notes" placeholder="Any admissions questions or special context."></textarea>
+              </label>
+            </fieldset>
 
             <div class="span-full form-actions">
               <div class="form-actions__buttons">
                 <button type="submit" class="btn" [disabled]="isSubmittingAdmissions()">
-                  {{ isSubmittingAdmissions() ? 'Submitting...' : 'Send Admissions Inquiry' }}
-                </button>
-                <button type="button" class="btn btn--secondary" (click)="useEmailFallbackForAdmissions()">
-                  Use Email Fallback
+                  {{ isSubmittingAdmissions() ? 'Submitting...' : 'Submit Application Interest' }}
                 </button>
               </div>
-              <p class="helper-text">
-                Direct email: <a [href]="'mailto:' + universityEmail">{{ universityEmail }}</a>
-              </p>
               @if (admissionsStatus()) {
                 <p class="status-text" aria-live="polite">{{ admissionsStatus() }}</p>
               }
@@ -266,26 +626,13 @@
                 <button type="submit" class="btn" [disabled]="isSubmittingContact()">
                   {{ isSubmittingContact() ? 'Submitting...' : 'Send Administrative Inquiry' }}
                 </button>
-                <button type="button" class="btn btn--secondary" (click)="useEmailFallbackForContact()">
-                  Use Email Fallback
-                </button>
               </div>
-              <p class="helper-text">
-                Direct email: <a [href]="'mailto:' + universityEmail">{{ universityEmail }}</a>
-              </p>
               @if (contactStatus()) {
                 <p class="status-text" aria-live="polite">{{ contactStatus() }}</p>
               }
             </div>
           </form>
         </section>
-      }
-
-      @if (!isFacultiesPage()) {
-        <div class="cta-band">
-          <a routerLink="/admissions" class="btn">Apply to the University</a>
-          <a routerLink="/contact" class="btn btn--secondary">Contact Administration</a>
-        </div>
       }
     </div>
   </section>

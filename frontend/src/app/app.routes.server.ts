@@ -6,6 +6,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'about/team/:slug',
+    renderMode: RenderMode.Server
+  },
+  {
     path: 'home/:level/:programSlug',
     renderMode: RenderMode.Server
   },

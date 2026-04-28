@@ -1,6 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TEAM_CATEGORY_GROUPS } from '../university/team-members';
 
 interface PurposeCard {
   readonly title: string;
@@ -45,6 +46,25 @@ interface ContentGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutPageComponent {
+  readonly teamGroups = TEAM_CATEGORY_GROUPS.filter((group) => group.id === 'founders');
+  readonly teamDirectoryLinks = [
+    {
+      label: 'Executive Team',
+      path: '/about/executive-team',
+      text: 'Operational leaders advancing the University from founding vision to working systems.',
+    },
+    {
+      label: 'Board of Governance',
+      path: '/about/board-of-governance',
+      text: 'Governance stewards supporting institutional credibility, oversight, and stability.',
+    },
+    {
+      label: 'Advisory Council',
+      path: '/about/advisory-council',
+      text: 'Independent advisors strengthening scholarship, partnerships, and continental relevance.',
+    },
+  ] as const;
+
   readonly overviewParagraphs: readonly string[] = [
     'Sankofa Alkebulan University is an independent intellectual and educational initiative dedicated to advancing African knowledge systems, critical scholarship, and transformative research.',
     'Founded on the Akan principle of Sankofa, meaning to go back and retrieve what has been lost, the University believes societies must draw wisdom from their past to build a stronger and more enlightened future.',
@@ -233,31 +253,31 @@ export class AboutPageComponent {
   readonly leadershipGroups: readonly LeadershipGroup[] = [
     {
       title: 'Board of Governance',
-      people: ['Prof. Mubiru Kisekwa - Board Member', 'Prof. Mutabazi Assani Mugisha - Board Member'],
+      people: ['Prof. Mubiru Kisekwa - Board Member', 'Prof. Mutabazi Mugisha - Board Member'],
     },
     {
       title: 'Advisory Council',
-      people: ['Prof. Leslee - Advisory Council Member', 'Prof. Joseph - Advisory Council Member'],
+      people: ['Prof. Lessee and Prof. Joseph - Advisory Council Members', 'Obi Onyeigwe - Advisory Council Member'],
     },
     {
       title: 'Founder & Chancellor',
-      people: ['Emmanuel Mihiingo Kaija - Founder and Chancellor'],
+      people: ['Diana Kaija - Founder', 'Emmanuel Mihiingo Kaija - Founder and Chancellor'],
     },
     {
       title: 'Academic Senate',
       people: [
         'Prof. Joseph - Senate Member',
-        'Prof. Leslee - Senate Member',
-        'Prof. Mutabazi Assani Mugisha - Senate Member',
+        'Prof. Lessee - Senate Member',
+        'Prof. Mutabazi Mugisha - Senate Member',
       ],
     },
     {
       title: 'Executive Directors / Management',
       people: [
-        'Gumarutahigwa-Bongobingiman Ruhinda - External Relations and Consultancy',
-        'Maguru Zagyenda - Information Technology',
-        'Michael Masabe - Finance',
-        'Dickens Ogira - Operations, Administration, and Human Resources',
+        'Prof. Adelukule - Executive Team',
+        'Mr. Masabe Michael Jackson - Executive Team',
+        'Alice Frimpong Sarkodie - Executive Team',
+        'Niyonzima Rogers Kabumba - Executive Team',
       ],
     },
   ];

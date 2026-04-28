@@ -1,0 +1,122 @@
+@if (member(); as profile) {
+  <div class="team-profile-page">
+    <section class="profile-hero" aria-labelledby="profile-title">
+      <img
+        class="profile-hero__image"
+        ngSrc="/assets/illustrations/about-illustrator.png"
+        width="1800"
+        height="720"
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        priority
+      />
+      <div class="profile-hero__overlay"></div>
+      <div class="container profile-hero__content">
+        <p class="profile-hero__eyebrow">Sankofa Alkebulan University</p>
+        <h1 id="profile-title">{{ profile.name }}</h1>
+        <p>{{ profile.role }}</p>
+      </div>
+    </section>
+
+    <main class="profile-body">
+      <div class="container profile-layout">
+        <aside class="profile-card" aria-label="Profile summary">
+          <div class="profile-card__portrait">
+            <img
+              [ngSrc]="profile.image"
+              width="420"
+              height="420"
+              sizes="(max-width: 780px) 58vw, 24vw"
+              [alt]="profile.name"
+              [style.object-position]="profile.objectPosition || '50% 30%'"
+              priority
+            />
+          </div>
+
+          <h2>{{ profile.name }}</h2>
+          <p class="profile-card__role">{{ profile.role }}</p>
+
+          <div class="profile-card__tags" aria-label="Profile categories">
+            @for (label of categoryLabels(); track label) {
+              <span>{{ label }}</span>
+            }
+          </div>
+
+          <a
+            [routerLink]="backTarget().path"
+            [fragment]="backTarget().fragment || undefined"
+            class="profile-card__back"
+          >
+            {{ backTarget().label }}
+          </a>
+        </aside>
+
+        <article class="profile-content">
+          <nav class="profile-tabs" aria-label="Profile sections">
+            <a href="#biography">Biography</a>
+            <a href="#publications">Publications</a>
+            <a href="#contact">Contact</a>
+            <a href="#curriculum-vitae">Curriculum Vitae</a>
+          </nav>
+
+          <section id="biography" class="profile-panel">
+            <p class="profile-panel__kicker">Biography</p>
+            <h2>{{ profile.name }}</h2>
+            <p class="profile-panel__summary">{{ profile.summary }}</p>
+            @for (paragraph of profile.profile; track $index) {
+              <p>{{ paragraph }}</p>
+            }
+          </section>
+
+          <section id="publications" class="profile-panel">
+            <p class="profile-panel__kicker">Publications</p>
+            <h2>Scholarship and public work</h2>
+            <p>
+              Publications, research outputs, policy reflections, media work, and public scholarship connected to this
+              profile will be curated here as institutional records are finalized.
+            </p>
+          </section>
+
+          <section id="contact" class="profile-panel">
+            <p class="profile-panel__kicker">Contact</p>
+            <h2>Profile inquiries</h2>
+            @if (profile.contacts?.length) {
+              <div class="profile-contact-list">
+                @for (contact of profile.contacts; track contact.value) {
+                  <a [href]="contact.href || null">
+                    <span>{{ contact.label }}</span>
+                    <strong>{{ contact.value }}</strong>
+                  </a>
+                }
+              </div>
+            } @else {
+              <p>
+                For official correspondence, partnership inquiries, and profile verification, contact the University
+                administration.
+              </p>
+              <a class="profile-panel__action" [href]="'mailto:' + adminEmail">{{ adminEmail }}</a>
+            }
+          </section>
+
+          <section id="curriculum-vitae" class="profile-panel">
+            <p class="profile-panel__kicker">Curriculum Vitae</p>
+            <h2>Professional record</h2>
+            <p>
+              Curriculum vitae, appointment records, publications lists, and formal documentation can be attached here
+              as approved profile materials become available.
+            </p>
+          </section>
+        </article>
+      </div>
+    </main>
+  </div>
+} @else {
+  <section class="profile-missing">
+    <div class="container">
+      <p class="profile-panel__kicker">Profile not found</p>
+      <h1>The requested profile could not be resolved.</h1>
+      <a routerLink="/about" fragment="leadership-team">Return to leadership directory</a>
+    </div>
+  </section>
+}

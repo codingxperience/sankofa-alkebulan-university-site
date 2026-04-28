@@ -1,6 +1,11 @@
 .home-shell {
+  --sankofa-gold: #d4a22f;
+  --sankofa-gold-dark: #7b5314;
+  --sankofa-gold-soft: #f4e3b7;
+
   background:
     linear-gradient(180deg, #f7f1e6 0%, #ffffff 14%, #f6f9fc 58%, #ffffff 100%);
+  overflow-x: hidden;
 }
 
 .hero {
@@ -235,19 +240,19 @@
   display: inline-flex;
   flex-wrap: wrap;
   width: fit-content;
-  gap: 0.42rem;
+  gap: 0.34rem;
   margin: 0;
-  padding: 0.42rem 0.52rem;
+  padding: 0.42rem 0.62rem;
   border-radius: 999px;
   background:
-    linear-gradient(90deg, rgb(15 76 129 / 9%) 0 7px, transparent 7px 13px),
-    rgb(255 255 255 / 58%);
-  border: 1px solid rgb(212 162 47 / 24%);
-  color: #805415;
+    linear-gradient(90deg, rgb(212 162 47 / 17%) 0 5px, transparent 5px 10px),
+    rgb(255 255 255 / 78%);
+  border: 1px solid rgb(212 162 47 / 36%);
+  color: var(--sankofa-gold-dark);
   font-family: 'Fraunces', var(--font-family-heading);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-style: italic;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
   text-shadow: 0 1px 0 rgb(255 255 255 / 48%);
@@ -261,12 +266,12 @@
 
 .hero-tagline span + span::before {
   content: '';
-  width: 0.42rem;
-  height: 0.42rem;
-  margin-right: 0.42rem;
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-right: 0.34rem;
   border-radius: 999px;
-  background: #d4a22f;
-  box-shadow: 0 0 0 3px rgb(212 162 47 / 14%);
+  background: var(--sankofa-gold);
+  box-shadow: 0 0 0 3px rgb(212 162 47 / 12%);
 }
 
 .hero-actions {
@@ -560,6 +565,8 @@
 .department-carousel {
   display: grid;
   gap: 0.95rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .department-carousel__controls {
@@ -681,14 +688,19 @@
 
 .department-carousel__dots {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
   margin-top: 0.1rem;
+  max-width: 100%;
+  padding-inline: 0.25rem;
+  overflow: hidden;
 }
 
 .department-carousel__dot {
-  width: 8px;
-  height: 8px;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
   border: none;
   border-radius: 999px;
   background: #efd1a3;
@@ -697,8 +709,8 @@
 }
 
 .department-carousel__dot--active {
-  width: 24px;
-  background: #e2a03a;
+  width: 20px;
+  background: var(--sankofa-gold);
 }
 
 .signal-grid {
@@ -708,6 +720,8 @@
 }
 
 .signal-card {
+  position: relative;
+  overflow: hidden;
   min-height: 226px;
   padding: 1.25rem;
   border-radius: 24px;
@@ -718,6 +732,11 @@
   align-content: start;
   gap: 0.68rem;
   transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.signal-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .signal-card:first-child {
@@ -739,6 +758,21 @@
   background: linear-gradient(155deg, #0b2e50 0%, #0f4c81 100%);
   border-color: rgb(88 134 172 / 38%);
   box-shadow: 0 24px 48px rgb(11 40 67 / 18%);
+}
+
+.signal-card[data-theme='ink']::before {
+  content: 'Sankofa';
+  position: absolute;
+  right: -0.2em;
+  bottom: -0.28em;
+  color: rgb(255 255 255 / 7%);
+  font-family: var(--font-family-heading);
+  font-size: clamp(4.7rem, 11vw, 8.6rem);
+  font-weight: 900;
+  letter-spacing: -0.09em;
+  line-height: 0.82;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .signal-card__top {
@@ -1080,13 +1114,14 @@
     width: 100%;
     max-width: none;
     align-content: end;
-    padding: 1.25rem;
+    align-items: start;
+    padding: 1.25rem 1.25rem 4.75rem;
   }
 
   .hero-banner--content-right .hero-banner__content {
     left: 0;
     right: 0;
-    padding: 1.25rem;
+    padding: 1.25rem 1.25rem 4.75rem;
   }
 
   .hero-banner--content-right .hero-banner__veil,
@@ -1095,20 +1130,28 @@
     background:
       linear-gradient(
         180deg,
-        rgb(247 248 250 / 18%) 0%,
-        rgb(247 248 250 / 6%) 18%,
-        rgb(247 248 250 / 72%) 64%,
-        rgb(247 248 250 / 94%) 100%
+        rgb(247 248 250 / 56%) 0%,
+        rgb(247 248 250 / 34%) 24%,
+        rgb(247 248 250 / 82%) 63%,
+        rgb(247 248 250 / 96%) 100%
       );
   }
 
+  .hero-kicker {
+    width: fit-content;
+    padding: 0.32rem 0.48rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 68%);
+    backdrop-filter: blur(8px);
+  }
+
   .hero-banner h1 {
-    max-width: 12ch;
-    font-size: 2.75rem;
+    max-width: min(100%, 15ch);
+    font-size: clamp(2.1rem, 8vw, 2.75rem);
   }
 
   .hero-summary {
-    max-width: 26rem;
+    max-width: min(100%, 27rem);
   }
 
   .launch-grid,
@@ -1138,7 +1181,7 @@
 
 @media (max-width: 620px) {
   .hero-stage__banner {
-    min-height: 426px;
+    min-height: 470px;
   }
 
   .hero-banner {
@@ -1150,18 +1193,35 @@
   }
 
   .hero-banner h1 {
-    font-size: 2.55rem;
-    line-height: 0.96;
+    max-width: 100%;
+    font-size: clamp(1.92rem, 9.6vw, 2.32rem);
+    line-height: 1.04;
   }
 
   .hero-summary {
-    font-size: 0.92rem;
+    max-width: 100%;
+    font-size: 0.9rem;
     line-height: 1.5;
   }
 
   .hero-tagline {
-    font-size: 0.84rem;
-    letter-spacing: 0.11em;
+    width: 100%;
+    justify-content: center;
+    gap: 0.28rem;
+    padding: 0.45rem 0.52rem;
+    border-radius: 18px;
+    background:
+      linear-gradient(135deg, rgb(212 162 47 / 18%) 0 18%, transparent 18% 38%, rgb(212 162 47 / 13%) 38% 56%, transparent 56%),
+      rgb(255 255 255 / 86%);
+    font-size: 0.68rem;
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-tagline span + span::before {
+    width: 0.28rem;
+    height: 0.28rem;
+    margin-right: 0.24rem;
   }
 
   .hero-actions,
@@ -1174,6 +1234,30 @@
     width: 100%;
   }
 
+  .hero-stage__controls {
+    bottom: 1.05rem;
+  }
+
+  .hero-control-btn {
+    top: auto;
+    bottom: 0.65rem;
+    transform: none;
+    width: 38px;
+    height: 38px;
+  }
+
+  .hero-control-btn:hover {
+    transform: none;
+  }
+
+  .hero-control-btn--left {
+    left: 1rem;
+  }
+
+  .hero-control-btn--right {
+    right: 1rem;
+  }
+
   .launch-card {
     grid-template-columns: 52px minmax(0, 1fr);
   }
@@ -1184,6 +1268,10 @@
 
   .department-carousel__controls {
     justify-content: flex-start;
+  }
+
+  .department-carousel__dots {
+    display: none;
   }
 
   .dept-card,
@@ -1216,11 +1304,11 @@
   }
 
   .hero-stage__banner {
-    min-height: 408px;
+    min-height: 500px;
   }
 
   .hero-banner__content {
-    padding: 1.05rem;
+    padding: 1.05rem 1rem 4.7rem;
   }
 
   .hero-label {
@@ -1228,20 +1316,20 @@
   }
 
   .hero-banner h1 {
-    font-size: 2.15rem;
+    font-size: clamp(1.78rem, 8.6vw, 2rem);
   }
 
   .hero-control-btn {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
   }
 
   .hero-control-btn--left {
-    left: 0.75rem;
+    left: 0.85rem;
   }
 
   .hero-control-btn--right {
-    right: 0.75rem;
+    right: 0.85rem;
   }
 
   .launch-card,

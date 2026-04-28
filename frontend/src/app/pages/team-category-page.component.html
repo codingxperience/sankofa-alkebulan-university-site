@@ -1,0 +1,67 @@
+@if (group(); as teamGroup) {
+  <div class="team-category-page">
+    <section class="team-category-hero" aria-labelledby="team-category-title">
+      <img
+        class="team-category-hero__image"
+        ngSrc="/assets/illustrations/about-illustrator.png"
+        width="1800"
+        height="720"
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        priority
+      />
+      <div class="team-category-hero__shade"></div>
+      <div class="container team-category-hero__content">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a routerLink="/about">About</a>
+          <span aria-hidden="true">/</span>
+          <span>{{ teamGroup.label }}</span>
+        </nav>
+
+        <p class="team-category-hero__kicker">Sankofa Alkebulan University</p>
+        <h1 id="team-category-title">{{ teamGroup.label }}</h1>
+      </div>
+    </section>
+
+    <main class="team-category-body">
+      <div class="container">
+        <div class="team-category-intro team-category-intro--compact">
+          <a routerLink="/about" fragment="leadership-team">Back to About</a>
+        </div>
+
+        <div class="team-category-grid" [attr.aria-label]="teamGroup.label">
+          @for (member of teamGroup.members; track member.slug) {
+            <article class="team-category-card">
+              <div class="team-category-card__portrait">
+                <img
+                  [ngSrc]="member.image"
+                  width="360"
+                  height="360"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1020px) 28vw, 18vw"
+                  [alt]="member.name"
+                  [style.object-position]="member.objectPosition || '50% 30%'"
+                />
+              </div>
+
+              <div class="team-category-card__body">
+                <p>{{ member.role }}</p>
+                <h2>{{ member.name }}</h2>
+                <span>{{ member.summary }}</span>
+                <a [routerLink]="['/about/team', member.slug]">View profile</a>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </main>
+  </div>
+} @else {
+  <section class="team-category-missing">
+    <div class="container">
+      <p class="team-category-hero__kicker">Leadership</p>
+      <h1>Team page not found.</h1>
+      <a routerLink="/about">Return to About</a>
+    </div>
+  </section>
+}

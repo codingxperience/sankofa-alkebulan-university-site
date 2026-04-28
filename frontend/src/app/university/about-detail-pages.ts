@@ -20,13 +20,15 @@ export interface AboutDetailPage {
 }
 
 export const ABOUT_SECTION_LINKS: readonly AboutNavLink[] = [
+  { label: 'Founders & Chancellor', path: '/about', fragment: 'founders-chancellor-team' },
+  { label: 'Executive Team', path: '/about/executive-team' },
+  { label: 'Board of Governance', path: '/about/board-of-governance' },
+  { label: 'Advisory Council', path: '/about/advisory-council' },
+  { label: 'Research & Scholarly Team', path: '/about/research-scholarly-team' },
   { label: 'History of Sankofa', path: '/about/history-of-sankofa' },
   { label: 'Governance Structure', path: '/about/governance-structure' },
-  { label: 'Board of Governance', path: '/about/board-of-governance' },
-  { label: 'Founder & Chancellor', path: '/about/founder-chancellor' },
   { label: 'University Council', path: '/about/university-council' },
   { label: 'Academic Senate', path: '/about/academic-senate' },
-  { label: 'Executive Directors', path: '/about/executive-directors' },
 ] as const;
 
 export const ABOUT_RELATED_LINKS: readonly AboutNavLink[] = [
@@ -90,7 +92,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     sections: [
       {
         heading: 'Current Membership',
-        items: ['Prof. Mubiru Kisekwa - Board Member', 'Prof. Mutabazi Assani Mugisha - Board Member'],
+        items: ['Prof. Mubiru Kisekwa - Board Member', 'Prof. Mutabazi Mugisha - Board Member'],
       },
     ],
   },
@@ -112,7 +114,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     sections: [
       {
         heading: 'Current Office Holder',
-        items: ['Emmanuel Mihiingo Kaija - Founder and Chancellor'],
+        items: ['Diana Kaija - Founder', 'Emmanuel Mihiingo Kaija - Founder and Chancellor'],
       },
     ],
   },
@@ -151,8 +153,8 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
         heading: 'Current Senate Membership',
         items: [
           'Prof. Joseph - Senate Member',
-          'Prof. Leslee - Senate Member',
-          'Prof. Mutabazi Assani Mugisha - Senate Member',
+          'Prof. Lessee - Senate Member',
+          'Prof. Mutabazi Mugisha - Senate Member',
         ],
       },
     ],
@@ -174,12 +176,12 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     ],
     sections: [
       {
-        heading: 'Current Executive Directors',
+        heading: 'Current Executive Team',
         items: [
-          'Gumarutahigwa-Bongobingiman Ruhinda - External Relations and Consultancy',
-          'Maguru Zagyenda - Information Technology',
-          'Michael Masabe - Finance',
-          'Dickens Ogira - Operations, Administration, and Human Resources',
+          'Prof. Gumaritahigwa Bongobingiman Ruhinda - Executive Team',
+          'Mr. Masabe Michael Jackson - Executive Team',
+          'Alice Frimpong Sarkodie - Executive Team',
+          'Niyonzima Rogers Kabumba - Executive Team',
         ],
       },
     ],
