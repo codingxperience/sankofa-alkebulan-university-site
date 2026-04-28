@@ -147,7 +147,7 @@
                   </div>
 
                   <div class="team-member-card__body">
-                    @if (member.role !== group.label && !(group.label === 'Founders & Chancellor' && member.role === 'Founder & Chancellor')) {
+                    @if (member.role !== group.label) {
                       <p class="team-member-card__role">{{ member.role }}</p>
                     }
                     <h4>{{ member.name }}</h4>

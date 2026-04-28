@@ -130,7 +130,6 @@ export const routes: Routes = [
       { path: 'about/:slug', component: AboutDetailPageComponent },
       { path: 'student-life', redirectTo: '/home', pathMatch: 'full' },
       { path: 'faculty-staff', redirectTo: '/home', pathMatch: 'full' },
-      { path: 'events-conferences', redirectTo: '/home', pathMatch: 'full' },
       { path: 'digital-learning', redirectTo: '/home', pathMatch: 'full' },
       { path: 'media-public-scholarship', redirectTo: '/home', pathMatch: 'full' },
       { path: 'institutional-development', redirectTo: '/home', pathMatch: 'full' },

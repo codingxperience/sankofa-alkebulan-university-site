@@ -53,7 +53,7 @@ import { RouterLink } from '@angular/router';
 
           <section>
             <h4>Connect</h4>
-            <span class="footer-disabled">Events</span>
+            <a routerLink="/events-conferences">Events</a>
             <a routerLink="/partnerships-global">Partnerships</a>
             <span class="footer-disabled">Media</span>
             <a href="mailto:sankofalkebulanuniversity@outlook.com">

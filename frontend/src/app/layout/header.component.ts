@@ -1100,7 +1100,7 @@ export class HeaderComponent implements OnInit {
     { label: 'About', path: '/about' },
     { label: 'Academics', path: '/faculties-schools' },
     { label: 'Research', path: '/research-innovation' },
-    { label: 'News & Events', path: null, disabled: true },
+    { label: 'News & Events', path: '/events-conferences' },
     { label: 'Campus', path: null, disabled: true },
   ];
 

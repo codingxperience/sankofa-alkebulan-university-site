@@ -58,7 +58,7 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
   {
     slug: 'emmanuel-mihiingo-kaija',
     name: 'Emmanuel Mihiingo Kaija',
-    role: 'Founder & Chancellor',
+    role: 'Founder/Chancellor',
     image: '/assets/about/sankofa-founder.jpeg',
     objectPosition: '50% 22%',
     categories: ['founders'],

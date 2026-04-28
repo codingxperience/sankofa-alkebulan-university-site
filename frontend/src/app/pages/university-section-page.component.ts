@@ -61,6 +61,39 @@ interface ApplicationMode {
   readonly studyLevel: string;
 }
 
+interface NewsEventCard {
+  readonly month: string;
+  readonly day: string;
+  readonly category: string;
+  readonly title: string;
+  readonly summary: string;
+  readonly location: string;
+  readonly mode: string;
+  readonly image: string;
+  readonly imageAlt: string;
+  readonly imagePosition?: string;
+  readonly path: string;
+}
+
+interface NewsStory {
+  readonly category: string;
+  readonly date: string;
+  readonly title: string;
+  readonly summary: string;
+  readonly image: string;
+  readonly imageAlt: string;
+  readonly imagePosition?: string;
+  readonly path: string;
+}
+
+interface EventChannel {
+  readonly label: string;
+  readonly title: string;
+  readonly description: string;
+  readonly iconClass: string;
+  readonly path: string;
+}
+
 @Component({
   selector: 'app-university-section-page',
   imports: [RouterLink, ReactiveFormsModule, NgOptimizedImage],
@@ -86,6 +119,7 @@ export class UniversitySectionPageComponent {
   readonly isContactPage = computed(() => this.page()?.slug === 'contact');
   readonly isFacultiesPage = computed(() => this.page()?.slug === 'faculties-schools');
   readonly isResearchPage = computed(() => this.page()?.slug === 'research-innovation');
+  readonly isEventsPage = computed(() => this.page()?.slug === 'events-conferences');
 
   readonly academicPathways: readonly AcademicPathway[] = [
     {
@@ -332,6 +366,158 @@ export class UniversitySectionPageComponent {
       description: 'Publish, patent, teach, advise policy, or launch practical innovation.',
     },
   ];
+
+  readonly newsEventFilters = ['All', 'Admissions', 'Research', 'Conferences', 'Community'] as const;
+  readonly activeNewsEventFilter = signal<(typeof this.newsEventFilters)[number]>('All');
+  readonly showAllNewsEvents = signal(false);
+  readonly visibleNewsEvents = computed(() => {
+    const activeFilter = this.activeNewsEventFilter();
+    if (activeFilter === 'All') {
+      return this.newsEvents;
+    }
+
+    return this.newsEvents.filter((event) => event.category === activeFilter);
+  });
+  readonly displayedNewsEvents = computed(() => {
+    const events = this.visibleNewsEvents();
+    return this.showAllNewsEvents() ? events : events.slice(0, 2);
+  });
+  readonly hasHiddenNewsEvents = computed(() => this.visibleNewsEvents().length > 2);
+
+  readonly featuredNewsEvent: NewsEventCard = {
+    month: 'May',
+    day: '18',
+    category: 'Admissions',
+    title: 'Virtual Open Day for 2026 Applicants',
+    summary:
+      'A focused live session for undergraduate, postgraduate, certificate, and international applicants.',
+    location: 'Online briefing room',
+    mode: 'Live + replay',
+    image: 'https://images.pexels.com/photos/36098139/pexels-photo-36098139.jpeg?auto=compress&cs=tinysrgb&w=1800',
+    imageAlt: 'African graduates standing together in academic gowns',
+    imagePosition: '50% 34%',
+    path: '/admissions',
+  };
+
+  readonly newsEvents: readonly NewsEventCard[] = [
+    this.featuredNewsEvent,
+    {
+      month: 'Jun',
+      day: '04',
+      category: 'Research',
+      title: 'Pan-African Research Seed Fund Briefing',
+      summary: 'Guidance for faculty teams preparing proposals in health, governance, climate, AI, and culture.',
+      location: 'Research and Innovation Office',
+      mode: 'Hybrid',
+      image: 'https://images.pexels.com/photos/6129879/pexels-photo-6129879.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageAlt: 'Researcher working in a laboratory',
+      imagePosition: '48% 42%',
+      path: '/research-innovation',
+    },
+    {
+      month: 'Jun',
+      day: '21',
+      category: 'Conferences',
+      title: 'African Knowledge Systems Colloquium',
+      summary: 'A public scholarship forum on civilizational studies, indigenous knowledge, and digital archives.',
+      location: 'Sankofa virtual auditorium',
+      mode: 'Conference',
+      image: 'https://images.pexels.com/photos/32702845/pexels-photo-32702845.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageAlt: 'African scholars in a group discussion',
+      imagePosition: '50% 38%',
+      path: '/about',
+    },
+    {
+      month: 'Jul',
+      day: '09',
+      category: 'Community',
+      title: 'Youth Leadership and Community Futures Workshop',
+      summary: 'A practical workshop connecting students, advisors, and community partners around civic leadership.',
+      location: 'Community engagement studio',
+      mode: 'Workshop',
+      image: 'https://images.pexels.com/photos/32668047/pexels-photo-32668047.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageAlt: 'African students gathered for a community learning moment',
+      imagePosition: '50% 40%',
+      path: '/community-outreach',
+    },
+  ];
+
+  readonly newsStories: readonly NewsStory[] = [
+    {
+      category: 'Admissions',
+      date: 'April 2026',
+      title: 'Admissions pathways reorganized for clearer applicant journeys',
+      summary: 'Sankofa now separates postgraduate, undergraduate, and certificate application pathways.',
+      image: 'https://images.pexels.com/photos/36098139/pexels-photo-36098139.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageAlt: 'African graduates standing together in academic gowns',
+      imagePosition: '50% 34%',
+      path: '/admissions',
+    },
+    {
+      category: 'Research',
+      date: 'April 2026',
+      title: 'Research institutes align around public-impact knowledge production',
+      summary: 'The institute register now groups scholarship by research strength and operational focus.',
+      image: 'https://images.pexels.com/photos/3825572/pexels-photo-3825572.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageAlt: 'Researcher using a microscope in a laboratory',
+      imagePosition: '48% 42%',
+      path: '/research-innovation',
+    },
+    {
+      category: 'Academics',
+      date: 'March 2026',
+      title: 'Academic worlds introduce a cleaner way to explore schools',
+      summary: 'Four academic worlds help applicants browse by ambition rather than bureaucracy.',
+      image: 'https://images.pexels.com/photos/6238012/pexels-photo-6238012.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      imageAlt: 'Black students smiling together in a learning space',
+      imagePosition: '50% 38%',
+      path: '/faculties-schools',
+    },
+  ];
+
+  readonly eventChannels: readonly EventChannel[] = [
+    {
+      label: 'Public scholarship',
+      title: 'Lectures and briefings',
+      description: 'Short, high-signal sessions for ideas that should travel beyond campus.',
+      iconClass: 'pi pi-megaphone',
+      path: '/events-conferences',
+    },
+    {
+      label: 'Academic convening',
+      title: 'Conferences and colloquia',
+      description: 'Scholar-led gatherings for research, methods, policy, and cultural knowledge.',
+      iconClass: 'pi pi-calendar-plus',
+      path: '/research-innovation',
+    },
+    {
+      label: 'Applicant moments',
+      title: 'Open days and showcases',
+      description: 'Admissions sessions, faculty showcases, and guided program discovery.',
+      iconClass: 'pi pi-users',
+      path: '/admissions',
+    },
+  ];
+
+  readonly newsroomTopics = [
+    'African Knowledge',
+    'Admissions',
+    'Research',
+    'Community',
+    'Governance',
+    'Innovation',
+    'Health',
+    'Culture',
+  ] as const;
+
+  setNewsEventFilter(filter: (typeof this.newsEventFilters)[number]): void {
+    this.activeNewsEventFilter.set(filter);
+    this.showAllNewsEvents.set(false);
+  }
+
+  toggleNewsEvents(): void {
+    this.showAllNewsEvents.set(!this.showAllNewsEvents());
+  }
 
   private readonly departmentSlugByTitle = new Map(
     DEPARTMENT_PAGES.map((page) => [page.title, page.slug]),

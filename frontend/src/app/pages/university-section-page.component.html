@@ -3,6 +3,7 @@
     class="section-shell"
     [class.section-shell--academics]="isFacultiesPage()"
     [class.section-shell--research]="isResearchPage()"
+    [class.section-shell--events]="isEventsPage()"
   >
     <div class="container">
       @if (isResearchPage()) {
@@ -110,6 +111,178 @@
                   <strong>{{ step.title }}</strong>
                   <p>{{ step.description }}</p>
                 </article>
+              }
+            </div>
+          </section>
+        </div>
+      } @else if (isEventsPage()) {
+        <div class="newsroom-page">
+          <section class="newsroom-masthead" aria-labelledby="events-title">
+            <div class="newsroom-topbar" aria-label="Newsroom categories">
+              <a routerLink="/events-conferences" class="newsroom-logo">SAU Newsroom</a>
+              <div class="newsroom-filterbar">
+                @for (filter of newsEventFilters; track filter) {
+                  <button
+                    type="button"
+                    [class.active]="activeNewsEventFilter() === filter"
+                    [attr.aria-pressed]="activeNewsEventFilter() === filter"
+                    (click)="setNewsEventFilter(filter)"
+                  >
+                    {{ filter }}
+                  </button>
+                }
+              </div>
+              <p class="newsroom-filter-note">Filter campus event cards below.</p>
+            </div>
+
+            <article class="newsroom-hero-story">
+              <img
+                [src]="featuredNewsEvent.image"
+                [alt]="featuredNewsEvent.imageAlt"
+                [style.object-position]="featuredNewsEvent.imagePosition || '50% 45%'"
+                loading="eager"
+              />
+              <div class="newsroom-hero-story__shade"></div>
+              <div class="newsroom-hero-story__content">
+                <span>{{ featuredNewsEvent.category }} / {{ featuredNewsEvent.month }} {{ featuredNewsEvent.day }}, 2026</span>
+                <h1 id="events-title">{{ featuredNewsEvent.title }}</h1>
+                <p>{{ featuredNewsEvent.summary }}</p>
+                <a [routerLink]="featuredNewsEvent.path" class="btn">Explore the session</a>
+              </div>
+            </article>
+          </section>
+
+          <section class="newsroom-highlights" aria-labelledby="newsroom-highlights-title">
+            <div class="newsroom-section-heading">
+              <h2 id="newsroom-highlights-title">Highlights</h2>
+              <p>Three updates that deserve attention now.</p>
+            </div>
+
+            <div class="newsroom-highlight-grid">
+              @if (newsStories[0]; as leadStory) {
+                <a [routerLink]="leadStory.path" class="highlight-lead">
+                  <img
+                    [src]="leadStory.image"
+                    [alt]="leadStory.imageAlt"
+                    [style.object-position]="leadStory.imagePosition || '50% 42%'"
+                    loading="lazy"
+                  />
+                  <span>{{ leadStory.category }}</span>
+                  <strong>{{ leadStory.title }}</strong>
+                  <small>{{ leadStory.summary }}</small>
+                </a>
+              }
+
+              <div class="highlight-stack">
+                @for (story of newsStories.slice(1); track story.title) {
+                  <a [routerLink]="story.path" class="highlight-mini">
+                    <span>{{ story.category }} / {{ story.date }}</span>
+                    <strong>{{ story.title }}</strong>
+                    <small>{{ story.summary }}</small>
+                  </a>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section class="newsroom-band" aria-labelledby="announcements-title">
+            <div class="newsroom-section-heading">
+              <h2 id="announcements-title">Announcements</h2>
+              <p>Short, practical notes from admissions, research, and the wider University.</p>
+            </div>
+
+            <div class="newsroom-card-row">
+              @for (story of newsStories; track story.title) {
+                <a [routerLink]="story.path" class="announcement-card">
+                  <img
+                    [src]="story.image"
+                    [alt]="story.imageAlt"
+                    [style.object-position]="story.imagePosition || '50% 42%'"
+                    loading="lazy"
+                  />
+                  <span>{{ story.category }}</span>
+                  <strong>{{ story.title }}</strong>
+                  <small>{{ story.date }}</small>
+                </a>
+              }
+            </div>
+          </section>
+
+          <section class="campus-events" aria-labelledby="campus-events-title">
+            <div class="campus-events__intro">
+              <h2 id="campus-events-title">Campus Events</h2>
+              <p>
+                Make the most of each moment by attending open days, public forums, workshops,
+                and research briefings.
+              </p>
+              <p class="filter-context">
+                Filters above refine this list. Showing {{ displayedNewsEvents().length }} of
+                {{ visibleNewsEvents().length }}
+                {{ activeNewsEventFilter() === 'All' ? 'events' : activeNewsEventFilter().toLowerCase() + ' events' }}.
+              </p>
+              <a routerLink="/admissions" class="btn btn--secondary">Plan your visit</a>
+            </div>
+
+            <div class="campus-events__list">
+              @for (event of displayedNewsEvents(); track event.title) {
+                <a [routerLink]="event.path" class="event-listing">
+                  <img
+                    [src]="event.image"
+                    [alt]="event.imageAlt"
+                    [style.object-position]="event.imagePosition || '50% 42%'"
+                    loading="lazy"
+                  />
+                  <div>
+                    <span>{{ event.category }} / {{ event.month }} {{ event.day }}</span>
+                    <strong>{{ event.title }}</strong>
+                    <small>{{ event.mode }} / {{ event.location }}</small>
+                  </div>
+                </a>
+              }
+              @if (hasHiddenNewsEvents()) {
+                <button type="button" class="event-listing-control" (click)="toggleNewsEvents()">
+                  {{ showAllNewsEvents() ? 'Show fewer events' : 'Show more events' }}
+                </button>
+              }
+            </div>
+          </section>
+
+          <section class="public-scholarship" aria-labelledby="public-scholarship-title">
+            <span class="sankofa-wordmark" aria-hidden="true">Sankofa</span>
+            <div class="public-scholarship__image">
+              <img
+                src="https://images.pexels.com/photos/32702845/pexels-photo-32702845.jpeg?auto=compress&cs=tinysrgb&w=1400"
+                alt="African scholars in conversation at a public forum"
+                loading="lazy"
+              />
+            </div>
+            <div class="public-scholarship__copy">
+              <p class="eyebrow">Public Scholarship</p>
+              <h2 id="public-scholarship-title">Ideas that travel beyond the room.</h2>
+              <p>
+                Sankofa events are designed to move knowledge outward through lectures, research
+                notes, community dialogue, and practical next steps.
+              </p>
+              <a routerLink="/research-innovation" class="btn">Explore research</a>
+            </div>
+          </section>
+
+          <section class="event-channels" aria-label="Event formats">
+            @for (channel of eventChannels; track channel.title) {
+              <a [routerLink]="channel.path" class="event-channel">
+                <i [class]="channel.iconClass" aria-hidden="true"></i>
+                <span>{{ channel.label }}</span>
+                <strong>{{ channel.title }}</strong>
+                <p>{{ channel.description }}</p>
+              </a>
+            }
+          </section>
+
+          <section class="topics-strip" aria-label="Topics we cover">
+            <h2>Topics We Cover</h2>
+            <div>
+              @for (topic of newsroomTopics; track topic) {
+                <span>{{ topic }}</span>
               }
             </div>
           </section>
