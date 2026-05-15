@@ -1,174 +1,232 @@
-<main class="program-detail-page">
-  <div class="container">
-    <nav class="breadcrumb-row" aria-label="Breadcrumb">
-      <a routerLink="/home" class="breadcrumb-link">Home</a>
-      <span class="delimiter">/</span>
-      <a [routerLink]="['/home', level() || 'bachelors']" class="breadcrumb-link">
-        {{ levelLabel() }}
-      </a>
-      <span class="delimiter">/</span>
-      <span class="current">{{ program()?.title || 'Programme not found' }}</span>
+<main class="v2-shell pd">
+  @if (program(); as program) {
+    <div class="pd-crumbs">
+      <div class="v2-container">
+        <nav aria-label="Breadcrumb">
+          <a routerLink="/faculties-schools">Academics</a>
+          <span aria-hidden="true">›</span>
+          <a [routerLink]="sourcePagePath()">{{ sourcePageLabel() }}</a>
+          <span aria-hidden="true">›</span>
+          <span class="here" aria-current="page">{{ program.title }}</span>
+        </nav>
+        <div class="actions" aria-label="Programme actions">
+          <a class="v2-btn v2-btn--ghost" [routerLink]="sourcePagePath()">
+            <i class="fa-regular fa-bookmark" aria-hidden="true"></i> Save
+          </a>
+          <a class="v2-btn v2-btn--ghost" routerLink="/admissions">
+            <i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Brochure (PDF)
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <section class="pd-hero" aria-labelledby="program-title">
+      <div class="pd-hero__dots" aria-hidden="true"></div>
+      <div class="v2-container pd-hero__grid">
+        <div class="pd-hero__copy">
+          <span class="v2-kicker">{{ levelLabel() }} · {{ program.award }}</span>
+          <h1 id="program-title">{{ program.title }}</h1>
+          @for (paragraph of overviewParagraphs().slice(0, 2); track paragraph) {
+            <p class="pd-hero__lead">{{ paragraph }}</p>
+          }
+          <div class="pd-hero__chips" aria-label="Programme summary">
+            <span class="v2-chip"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ program.duration }}</span>
+            <span class="v2-chip"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>{{ program.award }}</span>
+            <span class="v2-chip"><i class="fa-regular fa-calendar" aria-hidden="true"></i>{{ intakeTerm() }}</span>
+            <span class="v2-chip"><i class="fa-solid fa-laptop" aria-hidden="true"></i>Hybrid academic support</span>
+          </div>
+        </div>
+
+        <aside class="pd-hero__meta" aria-label="Programme facts">
+          <div class="row"><span class="lbl">Duration</span><b>{{ program.duration }}</b></div>
+          <div class="row"><span class="lbl">Study mode</span><b>On-campus and hybrid support</b></div>
+          <div class="row"><span class="lbl">Tuition</span><b>{{ program.tuition[0] || 'Contact admissions' }}</b></div>
+          <div class="row"><span class="lbl">Application deadline</span><b>30 June 2026</b></div>
+          <div class="row"><span class="lbl">Next intake</span><b>{{ intakeTerm() }}</b></div>
+          <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg apply-cta">
+            Apply for 2026 intake <span aria-hidden="true">→</span>
+          </a>
+          <p class="note">Saved progress, document uploads, and status tracking are handled in the applicant workflow.</p>
+        </aside>
+      </div>
+    </section>
+
+    <nav class="pd-tabs" aria-label="Programme sections">
+      <div class="v2-container">
+        @for (section of sections(); track section.id) {
+          <button
+            type="button"
+            [class.active]="isActiveSection(section.id)"
+              [attr.aria-current]="isActiveSection(section.id) ? 'page' : null"
+            (click)="setSection(section.id)"
+          >
+            {{ section.title }}
+          </button>
+        }
+      </div>
     </nav>
 
-    @if (program(); as program) {
-      <section class="program-intro">
-        <h1>{{ program.title }}</h1>
-        @for (paragraph of overviewParagraphs(); track $index) {
-          <p>{{ paragraph }}</p>
-        }
-      </section>
-
-      <section class="program-detail-layout">
-        <aside class="program-nav" aria-label="Programme section navigation">
-          <ul class="nav-list">
-            @for (section of sections(); track section.id) {
-              <li>
-                <button
-                  type="button"
-                  class="nav-link"
-                  [class.active]="isActiveSection(section.id)"
-                  (click)="setSection(section.id)"
-                  [attr.aria-current]="isActiveSection(section.id) ? 'page' : null"
-                >
-                  {{ section.title }}
-                </button>
-              </li>
-            }
-          </ul>
-        </aside>
-
-        <article class="program-main" aria-live="polite">
-          <header class="section-head">
-            <h2>{{ sectionHeading() }}</h2>
-            <p class="section-intro">{{ sectionIntro() }}</p>
-          </header>
-
+    <section class="pd-body">
+      <div class="v2-container pd-body__grid">
+        <article class="pd-body__main" aria-live="polite">
           @switch (activeSection()) {
             @case ('overview') {
-              <section class="section-block">
-                @if (overviewHighlights().length) {
-                  <ol class="highlight-list">
-                    @for (point of overviewHighlights(); track point) {
-                      <li>
-                        <strong>{{ point.title }}</strong>
-                        <span>{{ point.description }}</span>
-                      </li>
-                    }
-                  </ol>
-                }
-                <div class="overview-grid">
-                  <div class="overview-card">
-                    <span>Duration</span>
-                    <strong>{{ program.duration }}</strong>
-                  </div>
-                  <div class="overview-card">
-                    <span>Award</span>
-                    <strong>{{ program.award }}</strong>
-                  </div>
-                  <div class="overview-card">
-                    <span>Next Intake</span>
-                    <strong>{{ intakeTerm() }}</strong>
-                  </div>
-                  <div class="overview-card">
-                    <span>Tuition</span>
-                    <strong>{{ program.tuition[0] || 'Contact admissions' }}</strong>
-                  </div>
+              <h2>About the programme</h2>
+              @for (paragraph of overviewParagraphs(); track paragraph) {
+                <p>{{ paragraph }}</p>
+              }
+              @if (overviewHighlights().length) {
+                <div class="pd-highlight-grid">
+                  @for (point of overviewHighlights(); track point.title) {
+                    <article>
+                      <strong>{{ point.title }}</strong>
+                      <span>{{ point.description }}</span>
+                    </article>
+                  }
                 </div>
-              </section>
+              }
             }
             @case ('objectives') {
-              <section class="section-block">
-                <ul>
-                  @for (objective of programmeObjectives(); track objective) {
-                    <li>{{ objective }}</li>
-                  }
-                </ul>
-              </section>
+              <h2>Programme objectives</h2>
+              <ul class="pd-bullets">
+                @for (objective of programmeObjectives(); track objective) {
+                  <li>{{ objective }}</li>
+                }
+              </ul>
             }
             @case ('outcomes') {
-              <section class="section-block">
-                <ul>
-                  @for (outcome of programmeOutcomes(); track outcome) {
-                    <li>{{ outcome }}</li>
-                  }
-                </ul>
-              </section>
+              <h2>Learning outcomes</h2>
+              <ul class="pd-bullets">
+                @for (outcome of programmeOutcomes(); track outcome) {
+                  <li>{{ outcome }}</li>
+                }
+              </ul>
             }
             @case ('admissions') {
-              <section class="section-block">
-                <ul>
-                  @for (requirement of program.admissions; track requirement) {
-                    <li>{{ requirement }}</li>
-                  }
-                </ul>
-              </section>
+              <h2>Entry requirements</h2>
+              <ul class="pd-bullets">
+                @for (requirement of program.admissions; track requirement) {
+                  <li>{{ requirement }}</li>
+                }
+              </ul>
             }
             @case ('duration') {
-              <section class="section-block">
-                <p>{{ program.duration }}</p>
-                <p><strong>Typical intake:</strong> {{ intakeTerm() }}</p>
-              </section>
-            }
-            @case ('tuition') {
-              <section class="section-block">
-                <ul>
-                  @for (item of program.tuition; track item) {
-                    <li>{{ item }}</li>
-                  }
-                </ul>
-              </section>
+              <h2>Programme facts</h2>
+              <div class="pd-highlight-grid pd-highlight-grid--facts">
+                @for (fact of programmeFacts(); track fact.label) {
+                  <article>
+                    <strong>{{ fact.label }}</strong>
+                    <span>{{ fact.value }}</span>
+                  </article>
+                }
+                <article>
+                  <strong>Typical intake</strong>
+                  <span>{{ intakeTerm() }}</span>
+                </article>
+              </div>
             }
             @case ('curriculum') {
-              <section class="section-block">
-                @if (program.outline.length) {
-                  <div class="table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Year</th>
-                          <th>Course</th>
-                          <th>Credits</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (outline of program.outline; track outline.title) {
-                          @for (item of outline.items; track item) {
-                            <tr>
-                              <td>{{ outline.title }}</td>
-                              <td>{{ item }}</td>
-                              <td>3</td>
-                            </tr>
-                          }
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                } @else {
-                  <p>Curriculum details will be shared by the department.</p>
+              <h2>Curriculum at a glance</h2>
+              @if (curriculumRows().length) {
+                <div class="pd-year">
+                  @for (row of curriculumRows(); track row.stage + row.item) {
+                    <div class="y">
+                      <b>{{ row.showStage ? row.stage : '' }}</b>
+                      <div>
+                    <h5>{{ row.showStage ? row.stage : 'Coursework' }}</h5>
+                        <ul><li>{{ row.item }}</li></ul>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p>Curriculum details will be shared by the department.</p>
+              }
+            }
+            @case ('tuition') {
+              <h2>Tuition and funding</h2>
+              <ul class="pd-bullets">
+                @for (item of program.tuition; track item) {
+                  <li>{{ item }}</li>
                 }
-              </section>
+              </ul>
             }
             @case ('contact') {
-              <section class="section-block">
-                <p>{{ programmeMoreInfo() }}</p>
-              </section>
-            }
-            @default {
-              <section class="section-block">
-                <p>{{ program.overview }}</p>
-              </section>
+              <h2>Request more information</h2>
+              <p>{{ programmeMoreInfo() }}</p>
+              <div class="pd-contact-actions">
+                <a class="v2-btn v2-btn--primary" routerLink="/admissions">Apply now</a>
+                <a class="v2-btn v2-btn--ghost" routerLink="/contact">Contact admissions</a>
+              </div>
             }
           }
         </article>
-      </section>
-    } @else {
-      <section class="not-found">
-        <h2>Programme details unavailable</h2>
-        <p>We could not find the requested programme details. Please return to your level page.</p>
-        <a [routerLink]="['/home', level() || 'bachelors']" class="not-found__link">
-          Return to programmes
-        </a>
-      </section>
-    }
-  </div>
+
+        <aside class="pd-side" aria-label="Programme support">
+          <div class="pd-card">
+            <h5>Academic home</h5>
+            <div class="dir">
+              <img src="assets/portrait-prof-ruhinda.jpeg" alt="" />
+              <div>
+                <b>{{ sourcePageLabel() }}</b>
+                <span>{{ program.award }} programme</span>
+                <a [routerLink]="sourcePagePath()">View school →</a>
+              </div>
+            </div>
+          </div>
+
+          @if (sourcePage(); as page) {
+            <div class="pd-card">
+              <h5>Related programmes</h5>
+              <ul class="links">
+                @for (related of page.featuredDepartment.programs.slice(0, 4); track related.title) {
+                  <li><a [routerLink]="sourcePagePath()">{{ related.title }} →</a></li>
+                }
+              </ul>
+            </div>
+          }
+
+          <div class="pd-card pd-card--warm">
+            <h5>Funding</h5>
+            <p>Applicants can ask admissions about bursaries, payment planning, partner-supported pathways, and need-based support.</p>
+            <a routerLink="/admissions" class="v2-btn v2-btn--link">Funding brief</a>
+          </div>
+
+          <div class="pd-card">
+            <h5>Admissions calendar</h5>
+            <ul class="cal">
+              <li><span class="d">15 Jan 2026</span><span>Applications open</span></li>
+              <li><span class="d">30 Jun 2026</span><span>Priority deadline</span></li>
+              <li><span class="d">15 Aug 2026</span><span>Decisions released</span></li>
+              <li><span class="d">Sep 2026</span><span>Orientation begins</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="v2-container">
+      <div class="pg-divider-row">
+        <div class="pg-divider" aria-hidden="true"><img src="assets/pattern-mark.svg" alt="" /></div>
+      </div>
+    </div>
+
+    <section class="pd-apply-strip" aria-labelledby="programme-apply-title">
+      <div class="v2-container">
+        <div>
+          <span class="v2-kicker">Ready when you are</span>
+          <h2 id="programme-apply-title">One application. Saved as you go.</h2>
+          <p>Begin the 2026 application, upload documents, return through your applicant account, and track status from one place.</p>
+        </div>
+        <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg">Begin an application <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  } @else {
+    <section class="pd-not-found">
+      <span class="v2-kicker">Programme lookup</span>
+      <h1>Programme details unavailable</h1>
+      <p>We could not find the requested programme details. Please return to the programmes directory.</p>
+      <a class="v2-btn v2-btn--primary" [routerLink]="['/home', level() || 'bachelors']">Return to programmes</a>
+    </section>
+  }
 </main>

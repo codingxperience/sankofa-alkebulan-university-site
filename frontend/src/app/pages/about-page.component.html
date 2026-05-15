@@ -1,238 +1,239 @@
-<div class="about-page">
-  <section class="about-hero" aria-labelledby="about-page-title">
-    <div class="about-hero__media" aria-hidden="true">
-      <video
-        class="about-hero__video"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-      >
-        <source src="/assets/illustrations/about-hero-illustrator.mp4" type="video/mp4" />
-      </video>
-    </div>
-    <div class="about-hero__shade"></div>
-    <div class="container about-hero__content">
-      <p class="about-hero__eyebrow">Sankofa Alkebulan University</p>
-      <h1 id="about-page-title">About</h1>
-      <p class="about-hero__summary">
-        A Sankofa-centered university model rooted in African knowledge systems, rigorous scholarship, and ethical leadership.
-      </p>
-      <nav class="breadcrumb" aria-label="Breadcrumb">
+<div class="v2-shell">
+  <!-- Breadcrumb -->
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
         <a routerLink="/home">Home</a>
-        <span aria-hidden="true">/</span>
-        <span>About</span>
+        <span aria-hidden="true">›</span>
+        <span class="here" aria-current="page">About Sankofa</span>
       </nav>
-    </div>
-  </section>
-
-  <section class="about-section about-welcome" id="about-sankofa">
-    <div class="container">
-      <header class="section-heading section-heading--center">
-        <p class="section-kicker">About Sankofa</p>
-        <h2>Welcome Message</h2>
-        <p class="section-lead">
-          Sankofa Alkebulan University exists to recover wisdom, renew scholarship, and strengthen African-centered
-          intellectual leadership for the present and the future.
-        </p>
-      </header>
-
-      <div class="about-welcome__grid">
-        <div class="about-welcome__copy">
-          @for (paragraph of overviewParagraphs; track $index) {
-            <p>{{ paragraph }}</p>
-          }
-        </div>
-
-        <figure class="about-media-card">
-          <img
-            class="about-media-card__image"
-            ngSrc="/wp-content/uploads/2025/10/sankofa_hero_big.jpg"
-            width="1080"
-            height="720"
-            sizes="(max-width: 920px) 100vw, 42vw"
-            alt="Sankofa Alkebulan University lecture and welcome session"
-          />
-          <span class="about-media-card__play" aria-hidden="true"></span>
-          <figcaption>Founding vision and public scholarship at Sankofa Alkebulan University.</figcaption>
-        </figure>
+      <div class="actions">
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Annual report</a>
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share</a>
       </div>
-
     </div>
-  </section>
+  </div>
 
-  <section class="about-section about-purpose" id="mission">
-    <div class="container">
-      <div class="purpose-editorial">
-        <header class="purpose-editorial__intro">
-          <p class="section-kicker">Our Vision, Mission and Core Functions</p>
-          <h2>Clarity before scale.</h2>
-          <p>
-            A focused university model built around three commitments: recover African knowledge,
-            produce rigorous scholarship, and shape ethical leadership.
+  <!-- Hero — Sankofa motion artwork -->
+  <section class="pg-hero pg-hero--paper ab-hero" aria-labelledby="about-hero-title">
+    <div class="pg-hero__dots" aria-hidden="true"></div>
+    <div class="v2-container">
+      <div class="pg-hero__grid">
+        <div class="pg-hero__copy">
+          <span class="v2-kicker">About Sankofa Alkebulan</span>
+          <h1 id="about-hero-title">A university built on <em>returning</em> — to what was lost, and to what is possible.</h1>
+          <p class="pg-hero__lead">
+            Sankofa Alkebulan University is an independent, multidisciplinary research institution
+            advancing African knowledge systems, rigorous scholarship, and ethical public leadership
+            — founded on the Akan principle of Sankofa.
           </p>
-        </header>
-
-        <div class="purpose-editorial__body">
-          <div class="purpose-statement-list">
-            @for (card of purposeCards; track card.title; let idx = $index) {
-              <article class="purpose-statement">
-                <span>0{{ idx + 1 }}</span>
-                <div>
-                  <h3>{{ card.title }}</h3>
-                  <p>{{ card.text }}</p>
-                </div>
-              </article>
-            }
+          <div class="pg-hero__actions">
+            <a routerLink="/about" fragment="mission" class="v2-btn v2-btn--primary v2-btn--lg">Read our mission <span aria-hidden="true">→</span></a>
+            <a routerLink="/about" fragment="governance" class="v2-btn v2-btn--ghost v2-btn--lg">Governance &amp; charter</a>
           </div>
-
-          <section class="values-strip" aria-labelledby="core-values-title">
-            <div class="values-strip__heading">
-              <p class="section-kicker">Our Core Values</p>
-              <h3 id="core-values-title">Non-negotiables</h3>
-            </div>
-
-            <ul class="values-strip__list">
-              @for (value of coreValues; track value.title) {
-                <li>
-                  <strong>{{ value.title }}</strong>
-                  <span>{{ value.description }}</span>
-                </li>
-              }
-            </ul>
-          </section>
+          <div class="pg-hero__trust">
+            <div class="stat"><div class="num">Est. 2024</div><div class="lbl">Founded as an independent institution</div></div>
+            <span class="divider" aria-hidden="true"></span>
+            <div class="stat"><div class="num">17 schools</div><div class="lbl">Across six colleges</div></div>
+            <span class="divider" aria-hidden="true"></span>
+            <div class="stat"><div class="num">54 nations</div><div class="lbl">In present cohort</div></div>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="about-section about-team" id="leadership-team" aria-labelledby="leadership-team-title">
-    <div class="container">
-      <header class="section-heading section-heading--center">
-        <p class="section-kicker">Founding Leadership</p>
-        <h2 id="leadership-team-title">Founders & Chancellor</h2>
-        <p class="section-lead">
-          The founding custodians remain on the About page. Executive, governance, and advisory teams now have focused
-          pages for a cleaner leadership experience.
-        </p>
-      </header>
-
-      <div class="team-showcase">
-        @for (group of teamGroups; track group.id) {
-          <section
-            class="team-category-block"
-            [id]="group.anchor"
-            [attr.aria-labelledby]="group.anchor + '-title'"
-          >
-            <div class="team-category-block__header">
-              <div>
-                <h3 [id]="group.anchor + '-title'">{{ group.label }}</h3>
-              </div>
-              <span>{{ group.members.length }} {{ group.members.length === 1 ? 'member' : 'members' }}</span>
-            </div>
-
-            <div class="team-card-grid">
-              @for (member of group.members; track member.slug) {
-                <article class="team-member-card">
-                  <div class="team-member-card__portrait">
-                    <img
-                      [ngSrc]="member.image"
-                      width="320"
-                      height="320"
-                      sizes="(max-width: 640px) 38vw, (max-width: 1020px) 22vw, 13vw"
-                      [alt]="member.name"
-                      [style.object-position]="member.objectPosition || '50% 32%'"
-                    />
-                  </div>
-
-                  <div class="team-member-card__body">
-                    @if (member.role !== group.label) {
-                      <p class="team-member-card__role">{{ member.role }}</p>
-                    }
-                    <h4>{{ member.name }}</h4>
-                    <p>{{ member.summary }}</p>
-                    <a
-                      class="team-profile-link"
-                      [routerLink]="['/about/team', member.slug]"
-                    >
-                      View profile
-                    </a>
-                  </div>
-                </article>
-              }
-            </div>
-          </section>
-        }
-      </div>
-
-      <nav class="team-directory-links" aria-label="Other leadership teams">
-        @for (link of teamDirectoryLinks; track link.path) {
-          <a [routerLink]="link.path">
-            <span>{{ link.label }}</span>
-            <small>{{ link.text }}</small>
-          </a>
-        }
-      </nav>
-    </div>
-  </section>
-
-  <section class="about-section about-philosophy" id="philosophy">
-    <div class="container">
-      <header class="section-heading section-heading--center">
-        <p class="section-kicker">Our Philosophy</p>
-        <h2>Guided by the Sankofa Principle</h2>
-        <p class="section-lead">
-          The University's academic culture is shaped by historical memory, multidisciplinary scholarship, ethical
-          leadership, intellectual independence, and global engagement.
-        </p>
-      </header>
-
-      <div class="philosophy-layout">
-        <div class="philosophy-tabs" role="tablist" aria-label="Sankofa philosophy">
-          @for (item of philosophyItems; track item.title; let idx = $index) {
-            <button
-              type="button"
-              class="philosophy-tab"
-              [class.is-active]="activePhilosophyIndex() === idx"
-              [attr.aria-selected]="activePhilosophyIndex() === idx"
-              [attr.aria-controls]="'philosophy-panel'"
-              (click)="setPhilosophy(idx)"
-              role="tab"
+        <!-- About hero: brand-adapted illustrator video -->
+        <div class="ab-hero__media">
+          <div class="ab-hero__video">
+            <video
+              #heroVideo
+              autoplay
+              muted
+              loop
+              playsinline
+              poster="assets/about-illustrator-poster.png"
+              aria-label="Sankofa illustrator artwork — the university's identity rendered frame by frame."
             >
-              {{ item.title }}
-            </button>
-          }
+              <source src="assets/about-illustrator.mp4" type="video/mp4" />
+            </video>
+            <div class="ab-hero__veil" aria-hidden="true"></div>
+            <span class="ab-hero__wordmark" aria-hidden="true">Sankofa</span>
+          </div>
+          <figcaption class="ab-hero__bird-caption">
+            <span class="akan">se wo were fi na wosankofa a yenkyi</span>
+            <span class="trans">? it is not taboo to go back and retrieve what you have forgotten.</span>
+          </figcaption>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <article class="philosophy-panel" id="philosophy-panel" role="tabpanel">
-          <p class="philosophy-panel__eyebrow">Sankofa Philosophy</p>
-          <h3>{{ philosophyItems[activePhilosophyIndex()].title }}</h3>
-          <p>{{ philosophyItems[activePhilosophyIndex()].summary }}</p>
-          <ul class="accent-list">
-            @for (item of philosophyItems[activePhilosophyIndex()].focusAreas; track item) {
-              <li>{{ item }}</li>
+  <!-- On-page sub-nav -->
+  <nav class="ab-subnav" aria-label="About sections">
+    <div class="v2-container">
+      @for (s of subnav; track s.id; let first = $first) {
+        <a routerLink="/about" [fragment]="s.id" [class.active]="first">{{ s.label }}</a>
+      }
+    </div>
+  </nav>
+
+  <!-- Mission & philosophy -->
+  <section class="v2-section" id="mission">
+    <div class="v2-container">
+      <div class="ab-mission">
+        <div class="ab-mission__copy">
+          <span class="v2-kicker">Mission &amp; philosophy</span>
+          <h2>To return, restore, and reimagine African scholarship for a changing world.</h2>
+          <div class="pg-prose">
+            <p>The institution is founded on the philosophical principle of <strong>Sankofa</strong>, an
+              Akan concept from West Africa meaning &ldquo;to go back and retrieve what has been lost.&rdquo;
+              This is not nostalgia. It is a method: the deliberate, rigorous recovery of African
+              intellectual heritage in order to build a stronger and more enlightened future.</p>
+            <p>The university cultivates a scholarly environment where African history, philosophy,
+              spirituality, governance traditions, and indigenous knowledge are studied with
+              intellectual rigour and dignity — through research, writing, dialogue, and academic
+              collaboration.</p>
+            <p>We also nurture a community of thinkers committed to ethical leadership,
+              intellectual independence, and public engagement.</p>
+          </div>
+        </div>
+        <aside class="ab-mission__values">
+          <h3>What we hold</h3>
+          <ol>
+            @for (v of values; track v.n) {
+              <li><span class="n">{{ v.n }}</span><div><b>{{ v.b }}</b><p>{{ v.p }}</p></div></li>
             }
-          </ul>
-          <p>{{ philosophyItems[activePhilosophyIndex()].details }}</p>
-        </article>
+          </ol>
+        </aside>
       </div>
     </div>
   </section>
 
-  <section class="about-section about-cta">
-    <div class="container">
-      <div class="cta-panel">
-        <div>
-          <p class="section-kicker">Join Us</p>
-          <h2>Join Sankofa Alkebulan University</h2>
-          <p>
-            Become part of a University committed to reclaiming knowledge, renewing wisdom, and building ethical
-            leadership across Africa and beyond.
-          </p>
+  <!-- Divider mark -->
+  <div class="v2-container"><div class="pg-divider-row"><div class="pg-divider" aria-hidden="true"><img src="assets/pattern-mark.svg" alt=""></div></div></div>
+
+  <!-- Founder quote slab -->
+  <section class="pg-quote" aria-label="Founder's note">
+    <div class="v2-container">
+      <div class="pg-quote__portrait">
+        <img src="assets/portrait-founder.jpeg" alt="">
+      </div>
+      <div class="pg-quote__body">
+        <p>Africa's future will be built on the rigorous recovery of its past. We are not a museum
+          of memory — we are an institution that teaches restoration as a research method, and
+          turns scholarship into public capacity.</p>
+        <div class="pg-quote__attr">
+          <b>Prof. Emmanuel Mihiingo Kaija</b>
+          <span>Founder — Sankofa Alkebulan University</span>
         </div>
-        <a routerLink="/admissions" class="btn btn--accent">Apply Now</a>
       </div>
     </div>
   </section>
-</div>
+
+  <!-- History -->
+  <section class="v2-section v2-section--quiet" id="history">
+    <div class="v2-container">
+      <div class="v2-section-head" data-reveal>
+        <span class="v2-kicker">History</span>
+        <h2>From a research initiative to a continental university.</h2>
+        <p>The institution emerged from a broader intellectual movement to reclaim African knowledge traditions marginalised during the colonial and post-colonial eras. Its growth has been deliberate and incremental.</p>
+      </div>
+      <ol class="ab-timeline" data-reveal>
+        @for (t of timeline; track t.year) {
+          <li><span class="year">{{ t.year }}</span><b>{{ t.b }}</b><p>{{ t.p }}</p></li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Governance — clean vertical org tree -->
+  <section class="v2-section" id="governance">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split" data-reveal>
+        <div>
+          <span class="v2-kicker">Governance</span>
+          <h2>How the university is held to its mission.</h2>
+        </div>
+        <p class="right">A multi-layered structure designed to keep visionary leadership, scholarly authority, and operational accountability clearly distinct — and clearly coordinated.</p>
+      </div>
+
+      <ol class="ab-org" data-reveal>
+        @for (g of governance; track g.num) {
+          <li>
+            <span class="ab-org__num">{{ g.num }}</span>
+            <div class="ab-org__body">
+              <h4>{{ g.h }}</h4>
+              <p>{{ g.p }}</p>
+            </div>
+            <span class="ab-org__role">{{ g.role }}</span>
+          </li>
+        }
+      </ol>
+
+      <div class="ab-org__actions" data-reveal>
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Read the institutional charter</a>
+        <a href="#" class="v2-btn v2-btn--link">Annual reports &amp; financial statements</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Leadership grid -->
+  <section class="v2-section v2-section--quiet" id="leadership">
+    <div class="v2-container">
+      <div class="v2-section-head" data-reveal>
+        <span class="v2-kicker">Leadership</span>
+        <h2>The people who hold the work.</h2>
+      </div>
+      <div class="ab-team" data-reveal>
+        @for (person of leadership; track person.b) {
+          <article class="ab-person">
+            <div class="ab-person__photo"><img [src]="person.photo" alt=""></div>
+            <div><b>{{ person.b }}</b><span>{{ person.s }}</span><p>{{ person.p }}</p></div>
+          </article>
+        }
+      </div>
+      <div style="margin-top: 32px" data-reveal>
+        <a href="#" class="v2-btn v2-btn--link">View the full leadership directory</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Identity & charter strip -->
+  <section class="v2-section" id="identity">
+    <div class="v2-container">
+      <div class="ab-identity" data-reveal>
+        <div class="ab-identity__copy">
+          <span class="v2-kicker">Identity &amp; charter</span>
+          <h2>Pan-African in posture, plural in method.</h2>
+          <p>The university's identity is a coordinated record: a written charter, a constitution, a strategic plan, and a public set of standards. Every public document — from the seal and motto, to admissions policies and the academic calendar — is anchored in this canon.</p>
+          <div class="ab-identity__actions">
+            <a href="#" class="v2-btn v2-btn--primary">Read the charter <span aria-hidden="true">→</span></a>
+            <a href="#" class="v2-btn v2-btn--ghost">Strategic plan 2026–2031</a>
+          </div>
+        </div>
+        <ul class="ab-identity__list">
+          @for (doc of identityDocs; track doc.b) {
+            <li><span class="ico"><i [class]="doc.icon"></i></span><b>{{ doc.b }}</b><span>{{ doc.s }}</span></li>
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section class="v2-section v2-section--quiet" id="impact">
+    <div class="v2-container">
+      <div class="v2-section-head" data-reveal>
+        <span class="v2-kicker">Impact</span>
+        <h2>Where the work is showing up.</h2>
+      </div>
+      <div class="pg-stats" data-reveal>
+        @for (stat of impactRowA; track stat.lbl) {
+          <div class="stat"><div class="num">{{ stat.num }}</div><div class="lbl">{{ stat.lbl }}</div></div>
+        }
+      </div>
+      <div class="pg-stats" data-reveal style="margin-top: 28px;">
+        @for (stat of impactRowB; track stat.lbl) {
+          <div class="stat"><div class="num">{{ stat.num }}</div><div class="lbl">{{ stat.lbl }}</div></div>
+        }
+      </div>
+    </div>
+  </section></div>

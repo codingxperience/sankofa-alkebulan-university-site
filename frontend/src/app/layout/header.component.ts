@@ -6,15 +6,14 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MEGA_MENU_ITEMS } from '../university/university-data';
 
 interface NavLink {
   readonly label: string;
-  readonly path: string | null;
+  readonly path: string;
+  readonly kind?: 'about' | 'academics';
   readonly disabled?: boolean;
 }
 
@@ -22,6 +21,7 @@ interface MegaLink {
   readonly label: string;
   readonly path: string;
   readonly fragment?: string;
+  readonly description?: string;
 }
 
 interface MegaColumn {
@@ -29,46 +29,120 @@ interface MegaColumn {
   readonly links: readonly MegaLink[];
 }
 
+type MobileGroup = 'about' | 'academics';
+
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, NgOptimizedImage],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <header class="site-header">
-      <div class="utility-row">
-        <div class="container utility-row__inner">
+      <div class="editorial-bar">
+        <div class="container editorial-bar__inner">
           <a
             routerLink="/home"
-            class="brand-badge"
+            class="editorial-brand"
             aria-label="Sankofa Alkebulan University home"
             (click)="closeMenus()"
           >
-            <img
-              ngSrc="/assets/branding/sankofa_university_logo-remove-background.com.png"
-              alt="Sankofa Alkebulan University logo"
-              width="124"
-              height="186"
-              priority
-            />
+            <img src="/assets/design/logo-primary.png" alt="Sankofa Alkebulan University" />
           </a>
 
-          <nav class="utility-nav" aria-label="Utility navigation">
-            @for (item of utilityLinks; track item.label) {
-              @if (item.disabled) {
-                <span class="nav-disabled" aria-disabled="true">{{ item.label }}</span>
+          <nav class="editorial-nav" aria-label="Primary navigation">
+            @for (item of primaryLinks; track item.label) {
+              @if (item.kind === 'about') {
+                <div
+                  class="nav-item nav-item--has-menu"
+                  (mouseenter)="openAboutMenu()"
+                  (mouseleave)="closeAboutMenuDelayed()"
+                  (focusin)="openAboutMenu()"
+                  (focusout)="onAboutFocusOut($event)"
+                >
+                  <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
+                  <div class="nav-panel nav-panel--about" [class.nav-panel--open]="isAboutMenuOpen()">
+                    <div class="nav-panel__intro">
+                      <span>About SAU</span>
+                      <strong>Institutional identity with African intellectual roots.</strong>
+                      <p>{{ aboutMenuSummary }}</p>
+                    </div>
+                    <div class="nav-panel__columns nav-panel__columns--two">
+                      <section>
+                        <h3>Institution</h3>
+                        @for (link of aboutSectionLinks; track link.label) {
+                          <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                            <strong>{{ link.label }}</strong>
+                            @if (link.description) {
+                              <span>{{ link.description }}</span>
+                            }
+                          </a>
+                        }
+                      </section>
+                      <section>
+                        <h3>Governance</h3>
+                        @for (link of aboutRelatedLinks; track link.label) {
+                          <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                            <strong>{{ link.label }}</strong>
+                            @if (link.description) {
+                              <span>{{ link.description }}</span>
+                            }
+                          </a>
+                        }
+                      </section>
+                    </div>
+                  </div>
+                </div>
+              } @else if (item.kind === 'academics') {
+                <div
+                  class="nav-item nav-item--has-menu"
+                  (mouseenter)="openAcademicsMenu()"
+                  (mouseleave)="closeAcademicsMenuDelayed()"
+                  (focusin)="openAcademicsMenu()"
+                  (focusout)="onAcademicsFocusOut($event)"
+                >
+                  <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
+                  <div class="nav-panel nav-panel--academics" [class.nav-panel--open]="isAcademicsMenuOpen()">
+                    <div class="nav-panel__intro">
+                      <span>Academic Estate</span>
+                      <strong>Colleges, schools, programmes, and research institutes.</strong>
+                      <p>Choose by intellectual question first, then move into the full academic architecture.</p>
+                    </div>
+                    <div class="nav-panel__columns">
+                      @for (column of academicsMega; track column.title) {
+                        <section>
+                          <h3>{{ column.title }}</h3>
+                          @for (link of column.links; track link.label) {
+                            <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                              <strong>{{ link.label }}</strong>
+                              @if (link.description) {
+                                <span>{{ link.description }}</span>
+                              }
+                            </a>
+                          }
+                        </section>
+                      }
+                    </div>
+                  </div>
+                </div>
+              } @else if (item.disabled) {
+                <button
+                  type="button"
+                  class="nav-construction"
+                  aria-disabled="true"
+                  data-tip="Coming soon"
+                >
+                  {{ item.label }}
+                </button>
               } @else {
                 <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
               }
             }
           </nav>
 
-          <span class="utility-chat utility-chat--disabled" aria-disabled="true">
-            <span class="live-dot" aria-hidden="true"></span>
-            Live Chat
-          </span>
+          <a routerLink="/admissions" class="apply-link" (click)="closeMenus()">Apply &middot; 2026</a>
 
           <button
             type="button"
             class="mobile-toggle"
+            [class.mobile-toggle--open]="isMobileMenuOpen()"
             [attr.aria-expanded]="isMobileMenuOpen()"
             aria-controls="mobile-navigation"
             aria-label="Toggle mobile navigation"
@@ -81,1002 +155,704 @@ interface MegaColumn {
         </div>
       </div>
 
-      <div class="primary-row">
-        <div class="container primary-row__inner">
-          <nav class="primary-nav" aria-label="Primary navigation">
-            @for (item of primaryLinks; track item.label) {
-              @if (item.label === 'Academics') {
-                <div
-                  class="nav-flyout"
-                  (mouseenter)="openAcademicsMenu()"
-                  (mouseleave)="closeAcademicsMenuDelayed()"
-                  (focusin)="openAcademicsMenu()"
-                  (focusout)="onAcademicsFocusOut($event)"
-                >
-                  <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
-                  <div
-                    class="academics-flyout"
-                    (mouseenter)="openAcademicsMenu()"
-                    (mouseleave)="closeAcademicsMenuDelayed()"
-                    [class.academics-flyout--open]="isAcademicsMenuOpen()"
-                    aria-label="Academics menu"
-                  >
-                    <div class="academics-flyout__grid">
-                      @for (column of academicsMega; track column.title) {
-                        <div class="academics-flyout__column">
-                          <h4>{{ column.title }}</h4>
-                          <ul>
-                            @for (link of column.links; track link.label) {
-                              <li>
-                                <a
-                                  [routerLink]="link.path"
-                                  [fragment]="link.fragment"
-                                  (click)="closeMenus()"
-                                >
-                                  {{ link.label }}
-                                </a>
-                              </li>
-                            }
-                          </ul>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </div>
-              } @else if (item.path === '/about') {
-                <div
-                  class="nav-flyout"
-                  (mouseenter)="openAboutMenu()"
-                  (mouseleave)="closeAboutMenuDelayed()"
-                  (focusin)="openAboutMenu()"
-                  (focusout)="onAboutFocusOut($event)"
-                >
-                  <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
-                  <div
-                    class="about-flyout"
-                    (mouseenter)="openAboutMenu()"
-                    (mouseleave)="closeAboutMenuDelayed()"
-                    [class.about-flyout--open]="isAboutMenuOpen()"
-                    aria-label="About menu"
-                  >
-                    <div class="about-flyout__grid">
-                      <div class="about-flyout__intro">
-                        <p class="about-flyout__eyebrow">Overview</p>
-                        <p class="about-flyout__summary">
-                          {{ aboutMenuSummary }}
-                        </p>
-                      </div>
-                      <div class="about-flyout__column">
-                        <p class="about-flyout__heading">In This Section</p>
-                        <ul>
-                          @for (link of aboutSectionLinks; track link.label) {
-                            <li>
-                              <a
-                                [routerLink]="link.path"
-                                [fragment]="link.fragment"
-                                (click)="closeMenus()"
-                              >
-                                {{ link.label }}
-                              </a>
-                            </li>
-                          }
-                        </ul>
-                      </div>
-                      <div class="about-flyout__column">
-                        <p class="about-flyout__heading">Related Links</p>
-                        <ul>
-                          @for (link of aboutRelatedLinks; track link.label) {
-                            <li>
-                              <a
-                                [routerLink]="link.path"
-                                [fragment]="link.fragment"
-                                (click)="closeMenus()"
-                              >
-                                {{ link.label }}
-                              </a>
-                            </li>
-                          }
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              } @else {
-                @if (item.disabled) {
-                  <span class="nav-disabled nav-disabled--primary" aria-disabled="true">{{ item.label }}</span>
-                } @else {
-                  <a [routerLink]="item.path" routerLinkActive="is-active">{{ item.label }}</a>
-                }
-              }
-            }
-            <button
-              type="button"
-              class="all-sections"
-              disabled
-              aria-disabled="true"
-              [attr.aria-expanded]="false"
-              aria-controls="mega-menu-panel"
-            >
-              All Sections
-            </button>
-          </nav>
-          <a routerLink="/admissions" class="apply-btn">Apply Now</a>
-        </div>
-      </div>
-
-      <div id="mega-menu-panel" class="mega-menu" [class.mega-menu--open]="isMegaMenuOpen()">
-        <div class="container mega-menu__grid">
-          @for (item of megaMenuItems; track item.slug) {
-            <a [routerLink]="['/', item.path]" class="mega-menu__item" (click)="closeMenus()">
-              <strong>{{ item.navLabel }}</strong>
-              <span>{{ item.description }}</span>
+      <div id="mobile-navigation" class="mobile-drawer" [class.mobile-drawer--open]="isMobileMenuOpen()">
+        <div class="mobile-drawer__surface">
+          <div class="mobile-drawer__head">
+            <a routerLink="/home" class="mobile-drawer__brand" (click)="closeMenus()">
+              <img src="/assets/design/logo-primary.png" alt="Sankofa Alkebulan University" />
             </a>
-          }
+            <button type="button" aria-label="Close mobile navigation" (click)="closeMenus()">&times;</button>
+          </div>
+
+          <p class="mobile-drawer__eyebrow">Sankofa Alkebulan</p>
+
+          <nav class="mobile-drawer__nav" aria-label="Mobile navigation">
+            @for (item of primaryLinks; track item.label) {
+              @if (item.kind === 'about') {
+                <div
+                  class="mobile-group"
+                  [class.mobile-group--open]="isMobileGroupOpen('about')"
+                  [class.mobile-group--active]="isAboutRoute()"
+                >
+                  <button
+                    type="button"
+                    [attr.aria-expanded]="isMobileGroupOpen('about')"
+                    (click)="toggleMobileGroup('about')"
+                  >
+                    About SAU
+                  </button>
+                  <div class="mobile-group__links">
+                    <a routerLink="/about" (click)="closeMenus()">About overview</a>
+                    @for (link of aboutSectionLinks; track link.label) {
+                      <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">{{ link.label }}</a>
+                    }
+                    @for (link of aboutRelatedLinks; track link.label) {
+                      <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">{{ link.label }}</a>
+                    }
+                  </div>
+                </div>
+              } @else if (item.kind === 'academics') {
+                <div
+                  class="mobile-group"
+                  [class.mobile-group--open]="isMobileGroupOpen('academics')"
+                  [class.mobile-group--active]="isAcademicsRoute()"
+                >
+                  <button
+                    type="button"
+                    [attr.aria-expanded]="isMobileGroupOpen('academics')"
+                    (click)="toggleMobileGroup('academics')"
+                  >
+                    Academics
+                  </button>
+                  <div class="mobile-group__links">
+                    <a routerLink="/faculties-schools" (click)="closeMenus()">Academic overview</a>
+                    @for (column of academicsMega; track column.title) {
+                      <span>{{ column.title }}</span>
+                      @for (link of column.links; track link.label) {
+                        <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">{{ link.label }}</a>
+                      }
+                    }
+                  </div>
+                </div>
+              } @else if (item.disabled) {
+                <button
+                  type="button"
+                  class="mobile-construction"
+                  aria-disabled="true"
+                >
+                  <span>{{ item.label }}</span>
+                  <small>Coming soon</small>
+                </button>
+              } @else {
+                <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">{{ item.label }}</a>
+              }
+            }
+          </nav>
+
+          <div class="mobile-drawer__cta">
+            <a routerLink="/admissions" class="mobile-drawer__apply" (click)="closeMenus()">Apply now</a>
+            <a
+              href="https://chat.whatsapp.com/Dv2lTXXzhfMDf6sClAxpEP"
+              target="_blank"
+              rel="noopener"
+              class="mobile-drawer__support"
+              (click)="closeMenus()"
+            >
+              Live chat with admissions
+            </a>
+          </div>
         </div>
       </div>
 
-      <div id="mobile-navigation" class="mobile-menu" [class.mobile-menu--open]="isMobileMenuOpen()">
-        <div class="container mobile-menu__inner">
-          <a routerLink="/home" routerLinkActive="is-active" (click)="closeMenus()">Home</a>
-          @for (item of primaryLinks; track item.label) {
-            @if (item.path === '/about') {
-              <details class="mobile-menu__group">
-                <summary>About</summary>
-                <div class="mobile-subnav">
-                  <a routerLink="/about" routerLinkActive="is-active" (click)="closeMenus()">About Overview</a>
-                  @for (link of aboutSectionLinks; track link.label) {
-                    <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
-                      {{ link.label }}
-                    </a>
-                  }
-                  <span class="mobile-subnav__label">Related</span>
-                  @for (link of aboutRelatedLinks; track link.label) {
-                    <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
-                      {{ link.label }}
-                    </a>
-                  }
-                </div>
-              </details>
-            } @else if (item.label === 'Academics') {
-              <details class="mobile-menu__group">
-                <summary>Academics</summary>
-                <div class="mobile-subnav">
-                  <a routerLink="/faculties-schools" routerLinkActive="is-active" (click)="closeMenus()">
-                    Academics Overview
-                  </a>
-                  @for (column of academicsMega; track column.title) {
-                    <span class="mobile-subnav__label">{{ column.title }}</span>
-                    @for (link of column.links; track link.label) {
-                      <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
-                        {{ link.label }}
-                      </a>
-                    }
-                  }
-                </div>
-              </details>
-            } @else {
-              @if (item.disabled) {
-                <span class="mobile-link-disabled" aria-disabled="true">{{ item.label }}</span>
-              } @else {
-                <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">
-                  {{ item.label }}
-                </a>
-              }
-            }
-          }
-          <span class="mobile-link-disabled" aria-disabled="true">All Sections</span>
-          @for (item of utilityLinks; track item.label) {
-            @if (item.disabled) {
-              <span class="mobile-link-disabled" aria-disabled="true">{{ item.label }}</span>
-            } @else {
-              <a [routerLink]="item.path" routerLinkActive="is-active" (click)="closeMenus()">
-                {{ item.label }}
-              </a>
-            }
-          }
-          <span class="mobile-live-chat mobile-link-disabled" aria-disabled="true">
-            <span class="live-dot" aria-hidden="true"></span>
-            Live Chat Online
-          </span>
-          <a routerLink="/admissions" class="apply-btn apply-btn--mobile" (click)="closeMenus()">
-            Apply Now
-          </a>
-        </div>
-      </div>
     </header>
   `,
   styles: [`
     :host {
       display: block;
       width: 100%;
-      max-width: 100%;
     }
 
     .site-header {
       position: sticky;
       top: 0;
       z-index: 130;
-      border-bottom: 1px solid #d4e2ee;
-      box-shadow: 0 12px 28px rgba(10, 36, 58, 0.1);
-      background: #fff;
+      background: transparent;
     }
 
-    .utility-row {
-      background: #ffffff;
-      border-bottom: 1px solid #e0ebf6;
+    .editorial-bar {
+      border-bottom: 1px solid rgb(15 76 129 / 10%);
+      background: rgb(247 241 230 / 88%);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 28px rgb(8 36 58 / 7%);
     }
 
-    .utility-row__inner {
-      position: relative;
-      min-height: 48px;
-      padding-left: 144px;
-      display: flex;
-      justify-content: space-between;
+    .editorial-bar__inner {
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: minmax(170px, 220px) minmax(0, 1fr) auto;
+      gap: clamp(0.8rem, 2vw, 1.4rem);
       align-items: center;
-      gap: 0.7rem;
+      min-height: 76px;
       min-width: 0;
     }
 
-    .brand-badge {
-      position: absolute;
-      left: 0;
-      top: -24px;
+    .editorial-brand {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-width: 0;
+      text-decoration: none;
+    }
+
+    .editorial-brand img {
       width: auto;
-      height: auto;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      padding: 0;
-      box-shadow: none;
-      z-index: 4;
-      transition: transform 200ms ease;
-    }
-
-    .brand-badge img {
-      width: 124px;
-      height: 186px;
-      border-radius: 0;
+      height: 54px;
+      max-width: 180px;
       object-fit: contain;
-      filter: drop-shadow(0 10px 16px rgba(8, 39, 65, 0.26));
+    }
+
+    .editorial-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.16rem;
+      min-width: 0;
+    }
+
+    .editorial-nav > a,
+    .nav-construction,
+    .nav-item > a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0.46rem 0.72rem;
+      border: 0;
+      border-radius: 999px;
       background: transparent;
-    }
-
-    .brand-badge:hover {
-      transform: translateY(-2px);
-    }
-
-    .utility-nav {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 0.25rem;
-      min-width: 0;
-    }
-
-    .utility-nav a {
-      color: #355d7d;
+      color: #294960;
+      font-family: var(--font-family-heading);
+      font-size: 0.82rem;
+      font-weight: 750;
+      letter-spacing: -0.02em;
       text-decoration: none;
-      font-size: 0.77rem;
-      padding: 0.34rem 0.5rem;
-      border-radius: 999px;
-      font-weight: 600;
-      font-family: var(--font-family-heading);
-      letter-spacing: -0.02em;
+      white-space: nowrap;
+      transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
     }
 
-    .nav-disabled {
-      display: inline-flex;
-      align-items: center;
-      color: #6f8496;
-      font-size: 0.77rem;
-      padding: 0.34rem 0.5rem;
-      border-radius: 999px;
-      font-weight: 700;
-      font-family: var(--font-family-heading);
-      letter-spacing: -0.02em;
-      cursor: default;
-      opacity: 0.68;
-    }
-
-    .utility-nav a:hover,
-    .utility-nav a.is-active {
-      background: #eef6fd;
+    .editorial-nav > a:hover,
+    .nav-construction:hover,
+    .nav-construction:focus-visible,
+    .nav-item > a:hover,
+    .editorial-nav > a.is-active,
+    .nav-item > a.is-active {
+      background: rgb(255 255 255 / 62%);
       color: #0f4c81;
       text-decoration: none;
+      transform: translateY(-1px);
     }
 
-    .utility-chat {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.36rem;
-      color: #0f4c81;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.76rem;
-      padding: 0.35rem 0.56rem;
-      border: 1px solid #c9ddef;
-      border-radius: 999px;
-      background: #f5fbff;
-      font-family: var(--font-family-heading);
-      letter-spacing: -0.02em;
-    }
-
-    .utility-chat:hover {
-      border-color: #9bc0de;
-      background: #eaf4fd;
-      color: #0d436f;
-      text-decoration: none;
-    }
-
-    .utility-chat--disabled {
-      cursor: default;
-      opacity: 0.72;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #23b864;
-      box-shadow: 0 0 0 0 rgba(35, 184, 100, 0.46);
-      animation: presencePulse 1.9s infinite;
-      flex: 0 0 auto;
-    }
-
-    .about-flyout {
-      position: absolute;
-      top: calc(100% + 0.45rem);
-      left: 50%;
-      right: auto;
-      width: min(920px, calc(100vw - 2rem));
-      max-width: calc(100vw - 2rem);
-      min-width: min(720px, calc(100vw - 2rem));
-      background: #f4f6f2;
-      border: 1px solid #d8e0e8;
-      border-radius: 10px;
-      box-shadow: 0 18px 36px rgba(12, 38, 60, 0.2);
-      padding: 1.1rem 1.3rem 1.3rem;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(-50%) translateY(12px);
-      transition: opacity 180ms ease, transform 180ms ease;
-      z-index: 30;
-    }
-
-    .about-flyout--open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .about-flyout__grid {
-      display: flex;
-      flex-wrap: wrap;
-      display: grid;
-      grid-template-columns: minmax(220px, 1.2fr) minmax(200px, 1fr) minmax(200px, 1fr);
-      gap: 1.6rem;
-    }
-
-    .about-flyout__grid > * {
-      min-width: 0;
-      flex: 1 1 200px;
-    }
-
-    .about-flyout__intro {
-      display: grid;
-      gap: 0.6rem;
-      align-content: start;
-    }
-
-    .about-flyout__eyebrow {
-      margin: 0 0 0.55rem;
-      color: #b35c2a;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 700;
-    }
-
-    .about-flyout__summary {
-      margin: 0;
-      color: #4b5f70;
-      font-size: 0.86rem;
-      line-height: 1.6;
-    }
-
-    .about-flyout__heading {
-      margin: 0 0 0.55rem;
-      color: #b35c2a;
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 700;
-      font-family: var(--font-family-heading);
-    }
-
-    .about-flyout__column ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.4rem;
-    }
-
-    .about-flyout__column a {
-      color: #0f4c81;
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .about-flyout__column a:hover,
-    .about-flyout__column a:focus {
-      color: #0a3254;
-      text-decoration: none;
-    }
-
-    .primary-row {
-      background: #d4a22f;
-      border-top: 1px solid #e2be61;
-    }
-
-    .primary-row__inner {
-      min-height: 44px;
-      padding-left: 144px;
-      display: flex;
-      justify-content: space-between;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 0.7rem;
-      min-width: 0;
-    }
-
-    .primary-nav {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 0.25rem;
-      min-width: 0;
-    }
-    .nav-flyout {
+    .nav-construction {
       position: relative;
-      display: inline-flex;
-      align-items: center;
+      cursor: default;
     }
 
-    .nav-flyout > a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .nav-flyout > a::after {
+    .nav-construction::after {
       content: '';
-      width: 0;
-      height: 0;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 5px solid currentColor;
-      transform: translateY(1px);
+      width: 0.36rem;
+      height: 0.36rem;
+      margin-left: 0.34rem;
+      border-radius: 999px;
+      background: #d4a22f;
+      box-shadow: 0 0 0 4px rgb(212 162 47 / 12%);
     }
 
-    .academics-flyout {
+    .nav-construction::before {
+      content: attr(data-tip);
       position: absolute;
-      top: calc(100% + 0.45rem);
       left: 50%;
-      right: auto;
-      width: min(720px, calc(100vw - 2rem));
-      max-width: calc(100vw - 2rem);
-      min-width: min(520px, calc(100vw - 2rem));
-      background: #f8fcff;
-      border: 1px solid #dbe9f5;
-      border-radius: 16px;
-      box-shadow: 0 18px 40px rgba(12, 46, 78, 0.24);
-      padding: 0.9rem 1.1rem 1.1rem;
+      top: calc(100% + 0.58rem);
+      z-index: 3;
+      padding: 0.34rem 0.62rem;
+      border: 1px solid rgb(212 162 47 / 24%);
+      border-radius: 999px;
+      background: rgb(255 253 248 / 96%);
+      box-shadow: 0 14px 32px rgb(8 36 58 / 12%);
+      color: #8f6418;
+      font-family: var(--font-family-heading);
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
       opacity: 0;
       pointer-events: none;
-      transform: translateX(-50%) translateY(12px);
-      transition: opacity 180ms ease, transform 180ms ease;
-      z-index: 30;
-    }
-
-    .academics-flyout--open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .academics-flyout__grid {
-      display: flex;
-      flex-wrap: wrap;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(160px, 1fr));
-      gap: 1.2rem;
-    }
-
-    .academics-flyout__grid > * {
-      min-width: 0;
-      flex: 1 1 160px;
-    }
-
-    .academics-flyout__column h4 {
-      margin: 0 0 0.5rem;
-      color: #0f3e66;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-family: var(--font-family-heading);
-    }
-
-    .academics-flyout__column ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.4rem;
-    }
-
-    .academics-flyout__column a {
-      color: #0c3f66;
-      text-decoration: none;
-      font-size: 0.83rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .academics-flyout__column a::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #d4a22f;
-      opacity: 0;
-      transform: scale(0.6);
+      transform: translateX(-50%) translateY(-4px);
       transition: opacity 160ms ease, transform 160ms ease;
     }
 
-    .academics-flyout__column a:hover,
-    .academics-flyout__column a:focus {
-      color: #123b5f;
-      text-decoration: none;
-    }
-
-    .academics-flyout__column a:hover::before,
-    .academics-flyout__column a:focus::before {
+    .nav-construction:hover::before,
+    .nav-construction:focus-visible::before {
       opacity: 1;
-      transform: scale(1);
+      transform: translateX(-50%) translateY(0);
     }
 
-    .primary-nav a,
-    .all-sections {
-      border: none;
-      background: transparent;
-      color: #0d3d63;
-      text-decoration: none;
-      font-size: 0.84rem;
-      font-weight: 700;
-      padding: 0.36rem 0.54rem;
-      border-radius: 999px;
-      cursor: pointer;
+    .nav-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .nav-item--has-menu > a::after {
+      content: '';
+      width: 0.42rem;
+      height: 0.42rem;
+      margin-left: 0.36rem;
+      border-right: 1.8px solid currentColor;
+      border-bottom: 1.8px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+      opacity: 0.68;
+    }
+
+    .apply-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0.6rem 1.05rem;
+      border-radius: 4px;
+      background: #0f4c81;
+      color: #ffffff;
       font-family: var(--font-family-heading);
-      letter-spacing: -0.02em;
-    }
-
-    .nav-disabled--primary {
-      color: #25475f;
-      font-size: 0.84rem;
-      padding: 0.36rem 0.54rem;
-      opacity: 0.76;
-    }
-
-    .all-sections:disabled {
-      cursor: default;
-      opacity: 0.58;
-    }
-
-    .primary-nav a:hover,
-    .primary-nav a.is-active,
-    .all-sections:not(:disabled):hover,
-    .all-sections--active {
-      background: rgba(255, 255, 255, 0.36);
-      color: #0b3454;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
       text-decoration: none;
-    }
-
-    .apply-btn {
-      border: 1px solid #1a4f7c;
-      border-radius: 3px;
-      background: linear-gradient(180deg, #1f5f95 0%, #0f4c81 100%);
-      color: #f3f9ff;
-      font-weight: 700;
-      text-decoration: none;
-      font-size: 0.83rem;
-      padding: 0.46rem 0.95rem;
-      white-space: nowrap;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-family: var(--font-family-heading);
+      white-space: nowrap;
+      box-shadow: 0 14px 28px rgb(15 76 129 / 18%);
+      transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
     }
 
-    .apply-btn:hover {
-      background: linear-gradient(180deg, #0f4c81 0%, #0b3c66 100%);
+    .apply-link:hover {
+      background: #08243a;
+      color: #ffffff;
       text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 18px 34px rgb(8 36 58 / 22%);
+    }
+
+    .nav-panel {
+      position: absolute;
+      top: calc(100% + 0.85rem);
+      left: 50%;
+      display: grid;
+      grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+      gap: 1.4rem;
+      width: min(1040px, calc(100vw - 2rem));
+      padding: 1.2rem;
+      border: 1px solid rgb(15 76 129 / 10%);
+      border-radius: 18px;
+      background: rgb(255 255 255 / 96%);
+      box-shadow: 0 26px 60px rgb(8 36 58 / 18%);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) translateY(10px);
+      transition: opacity 170ms ease, transform 170ms ease;
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-panel--about {
+      width: min(860px, calc(100vw - 2rem));
+    }
+
+    .nav-panel--open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .nav-panel::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      border-left: 1px solid rgb(15 76 129 / 10%);
+      border-top: 1px solid rgb(15 76 129 / 10%);
+      background: #ffffff;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .nav-panel__intro {
+      display: grid;
+      gap: 0.55rem;
+      align-content: start;
+      min-height: 100%;
+      padding: 1.05rem;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 92% 0%, rgb(212 162 47 / 18%), transparent 8rem),
+        linear-gradient(180deg, #f7f1e6 0%, #ffffff 100%);
+    }
+
+    .nav-panel__intro span,
+    .nav-panel__columns h3,
+    .mobile-drawer__eyebrow,
+    .mobile-group__links span {
+      color: #9a6a18;
+      font-family: var(--font-family-heading);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .nav-panel__intro strong {
+      max-width: 18ch;
+      color: #08243a;
+      font-family: var(--font-family-heading);
+      font-size: 1.55rem;
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+    }
+
+    .nav-panel__intro p {
+      margin: 0;
+      color: #536b7d;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .nav-panel__columns {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      min-width: 0;
+    }
+
+    .nav-panel__columns--two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nav-panel__columns section {
+      display: grid;
+      align-content: start;
+      gap: 0.38rem;
+      min-width: 0;
+    }
+
+    .nav-panel__columns h3 {
+      margin: 0 0 0.2rem;
+    }
+
+    .nav-panel__columns a {
+      display: grid;
+      gap: 0.14rem;
+      padding: 0.58rem 0;
+      border-top: 1px solid rgb(15 76 129 / 9%);
+      color: inherit;
+      text-decoration: none;
+      transition: padding-left 160ms ease, color 160ms ease;
+    }
+
+    .nav-panel__columns a:hover {
+      padding-left: 0.28rem;
+      color: #0f4c81;
+      text-decoration: none;
+    }
+
+    .nav-panel__columns strong {
+      color: #123f62;
+      font-family: var(--font-family-heading);
+      font-size: 0.86rem;
+      line-height: 1.22;
+      letter-spacing: -0.025em;
+    }
+
+    .nav-panel__columns span {
+      color: #63798b;
+      font-size: 0.74rem;
+      line-height: 1.35;
     }
 
     .mobile-toggle {
       display: none;
-      width: 46px;
-      height: 40px;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      justify-self: end;
-      margin-left: auto;
-      flex-shrink: 0;
-      border: 1px solid #c7dcef;
-      background: #f5faff;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgb(15 76 129 / 14%);
       border-radius: 10px;
-      padding: 0.42rem;
+      background: rgb(255 255 255 / 72%);
       cursor: pointer;
     }
 
     .mobile-toggle span {
-      width: 19px;
+      display: block;
+      width: 18px;
       height: 2px;
-      display: block;
-      margin: 3px 0;
-      background: #114f81;
+      margin: 2.7px 0;
+      border-radius: 999px;
+      background: #0f4c81;
+      transition: transform 180ms ease, opacity 180ms ease;
     }
 
-    .mega-menu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 240ms ease;
-      border-top: 1px solid transparent;
-      background: #f8fcff;
+    .mobile-toggle--open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
     }
 
-    .mega-menu--open {
-      max-height: 520px;
-      border-top-color: #dbe9f5;
+    .mobile-toggle--open span:nth-child(2) {
+      opacity: 0;
     }
 
-    .mega-menu__grid {
-      display: flex;
-      flex-wrap: wrap;
+    .mobile-toggle--open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.65rem;
-      padding-top: 0.85rem;
-      padding-bottom: 0.95rem;
+      justify-items: end;
+      background: rgb(5 20 32 / 0%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, background-color 180ms ease;
     }
 
-    .mega-menu__grid > * {
-      flex: 1 1 220px;
-      min-width: 0;
+    .mobile-drawer--open {
+      opacity: 1;
+      pointer-events: auto;
+      background: rgb(5 20 32 / 48%);
     }
 
-    .mega-menu__item {
-      border: 1px solid #d8e6f3;
-      border-radius: 12px;
-      background: #fff;
-      padding: 0.76rem;
-      color: inherit;
-      text-decoration: none;
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .mega-menu__item strong {
-      color: #123f62;
-      font-size: 0.91rem;
-    }
-
-    .mega-menu__item span {
-      color: #4a6f8e;
-      font-size: 0.78rem;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-    }
-
-    .mobile-menu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 220ms ease;
-      background: #f7fbff;
-      border-top: 1px solid transparent;
-    }
-
-    .mobile-menu--open {
-      max-height: calc(100vh - 62px);
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      border-top-color: #dce8f3;
-    }
-
-    .mobile-menu__inner {
-      display: grid;
-      gap: 0.45rem;
-      padding-top: 0.85rem;
-      padding-bottom: 0.9rem;
-    }
-
-    .mobile-menu__inner a,
-    .mobile-menu__group > summary,
-    .mobile-link-disabled {
-      border: 1px solid #d5e6f4;
-      border-radius: 10px;
-      background: #fff;
-      color: #173f5f;
-      text-decoration: none;
-      font-size: 0.9rem;
-      padding: 0.58rem 0.72rem;
-      font-family: var(--font-family-heading);
-      letter-spacing: -0.02em;
-    }
-
-    .mobile-link-disabled {
-      display: block;
-      opacity: 0.62;
-      cursor: default;
-    }
-
-    .mobile-menu__group {
-      min-width: 0;
-      border-radius: 12px;
-    }
-
-    .mobile-menu__group > summary {
+    .mobile-drawer__surface {
       position: relative;
+      display: grid;
+      align-content: start;
+      gap: 0.75rem;
+      width: min(420px, 100%);
+      height: 100%;
+      overflow-y: auto;
+      padding: 1rem;
+      background: linear-gradient(180deg, #08243a 0%, #051b2c 100%);
+      color: #ffffff;
+      transform: translateX(100%);
+      transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .mobile-drawer--open .mobile-drawer__surface {
+      transform: translateX(0);
+    }
+
+    .mobile-drawer__surface::after {
+      content: 'Sankofa';
+      position: fixed;
+      right: -0.28em;
+      bottom: -0.18em;
+      color: rgb(255 255 255 / 5%);
+      font-family: var(--font-family-heading);
+      font-size: 8rem;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      pointer-events: none;
+    }
+
+    .mobile-drawer__head {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      list-style: none;
-      cursor: pointer;
-      font-weight: 800;
+      gap: 1rem;
+      margin-bottom: 0.45rem;
     }
 
-    .mobile-menu__group > summary::-webkit-details-marker {
-      display: none;
+    .mobile-drawer__brand img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
     }
 
-    .mobile-menu__group > summary::after {
-      content: '';
-      width: 0.5rem;
-      height: 0.5rem;
-      border-right: 2px solid currentColor;
-      border-bottom: 2px solid currentColor;
-      transform: rotate(45deg) translateY(-2px);
-      transition: transform 160ms ease;
-      opacity: 0.75;
-      flex: 0 0 auto;
-      margin-left: 0.8rem;
-    }
-
-    .mobile-menu__group[open] > summary {
-      border-color: #99bddc;
-      background: #e8f3fd;
-      color: #0d426f;
-    }
-
-    .mobile-menu__group[open] > summary::after {
-      transform: rotate(225deg) translate(-2px, -1px);
-    }
-
-    .mobile-subnav {
+    .mobile-drawer__head button {
       display: grid;
-      gap: 0.38rem;
-      margin-top: 0.42rem;
-      padding: 0.54rem;
-      border: 1px solid #d9e8f4;
-      border-radius: 14px;
-      background: linear-gradient(180deg, #ffffff 0%, #f0f7fd 100%);
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 12px;
+      background: rgb(255 255 255 / 10%);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
     }
 
-    .mobile-subnav a {
-      border-radius: 9px;
-      background: #f8fcff;
-      border-color: #e1edf6;
-      font-size: 0.82rem;
-      padding: 0.52rem 0.62rem;
-      line-height: 1.3;
+    .mobile-drawer__eyebrow {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: #f0d28a;
     }
 
-    .mobile-subnav a:hover,
-    .mobile-subnav a:focus {
-      border-color: #a8c8e2;
-      background: #ffffff;
-      color: #0d426f;
+    .mobile-drawer__nav {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.22rem;
+    }
+
+    .mobile-drawer__nav > a,
+    .mobile-construction,
+    .mobile-group > button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 50px;
+      padding: 0.75rem 0.8rem;
+      border: 0;
+      border-bottom: 1px solid rgb(255 255 255 / 9%);
+      background: transparent;
+      color: #ffffff;
+      font-family: var(--font-family-heading);
+      font-size: 1rem;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      list-style: none;
+      text-decoration: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .mobile-drawer__nav > a::after,
+    .mobile-group > button::after {
+      content: '';
+      width: 0.46rem;
+      height: 0.46rem;
+      border-top: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      color: rgb(255 255 255 / 58%);
+      transform: rotate(45deg);
+      transition: color 160ms ease, transform 160ms ease;
+    }
+
+    .mobile-drawer__nav > a.is-active,
+    .mobile-drawer__nav > a.is-active::after,
+    .mobile-group--active > button,
+    .mobile-group--active > button::after,
+    .mobile-group--open > button,
+    .mobile-group--open > button::after {
+      color: #f1cf83;
+    }
+
+    .mobile-construction {
+      cursor: default;
+    }
+
+    .mobile-construction small {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.2rem 0.52rem;
+      border: 1px solid rgb(240 210 138 / 28%);
+      border-radius: 999px;
+      background: rgb(240 210 138 / 10%);
+      color: #f1cf83;
+      font-family: var(--font-family-heading);
+      font-size: 0.62rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .mobile-group--open > button::after {
+      transform: rotate(135deg);
+    }
+
+    .mobile-group__links {
+      display: none;
+      gap: 0.12rem;
+      padding: 0.15rem 0.8rem 0.75rem;
+    }
+
+    .mobile-group--open .mobile-group__links {
+      display: grid;
+    }
+
+    .mobile-group__links a {
+      padding: 0.48rem 0.2rem;
+      color: rgb(255 255 255 / 76%);
+      font-size: 0.86rem;
       text-decoration: none;
     }
 
-    .mobile-subnav__label {
-      margin-top: 0.28rem;
-      color: #a87b18;
-      font-family: var(--font-family-heading);
-      font-size: 0.68rem;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.15rem 0.25rem;
+    .mobile-group__links span {
+      margin-top: 0.6rem;
+      color: #f1cf83;
+      font-size: 0.62rem;
     }
 
-    .mobile-subnav--sections a {
+    .mobile-drawer__cta {
+      position: relative;
+      z-index: 1;
       display: grid;
-      gap: 0.18rem;
+      gap: 0.55rem;
+      margin-top: 0.9rem;
     }
 
-    .mobile-subnav--sections strong {
-      color: #123f62;
-      font-size: 0.84rem;
-    }
-
-    .mobile-subnav--sections span {
-      color: #5c768c;
-      font-size: 0.72rem;
-      line-height: 1.35;
-    }
-
-    .mobile-menu__inner a.is-active {
-      border-color: #99bddc;
-      background: #e8f3fd;
-      color: #0d426f;
-    }
-
-    .mobile-live-chat {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.42rem;
-      border-color: #9fc1dd;
-      background: #edf6ff;
-      color: #124a75;
-      font-weight: 700;
-    }
-
-    .apply-btn--mobile {
-      display: inline-flex;
+    .mobile-drawer__apply,
+    .mobile-drawer__support {
+      display: flex;
       justify-content: center;
+      align-items: center;
+      min-height: 46px;
+      border-radius: 6px;
+      color: #1a0d00;
+      background: #d4a22f;
+      font-family: var(--font-family-heading);
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-transform: uppercase;
     }
 
-    @media (max-width: 1040px) {
-      .utility-row__inner,
-      .primary-row__inner {
-        padding-left: 126px;
-      }
-
-      .brand-badge img {
-        width: 104px;
-        height: 156px;
-      }
+    .mobile-drawer__support {
+      border: 1px solid rgb(255 255 255 / 18%);
+      background: rgb(255 255 255 / 8%);
+      color: #ffffff;
+      text-transform: none;
+      letter-spacing: 0;
     }
 
-    @media (max-width: 1020px) {
-      .academics-flyout {
-        right: 0;
-        left: auto;
-        min-width: 0;
-        transform: translateY(12px);
+    @media (max-width: 1160px) {
+      .editorial-bar__inner {
+        grid-template-columns: minmax(145px, 180px) minmax(0, 1fr) auto;
       }
 
-      .academics-flyout--open {
-        transform: translateY(0);
-      }
-
-      .academics-flyout__grid {
-        grid-template-columns: repeat(2, minmax(160px, 1fr));
-      }
-
-      .about-flyout {
-        right: 0;
-        left: auto;
-        min-width: 0;
-        width: min(760px, 88vw);
-        transform: translateY(12px);
-      }
-
-      .about-flyout--open {
-        transform: translateY(0);
-      }
-
-      .about-flyout__grid {
-        grid-template-columns: repeat(2, minmax(160px, 1fr));
-      }
-
-      .about-flyout__intro {
-        grid-column: 1 / -1;
+      .editorial-nav > a,
+      .nav-item > a {
+        padding-inline: 0.5rem;
+        font-size: 0.78rem;
       }
     }
 
-    @media (max-width: 920px) {
-      .utility-nav,
-      .utility-chat,
-      .primary-row {
+    @media (max-width: 980px) {
+      .editorial-bar__inner {
+        grid-template-columns: 1fr auto;
+        min-height: 68px;
+      }
+
+      .editorial-brand img {
+        height: 46px;
+        max-width: 136px;
+      }
+
+      .editorial-nav,
+      .apply-link {
         display: none;
       }
 
-      .utility-row {
-        border-bottom: none;
-      }
-
-      .utility-row__inner {
-        min-height: 68px;
-        padding-left: 110px;
-        grid-template-columns: minmax(0, 1fr) auto;
-        column-gap: 0.85rem;
-      }
-
-      .brand-badge {
-        top: -14px;
-      }
-
-      .brand-badge img {
-        width: 82px;
-        height: 123px;
-      }
-
       .mobile-toggle {
-        display: inline-flex;
+        display: grid;
       }
     }
 
-    @media (max-width: 520px) {
-      .utility-row__inner {
-        padding-left: 96px;
-        padding-right: 0.3rem;
-        min-height: 62px;
-        column-gap: 0.7rem;
+    @media (max-width: 460px) {
+      .editorial-bar__inner {
+        min-height: 64px;
       }
 
-      .brand-badge {
-        top: -10px;
+      .editorial-brand img {
+        height: 44px;
+        max-width: 112px;
+        content: url('/assets/design/logo-mark.png');
       }
 
-      .brand-badge img {
-        width: 68px;
-        height: 102px;
-      }
-
-      .mobile-toggle {
-        width: 44px;
-        height: 38px;
-        padding: 0.34rem;
-      }
-
-      .mobile-menu__inner a {
-        font-size: 0.84rem;
-        padding: 0.54rem 0.64rem;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .utility-row__inner {
-        padding-left: 84px;
-        padding-right: 0.2rem;
-        min-height: 58px;
-      }
-
-      .brand-badge img {
-        width: 60px;
-        height: 90px;
-      }
-
-      .mobile-toggle {
-        width: 40px;
-        height: 36px;
+      .mobile-drawer__surface {
+        width: 100%;
       }
     }
   `],
@@ -1086,79 +862,146 @@ export class HeaderComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly utilityLinks: readonly NavLink[] = [
-    { label: 'Students', path: null, disabled: true },
-    { label: 'Faculty & Staff', path: null, disabled: true },
-    { label: 'Recruitment', path: null, disabled: true },
-    { label: 'Visit', path: null, disabled: true },
-    { label: 'Media', path: null, disabled: true },
-    { label: 'Give', path: null, disabled: true },
-    { label: 'Portal', path: null, disabled: true },
-  ];
-
   readonly primaryLinks: readonly NavLink[] = [
-    { label: 'About', path: '/about' },
-    { label: 'Academics', path: '/faculties-schools' },
+    { label: 'About', path: '/about', kind: 'about' },
+    { label: 'Academics', path: '/faculties-schools', kind: 'academics' },
+    { label: 'Admissions', path: '/admissions' },
     { label: 'Research', path: '/research-innovation' },
-    { label: 'News & Events', path: '/events-conferences' },
-    { label: 'Campus', path: null, disabled: true },
+    { label: 'Digital Campus', path: '/digital-learning', disabled: true },
+    { label: 'Student Life', path: '/student-life' },
+    { label: 'Library', path: '/library-repository', disabled: true },
+    { label: 'Contact', path: '/contact' },
   ];
 
   readonly aboutMenuSummary =
-    'Sankofa Alkebulan University advances African knowledge systems through research, scholarship, partnerships, and public engagement rooted in the Sankofa principle.';
+    'A Sankofa-centered university model rooted in African knowledge systems, rigorous scholarship, ethical leadership, and institutional renewal.';
 
   readonly aboutSectionLinks: readonly MegaLink[] = [
-    { label: 'Founders & Chancellor', path: '/about', fragment: 'founders-chancellor-team' },
-    { label: 'Executive Team', path: '/about/executive-team' },
-    { label: 'Board of Governance', path: '/about/board-of-governance' },
-    { label: 'Advisory Council', path: '/about/advisory-council' },
-    { label: 'Research & Scholarly Team', path: '/about/research-scholarly-team' },
-    { label: 'History of Sankofa', path: '/about/history-of-sankofa' },
+    {
+      label: 'Vision & Mission',
+      path: '/about',
+      fragment: 'mission',
+      description: 'Purpose, mission, values, and philosophical direction.',
+    },
+    {
+      label: 'History of SAU',
+      path: '/about/history-of-sankofa',
+      description: 'Origins, legacy, and African intellectual renewal.',
+    },
+    {
+      label: 'Identity and Motto',
+      path: '/about',
+      fragment: 'identity',
+      description: 'Logo, motto, philosophy, and institutional language.',
+    },
+    {
+      label: 'Institutional Charter',
+      path: '/about/sankofa-charter',
+      description: 'The supreme institutional framework.',
+    },
   ];
 
   readonly aboutRelatedLinks: readonly MegaLink[] = [
-    { label: 'Sankofa Charter', path: '/about/sankofa-charter' },
-    { label: 'Sankofa Law Council', path: '/about/sankofa-law-council' },
-    { label: 'Statute on Governance & Management', path: '/about/statute-on-governance-and-management' },
-    { label: 'University Policies', path: '/about/university-policies' },
-    { label: 'Job Opportunities', path: '/about/job-opportunities' },
+    {
+      label: 'Governance Structure',
+      path: '/about/governance-structure',
+      description: 'How authority and accountability are organized.',
+    },
+    {
+      label: 'University Council',
+      path: '/about/university-council',
+      description: 'Administration, planning, and policy implementation.',
+    },
+    {
+      label: 'Academic Senate',
+      path: '/about/academic-senate',
+      description: 'Academic standards, curricula, research, and quality assurance.',
+    },
+    {
+      label: 'University Policies',
+      path: '/about/university-policies',
+      description: 'Academic, student, finance, technology, and ethics policies.',
+    },
   ];
-      readonly academicsMega: readonly MegaColumn[] = [
+
+  readonly academicsMega: readonly MegaColumn[] = [
+    {
+      title: 'Academic Structure',
+      links: [
+        {
+          label: 'Colleges Overview',
+          path: '/faculties-schools',
+          description: 'The full Pan-African college system.',
+        },
+        {
+          label: 'Schools & Departments',
+          path: '/faculties-schools',
+          fragment: 'academic-architecture',
+          description: 'School-level homes with department detail.',
+        },
+        {
+          label: 'Academic Architecture',
+          path: '/faculties-schools',
+          fragment: 'academic-architecture',
+          description: 'Colleges, schools, departments, programmes, and institutes.',
+        },
+      ],
+    },
     {
       title: 'Programmes',
       links: [
-        { label: 'PhD Programmes', path: '/home/phd' },
-        { label: 'Masters Degree Programmes', path: '/home/masters' },
-        { label: 'Postgraduate Diploma Programmes', path: '/home/postgraduate-diploma' },
-        { label: 'Bachelors Degree Programmes', path: '/home/bachelors' },
-        { label: 'Diploma Programmes', path: '/home/diploma' },
-        { label: 'Certificate Programmes', path: '/home/certificate' },
+        { label: 'All Programmes', path: '/programs', description: 'Certificates through doctorates.' },
+        { label: 'PhD Programmes', path: '/home/phd', description: 'Doctoral research pathways.' },
+        { label: 'Masters Programmes', path: '/home/masters', description: 'Advanced professional and research pathways.' },
+        { label: 'Undergraduate Studies', path: '/home/bachelors', description: 'Bachelor degree academic formation.' },
       ],
     },
     {
-      title: 'Schools',
+      title: 'Research Layer',
       links: [
-        { label: 'Business School', path: '/home/Business School' },
-        { label: 'Graduate School', path: '/home/Graduate School' },
-        { label: 'School of Education', path: '/home/School of Education' },
-        { label: 'School of Technology, Computing & Engineering', path: '/home/School of Technology, Computing & Engineering' },
-        { label: 'Law School', path: '/home/Law School' },
+        {
+          label: 'Research Institutes',
+          path: '/research-innovation',
+          description: '49 institute pathways aligned to the colleges.',
+        },
+        {
+          label: 'Graduate School',
+          path: '/home/graduate-school',
+          description: 'Postgraduate coordination and higher degrees quality assurance.',
+        },
+        {
+          label: 'University Press',
+          path: '/university-press',
+          description: 'Journals, books, proceedings, and scholarly publishing.',
+        },
       ],
     },
     {
-      title: 'Institutes',
+      title: 'Applied Learning',
       links: [
-        { label: 'Institute of Public Health & Health Sciences', path: '/home/Institute of Public Health & Health Sciences' },
-        { label: 'Institute of African Culture, Science and Technology (IACST)', path: '/home/Institute of African Culture, Science and Technology (IACST)' },
+        {
+          label: 'Clubs & Societies',
+          path: '/student-life',
+          description: 'Cultural societies, clubs, and professional societies.',
+        },
+        {
+          label: 'Admissions',
+          path: '/admissions',
+          description: 'Choose a level, intake, and application route.',
+        },
+        {
+          label: 'Support Services',
+          path: '/services',
+          description: 'Routing for applicants, students, scholars, and partners.',
+        },
       ],
     },
   ];
 
-  readonly megaMenuItems = MEGA_MENU_ITEMS;
   readonly isMobileMenuOpen = signal(false);
-  readonly isMegaMenuOpen = signal(false);
   readonly isAcademicsMenuOpen = signal(false);
   readonly isAboutMenuOpen = signal(false);
+  readonly mobileOpenGroup = signal<MobileGroup | null>(null);
   private academicsCloseTimer: ReturnType<typeof setTimeout> | null = null;
   private aboutCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -1174,19 +1017,36 @@ export class HeaderComponent implements OnInit {
   toggleMobileMenu(): void {
     this.isMobileMenuOpen.set(!this.isMobileMenuOpen());
     if (this.isMobileMenuOpen()) {
-      this.isMegaMenuOpen.set(false);
       this.isAcademicsMenuOpen.set(false);
       this.isAboutMenuOpen.set(false);
+      this.mobileOpenGroup.set(this.currentMobileGroup());
     }
   }
 
-  toggleMegaMenu(): void {
-    this.isMegaMenuOpen.set(!this.isMegaMenuOpen());
-    if (this.isMegaMenuOpen()) {
-      this.isMobileMenuOpen.set(false);
-      this.isAcademicsMenuOpen.set(false);
-      this.isAboutMenuOpen.set(false);
-    }
+  toggleMobileGroup(group: MobileGroup): void {
+    this.mobileOpenGroup.set(this.mobileOpenGroup() === group ? null : group);
+  }
+
+  isMobileGroupOpen(group: MobileGroup): boolean {
+    return this.mobileOpenGroup() === group;
+  }
+
+  isAboutRoute(): boolean {
+    return this.router.url.startsWith('/about');
+  }
+
+  isAcademicsRoute(): boolean {
+    const url = this.router.url;
+    return (
+      url.startsWith('/faculties-schools') ||
+      url.startsWith('/program') ||
+      url.startsWith('/programmes') ||
+      url.startsWith('/home/phd') ||
+      url.startsWith('/home/masters') ||
+      url.startsWith('/home/bachelors') ||
+      url.startsWith('/home/certificate') ||
+      url.startsWith('/home/diploma')
+    );
   }
 
   openAcademicsMenu(): void {
@@ -1195,7 +1055,6 @@ export class HeaderComponent implements OnInit {
       this.academicsCloseTimer = null;
     }
     this.isAcademicsMenuOpen.set(true);
-    this.isMegaMenuOpen.set(false);
     this.isAboutMenuOpen.set(false);
   }
 
@@ -1206,7 +1065,7 @@ export class HeaderComponent implements OnInit {
     this.academicsCloseTimer = setTimeout(() => {
       this.isAcademicsMenuOpen.set(false);
       this.academicsCloseTimer = null;
-    }, 240);
+    }, 180);
   }
 
   closeAcademicsMenu(): void {
@@ -1230,7 +1089,6 @@ export class HeaderComponent implements OnInit {
       this.aboutCloseTimer = null;
     }
     this.isAboutMenuOpen.set(true);
-    this.isMegaMenuOpen.set(false);
     this.isAcademicsMenuOpen.set(false);
   }
 
@@ -1241,7 +1099,7 @@ export class HeaderComponent implements OnInit {
     this.aboutCloseTimer = setTimeout(() => {
       this.isAboutMenuOpen.set(false);
       this.aboutCloseTimer = null;
-    }, 240);
+    }, 180);
   }
 
   closeAboutMenu(): void {
@@ -1261,19 +1119,19 @@ export class HeaderComponent implements OnInit {
 
   closeMenus(): void {
     this.isMobileMenuOpen.set(false);
-    this.isMegaMenuOpen.set(false);
+    this.mobileOpenGroup.set(null);
     this.closeAcademicsMenu();
     this.closeAboutMenu();
   }
+
+  private currentMobileGroup(): MobileGroup | null {
+    if (this.isAboutRoute()) {
+      return 'about';
+    }
+    if (this.isAcademicsRoute()) {
+      return 'academics';
+    }
+    return null;
+  }
 }
-
-
-
-
-
-
-
-
-
-
 

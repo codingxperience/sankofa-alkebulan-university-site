@@ -1,3 +1,6 @@
+import { ACADEMIC_ARCHITECTURE_COLLEGES } from './academic-architecture';
+import { ACADEMIC_RESEARCH_INSTITUTES } from './academic-departments';
+
 export interface HeroBanner {
   readonly title: string;
   readonly subtitle: string;
@@ -34,7 +37,7 @@ export const UNIVERSITY_HERO_BANNERS: readonly HeroBanner[] = [
   },
   {
     title: 'Research Highlight: Pan-African Innovation Labs',
-    subtitle: '18 institutes advancing health, governance, AI, climate, and community solutions.',
+    subtitle: '49 institutes advancing health, governance, AI, climate, culture, industry, and community solutions.',
     ctaLabel: 'Explore Research',
     ctaPath: '/research-innovation',
   },
@@ -52,54 +55,13 @@ export const UNIVERSITY_HERO_BANNERS: readonly HeroBanner[] = [
   },
 ];
 
-export const FACULTIES_AND_SCHOOLS: readonly string[] = [
-  'Schools',
-  'School of Business, Economics, and Entrepreneurship',
-  'Graduate School',
-  'School of Education',
-  'School of Technology, Computing & Engineering',
-  'Law School',
-  'Institutes',
-  'Institute of Public Health & Health Sciences',
-  'Institute of African Culture, Science and Technology (IACST)',
-  'College of African Civilizational Studies',
-  'College of Theology and Religious Studies',
-  'College of Humanities and Cultural Studies',
-  'College of Leadership and Governance',
-  'College of Science, Technology, and Innovation',
-  'School of Global Education and International Relations',
-  'College of Health Sciences and Biomedical Studies',
-  'School of Environmental and Sustainability Studies',
-  'School of Agriculture and Food Security',
-  'School of Engineering and Applied Technologies',
-  'College of Social Sciences and Public Policy',
-  'School of Creative Arts, Music, and Media',
-  'School of Mathematics, Data Science, and AI',
-  'School of Psychology, Behavioral, and Cognitive Sciences',
-  'School of Tourism, Hospitality, and Cultural Heritage',
-  'School of Space, Astronomy, and Earth Sciences',
-];
+export const FACULTIES_AND_SCHOOLS: readonly string[] = ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) => [
+  college.name,
+  ...college.schools,
+]);
 
-export const RESEARCH_INSTITUTES: readonly string[] = [
-  'Institute for Pan-African Studies',
-  'Center for Indigenous Knowledge Systems',
-  'African Theology and Spiritual Traditions Institute',
-  'African Governance and Policy Institute',
-  'Center for Science, Technology and Innovation Policy',
-  'Center for Social Justice and Human Rights',
-  'Pan-African Health and Biomedical Research Institute',
-  'Institute for Climate, Environment and Sustainability',
-  'Digital Humanities and Knowledge Management Center',
-  'Center for Artificial Intelligence and Robotics',
-  'Center for Renewable Energy and Smart Infrastructure',
-  'Institute for Water, Agriculture and Food Security Research',
-  'Center for Global Education and International Development',
-  'Institute for Space, Astronomy and Earth Observation',
-  'Center for Behavioral and Cognitive Sciences Research',
-  'Institute for Cultural Heritage, Arts and Media Studies',
-  'Center for Entrepreneurship, Innovation and Economic Development',
-  'Institute for Policy, Peace, and Conflict Resolution',
-];
+export const RESEARCH_INSTITUTES: readonly string[] = ACADEMIC_RESEARCH_INSTITUTES;
+
 
 export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
   {
@@ -225,7 +187,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
     navLabel: 'Faculties',
     title: 'Faculties and Schools',
     description:
-      'Eighteen colleges and schools organized for multidisciplinary scholarship and transformative practice.',
+      'Forty-nine colleges organized through schools, programmes, and research institute alignment.',
     modules: [
       {
         heading: 'Academic Structure',
@@ -244,7 +206,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
       },
     ],
     highlights: [
-      { label: 'Colleges and Schools', value: '18' },
+      { label: 'Colleges', value: '49' },
       { label: 'Learning Design', value: 'Outcome-Based' },
       { label: 'Career Ecosystem', value: 'Industry Integrated' },
     ],
@@ -782,6 +744,45 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
     ],
   },
   {
+    slug: 'services',
+    path: 'services',
+    navLabel: 'Services',
+    title: 'University Services',
+    description:
+      'Student-facing, academic, digital, and administrative services organized for clear support and easy access.',
+    modules: [
+      {
+        heading: 'Student Support',
+        items: [
+          'Admissions guidance and application support',
+          'Student wellness, accessibility, and disability support',
+          'Career guidance, mentorship, and placement pathways',
+        ],
+      },
+      {
+        heading: 'Academic Services',
+        items: [
+          'Programme advising and academic pathway guidance',
+          'Library repository and research support',
+          'Digital learning, virtual campus, and learner systems',
+        ],
+      },
+      {
+        heading: 'Administrative Services',
+        items: [
+          'Office directory and departmental routing',
+          'Document support, inquiries, and escalation channels',
+          'Live chat and contact center assistance',
+        ],
+      },
+    ],
+    highlights: [
+      { label: 'Student Care', value: 'Guidance + Wellness' },
+      { label: 'Academic Access', value: 'Library + Digital Campus' },
+      { label: 'Support Channel', value: 'Live Chat + Contact Center' },
+    ],
+  },
+  {
     slug: 'contact',
     path: 'contact',
     navLabel: 'Contact',
@@ -800,14 +801,14 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
       {
         heading: 'Primary Channels',
         items: [
-          'Email: sankofalkebulanuniversity@outlook.com',
+          'Email: SanAlkeU@outlook.com',
           'Phone directory and future campus locations',
           'Admissions and registrar escalation paths',
         ],
       },
     ],
     highlights: [
-      { label: 'Primary Email', value: 'sankofalkebulanuniversity@outlook.com' },
+      { label: 'Primary Email', value: 'SanAlkeU@outlook.com' },
       { label: 'Support Access', value: 'Live Chat + FAQ AI' },
       { label: 'Response Network', value: 'Department Routing' },
     ],

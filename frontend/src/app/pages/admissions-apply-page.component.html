@@ -1,0 +1,153 @@
+<div class="v2-shell ap-shell">
+  <!-- Compact header for the applicant context -->
+  <header class="ap-topbar" role="banner">
+    <div class="v2-container">
+      <a routerLink="/home" class="ap-brand" aria-label="Back to homepage">
+        <img src="assets/logo-primary.png" alt="">
+        <b>Sankofa Alkebulan University</b>
+      </a>
+      <div class="ap-progress-wrap">
+        <span class="ap-progress-label">Step 2 of 6 — Personal details</span>
+        <div class="ap-progress" aria-hidden="true"><div></div></div>
+      </div>
+      <div class="ap-account">
+        <span class="ap-status">
+          <span class="dot" aria-hidden="true"></span>
+          Auto-saved 12 sec ago
+        </span>
+        <a href="#" class="ap-account__name">a.owusu&#64;example.org</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="ap-layout">
+    <div class="v2-container">
+      <div class="ap-grid">
+        <!-- Step rail -->
+        <aside class="ap-rail" aria-label="Application steps">
+          <div class="ap-rail__head">
+            <span class="v2-kicker">Application — 2026 intake</span>
+            <h2>One application. Three pathways. Saved at every step.</h2>
+          </div>
+          <ol class="ap-steps">
+            @for (step of steps; track step.label) {
+              <li [class.done]="step.state === 'done'" [class.active]="step.state === 'active'">
+                <span class="n">
+                  @if (step.marker === 'check') {
+                    <i class="fa-solid fa-check"></i>
+                  } @else {
+                    {{ step.marker }}
+                  }
+                </span>
+                <div><b>{{ step.label }}</b><span>{{ step.sub }}</span></div>
+              </li>
+            }
+          </ol>
+          <div class="ap-rail__help">
+            <h4>Need help?</h4>
+            <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-message"></i> Live chat with admissions</a>
+            <a href="#" class="v2-btn v2-btn--link">Read the application guide</a>
+          </div>
+        </aside>
+
+        <!-- Form -->
+        <section class="ap-form" aria-label="Personal details form">
+          <header class="ap-form__head">
+            <h1>Personal details</h1>
+            <p>Tell us a little about yourself. We use this to set up your applicant account and to match you to a regional admissions officer.</p>
+          </header>
+
+          <!-- Pathway recap -->
+          <fieldset class="ap-group">
+            <legend>Pathway</legend>
+            <div class="ap-pathway">
+              @for (p of pathways; track p.id) {
+                <label class="ap-pw" [class.is-selected]="selectedPathway === p.id">
+                  <input type="radio" name="pathway" [value]="p.id" [(ngModel)]="selectedPathway">
+                  <span class="title">{{ p.title }}</span>
+                  <span class="sub">{{ p.sub }}</span>
+                </label>
+              }
+            </div>
+          </fieldset>
+
+          <!-- About you -->
+          <fieldset class="ap-group">
+            <legend>About you</legend>
+            <div class="ap-row">
+              <div class="ap-field">
+                <label for="fn">Given name</label>
+                <input id="fn" type="text" name="givenName" [(ngModel)]="model.givenName">
+              </div>
+              <div class="ap-field">
+                <label for="ln">Family name</label>
+                <input id="ln" type="text" name="familyName" [(ngModel)]="model.familyName">
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-field">
+                <label for="dob">Date of birth</label>
+                <input id="dob" type="date" name="dob" [(ngModel)]="model.dob">
+              </div>
+              <div class="ap-field">
+                <label for="gender">Gender (optional)</label>
+                <select id="gender" name="gender" [(ngModel)]="model.gender">
+                  @for (g of genders; track g) {
+                    <option [value]="g">{{ g }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-field">
+                <label for="cit">Country of citizenship</label>
+                <select id="cit" name="citizenship" [(ngModel)]="model.citizenship">
+                  @for (c of citizenship; track c) {
+                    <option [value]="c">{{ c }}</option>
+                  }
+                </select>
+              </div>
+              <div class="ap-field">
+                <label for="res">Country of residence</label>
+                <select id="res" name="residence" [(ngModel)]="model.residence">
+                  @for (r of residence; track r) {
+                    <option [value]="r">{{ r }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Contact -->
+          <fieldset class="ap-group">
+            <legend>Contact</legend>
+            <div class="ap-row">
+              <div class="ap-field">
+                <label for="em">Email</label>
+                <input id="em" type="email" name="email" [(ngModel)]="model.email">
+                <span class="hint">We'll send applicant-portal links and decisions here. Use a personal address you'll have access to after secondary school.</span>
+              </div>
+              <div class="ap-field">
+                <label for="ph">Phone</label>
+                <input id="ph" type="tel" name="phone" placeholder="+233 â€¦" [(ngModel)]="model.phone">
+              </div>
+            </div>
+            <div class="ap-field">
+              <label for="addr">Mailing address</label>
+              <input id="addr" type="text" name="address" placeholder="Street, city, postal code" [(ngModel)]="model.address">
+            </div>
+          </fieldset>
+
+          <!-- Actions -->
+          <footer class="ap-form__actions">
+            <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-floppy-disk"></i> Save &amp; exit</a>
+            <div class="ap-form__nav">
+              <a href="#" class="v2-btn v2-btn--ghost">← Pathway</a>
+              <a href="#" class="v2-btn v2-btn--primary v2-btn--lg">Continue · Academic history <span aria-hidden="true">→</span></a>
+            </div>
+          </footer>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

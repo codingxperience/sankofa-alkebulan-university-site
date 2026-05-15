@@ -1,0 +1,605 @@
+/* PDF reference alignment: academics, admissions, and student-life polish. */
+.academics-reference {
+  gap: clamp(2rem, 5vw, 4.5rem);
+  color: #08243a;
+}
+
+.academics-reference-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.58fr);
+  gap: clamp(1.5rem, 5vw, 5rem);
+  align-items: center;
+  min-height: clamp(420px, 54vw, 620px);
+  padding: clamp(2rem, 6vw, 5rem) 0;
+  border-bottom: 1px solid rgb(15 76 129 / 10%);
+}
+
+.academics-reference-crumb {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: clamp(1.8rem, 4vw, 3.5rem);
+  color: #718697;
+  font-size: 0.78rem;
+}
+
+.academics-reference-crumb a {
+  color: #0f4c81;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.academics-reference-hero h1 {
+  max-width: 12ch;
+  margin: 0;
+  color: #071f33;
+  font-size: clamp(3.1rem, 6.9vw, 6.4rem);
+  letter-spacing: -0.075em;
+  line-height: 0.89;
+  text-wrap: balance;
+}
+
+.academics-reference-hero__copy > p:not(.eyebrow) {
+  max-width: 39rem;
+  margin: 1rem 0 0;
+  color: #415f76;
+  font-size: 1.03rem;
+  line-height: 1.68;
+}
+
+.academics-reference-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.3rem;
+}
+
+.programme-finder {
+  display: grid;
+  gap: 0.8rem;
+  align-self: center;
+  padding: clamp(1.1rem, 2.5vw, 1.45rem);
+  border: 1px solid rgb(15 76 129 / 12%);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 24px 58px rgb(8 36 58 / 10%);
+}
+
+.programme-finder h2 {
+  margin: 0;
+  color: #08243a;
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.programme-finder label {
+  display: grid;
+  gap: 0.4rem;
+  color: #2c526e;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.programme-finder input {
+  width: 100%;
+  border: 1px solid rgb(15 76 129 / 14%);
+  border-radius: 999px;
+  padding: 0.78rem 0.95rem;
+  color: #123e65;
+  font: inherit;
+}
+
+.programme-finder div {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.programme-finder a {
+  color: #0f4c81;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.academic-focus {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.2rem);
+  align-items: stretch;
+}
+
+.academic-focus__image {
+  position: relative;
+  overflow: hidden;
+  min-height: 480px;
+  margin: 0;
+  border-radius: 24px;
+  background: #0a2a43;
+  box-shadow: 0 26px 58px rgb(8 36 58 / 12%);
+}
+
+.academic-focus__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.02) contrast(1.04);
+}
+
+.academic-focus__image::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(5 23 38 / 6%) 0%, rgb(5 23 38 / 76%) 100%);
+  content: '';
+}
+
+.academic-focus__image figcaption {
+  position: absolute;
+  z-index: 1;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+  color: #ffffff;
+}
+
+.academic-focus__image span,
+.academic-college-card > span,
+.academic-institute-grid span,
+.academic-quality__points span {
+  color: #d4a22f;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.academic-focus__image strong {
+  max-width: 14ch;
+  color: #ffffff;
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.75rem, 3.2vw, 3rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+
+.academic-focus__copy {
+  display: grid;
+  align-content: center;
+  gap: 1rem;
+}
+
+.academic-focus__copy h2,
+.academic-fields h2,
+.academic-quality h2 {
+  margin: 0;
+  color: #08243a;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.academic-focus__copy > p:not(.eyebrow),
+.academic-quality > div:first-child > p {
+  margin: 0;
+  color: #4f6a80;
+  line-height: 1.68;
+}
+
+.academic-question-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.academic-question-list article {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgb(15 76 129 / 10%);
+}
+
+.academic-question-list span {
+  color: rgb(15 76 129 / 46%);
+  font-family: var(--font-family-mono);
+  font-weight: 900;
+}
+
+.academic-question-list strong {
+  color: #0d3554;
+  font-family: var(--font-family-heading);
+}
+
+.academic-question-list p {
+  margin: 0.25rem 0 0;
+  color: #5f7588;
+  font-size: 0.9rem;
+  line-height: 1.52;
+}
+
+.academic-programme-pills,
+.academic-fields div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.academic-programme-pills a,
+.academic-fields a {
+  border: 1px solid rgb(15 76 129 / 12%);
+  border-radius: 999px;
+  padding: 0.48rem 0.78rem;
+  background: #ffffff;
+  color: #0f4c81;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.academic-section-heading--split {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  max-width: none;
+}
+
+.academic-section-heading--split > p {
+  max-width: 34rem;
+}
+
+.academic-college-grid,
+.academic-institute-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.academic-college-card,
+.academic-institute-grid article,
+.academic-quality__points article {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: start;
+  min-width: 0;
+  border: 1px solid rgb(15 76 129 / 10%);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 1rem;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 14px 34px rgb(8 36 58 / 5%);
+}
+
+.academic-college-card strong,
+.academic-institute-grid strong,
+.academic-quality__points strong {
+  color: #0b3556;
+  font-family: var(--font-family-heading);
+  line-height: 1.1;
+}
+
+.academic-college-card p,
+.academic-institute-grid p,
+.academic-quality__points p {
+  margin: 0.3rem 0 0;
+  color: #5f7588;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.academic-college-card small {
+  color: #7d8f9e;
+  font-size: 0.75rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.academic-fields {
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border-radius: 24px;
+  background: #f5f8fb;
+}
+
+.academic-institute-grid article,
+.academic-quality__points article {
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+}
+
+.academic-quality {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.12fr);
+  gap: clamp(1rem, 4vw, 3rem);
+  align-items: start;
+  padding: clamp(1.4rem, 3.5vw, 2.4rem);
+  border-radius: 28px;
+  background: #08243a;
+  color: #dcecf8;
+}
+
+.academic-quality h2 {
+  color: #ffffff;
+}
+
+.academic-quality > div:first-child > p {
+  color: #b5cbdd;
+}
+
+.academic-quality__points {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.academic-quality__points article {
+  border-color: rgb(255 255 255 / 12%);
+  background: rgb(255 255 255 / 7%);
+  box-shadow: none;
+}
+
+.academic-quality__points strong {
+  color: #ffffff;
+}
+
+.academic-quality__points p {
+  color: #bdd2e3;
+}
+
+.academic-register {
+  border: 1px solid rgb(15 76 129 / 10%);
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgb(8 36 58 / 6%);
+}
+
+.academic-register > summary {
+  display: grid;
+  gap: 0.35rem;
+  padding: clamp(1rem, 2.5vw, 1.35rem);
+  color: #0f4c81;
+  cursor: pointer;
+  list-style: none;
+}
+
+.academic-register > summary::-webkit-details-marker {
+  display: none;
+}
+
+.academic-register > summary span {
+  color: #9a6b20;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.academic-register > summary strong {
+  color: #08243a;
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  line-height: 1.1;
+}
+
+.academic-architecture-grid--compact {
+  padding: 0 clamp(1rem, 2.5vw, 1.35rem) clamp(1rem, 2.5vw, 1.35rem);
+}
+
+.application-flow-head {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.6fr) minmax(260px, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.35rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgb(15 76 129 / 10%);
+}
+
+.application-flow-brand {
+  display: inline-flex;
+  gap: 0.7rem;
+  align-items: center;
+  color: #061f34;
+  text-decoration: none;
+}
+
+.application-flow-brand img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.application-flow-brand strong {
+  font-family: var(--font-family-heading);
+  font-size: 1rem;
+}
+
+.application-flow-progress {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.application-flow-progress span {
+  color: #1a4462;
+  font-family: var(--font-family-mono);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.application-flow-progress i {
+  display: block;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0f4c81 0 38%, rgb(15 76 129 / 10%) 38% 100%);
+}
+
+.application-flow-head > p {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin: 0;
+  color: #4d6578;
+  font-size: 0.86rem;
+}
+
+.application-flow-head > p span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #19b56b;
+}
+
+.flow-card--application {
+  margin-top: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.flow-card--application .application-shell {
+  grid-template-columns: minmax(245px, 320px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.flow-card--application .application-rail {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding-inline: 0;
+}
+
+.application-help-card {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: auto;
+  padding: 1rem;
+  border: 1px solid rgb(15 76 129 / 12%);
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.application-help-card strong {
+  color: #08243a;
+  font-family: var(--font-family-heading);
+}
+
+.application-help-card a {
+  display: flex;
+  justify-content: center;
+  border: 1px solid rgb(15 76 129 / 14%);
+  border-radius: 10px;
+  padding: 0.7rem;
+  color: #0f4c81;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+}
+
+.flow-card--application .application-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 0.7rem;
+}
+
+.flow-card--application .application-tab {
+  min-height: 76px;
+  border-radius: 14px;
+  text-align: left;
+}
+
+.flow-card--application .application-card-header,
+.flow-card--application .flow-form {
+  border-radius: 24px;
+  box-shadow: 0 18px 42px rgb(8 36 58 / 7%);
+}
+
+.section-shell--student-life {
+  background: linear-gradient(180deg, #fbf5e9 0%, #ffffff 34%, #f8fbfd 100%);
+}
+
+.student-life-page {
+  gap: clamp(3rem, 7vw, 6rem);
+}
+
+.student-life-hero {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.student-life-hero__copy h1 {
+  font-size: clamp(3.2rem, 7vw, 6.7rem);
+}
+
+.student-life-systems-shell {
+  padding-top: 2rem;
+  border-top: 1px solid rgb(15 76 129 / 10%);
+}
+
+@media (max-width: 980px) {
+  .academics-reference-hero,
+  .academic-focus,
+  .academic-quality,
+  .application-flow-head,
+  .flow-card--application .application-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .academic-college-grid,
+  .academic-institute-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-card--application .application-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .academics-reference-hero {
+    min-height: auto;
+    padding-top: 1.2rem;
+  }
+
+  .academics-reference-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 4.2rem);
+  }
+
+  .academic-section-heading--split {
+    display: grid;
+  }
+
+  .academic-focus__image {
+    min-height: 360px;
+  }
+
+  .academic-college-card {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .academic-college-card small {
+    grid-column: 2;
+  }
+
+  .flow-card--application .application-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-card--application .application-tab {
+    min-height: 56px;
+    text-align: center;
+  }
+
+  .application-flow-brand strong {
+    font-size: 0.9rem;
+  }
+}

@@ -157,7 +157,7 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
   },
   {
     slug: 'prof-lessee-and-joseph',
-    name: 'Prof. Lessee and Prof. Joseph',
+    name: 'Prof. Leslee Anne and Prof. Joseph',
     role: 'Advisory Council',
     image: '/assets/team/prof-lessee-and-joseph.jpeg',
     categories: ['advisory'],
@@ -226,12 +226,36 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
     name: 'Musanjufu Benjamin Kavubu',
     role: 'Executive Director - Student Affairs',
     image: '/assets/team/musanjufu-benjamin-kavubu.jpeg',
-    categories: ['research-scholarly'],
+    categories: ['executive'],
     summary: 'Executive Director for Student Affairs supporting student-facing systems and academic community development.',
     profile: [
       'Supports student affairs, learner engagement, and the practical student-facing systems needed for Sankofa\'s academic community.',
     ],
     objectPosition: '50% 22%',
+  },
+  {
+    slug: 'maguru-zagyenda',
+    name: 'Maguru Zagyenda',
+    role: 'Executive Team',
+    image: '/assets/team/maguru-zagyenda.jpeg',
+    categories: ['executive'],
+    summary: 'Executive team member supporting institutional operations, public coordination, and implementation readiness.',
+    profile: [
+      'Supports Sankofa Alkebulan University through executive coordination, operational follow-through, and the disciplined implementation needed for an emerging university system.',
+    ],
+    objectPosition: '50% 24%',
+  },
+  {
+    slug: 'kabala-hardpiece',
+    name: 'Kabala Hardpiece',
+    role: 'Research & Scholarly Team',
+    image: '/assets/team/kabala-hardpiece.jpeg',
+    categories: ['research-scholarly'],
+    summary: 'Research and scholarly team member supporting academic inquiry, documentation, and knowledge-system development.',
+    profile: [
+      'Supports Sankofa\'s research and scholarly formation through inquiry, academic documentation, and the careful development of African-centered knowledge systems.',
+    ],
+    objectPosition: '50% 24%',
   },
 ] as const;
 

@@ -3,6 +3,9 @@ import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './pages/home.component';
 import { AboutPageComponent } from './pages/about-page.component';
 import { AboutDetailPageComponent } from './pages/about-detail-page.component';
+import { AcademicsPageComponent } from './pages/academics-page.component';
+import { AdmissionsApplyPageComponent } from './pages/admissions-apply-page.component';
+import { StudentLifePageComponent } from './pages/student-life-page.component';
 import { TeamCategoryPageComponent } from './pages/team-category-page.component';
 import { TeamProfilePageComponent } from './pages/team-profile-page.component';
 import { DepartmentPageComponent } from './pages/department-page.component';
@@ -128,11 +131,11 @@ export const routes: Routes = [
       { path: 'about/research-scholarly-team', component: TeamCategoryPageComponent, data: { categoryId: 'research-scholarly' } },
       { path: 'about/team/:slug', component: TeamProfilePageComponent },
       { path: 'about/:slug', component: AboutDetailPageComponent },
-      { path: 'student-life', redirectTo: '/home', pathMatch: 'full' },
-      { path: 'faculty-staff', redirectTo: '/home', pathMatch: 'full' },
-      { path: 'digital-learning', redirectTo: '/home', pathMatch: 'full' },
-      { path: 'media-public-scholarship', redirectTo: '/home', pathMatch: 'full' },
-      { path: 'institutional-development', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'academics', component: AcademicsPageComponent },
+      { path: 'faculties-schools', component: AcademicsPageComponent },
+      { path: 'admissions', component: AdmissionsApplyPageComponent },
+      { path: 'apply', redirectTo: '/admissions', pathMatch: 'full' },
+      { path: 'student-life', component: StudentLifePageComponent },
       ...departmentShortcutRoutes,
       { path: 'home/:level/:programSlug', component: ProgramDetailComponent },
       { path: 'home/:level', component: ProgrammesLevelComponent },

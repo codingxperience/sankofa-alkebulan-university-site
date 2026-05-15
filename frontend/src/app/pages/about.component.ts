@@ -1052,7 +1052,7 @@ export class AboutComponent {
       id: 'advisory',
       title: 'Advisory Council',
       description: 'Distinguished scholars and experts offering guidance on academic development, research direction, and institutional partnerships.',
-      people: ['Prof. Leslee - Advisory Council Member', 'Prof. Joseph - Advisory Council Member'],
+      people: ['Prof. Leslee Anne - Advisory Council Member', 'Prof. Joseph - Advisory Council Member'],
     },
     {
       id: 'council',
@@ -1063,7 +1063,7 @@ export class AboutComponent {
       id: 'senate',
       title: 'Academic Senate',
       description: 'Highest authority on academic matters, overseeing curricula, research priorities, quality assurance, and academic freedom.',
-      people: ['Prof. Joseph - Senate Member', 'Prof. Leslee - Senate Member', 'Prof. Mutabazi Assani Mugisha - Senate Member'],
+      people: ['Prof. Joseph - Senate Member', 'Prof. Leslee Anne - Senate Member', 'Prof. Mutabazi Assani Mugisha - Senate Member'],
     },
     {
       id: 'management',

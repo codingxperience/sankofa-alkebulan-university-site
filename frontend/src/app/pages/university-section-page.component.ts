@@ -3,7 +3,13 @@ import { NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RESEARCH_INSTITUTES, UNIVERSITY_PORTAL_PAGES } from '../university/university-data';
+import { ACADEMIC_ARCHITECTURE_COLLEGES, ACADEMIC_ARCHITECTURE_TOTALS } from '../university/academic-architecture';
 import { DEPARTMENT_PAGES } from '../university/department-pages';
+import {
+  STUDENT_LIFE_DECLARATIONS,
+  STUDENT_LIFE_SYSTEMS,
+  StudentLifeSystem,
+} from '../university/student-life-systems';
 import { InquiriesService } from '../core/inquiries.service';
 import { firstValueFrom } from 'rxjs';
 
@@ -94,11 +100,122 @@ interface EventChannel {
   readonly path: string;
 }
 
+interface ServicePathway {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly description: string;
+  readonly iconClass: string;
+  readonly path: string;
+  readonly features: readonly string[];
+}
+
+interface ServiceSignal {
+  readonly value: string;
+  readonly label: string;
+}
+
+interface ContactChannel {
+  readonly label: string;
+  readonly value: string;
+  readonly description: string;
+  readonly href: string;
+  readonly iconClass: string;
+}
+
+interface ContactOffice {
+  readonly title: string;
+  readonly description: string;
+  readonly path: string;
+}
+
+interface ContactInfoBlock {
+  readonly label: string;
+  readonly value: string;
+  readonly description: string;
+  readonly iconClass: string;
+  readonly href?: string;
+  readonly lines?: readonly string[];
+}
+
+interface ContactLocationCard {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly description: string;
+  readonly meta: string;
+  readonly actionLabel: string;
+  readonly path: string;
+}
+
+interface ContactFaq {
+  readonly question: string;
+  readonly answer: string;
+}
+
+interface StudentLifeCommitment {
+  readonly label: string;
+  readonly category: string;
+  readonly title: string;
+  readonly text: string;
+  readonly image: string;
+  readonly imageAlt: string;
+  readonly imagePosition?: string;
+  readonly actionLabel: string;
+  readonly path: string;
+}
+
+interface StudentVoice {
+  readonly quote: string;
+  readonly name: string;
+  readonly role: string;
+  readonly image: string;
+  readonly imageAlt: string;
+  readonly imagePosition?: string;
+}
+
+interface StudentLifeCalendarItem {
+  readonly day: string;
+  readonly month: string;
+  readonly title: string;
+  readonly description: string;
+  readonly meta: string;
+  readonly action: string;
+}
+
+interface AcademicCollegeCard {
+  readonly number: string;
+  readonly title: string;
+  readonly description: string;
+  readonly schools: number;
+  readonly path: string;
+}
+
+interface AcademicFocusQuestion {
+  readonly label: string;
+  readonly title: string;
+  readonly text: string;
+}
+
+interface AcademicInstituteCard {
+  readonly label: string;
+  readonly title: string;
+  readonly description: string;
+}
+
+interface AcademicQualityPoint {
+  readonly label: string;
+  readonly title: string;
+  readonly description: string;
+}
+
 @Component({
   selector: 'app-university-section-page',
   imports: [RouterLink, ReactiveFormsModule, NgOptimizedImage],
   templateUrl: './university-section-page.component.html',
-  styleUrl: './university-section-page.component.scss',
+  styleUrls: [
+    './university-section-page.component.scss',
+    './university-section-page.student-life.scss',
+    './university-section-page.reference.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UniversitySectionPageComponent {
@@ -106,7 +223,7 @@ export class UniversitySectionPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly inquiriesService = inject(InquiriesService);
 
-  readonly universityEmail = 'sankofalkebulanuniversity@outlook.com';
+  readonly universityEmail = 'SanAlkeU@outlook.com';
 
   readonly page = computed(() => {
     const slug = this.route.snapshot.data['slug'];
@@ -116,10 +233,174 @@ export class UniversitySectionPageComponent {
   });
 
   readonly isAdmissionsPage = computed(() => this.page()?.slug === 'admissions');
+  readonly isServicesPage = computed(() => this.page()?.slug === 'services');
   readonly isContactPage = computed(() => this.page()?.slug === 'contact');
   readonly isFacultiesPage = computed(() => this.page()?.slug === 'faculties-schools');
   readonly isResearchPage = computed(() => this.page()?.slug === 'research-innovation');
   readonly isEventsPage = computed(() => this.page()?.slug === 'events-conferences');
+  readonly isStudentLifePage = computed(() => this.page()?.slug === 'student-life');
+
+  readonly studentLifeSystems = STUDENT_LIFE_SYSTEMS;
+  readonly studentLifeDeclarations = STUDENT_LIFE_DECLARATIONS;
+  readonly activeStudentLifeSystemId = signal<StudentLifeSystem['id']>('cultural');
+  readonly activeStudentLifeSystem = computed(
+    () =>
+      this.studentLifeSystems.find((system) => system.id === this.activeStudentLifeSystemId()) ??
+      this.studentLifeSystems[0],
+  );
+  readonly studentLifeTotals = computed(() =>
+    this.studentLifeSystems.map((system) => ({
+      label: system.label,
+      groups: system.groups.length,
+      items: system.groups.reduce((total, group) => total + group.items.length, 0),
+    })),
+  );
+
+  readonly studentLifeCommitments: readonly StudentLifeCommitment[] = [
+    {
+      label: '01',
+      category: 'Residence',
+      title: 'A room of your own, on a campus that holds you.',
+      text: 'Four residence colleges with single and shared rooms, common kitchens, study lofts, and dedicated wardens for first-year support.',
+      image: '/assets/contact/contact-students-study-group.jpg',
+      imageAlt: 'Students studying together on campus',
+      imagePosition: '50% 42%',
+      actionLabel: 'Housing and residence colleges',
+      path: '/services',
+    },
+    {
+      label: '02',
+      category: 'Wellbeing and counsel',
+      title: 'Quiet, confidential support built in.',
+      text: 'A wellbeing centre staffed by counsellors, chaplaincy, and a small mental-health team keeps care present before crisis.',
+      image: '/assets/design/photo-students.jpg',
+      imageAlt: 'Students walking together in a university setting',
+      imagePosition: '48% 38%',
+      actionLabel: 'Wellbeing services',
+      path: '/services',
+    },
+    {
+      label: '03',
+      category: 'Societies and debate',
+      title: 'Forty-plus student societies, run by students.',
+      text: 'Debate, language, faith, music, journalism, model-AU, and a continental cultural network are funded publicly with real budgets.',
+      image: '/assets/academics/world-heritage-civilization.jpg',
+      imageAlt: 'African cultural gathering and public learning moment',
+      imagePosition: '50% 48%',
+      actionLabel: 'Browse societies',
+      path: '/student-life',
+    },
+    {
+      label: '04',
+      category: 'Athletics and movement',
+      title: 'Intramural sport and competitive teams.',
+      text: 'Football, rugby sevens, basketball, athletics, swimming, and fitness clubs keep campus energetic and disciplined.',
+      image: '/assets/design/hero-campus.jpg',
+      imageAlt: 'Sankofa campus exterior',
+      imagePosition: '50% 48%',
+      actionLabel: 'Athletics programme',
+      path: '/student-life',
+    },
+    {
+      label: '05',
+      category: 'Faith and reflection',
+      title: 'An interfaith chaplaincy, serious and unhurried.',
+      text: 'Christian, Muslim, traditional African, and humanist chaplains support reflection, dialogue, and spiritual practice.',
+      image: '/assets/design/hero-research.jpg',
+      imageAlt: 'Research and reflection space with a scientist in a laboratory',
+      imagePosition: '48% 42%',
+      actionLabel: 'Faith life on campus',
+      path: '/services',
+    },
+    {
+      label: '06',
+      category: 'Leadership and service',
+      title: 'The students assembly, and the public work of the university.',
+      text: 'Student governance, civic projects, leadership clinics, and service placements make learning accountable to communities.',
+      image: '/assets/design/hero-admissions.jpg',
+      imageAlt: 'Student holding books in a campus garden',
+      imagePosition: '58% 36%',
+      actionLabel: 'Leadership and service',
+      path: '/student-life',
+    },
+  ];
+
+  readonly studentVoices: readonly StudentVoice[] = [
+    {
+      quote:
+        'I came to Sankofa to write about how my grandmother understood medicine. Three years in, that question has become a real research programme and a community practice.',
+      name: 'Diana Kaija',
+      role: 'Indigenous Knowledge Systems',
+      image: '/assets/team/diana-kaija.jpeg',
+      imageAlt: 'Diana Kaija',
+      imagePosition: '54% 32%',
+    },
+    {
+      quote:
+        'The Pan-African scholars network was the first place I met students from Ghana, Senegal, and Ethiopia who think the way I do about African economies.',
+      name: 'Chinaza Ekeoma',
+      role: 'Civilizational Studies',
+      image: '/assets/team/chinaza-ekeoma.jpeg',
+      imageAlt: 'Chinaza Ekeoma',
+      imagePosition: '50% 24%',
+    },
+    {
+      quote:
+        'I was nervous about leaving Kigali. The residence wardens met me at the airport. Two terms later, I am running the debate society and writing for the student archive.',
+      name: 'Winnie Mukashema',
+      role: 'Public Health',
+      image: '/assets/team/mukashema-winnie.jpeg',
+      imageAlt: 'Winnie Mukashema',
+      imagePosition: '50% 24%',
+    },
+  ];
+
+  readonly studentLifeCalendar: readonly StudentLifeCalendarItem[] = [
+    {
+      day: '14',
+      month: 'Mar',
+      title: 'Annual Lecture - Restoration as a research method',
+      description: 'Prof. Rukundo, public talk in the John K. Sentongo Hall. Free, livestreamed, recorded.',
+      meta: '18:00 / Hall',
+      action: 'RSVP',
+    },
+    {
+      day: '17',
+      month: 'Mar',
+      title: 'Pan-African scholars reading group',
+      description: 'Open seminar on Ngugi wa Thiongo and decolonising the African mind.',
+      meta: '17:30 / Seminar room',
+      action: 'Add to calendar',
+    },
+    {
+      day: '22',
+      month: 'Mar',
+      title: 'Health and wellbeing fair',
+      description: 'Drop-in clinics, mental-health screenings, peer-support sign-ups, and a free strength class.',
+      meta: '09:00 - 16:00 / Quad',
+      action: 'Details',
+    },
+    {
+      day: '29',
+      month: 'Mar',
+      title: 'Inter-college debate finals',
+      description: 'Motion: This house believes restoration is a stronger frame than reform.',
+      meta: '19:00 / Senate Hall',
+      action: 'Tickets',
+    },
+    {
+      day: '02',
+      month: 'Apr',
+      title: 'Founders Day: Service of restoration',
+      description: 'A public service of music, prayer, and reading. Interfaith chaplaincy, all students and families welcome.',
+      meta: '11:00 / Chapel of the Three Rivers',
+      action: 'Details',
+    },
+  ];
+
+  setStudentLifeSystem(systemId: StudentLifeSystem['id']): void {
+    this.activeStudentLifeSystemId.set(systemId);
+  }
 
   readonly academicPathways: readonly AcademicPathway[] = [
     {
@@ -144,6 +425,200 @@ export class UniversitySectionPageComponent {
       path: '/research-innovation',
     },
   ];
+
+  readonly serviceSignals: readonly ServiceSignal[] = [
+    { value: '01', label: 'Choose the right pathway' },
+    { value: '02', label: 'Reach the correct office' },
+    { value: '03', label: 'Move from inquiry to action' },
+  ];
+
+  readonly servicePathways: readonly ServicePathway[] = [
+    {
+      eyebrow: 'Study',
+      title: 'Admissions and Programme Guidance',
+      description: 'Clear support for applicants choosing a level, programme, intake, and funding route.',
+      iconClass: 'pi pi-send',
+      path: '/admissions',
+      features: ['Domestic and international admissions', 'Programme choice support', 'Scholarships and document readiness'],
+    },
+    {
+      eyebrow: 'Learn',
+      title: 'Academic and Digital Learning Services',
+      description: 'Academic navigation across colleges, schools, library access, and virtual learning systems.',
+      iconClass: 'pi pi-book',
+      path: '/faculties-schools',
+      features: ['College and school directory', 'Library and repository access', 'Virtual campus support'],
+    },
+    {
+      eyebrow: 'Belong',
+      title: 'Student Life and Applied Learning',
+      description: 'Clubs, cultural societies, professional societies, wellness, and leadership formation.',
+      iconClass: 'pi pi-users',
+      path: '/student-life',
+      features: ['Cultural and heritage societies', 'Applied clubs', 'Professional societies'],
+    },
+    {
+      eyebrow: 'Build',
+      title: 'Research, Partnerships, and Public Scholarship',
+      description: 'Support for research collaboration, events, publications, partnerships, and public impact.',
+      iconClass: 'pi pi-globe',
+      path: '/research-innovation',
+      features: ['Research institutes', 'Events and conferences', 'Partnership pathways'],
+    },
+  ];
+
+  readonly contactChannels: readonly ContactChannel[] = [
+    {
+      label: 'Email',
+      value: this.universityEmail,
+      description: 'Best for formal inquiries, documents, admissions questions, and administrative routing.',
+      href: `mailto:${this.universityEmail}`,
+      iconClass: 'pi pi-envelope',
+    },
+    {
+      label: 'WhatsApp Live Chat',
+      value: 'Sankofa community support',
+      description: 'Fastest path for lightweight questions, applicant guidance, and quick follow-up.',
+      href: 'https://chat.whatsapp.com/Dv2lTXXzhfMDf6sClAxpEP',
+      iconClass: 'pi pi-whatsapp',
+    },
+    {
+      label: 'Founder / Chancellor',
+      value: '0765871126 / 0706938536',
+      description: 'Leadership contact for founding, institutional, and high-priority university matters.',
+      href: 'tel:0765871126',
+      iconClass: 'pi pi-phone',
+    },
+  ];
+
+  readonly contactOffices: readonly ContactOffice[] = [
+    {
+      title: 'Admissions Office',
+      description: 'Applications, entry requirements, study levels, scholarships, and document readiness.',
+      path: '/admissions',
+    },
+    {
+      title: 'Academic Pathways',
+      description: 'Programmes, colleges, schools, research alignment, and learning routes.',
+      path: '/faculties-schools',
+    },
+    {
+      title: 'Research and Partnerships',
+      description: 'Research institutes, public scholarship, conferences, and institutional collaboration.',
+      path: '/research-innovation',
+    },
+    {
+      title: 'Student Systems',
+      description: 'Student life, clubs, cultural societies, professional societies, and support services.',
+      path: '/student-life',
+    },
+  ];
+
+  readonly contactInfoBlocks: readonly ContactInfoBlock[] = [
+    {
+      label: 'Phone',
+      value: 'Founder / Chancellor Office',
+      description: 'For founding, institutional, and urgent leadership inquiries.',
+      href: 'tel:0765871126',
+      iconClass: 'pi pi-phone',
+      lines: ['0765871126', '0706938536'],
+    },
+    {
+      label: 'Email',
+      value: this.universityEmail,
+      description: 'Best for admissions documents, formal letters, partnership notes, and records.',
+      href: `mailto:${this.universityEmail}`,
+      iconClass: 'pi pi-envelope',
+    },
+    {
+      label: 'WhatsApp',
+      value: 'Live community support',
+      description: 'Use for quick guidance, applicant questions, and follow-up conversations.',
+      href: 'https://chat.whatsapp.com/Dv2lTXXzhfMDf6sClAxpEP',
+      iconClass: 'pi pi-whatsapp',
+    },
+    {
+      label: 'Access',
+      value: 'Digital contact center',
+      description: 'Administrative access is currently routed through digital channels while future campus locations are developed.',
+      iconClass: 'pi pi-map-marker',
+      lines: ['Pan-African virtual office', 'Future campus locations under development'],
+    },
+  ];
+
+  readonly contactLocationCards: readonly ContactLocationCard[] = [
+    {
+      eyebrow: 'Primary access',
+      title: 'Digital Contact Center',
+      description: 'One structured channel for admissions, administration, partnerships, and student support routing.',
+      meta: 'Email, WhatsApp, and inquiry form',
+      actionLabel: 'Send an inquiry',
+      path: '/contact',
+    },
+    {
+      eyebrow: 'Campus planning',
+      title: 'Future Campus Locations',
+      description: 'Sankofa is building toward physical, hybrid, and partner-based learning locations across Pan-African networks.',
+      meta: 'Uganda and continental partner hubs',
+      actionLabel: 'Explore partnerships',
+      path: '/partnerships-global',
+    },
+  ];
+
+  readonly contactFaqs: readonly ContactFaq[] = [
+    {
+      question: 'What is Sankofa Alkebulan University?',
+      answer:
+        'Sankofa Alkebulan University is a Pan-African university initiative centered on African knowledge systems, research, ethical leadership, digital learning, and civilisational renewal.',
+    },
+    {
+      question: 'Which email should I use for official inquiries?',
+      answer: `Use ${this.universityEmail} for admissions, documents, partnership letters, media requests, and administrative correspondence.`,
+    },
+    {
+      question: 'How do prospective students apply?',
+      answer:
+        'Open Admissions, choose postgraduate, undergraduate, or certificate application, complete the form, and include your programme interest, intake, country, and contact details.',
+    },
+    {
+      question: 'Can international applicants apply?',
+      answer:
+        'Yes. International applicants can use the same online pathway and should provide their country, previous qualifications, programme choice, and available academic documents.',
+    },
+    {
+      question: 'Where is the University located?',
+      answer:
+        'Sankofa is currently presented as a digital-first Pan-African university model while future campus locations and partner hubs are developed. Contact administration for current location updates.',
+    },
+    {
+      question: 'Does the University have a charter or accreditation status?',
+      answer:
+        'The Governance and Compliance section is the reference point for charter, policy, quality assurance, and accreditation updates. For current official status, contact administration directly.',
+    },
+    {
+      question: 'Can I submit documents online?',
+      answer:
+        'Yes. Applicants can begin through the admissions form and use email follow-up for transcripts, identification, proposal documents, and other materials requested by admissions.',
+    },
+    {
+      question: 'How do I contact the Founder / Chancellor office?',
+      answer:
+        'Use 0765871126 or 0706938536 for founder/chancellor matters. Routine admissions and document questions should still be sent by email for proper records.',
+    },
+  ];
+
+  readonly contactDepartmentOptions: readonly string[] = [
+    'Admissions',
+    'Academic Programmes',
+    'Research and Partnerships',
+    'Student Life',
+    'Governance and Administration',
+    'Media and Public Scholarship',
+    'General Inquiry',
+  ];
+
+  readonly academicArchitecture = ACADEMIC_ARCHITECTURE_COLLEGES;
+  readonly academicArchitectureTotals = ACADEMIC_ARCHITECTURE_TOTALS;
 
   readonly featuredSchools: readonly FeaturedSchool[] = DEPARTMENT_PAGES.slice(0, 6).map(
     (school, index) => ({
@@ -182,6 +657,130 @@ export class UniversitySectionPageComponent {
       image: '/assets/academics/world-health-earth.jpg',
       imagePosition: '48% center',
       path: '/faculties-schools/college-of-health-sciences-and-biomedical-studies',
+    },
+  ];
+
+  readonly academicFocusQuestions: readonly AcademicFocusQuestion[] = [
+    {
+      label: '01',
+      title: 'Which traditions explain African futures?',
+      text: 'Civilisation, memory, language, public thought, theology, and decolonial scholarship.',
+    },
+    {
+      label: '02',
+      title: 'How does knowledge become public capacity?',
+      text: 'Research, policy, archive work, publishing, and community-facing scholarship.',
+    },
+    {
+      label: '03',
+      title: 'Where can culture become method?',
+      text: 'Heritage systems, oral traditions, philosophy, creative practice, and African languages.',
+    },
+  ];
+
+  readonly academicFocusProgrammes = [
+    'MA Pan-African Studies',
+    'BA Indigenous Knowledge Systems',
+    'MA African Political Thought',
+    'BA African Languages',
+  ] as const;
+
+  readonly academicCollegeCards: readonly AcademicCollegeCard[] = [
+    {
+      number: '01',
+      title: 'College of African Civilizational Studies',
+      description: 'Civilisation, memory, language, philosophy, theology, culture, and African knowledge systems.',
+      schools: 7,
+      path: '/faculties-schools',
+    },
+    {
+      number: '02',
+      title: 'College of Science, Technology & Innovation',
+      description: 'Computing, AI, engineering, data, robotics, space, mathematics, and digital systems.',
+      schools: 8,
+      path: '/faculties-schools',
+    },
+    {
+      number: '03',
+      title: 'College of Governance, Law & Public Policy',
+      description: 'Law, statecraft, public administration, peace, security, diplomacy, and institutional reform.',
+      schools: 6,
+      path: '/faculties-schools',
+    },
+    {
+      number: '04',
+      title: 'College of Health, Wellbeing & Society',
+      description: 'Medicine, public health, psychology, biomedical systems, wellness, and human development.',
+      schools: 7,
+      path: '/faculties-schools',
+    },
+    {
+      number: '05',
+      title: 'College of Business, Enterprise & Economics',
+      description: 'Finance, enterprise, accounting, logistics, trade systems, and economic transformation.',
+      schools: 5,
+      path: '/faculties-schools',
+    },
+    {
+      number: '06',
+      title: 'College of Education & Teacher Development',
+      description: 'Pedagogy, curriculum, teacher education, educational leadership, and lifelong learning.',
+      schools: 4,
+      path: '/faculties-schools',
+    },
+  ];
+
+  readonly academicFieldTags = [
+    'Civilisational systems',
+    'Heritage and memory',
+    'African languages',
+    'Philosophy and ethics',
+    'Arts and cultural production',
+    'AI and data systems',
+    'Public health',
+    'Governance and justice',
+    'Climate futures',
+    'Education systems',
+  ] as const;
+
+  readonly academicInstituteCards: readonly AcademicInstituteCard[] = [
+    {
+      label: '01',
+      title: 'Institute for Pan-African Civilisational Systems',
+      description: 'Long-form scholarship on African thought, identity, history, and public memory.',
+    },
+    {
+      label: '02',
+      title: 'Institute for Artificial Intelligence, Data & Digital Systems',
+      description: 'Human-centered computation, digital sovereignty, analytics, and responsible AI.',
+    },
+    {
+      label: '03',
+      title: 'Institute for Public Health, Epidemiology & Health Security',
+      description: 'Applied health systems research, prevention, community resilience, and policy.',
+    },
+    {
+      label: '04',
+      title: 'Institute for Climate Change & Sustainability Systems',
+      description: 'Climate, ecology, food systems, water security, and environmental transition.',
+    },
+  ];
+
+  readonly academicQualityPoints: readonly AcademicQualityPoint[] = [
+    {
+      label: '01',
+      title: 'Programme approval',
+      description: 'Every programme moves through curriculum review, quality assurance, and Senate approval.',
+    },
+    {
+      label: '02',
+      title: 'External examination',
+      description: 'Independent review protects academic standards, assessment quality, and credibility.',
+    },
+    {
+      label: '03',
+      title: 'Research alignment',
+      description: 'Departments connect teaching to institutes, fieldwork, publications, and public scholarship.',
     },
   ];
 
@@ -547,8 +1146,8 @@ export class UniversitySectionPageComponent {
   readonly birthMonths = Array.from({ length: 12 }, (_, index) => String(index + 1));
 
   readonly applicationModes: readonly ApplicationMode[] = [
-    { label: 'Postgraduate Application', studyLevel: 'Master Degree' },
     { label: 'Undergraduate Application', studyLevel: 'Bachelor Degree' },
+    { label: 'Postgraduate Application', studyLevel: 'Master Degree' },
     { label: 'Certificate Application', studyLevel: 'Certificate or Diploma' },
   ];
 
@@ -885,5 +1484,3 @@ export class UniversitySectionPageComponent {
     return null;
   }
 }
-
-

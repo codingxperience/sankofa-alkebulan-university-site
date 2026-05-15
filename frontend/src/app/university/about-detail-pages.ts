@@ -5,6 +5,14 @@ export interface AboutNavLink {
 }
 
 export interface AboutDetailSection {
+  readonly id?: string;
+  readonly heading: string;
+  readonly paragraphs?: readonly string[];
+  readonly items?: readonly string[];
+  readonly groups?: readonly AboutDetailGroup[];
+}
+
+export interface AboutDetailGroup {
   readonly heading: string;
   readonly paragraphs?: readonly string[];
   readonly items?: readonly string[];
@@ -20,11 +28,6 @@ export interface AboutDetailPage {
 }
 
 export const ABOUT_SECTION_LINKS: readonly AboutNavLink[] = [
-  { label: 'Founders & Chancellor', path: '/about', fragment: 'founders-chancellor-team' },
-  { label: 'Executive Team', path: '/about/executive-team' },
-  { label: 'Board of Governance', path: '/about/board-of-governance' },
-  { label: 'Advisory Council', path: '/about/advisory-council' },
-  { label: 'Research & Scholarly Team', path: '/about/research-scholarly-team' },
   { label: 'History of Sankofa', path: '/about/history-of-sankofa' },
   { label: 'Governance Structure', path: '/about/governance-structure' },
   { label: 'University Council', path: '/about/university-council' },
@@ -33,6 +36,7 @@ export const ABOUT_SECTION_LINKS: readonly AboutNavLink[] = [
 
 export const ABOUT_RELATED_LINKS: readonly AboutNavLink[] = [
   { label: 'Sankofa Charter', path: '/about/sankofa-charter' },
+  { label: 'Annual Reports', path: '/about/annual-reports' },
   { label: 'Sankofa Law Council', path: '/about/sankofa-law-council' },
   { label: 'Statute on Governance & Management', path: '/about/statute-on-governance-and-management' },
   { label: 'University Policies', path: '/about/university-policies' },
@@ -153,7 +157,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
         heading: 'Current Senate Membership',
         items: [
           'Prof. Joseph - Senate Member',
-          'Prof. Lessee - Senate Member',
+          'Prof. Leslee Anne - Senate Member',
           'Prof. Mutabazi Mugisha - Senate Member',
         ],
       },
@@ -202,12 +206,309 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     ],
     sections: [
       {
-        heading: 'Core Charter Themes',
+        id: 'preamble',
+        heading: '1. Preamble',
+        paragraphs: [
+          'We, the Founding Authority of Sankofa Alkebulan University, hereby establish this institution as a Pan-African university dedicated to advanced learning, research excellence, and civilisational knowledge production.',
+          'This Charter constitutes the supreme institutional framework governing the University\'s legal identity, academic structure, governance system, and operational principles.',
+        ],
+      },
+      {
+        id: 'legal-status',
+        heading: '2. Legal Status & Authority',
+        groups: [
+          {
+            heading: '2.1 Establishment',
+            paragraphs: [
+              'The University is established as a private higher education institution in accordance with applicable national higher education laws and regulatory frameworks.',
+            ],
+          },
+          {
+            heading: '2.2 Legal Personality',
+            paragraphs: ['The University is a body corporate with perpetual succession, empowered to:'],
+            items: ['Own, acquire, and dispose of property', 'Enter into contracts', 'Sue and be sued in its own name'],
+          },
+          {
+            heading: '2.3 Regulatory Compliance',
+            paragraphs: ['The University shall operate under:'],
+            items: ['National Higher Education regulatory authority requirements', 'International academic quality standards'],
+          },
+        ],
+      },
+      {
+        id: 'institutional-identity',
+        heading: '3. Institutional Identity',
+        groups: [
+          {
+            heading: '3.1 Vision',
+            paragraphs: [
+              'To become a leading Pan-African centre of excellence in science, governance, innovation, and civilisational knowledge systems.',
+            ],
+          },
+          {
+            heading: '3.2 Mission',
+            paragraphs: [
+              'To provide transformative education, produce impactful research, and develop systems-based solutions for African and global development challenges.',
+            ],
+          },
+          {
+            heading: '3.3 Philosophy',
+            paragraphs: ['The University is guided by:'],
+            items: [
+              'Epistemic independence',
+              'Interdisciplinary systems thinking',
+              'African-centred knowledge production',
+              'Ethical and socially responsible scholarship',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'core-objectives',
+        heading: '4. Core Objectives',
+        paragraphs: ['The University shall:'],
         items: [
-          'Establishment and legal identity',
-          'Mission, vision, and guiding principles',
-          'Governance structures and academic authority',
-          'Research ethics, student representation, and ceremonies',
+          'Deliver accredited academic programmes at all levels',
+          'Advance research and innovation across disciplines',
+          'Promote African indigenous and global knowledge integration',
+          'Contribute to policy development and institutional reform',
+          'Develop skilled, globally competitive graduates',
+          'Foster international academic collaboration',
+        ],
+      },
+      {
+        id: 'academic-structure',
+        heading: '5. Academic Structure',
+        groups: [
+          {
+            heading: '5.1 Institutional Hierarchy',
+            paragraphs: ['The academic system shall be structured as: University -> Colleges -> Schools -> Departments -> Programmes -> Courses.'],
+          },
+          {
+            heading: '5.2 Research Architecture',
+            paragraphs: ['Research shall be conducted through:'],
+            items: ['Academic Departments', 'Schools', 'Research Institutes (cross-disciplinary systems units)'],
+          },
+          {
+            heading: '5.3 Academic Awards',
+            paragraphs: ['The University shall confer:'],
+            items: ['Diplomas', 'Bachelor\'s Degrees', 'Master\'s Degrees', 'Doctoral Degrees'],
+          },
+        ],
+      },
+      {
+        id: 'governance-structure',
+        heading: '6. Governance Structure',
+        groups: [
+          {
+            heading: '6.1 University Council (Supreme Authority)',
+            paragraphs: ['Mandate:', 'Powers:'],
+            items: [
+              'Institutional governance and oversight',
+              'Financial and strategic control',
+              'Appointment of senior leadership',
+              'Approves statutes, budgets, and institutional policies',
+              'Ensures regulatory compliance',
+            ],
+          },
+          {
+            heading: '6.2 University Senate (Academic Authority)',
+            paragraphs: ['Mandate: Academic governance and quality assurance.', 'Functions:'],
+            items: [
+              'Approves curricula and programmes',
+              'Regulates examinations and academic standards',
+              'Oversees academic integrity',
+            ],
+          },
+          {
+            heading: '6.3 Executive Leadership',
+            items: [
+              'Vice-Chancellor: Chief Executive and Academic Officer of the University',
+              'Deputy Vice-Chancellor: Academic Affairs',
+              'Deputy Vice-Chancellor: Research & Innovation',
+              'Deputy Vice-Chancellor: Finance & Administration',
+              'Deputy Vice-Chancellor: Student Affairs',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'academic-governance-units',
+        heading: '7. Academic Governance Units',
+        groups: [
+          {
+            heading: '7.1 Colleges',
+            items: ['Led by Deans', 'Responsible for disciplinary coordination'],
+          },
+          {
+            heading: '7.2 Schools',
+            items: ['Led by School Directors', 'Responsible for programme execution'],
+          },
+          {
+            heading: '7.3 Departments',
+            items: ['Led by Heads of Department', 'Responsible for teaching, research, and curriculum delivery'],
+          },
+        ],
+      },
+      {
+        id: 'research-institutes',
+        heading: '8. Research Institutes System',
+        groups: [
+          {
+            heading: '8.1 Status',
+            paragraphs: ['Research Institutes are semi-autonomous interdisciplinary units reporting to the DVC Research.'],
+          },
+          {
+            heading: '8.2 Functions',
+            items: [
+              'Advanced research and innovation',
+              'Policy advisory services',
+              'Knowledge production and dissemination',
+              'Patent and intellectual property generation',
+            ],
+          },
+          {
+            heading: '8.3 Governance',
+            paragraphs: ['Each Institute shall be led by a Director and governed by a Research Advisory Board.'],
+          },
+        ],
+      },
+      {
+        id: 'quality-assurance',
+        heading: '9. Quality Assurance Framework',
+        groups: [
+          {
+            heading: '9.1 Directorate of Quality Assurance',
+            paragraphs: ['Responsible for:'],
+            items: [
+              'Academic audits',
+              'Programme validation',
+              'Teaching and learning evaluation',
+              'Compliance monitoring',
+            ],
+          },
+          {
+            heading: '9.2 External Examination System',
+            paragraphs: ['All academic programmes shall be subject to independent external examination.'],
+          },
+        ],
+      },
+      {
+        id: 'academic-regulations',
+        heading: '10. Academic Regulations (Integrated)',
+        groups: [
+          {
+            heading: '10.1 Credit System',
+            paragraphs: ['The University shall adopt a standardized credit unit system consistent with international academic frameworks.'],
+          },
+          {
+            heading: '10.2 Programme Approval',
+            paragraphs: ['All academic programmes shall:'],
+            items: ['Undergo Senate approval', 'Be reviewed periodically', 'Meet regulatory accreditation standards'],
+          },
+          {
+            heading: '10.3 Progression Rules',
+            paragraphs: ['Students shall progress based on:'],
+            items: ['Academic performance', 'Credit accumulation', 'Programme requirements'],
+          },
+        ],
+      },
+      {
+        id: 'staffing',
+        heading: '11. Staffing and Appointment Framework',
+        groups: [
+          {
+            heading: '11.1 Academic Staff Categories',
+            items: ['Professor', 'Associate Professor', 'Senior Lecturer', 'Lecturer', 'Assistant Lecturer'],
+          },
+          {
+            heading: '11.2 Appointment Principles',
+            paragraphs: ['Appointments shall be based on:'],
+            items: ['Academic merit', 'Research output', 'Teaching competence', 'Professional integrity'],
+          },
+        ],
+      },
+      {
+        id: 'student-governance',
+        heading: '12. Student Governance',
+        groups: [
+          {
+            heading: '12.1 Student Union',
+            paragraphs: ['Represents student interests and welfare.'],
+          },
+          {
+            heading: '12.2 Student Affairs Directorate',
+            paragraphs: ['Responsible for:'],
+            items: ['Welfare services', 'Discipline', 'Counseling and support'],
+          },
+        ],
+      },
+      {
+        id: 'financial-governance',
+        heading: '13. Financial Governance',
+        groups: [
+          {
+            heading: '13.1 Revenue Sources',
+            items: ['Tuition fees', 'Research grants', 'Donations and endowments', 'Consultancy services'],
+          },
+          {
+            heading: '13.2 Financial Controls',
+            items: ['Annual external audits', 'Transparent budgeting system', 'Council-approved financial policies'],
+          },
+        ],
+      },
+      {
+        id: 'ethics-integrity',
+        heading: '14. Ethics, Integrity & Discipline',
+        paragraphs: ['The University shall uphold:', 'A Disciplinary Committee shall enforce compliance.'],
+        items: [
+          'Academic integrity',
+          'Research ethics',
+          'Professional conduct standards',
+          'Anti-corruption principles',
+        ],
+      },
+      {
+        id: 'partnerships',
+        heading: '15. Partnerships & Collaboration',
+        paragraphs: ['The University may engage with:'],
+        items: ['Governments', 'International institutions', 'Industry partners', 'Research organizations'],
+      },
+      {
+        id: 'infrastructure',
+        heading: '16. Infrastructure & Delivery Modes',
+        paragraphs: ['The University may operate through:'],
+        items: [
+          'Physical campuses',
+          'Digital learning platforms',
+          'Hybrid academic delivery systems',
+          'Research laboratories and innovation hubs',
+        ],
+      },
+      {
+        id: 'amendment',
+        heading: '17. Amendment of the Charter',
+        paragraphs: ['This Charter may be amended by:'],
+        items: [
+          'University Council',
+          'Upon recommendation of Senate',
+          'In compliance with national regulatory requirements',
+        ],
+      },
+      {
+        id: 'commencement',
+        heading: '18. Commencement',
+        paragraphs: ['This Charter shall take effect upon:'],
+        items: ['Approval by the Governing Council', 'Recognition by the relevant regulatory authority'],
+      },
+      {
+        id: 'seal',
+        heading: '19. Seal of the University',
+        paragraphs: ['The University shall maintain an official seal for:'],
+        items: [
+          'Degree certification',
+          'Legal documentation',
+          'Institutional authentication',
         ],
       },
     ],
@@ -255,6 +556,32 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
       'Student admissions, welfare, conduct, and citizenship',
       'Governance, finance, procurement, and compliance',
       'Technology, data protection, sustainability, and international collaboration',
+    ],
+  },
+  {
+    slug: 'annual-reports',
+    title: 'Annual Reports',
+    summary: 'A public reporting home for institutional progress, finances, governance, and academic development.',
+    intro: [
+      'Annual reporting at Sankofa Alkebulan University is designed to keep the institution accountable to its mission, students, partners, and governing bodies.',
+      'Reports will organize progress across academic development, research activity, student access, governance, finances, quality assurance, and public impact.',
+    ],
+    highlights: [
+      'Academic and research progress',
+      'Admissions, access, and student support reporting',
+      'Governance and quality assurance updates',
+      'Financial stewardship and public accountability',
+    ],
+    sections: [
+      {
+        heading: 'Reporting Areas',
+        items: [
+          'Academic programmes, colleges, schools, and departments',
+          'Research institutes, publications, and policy outputs',
+          'Student life, scholarships, access, and welfare indicators',
+          'Governance, finance, risk, and compliance updates',
+        ],
+      },
     ],
   },
   {

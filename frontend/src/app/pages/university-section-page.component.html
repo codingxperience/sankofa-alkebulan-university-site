@@ -4,6 +4,9 @@
     [class.section-shell--academics]="isFacultiesPage()"
     [class.section-shell--research]="isResearchPage()"
     [class.section-shell--events]="isEventsPage()"
+    [class.section-shell--student-life]="isStudentLifePage()"
+    [class.section-shell--services]="isServicesPage()"
+    [class.section-shell--contact]="isContactPage()"
   >
     <div class="container">
       @if (isResearchPage()) {
@@ -287,125 +290,772 @@
             </div>
           </section>
         </div>
-      } @else if (isFacultiesPage()) {
-        <div class="academics-landing">
-          <section class="academics-hero" aria-labelledby="academics-title">
-            <video
-              class="academics-hero__media"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-              poster="/assets/hero/hero-campus-africa.jpg"
-              aria-label="Students collaborating in a modern learning space"
-            >
-              <source src="/assets/academics/academic-students-tablet.mp4" type="video/mp4" />
-            </video>
-            <div class="academics-hero__veil"></div>
-            <div class="academics-hero__content">
-              <p class="eyebrow">Academics at Sankofa</p>
-              <h1 id="academics-title">{{ section.title }}</h1>
+      } @else if (isStudentLifePage()) {
+        <div class="student-life-page">
+          <section class="student-life-hero" aria-labelledby="student-life-title">
+            <div class="student-life-hero__copy">
+              <p class="eyebrow">Student Life</p>
+              <h1 id="student-life-title">A life of the <em>mind</em>, and of <em>each other</em>.</h1>
               <p>
-                Clear academic homes for heritage, science, leadership, enterprise, health,
-                law, and creative futures.
+                Sankofa is not only what you study. It is how you live alongside fellow scholars -
+                in residences, libraries, studios, and student societies. The university backs that life
+                with housing, wellbeing, athletics, faith, and leadership infrastructure.
               </p>
-              <div class="academics-hero__actions">
-                <a routerLink="/programs" class="btn">Explore programs</a>
-                <a routerLink="/admissions" class="btn btn--secondary">Apply now</a>
+              <div class="student-life-hero__actions">
+                <a routerLink="/student-life" fragment="student-life-systems" class="btn">See what is here</a>
+                <a routerLink="/events-conferences" class="btn btn--secondary">Term calendar</a>
               </div>
             </div>
-            <div class="academics-hero__ticker" aria-hidden="true">
-              <span>Heritage</span>
-              <span>Science</span>
-              <span>Leadership</span>
-              <span>Health</span>
-              <span>AI</span>
-              <span>Law</span>
+
+            <div class="student-life-portrait-stack" aria-label="Student voices and life at Sankofa">
+              <figure class="student-life-portrait student-life-portrait--main">
+                <img
+                  ngSrc="/assets/team/diana-kaija.jpeg"
+                  width="560"
+                  height="560"
+                  sizes="(min-width: 900px) 34vw, 88vw"
+                  alt="Sankofa student portrait"
+                />
+              </figure>
+              <article class="student-life-profile-card student-life-profile-card--top">
+                <img
+                  ngSrc="/assets/team/chinaza-ekeoma.jpeg"
+                  width="96"
+                  height="96"
+                  sizes="8vw"
+                  alt="Chinaza Ekeoma"
+                />
+                <div>
+                  <strong>Chinaza</strong>
+                  <span>BA Civilizational Studies</span>
+                </div>
+              </article>
+              <article class="student-life-profile-card student-life-profile-card--bottom">
+                <img
+                  ngSrc="/assets/team/musemeza-jonah.jpeg"
+                  width="96"
+                  height="96"
+                  sizes="8vw"
+                  alt="Musemeza Jonah"
+                />
+                <div>
+                  <strong>Jonah</strong>
+                  <span>BSc Computing & Data</span>
+                </div>
+              </article>
             </div>
           </section>
 
-          <section class="academic-pathways" aria-label="Academic pathways">
-            @for (pathway of academicPathways; track pathway.title) {
-              <a [routerLink]="pathway.path" class="academic-pathway">
-                <span class="academic-pathway__icon" aria-hidden="true"><i [class]="pathway.iconClass"></i></span>
+          <section class="student-life-commitments" aria-labelledby="student-life-commitments-title">
+            <div class="student-life-section-heading">
+              <div>
+                <p class="eyebrow">What student life means here</p>
+                <h2 id="student-life-commitments-title">Six commitments the university holds.</h2>
+              </div>
+              <p>
+                Each commitment has a public team, a budget, and an annual reporting line.
+                Student life is designed as infrastructure, not decoration.
+              </p>
+            </div>
+
+            <div class="student-life-commitment-grid">
+              @for (commitment of studentLifeCommitments; track commitment.label) {
+                <article class="student-life-commitment">
+                  <img
+                    [ngSrc]="commitment.image"
+                    width="720"
+                    height="520"
+                    sizes="(min-width: 1100px) 31vw, (min-width: 720px) 46vw, 92vw"
+                    [alt]="commitment.imageAlt"
+                    [style.object-position]="commitment.imagePosition || '50% 50%'"
+                  />
+                  <div>
+                    <span>{{ commitment.label }} &middot; {{ commitment.category }}</span>
+                    <h3>{{ commitment.title }}</h3>
+                    <p>{{ commitment.text }}</p>
+                    <a [routerLink]="commitment.path">{{ commitment.actionLabel }} <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="student-life-voices" aria-labelledby="student-life-voices-title">
+            <div class="student-life-section-heading">
+              <div>
+                <p class="eyebrow">Student voices</p>
+                <h2 id="student-life-voices-title">In their own words.</h2>
+              </div>
+            </div>
+
+            <div class="student-life-voice-grid">
+              @for (voice of studentVoices; track voice.name) {
+                <blockquote>
+                  <p>{{ voice.quote }}</p>
+                  <footer>
+                    <img
+                      [ngSrc]="voice.image"
+                      width="72"
+                      height="72"
+                      sizes="7vw"
+                      [alt]="voice.imageAlt"
+                      [style.object-position]="voice.imagePosition || '50% 28%'"
+                    />
+                    <cite>
+                      <strong>{{ voice.name }}</strong>
+                      <span>{{ voice.role }}</span>
+                    </cite>
+                  </footer>
+                </blockquote>
+              }
+            </div>
+          </section>
+
+          <section class="student-life-calendar" aria-labelledby="student-life-calendar-title">
+            <div class="student-life-section-heading">
+              <div>
+                <p class="eyebrow">This term</p>
+                <h2 id="student-life-calendar-title">What is on, in the next four weeks.</h2>
+              </div>
+              <p>A small selection. The full term calendar lives in the student portal.</p>
+            </div>
+
+            <div class="student-life-event-list">
+              @for (event of studentLifeCalendar; track event.title) {
+                <article>
+                  <time>
+                    <strong>{{ event.day }}</strong>
+                    <span>{{ event.month }}</span>
+                  </time>
+                  <div>
+                    <h3>{{ event.title }}</h3>
+                    <p>{{ event.description }}</p>
+                    <small>{{ event.meta }}</small>
+                  </div>
+                  <button type="button">{{ event.action }}</button>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="student-life-quote-band" aria-label="Student affairs statement">
+            <div>
+              <img
+                ngSrc="/assets/team/mukashema-winnie.jpeg"
+                width="140"
+                height="140"
+                sizes="9vw"
+                alt="Winnie Mukashema"
+              />
+              <blockquote>
+                <p>
+                  Student life at Sankofa is not a separate department. It is the way a serious university
+                  looks after the people who do its serious work - quietly, well, and on a budget you can read.
+                </p>
+                <cite>Winnie Mukashema <span>Executive Director - Student Affairs</span></cite>
+              </blockquote>
+            </div>
+          </section>
+
+          <section class="student-life-campus-cta" aria-labelledby="student-life-campus-title">
+            <div>
+              <p class="eyebrow">For prospective students</p>
+              <h2 id="student-life-campus-title">Come see the campus.</h2>
+              <p>
+                Open days, virtual campus tours, and overnight visits are available for shortlisted applicants.
+                The fastest way to know if Sankofa is for you is to walk through it.
+              </p>
+            </div>
+            <div>
+              <a routerLink="/contact" class="btn">Book a visit</a>
+              <a routerLink="/services" class="btn btn--secondary">Virtual campus tour</a>
+            </div>
+          </section>
+
+          <section class="student-life-systems-shell" id="student-life-systems" aria-labelledby="student-life-systems-title">
+            <div class="student-life-section-heading">
+              <div>
+                <p class="eyebrow">Complete system</p>
+                <h2 id="student-life-systems-title">Societies, clubs, and professional pathways.</h2>
+              </div>
+              <p>
+                Cultural societies, applied clubs, and professional societies are organized as living systems:
+                identity, practice, leadership, and career formation working together.
+              </p>
+            </div>
+
+          <section class="student-life-switcher" aria-label="Student life systems">
+            @for (system of studentLifeSystems; track system.id) {
+              <button
+                type="button"
+                [class.active]="activeStudentLifeSystemId() === system.id"
+                [attr.aria-pressed]="activeStudentLifeSystemId() === system.id"
+                (click)="setStudentLifeSystem(system.id)"
+              >
+                <span>{{ system.eyebrow }}</span>
+                <strong>{{ system.label }}</strong>
+              </button>
+            }
+          </section>
+
+          @if (activeStudentLifeSystem(); as system) {
+            <section class="student-life-system" aria-labelledby="student-life-system-title">
+              <div class="student-life-system__intro">
+                <p class="eyebrow">{{ system.eyebrow }}</p>
+                <h2 id="student-life-system-title">{{ system.title }}</h2>
+                <p>{{ system.description }}</p>
+              </div>
+
+              <aside class="student-life-governance" aria-label="Governance framework">
+                <h3>{{ system.governanceTitle }}</h3>
+                <ul>
+                  @for (item of system.governance; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </aside>
+
+              <div class="student-life-directory">
+                @for (group of system.groups; track group.title; let groupIndex = $index) {
+                  <article class="student-life-group">
+                    <div class="student-life-group__head">
+                      <span>{{ group.items.length }} pathways</span>
+                      <h3>{{ group.title }}</h3>
+                      @if (group.subtitle) {
+                        <p>{{ group.subtitle }}</p>
+                      }
+                    </div>
+
+                    <ul class="student-life-preview">
+                      @for (item of group.items.slice(0, 5); track item) {
+                        <li>{{ item }}</li>
+                      }
+                    </ul>
+
+                    @if (group.items.length > 5) {
+                      <details class="student-life-details">
+                        <summary>View all {{ group.items.length }} pathways</summary>
+                        <ul>
+                          @for (item of group.items.slice(5); track item) {
+                            <li>{{ item }}</li>
+                          }
+                        </ul>
+                      </details>
+                    }
+                  </article>
+                }
+              </div>
+            </section>
+          }
+          </section>
+
+          <section class="student-life-declarations" aria-label="Institutional principles">
+            @for (declaration of studentLifeDeclarations; track declaration) {
+              <blockquote>{{ declaration }}</blockquote>
+            }
+          </section>
+        </div>
+      } @else if (isFacultiesPage()) {
+        <div class="academics-landing academics-reference">
+          <section class="academics-reference-hero" aria-labelledby="academics-title">
+            <div class="academics-reference-hero__copy">
+              <nav class="academics-reference-crumb" aria-label="Breadcrumb">
+                <a routerLink="/home">Home</a>
+                <span>/</span>
+                <span>Academics</span>
+              </nav>
+              <p class="eyebrow">Academics</p>
+              <h1 id="academics-title">Choose by the question, not the catalogue.</h1>
+              <p>
+                Sankofa organizes study through colleges, schools, departments, programmes, and research institutes,
+                but applicants should begin with the problem they want to understand and the work they want to do.
+              </p>
+              <div class="academics-reference-actions">
+                <a routerLink="/academic-calendar" class="btn btn--secondary">Academic calendar</a>
+                <a routerLink="/programs" class="btn">Course catalogue</a>
+              </div>
+            </div>
+
+            <aside class="programme-finder" aria-labelledby="programme-finder-title">
+              <p class="eyebrow">Find a programme</p>
+              <h2 id="programme-finder-title">Search by level, field, or question.</h2>
+              <label>
+                Programme search
+                <input type="search" placeholder="Pan-African Studies, AI, Public Health..." />
+              </label>
+              <div>
+                <a routerLink="/programs">Browse all programmes</a>
+                <a routerLink="/admissions">Start an application</a>
+              </div>
+            </aside>
+          </section>
+
+          <section class="academic-focus" aria-labelledby="academic-focus-title">
+            <figure class="academic-focus__image">
+              <img
+                ngSrc="/assets/academics/world-heritage-civilization.jpg"
+                width="1200"
+                height="860"
+                sizes="(min-width: 980px) 44vw, 100vw"
+                alt="African cultural learning and public knowledge gathering"
+              />
+              <figcaption>
+                <span>In focus</span>
+                <strong>College of African Civilizational Studies</strong>
+              </figcaption>
+            </figure>
+
+            <div class="academic-focus__copy">
+              <p class="eyebrow">Focus college</p>
+              <h2 id="academic-focus-title">The continent's history is not a footnote. It is the syllabus.</h2>
+              <p>
+                A focused entry point into heritage, language, philosophy, visual arts, political thought,
+                and the restoration of African knowledge traditions.
+              </p>
+
+              <div class="academic-question-list">
+                @for (question of academicFocusQuestions; track question.label) {
+                  <article>
+                    <span>{{ question.label }}</span>
+                    <div>
+                      <strong>{{ question.title }}</strong>
+                      <p>{{ question.text }}</p>
+                    </div>
+                  </article>
+                }
+              </div>
+
+              <div class="academic-programme-pills" aria-label="Featured programmes">
+                @for (programme of academicFocusProgrammes; track programme) {
+                  <a routerLink="/programs">{{ programme }}</a>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section class="academic-college-directory" aria-labelledby="academic-college-directory-title">
+            <div class="academic-section-heading academic-section-heading--split">
+              <div>
+                <p class="eyebrow">Six colleges</p>
+                <h2 id="academic-college-directory-title">Choose the question, not the catalogue.</h2>
+              </div>
+              <p>
+                A calm front door into the wider college system. The complete architecture remains available below
+                without turning the page into a wall of text.
+              </p>
+            </div>
+
+            <div class="academic-college-grid">
+              @for (college of academicCollegeCards; track college.number) {
+                <a [routerLink]="college.path" class="academic-college-card">
+                  <span>{{ college.number }}</span>
+                  <div>
+                    <strong>{{ college.title }}</strong>
+                    <p>{{ college.description }}</p>
+                  </div>
+                  <small>{{ college.schools }} schools</small>
+                </a>
+              }
+            </div>
+          </section>
+
+          <section class="academic-pathway-panel" aria-labelledby="academic-pathway-title">
+            <div class="academic-section-heading">
+              <p class="eyebrow">Ways to study</p>
+              <h2 id="academic-pathway-title">Four paths into serious work.</h2>
+            </div>
+            <div class="academic-pathways academic-pathways--reference">
+              @for (pathway of academicPathways; track pathway.title) {
+                <a [routerLink]="pathway.path" class="academic-pathway">
+                  <span class="academic-pathway__icon" aria-hidden="true"><i [class]="pathway.iconClass"></i></span>
+                  <span class="academic-pathway__body">
+                    <span>{{ pathway.eyebrow }}</span>
+                    <strong>{{ pathway.title }}</strong>
+                    <small>{{ pathway.description }}</small>
+                  </span>
+                  <span class="academic-pathway__arrow" aria-hidden="true">&rarr;</span>
+                </a>
+              }
+              <a routerLink="/admissions" class="academic-pathway">
+                <span class="academic-pathway__icon" aria-hidden="true"><i class="pi pi-send"></i></span>
                 <span class="academic-pathway__body">
-                  <span>{{ pathway.eyebrow }}</span>
-                  <strong>{{ pathway.title }}</strong>
-                  <small>{{ pathway.description }}</small>
+                  <span>Apply</span>
+                  <strong>Admissions</strong>
+                  <small>One application flow for undergraduate, postgraduate, and certificate routes.</small>
                 </span>
                 <span class="academic-pathway__arrow" aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="academic-fields" aria-labelledby="academic-fields-title">
+            <p class="eyebrow">Explore by field</p>
+            <h2 id="academic-fields-title">Readable entry points before the full register.</h2>
+            <div>
+              @for (tag of academicFieldTags; track tag) {
+                <a routerLink="/programs">{{ tag }}</a>
+              }
+            </div>
+          </section>
+
+          <section class="academic-institutes" aria-labelledby="academic-institutes-title">
+            <div class="academic-section-heading academic-section-heading--split">
+              <div>
+                <p class="eyebrow">Research alignment</p>
+                <h2 id="academic-institutes-title">Institutes that connect study to public work.</h2>
+              </div>
+              <p>Departments do not sit alone; they connect to institutes, fieldwork, publishing, and policy-facing scholarship.</p>
+            </div>
+
+            <div class="academic-institute-grid">
+              @for (institute of academicInstituteCards; track institute.label) {
+                <article>
+                  <span>{{ institute.label }}</span>
+                  <strong>{{ institute.title }}</strong>
+                  <p>{{ institute.description }}</p>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="academic-quality" aria-labelledby="academic-quality-title">
+            <div>
+              <p class="eyebrow">Academic quality assurance</p>
+              <h2 id="academic-quality-title">Standards before scale.</h2>
+              <p>
+                Sankofa's academic architecture is intentionally broad, but each programme must pass quality,
+                governance, and research-alignment checks before delivery.
+              </p>
+            </div>
+            <div class="academic-quality__points">
+              @for (point of academicQualityPoints; track point.label) {
+                <article>
+                  <span>{{ point.label }}</span>
+                  <strong>{{ point.title }}</strong>
+                  <p>{{ point.description }}</p>
+                </article>
+              }
+            </div>
+          </section>
+
+          <details id="academic-architecture" class="academic-register">
+            <summary>
+              <span>Complete academic register</span>
+              <strong>
+                {{ academicArchitectureTotals.colleges }} colleges, {{ academicArchitectureTotals.schools }} schools,
+                {{ academicArchitectureTotals.departments }} departments, {{ academicArchitectureTotals.programmes }} programmes,
+                and {{ academicArchitectureTotals.researchInstitutes }} research institutes.
+              </strong>
+            </summary>
+
+            <div class="academic-architecture-grid academic-architecture-grid--compact">
+              @for (college of academicArchitecture; track college.id) {
+                <article class="academic-architecture-card">
+                  <div class="academic-architecture-card__head">
+                    <span>{{ college.id < 10 ? '0' + college.id : college.id }}</span>
+                    <h3>{{ college.name }}</h3>
+                  </div>
+
+                  <details>
+                    <summary>Schools and Departments</summary>
+                    <div class="academic-school-list">
+                      @for (school of college.schoolStructure; track school.name) {
+                        <section>
+                          <h4>{{ school.name }}</h4>
+                          <ul>
+                            @for (department of school.departments; track department) {
+                              <li>{{ department }}</li>
+                            }
+                          </ul>
+                        </section>
+                      }
+                    </div>
+                  </details>
+
+                  <details>
+                    <summary>Programmes</summary>
+                    <ul>
+                      @for (programme of college.programmes; track programme) {
+                        <li>{{ programme }}</li>
+                      }
+                    </ul>
+                  </details>
+
+                  <p class="academic-architecture-card__research">
+                    <span>Research institute</span>
+                    {{ college.researchInstitute }}
+                  </p>
+                </article>
+              }
+            </div>
+          </details>
+        </div>
+      } @else if (isServicesPage()) {
+        <div class="services-page">
+          <section class="services-hero" aria-labelledby="services-title">
+            <div class="services-hero__copy">
+              <p class="eyebrow">University Services</p>
+              <h1 id="services-title">The right help, without the maze.</h1>
+              <p>
+                A clean service layer for applicants, students, scholars, partners, and visitors.
+                Start with the outcome you need; Sankofa routes you to the right system.
+              </p>
+              <div class="services-hero__actions">
+                <a routerLink="/admissions" class="btn">Start an application</a>
+                <a routerLink="/contact" class="btn btn--secondary">Contact support</a>
+              </div>
+            </div>
+
+            <div class="services-hero__visual" aria-label="Service flow">
+              <span class="services-wordmark" aria-hidden="true">Sankofa</span>
+              @for (signal of serviceSignals; track signal.label) {
+                <article>
+                  <strong>{{ signal.value }}</strong>
+                  <span>{{ signal.label }}</span>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="services-pathways" aria-label="Service pathways">
+            @for (service of servicePathways; track service.title) {
+              <a [routerLink]="service.path" class="service-pathway">
+                <i [class]="service.iconClass" aria-hidden="true"></i>
+                <span>{{ service.eyebrow }}</span>
+                <strong>{{ service.title }}</strong>
+                <p>{{ service.description }}</p>
+                <ul>
+                  @for (feature of service.features; track feature) {
+                    <li>{{ feature }}</li>
+                  }
+                </ul>
+                <em>Open service</em>
               </a>
             }
           </section>
 
-          <section class="academic-clusters" aria-labelledby="academic-clusters-title">
-            <div class="academic-section-heading">
-              <p class="eyebrow">Academic Worlds</p>
-              <h2 id="academic-clusters-title">Explore by ambition, not by bureaucracy.</h2>
-              <p>Four clear doors into Sankofa's wider school system.</p>
+          <section class="services-contact-strip" aria-labelledby="services-contact-title">
+            <div>
+              <p class="eyebrow">Need direction?</p>
+              <h2 id="services-contact-title">One contact center. Clear routing.</h2>
+              <p>
+                If you are not sure where to begin, send one inquiry and the University will route it
+                to admissions, academic services, research, student systems, or administration.
+              </p>
+            </div>
+            <a routerLink="/contact" class="btn">Open contact center</a>
+          </section>
+        </div>
+      } @else if (isContactPage()) {
+        <div class="contact-page">
+          <section class="contact-cinema" aria-labelledby="contact-title">
+            <div class="contact-cinema__content">
+              <p class="eyebrow">Contact Sankofa</p>
+              <h1 id="contact-title">One message. The right door.</h1>
+              <p>
+                Admissions, partnerships, student systems, research, media, and administration
+                routed through one clean contact experience.
+              </p>
+              <div class="contact-cinema__actions">
+                <a [href]="'mailto:' + universityEmail" class="btn">Email {{ universityEmail }}</a>
+                <a href="https://chat.whatsapp.com/Dv2lTXXzhfMDf6sClAxpEP" target="_blank" rel="noopener" class="btn btn--secondary">
+                  WhatsApp support
+                </a>
+              </div>
             </div>
 
-            <div class="academic-cluster-grid">
-              @for (cluster of academicClusters; track cluster.title) {
-                <a
-                  [routerLink]="cluster.path"
-                  class="academic-cluster"
-                  [style.--cluster-image-position]="cluster.imagePosition"
-                >
-                  <img [src]="cluster.image" [alt]="cluster.title" loading="lazy" />
-                  <span class="academic-cluster__shade"></span>
-                  <span class="academic-cluster__content">
-                    <strong>{{ cluster.title }}</strong>
-                    <small>{{ cluster.description }}</small>
-                    <em>Explore world</em>
-                  </span>
-                </a>
-              }
+            <div class="contact-cinema__visual">
+              <img
+                ngSrc="/assets/contact/contact-support-headset.jpg"
+                width="1800"
+                height="1200"
+                sizes="(min-width: 960px) 44vw, 100vw"
+                alt="Black student support specialist working on a laptop with headset"
+                priority
+              />
             </div>
           </section>
 
-          <section class="academic-showcase" aria-labelledby="academic-showcase-title">
-            <div class="academic-section-heading">
-              <p class="eyebrow">Schools</p>
-              <h2 id="academic-showcase-title">Six gateways into the full academic system.</h2>
-              <p>Start with featured colleges, then move into all eighteen schools when ready.</p>
+          <section class="contact-media-ribbon" aria-label="Sankofa contact moments">
+            <figure>
+              <img
+                ngSrc="/assets/contact/contact-student-laptop-campus.jpg"
+                width="1400"
+                height="2100"
+                sizes="(min-width: 960px) 30vw, 100vw"
+                alt="Black student studying with a laptop outdoors"
+              />
+              <figcaption>Applicant guidance</figcaption>
+            </figure>
+            <figure>
+              <img
+                ngSrc="/assets/contact/contact-students-study-group.jpg"
+                width="1800"
+                height="1200"
+                sizes="(min-width: 960px) 30vw, 100vw"
+                alt="Black students collaborating in a study setting"
+              />
+              <figcaption>Student systems</figcaption>
+            </figure>
+            <figure>
+              <img
+                ngSrc="/assets/contact/contact-campus-walking.jpg"
+                width="1800"
+                height="1200"
+                sizes="(min-width: 960px) 30vw, 100vw"
+                alt="Students walking together on campus"
+              />
+              <figcaption>Visits and partnerships</figcaption>
+            </figure>
+          </section>
+
+          <section class="contact-command" aria-label="Contact command center">
+            <div class="contact-command__rail">
+              @for (block of contactInfoBlocks; track block.label) {
+                <article class="contact-line">
+                  <i [class]="block.iconClass" aria-hidden="true"></i>
+                  <div>
+                    <span>{{ block.label }}</span>
+                    @if (block.href) {
+                      <a
+                        [href]="block.href"
+                        [attr.target]="block.href.startsWith('http') ? '_blank' : null"
+                        [attr.rel]="block.href.startsWith('http') ? 'noopener' : null"
+                      >
+                        {{ block.value }}
+                      </a>
+                    } @else {
+                      <strong>{{ block.value }}</strong>
+                    }
+                    @if (block.lines?.length) {
+                      <small>
+                        @for (line of block.lines; track line; let last = $last) {
+                          {{ line }}@if (!last) { <span> / </span> }
+                        }
+                      </small>
+                    }
+                    <p>{{ block.description }}</p>
+                  </div>
+                </article>
+              }
             </div>
 
-            <div class="featured-school-grid">
-              @for (school of featuredSchools; track school.slug) {
-                <a [routerLink]="['/faculties-schools', school.slug]" class="featured-school">
-                  <span>{{ school.tag }}</span>
-                  <strong>{{ school.title }}</strong>
-                  <small>{{ school.description }}</small>
-                </a>
-              }
+            <section class="contact-form-panel contact-form-panel--cinema" aria-labelledby="contact-form-title">
+              <div class="contact-form-panel__head">
+                <p class="eyebrow">Get in touch</p>
+                <h2 id="contact-form-title">Send one clean message.</h2>
+                <p>Tell us who you are, what you need, and which office should respond.</p>
+              </div>
+
+              <form [formGroup]="contactForm" (ngSubmit)="submitContactForm()" class="flow-form">
+                <label>
+                  Full Name
+                  <input type="text" formControlName="fullName" />
+                  @if (contactForm.controls.fullName.touched && contactForm.controls.fullName.invalid) {
+                    <span class="error-text">Provide a valid full name.</span>
+                  }
+                </label>
+
+                <label>
+                  Email Address
+                  <input type="email" formControlName="email" />
+                  @if (contactForm.controls.email.touched && contactForm.controls.email.invalid) {
+                    <span class="error-text">Provide a valid email.</span>
+                  }
+                </label>
+
+                <label>
+                  Target Office
+                  <select formControlName="department">
+                    <option value="">Select office</option>
+                    @for (option of contactDepartmentOptions; track option) {
+                      <option [value]="option">{{ option }}</option>
+                    }
+                  </select>
+                  @if (contactForm.controls.department.touched && contactForm.controls.department.invalid) {
+                    <span class="error-text">Select an office.</span>
+                  }
+                </label>
+
+                <label>
+                  Subject
+                  <input type="text" formControlName="subject" />
+                  @if (contactForm.controls.subject.touched && contactForm.controls.subject.invalid) {
+                    <span class="error-text">Subject is required.</span>
+                  }
+                </label>
+
+                <label class="span-full">
+                  Message
+                  <textarea rows="5" formControlName="message"></textarea>
+                  @if (contactForm.controls.message.touched && contactForm.controls.message.invalid) {
+                    <span class="error-text">Message must be at least 20 characters.</span>
+                  }
+                </label>
+
+                <div class="span-full form-actions">
+                  <div class="form-actions__buttons">
+                    <button type="submit" class="btn" [disabled]="isSubmittingContact()">
+                      {{ isSubmittingContact() ? 'Submitting...' : 'Submit Message' }}
+                    </button>
+                  </div>
+                  @if (contactStatus()) {
+                    <p class="status-text" aria-live="polite">{{ contactStatus() }}</p>
+                  }
+                </div>
+              </form>
+            </section>
+          </section>
+
+          <section class="contact-story" aria-labelledby="contact-story-title">
+            <img
+              ngSrc="/assets/contact/contact-phone-laptop.jpg"
+              width="1400"
+              height="2100"
+              sizes="(min-width: 960px) 48vw, 100vw"
+              alt="Student using a phone and laptop for university communication"
+            />
+            <div>
+              <p class="eyebrow">Routing by purpose</p>
+              <h2 id="contact-story-title">Every inquiry should land where action happens.</h2>
+              <div class="contact-office-flow">
+                @for (office of contactOffices; track office.title) {
+                  <a [routerLink]="office.path">
+                    <span>{{ office.title }}</span>
+                    <p>{{ office.description }}</p>
+                  </a>
+                }
+              </div>
             </div>
           </section>
 
+          <section class="contact-faq-band" aria-labelledby="contact-faq-title">
+            <div>
+              <p class="eyebrow">FAQs / Inquiries</p>
+              <h2 id="contact-faq-title">Quick answers before you write.</h2>
+            </div>
+            <div class="contact-faq-list">
+              @for (faq of contactFaqs; track faq.question) {
+                <details class="contact-faq-item">
+                  <summary>{{ faq.question }}</summary>
+                  <p>{{ faq.answer }}</p>
+                </details>
+              }
+            </div>
+          </section>
         </div>
       } @else if (isAdmissionsPage()) {
-        <section class="admissions-hero" aria-labelledby="admissions-title">
-          <img
-            class="admissions-hero__image"
-            ngSrc="/assets/illustrations/about-illustrator.png"
-            width="1800"
-            height="720"
-            sizes="100vw"
-            alt=""
-            aria-hidden="true"
-            priority
-          />
-          <div class="admissions-hero__shade"></div>
-          <div class="admissions-hero__content">
-            <p class="eyebrow">Sankofa Alkebulan University</p>
-            <h1 id="admissions-title">Admissions</h1>
-            <p>
-              Apply through a clear pathway for domestic, international, undergraduate,
-              postgraduate, and certificate applicants.
-            </p>
+        <div class="application-flow-head" aria-label="Application progress summary">
+          <a routerLink="/home" class="application-flow-brand">
+            <img ngSrc="/assets/design/logo-primary.png" width="42" height="42" sizes="10vw" alt="Sankofa Alkebulan University logo" />
+            <strong>Sankofa Alkebulan University</strong>
+          </a>
+          <div class="application-flow-progress">
+            <span>Step 2 of 6 · Personal details</span>
+            <i aria-hidden="true"></i>
           </div>
-        </section>
+          <p><span aria-hidden="true"></span> Auto-saved 12 sec ago</p>
+        </div>
       } @else {
         <div class="section-hero">
           <p class="eyebrow">Sankofa Alkebulan University</p>
@@ -440,6 +1090,53 @@
 
       @if (isAdmissionsPage()) {
         <section class="flow-card flow-card--application" aria-labelledby="admissions-application-title">
+          <div class="application-shell">
+            <aside class="application-rail" aria-label="Application progress">
+              <p>Application &middot; 2026 intake</p>
+              <h2>One application. Three pathways. Saved at every step.</h2>
+              <ol>
+                <li class="application-rail__step application-rail__step--done">
+                  <span>01</span>
+                  <strong>Pathway</strong>
+                  <small>{{ activeApplicationMode() }}</small>
+                </li>
+                <li class="application-rail__step application-rail__step--active">
+                  <span>02</span>
+                  <strong>Personal details</strong>
+                  <small>About you and contact</small>
+                </li>
+                <li class="application-rail__step">
+                  <span>03</span>
+                  <strong>Academic history</strong>
+                  <small>Schools, results, transcripts</small>
+                </li>
+                <li class="application-rail__step">
+                  <span>04</span>
+                  <strong>Statement & references</strong>
+                  <small>500 words · two referees</small>
+                </li>
+                <li class="application-rail__step">
+                  <span>05</span>
+                  <strong>Funding</strong>
+                  <small>Aid, scholarships, payments</small>
+                </li>
+                <li class="application-rail__step">
+                  <span>06</span>
+                  <strong>Review & submit</strong>
+                  <small>Final check, digital signature</small>
+                </li>
+              </ol>
+
+              <div class="application-help-card">
+                <strong>Need help?</strong>
+                <a href="https://chat.whatsapp.com/Dv2lTXXzhfMDf6sClAxpEP" target="_blank" rel="noopener">
+                  Live chat with admissions
+                </a>
+                <a routerLink="/admissions">Read the application guide</a>
+              </div>
+            </aside>
+
+            <div class="application-workspace">
           <div class="application-tabs" aria-label="Application categories">
             @for (mode of applicationModes; track mode.label) {
               <button
@@ -458,11 +1155,11 @@
 
           <div class="application-card-header">
             <div>
-              <p class="application-card-header__eyebrow">Prospective Students</p>
-              <h2 id="admissions-application-title">Start your application pathway.</h2>
+              <p class="application-card-header__eyebrow">Step 2 of 6</p>
+              <h2 id="admissions-application-title">Personal details</h2>
               <p>
-                Share your study interest and admissions will guide the next step, document requirements,
-                and funding options.
+                Tell us a little about yourself. We use this to set up your applicant account
+                and match you to the right admissions officer.
               </p>
             </div>
             <span class="application-card-header__mark" aria-hidden="true">Sankofa</span>
@@ -742,71 +1439,11 @@
               }
             </div>
           </form>
-        </section>
-      }
-
-      @if (isContactPage()) {
-        <section class="flow-card">
-          <h2>Administrative Inquiry Form</h2>
-          <p>
-            Route your inquiry to the relevant office through the online channel, with email fallback available if
-            needed.
-          </p>
-
-          <form [formGroup]="contactForm" (ngSubmit)="submitContactForm()" class="flow-form">
-            <label>
-              Full Name
-              <input type="text" formControlName="fullName" />
-              @if (contactForm.controls.fullName.touched && contactForm.controls.fullName.invalid) {
-                <span class="error-text">Provide a valid full name.</span>
-              }
-            </label>
-
-            <label>
-              Email Address
-              <input type="email" formControlName="email" />
-              @if (contactForm.controls.email.touched && contactForm.controls.email.invalid) {
-                <span class="error-text">Provide a valid email.</span>
-              }
-            </label>
-
-            <label>
-              Target Department
-              <input type="text" formControlName="department" placeholder="Admissions, Registrar, Finance..." />
-              @if (contactForm.controls.department.touched && contactForm.controls.department.invalid) {
-                <span class="error-text">Department is required.</span>
-              }
-            </label>
-
-            <label>
-              Subject
-              <input type="text" formControlName="subject" />
-              @if (contactForm.controls.subject.touched && contactForm.controls.subject.invalid) {
-                <span class="error-text">Subject is required.</span>
-              }
-            </label>
-
-            <label class="span-full">
-              Message
-              <textarea rows="5" formControlName="message"></textarea>
-              @if (contactForm.controls.message.touched && contactForm.controls.message.invalid) {
-                <span class="error-text">Message must be at least 20 characters.</span>
-              }
-            </label>
-
-            <div class="span-full form-actions">
-              <div class="form-actions__buttons">
-                <button type="submit" class="btn" [disabled]="isSubmittingContact()">
-                  {{ isSubmittingContact() ? 'Submitting...' : 'Send Administrative Inquiry' }}
-                </button>
-              </div>
-              @if (contactStatus()) {
-                <p class="status-text" aria-live="polite">{{ contactStatus() }}</p>
-              }
             </div>
-          </form>
+          </div>
         </section>
       }
+
     </div>
   </section>
 } @else {
@@ -823,5 +1460,3 @@
     </div>
   </section>
 }
-
-

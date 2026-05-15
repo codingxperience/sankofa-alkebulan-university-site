@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
+  AboutDetailPage,
+  AboutDetailSection,
   ABOUT_RELATED_LINKS,
   ABOUT_SECTION_LINKS,
   getAboutDetailPage,
@@ -11,7 +12,7 @@ import {
 @Component({
   selector: 'app-about-detail-page',
   standalone: true,
-  imports: [NgOptimizedImage, RouterLink],
+  imports: [RouterLink],
   templateUrl: './about-detail-page.component.html',
   styleUrl: './about-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,4 +26,20 @@ export class AboutDetailPageComponent {
   readonly sectionLinks = ABOUT_SECTION_LINKS;
   readonly relatedLinks = ABOUT_RELATED_LINKS;
   readonly page = computed(() => getAboutDetailPage(this.paramMap().get('slug')));
+
+  sectionId(section: AboutDetailSection): string {
+    return section.id ?? this.slugify(section.heading);
+  }
+
+  isCharterPage(page: AboutDetailPage): boolean {
+    return page.slug === 'sankofa-charter';
+  }
+
+  private slugify(value: string): string {
+    return value
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
 }

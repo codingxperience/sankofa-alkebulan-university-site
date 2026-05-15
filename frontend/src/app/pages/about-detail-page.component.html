@@ -3,13 +3,11 @@
     <section class="about-detail-page__hero" aria-labelledby="about-detail-title">
       <img
         class="about-detail-page__hero-image"
-        ngSrc="/assets/hero/hero-campus-source.jpg"
-        width="5184"
-        height="3456"
-        sizes="100vw"
+        src="/assets/illustrations/sankofa-core-banner.svg"
+        width="1800"
+        height="620"
         alt=""
         aria-hidden="true"
-        priority
       />
       <div class="about-detail-page__hero-overlay"></div>
       <div class="container about-detail-page__hero-content">
@@ -25,9 +23,25 @@
 
     <section class="about-detail-page__body">
       <div class="container about-detail-page__layout">
+        <aside class="about-detail-page__section-nav" aria-label="About page navigation">
+          <p class="about-detail-page__nav-title">In This Section</p>
+          <nav>
+            @for (link of sectionLinks; track link.label) {
+              <a [routerLink]="link.path" [fragment]="link.fragment">{{ link.label }}</a>
+            }
+          </nav>
+
+          <p class="about-detail-page__nav-title about-detail-page__nav-title--secondary">Related Links</p>
+          <nav>
+            @for (link of relatedLinks; track link.label) {
+              <a [routerLink]="link.path">{{ link.label }}</a>
+            }
+          </nav>
+        </aside>
+
         <article class="about-detail-page__content">
           <header class="about-detail-page__intro">
-            <p class="about-detail-page__kicker">About</p>
+            <p class="about-detail-page__kicker">{{ isCharterPage(detailPage) ? 'Institutional Charter' : 'About' }}</p>
             <p class="about-detail-page__summary">{{ detailPage.summary }}</p>
           </header>
 
@@ -38,60 +52,82 @@
           </div>
 
           @if (detailPage.sections?.length) {
-            <div class="about-detail-page__section-stack">
-              @for (section of detailPage.sections; track section.heading) {
-                <section class="about-detail-page__section-card">
-                  <h2>{{ section.heading }}</h2>
-                  @if (section.paragraphs?.length) {
-                    @for (paragraph of section.paragraphs; track $index) {
-                      <p>{{ paragraph }}</p>
-                    }
-                  }
-                  @if (section.items?.length) {
-                    <ul class="about-detail-page__accent-list">
-                      @for (item of section.items; track item) {
-                        <li>{{ item }}</li>
+            @if (isCharterPage(detailPage)) {
+              <section class="about-detail-page__charter-overview" aria-label="Charter overview">
+                <h2>Institutional Charter</h2>
+                <p>
+                  Revised and upgraded edition. Structured as the supreme institutional framework
+                  for identity, governance, academic standards, research, quality assurance,
+                  student welfare, finance, ethics, partnerships, delivery modes, amendment,
+                  commencement, and the University seal.
+                </p>
+              </section>
+            }
+
+            <div class="about-detail-page__section-stack" [class.about-detail-page__section-stack--accordion]="isCharterPage(detailPage)">
+              @for (section of detailPage.sections; track section.heading; let idx = $index) {
+                @if (isCharterPage(detailPage)) {
+                  <details class="about-detail-page__section-card about-detail-page__section-card--accordion" [attr.id]="sectionId(section)" [open]="idx === 0">
+                    <summary>
+                      <span>{{ section.heading }}</span>
+                    </summary>
+                    <div class="about-detail-page__section-body">
+                      @if (section.paragraphs?.length) {
+                        @for (paragraph of section.paragraphs; track $index) {
+                          <p>{{ paragraph }}</p>
+                        }
                       }
-                    </ul>
-                  }
-                </section>
+                      @if (section.items?.length) {
+                        <ul class="about-detail-page__accent-list">
+                          @for (item of section.items; track item) {
+                            <li>{{ item }}</li>
+                          }
+                        </ul>
+                      }
+                      @if (section.groups?.length) {
+                        <div class="about-detail-page__group-stack">
+                          @for (group of section.groups; track group.heading) {
+                            <section class="about-detail-page__group">
+                              <h3>{{ group.heading }}</h3>
+                              @if (group.paragraphs?.length) {
+                                @for (paragraph of group.paragraphs; track $index) {
+                                  <p>{{ paragraph }}</p>
+                                }
+                              }
+                              @if (group.items?.length) {
+                                <ul class="about-detail-page__accent-list">
+                                  @for (item of group.items; track item) {
+                                    <li>{{ item }}</li>
+                                  }
+                                </ul>
+                              }
+                            </section>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </details>
+                } @else {
+                  <section class="about-detail-page__section-card" [attr.id]="sectionId(section)">
+                    <h2>{{ section.heading }}</h2>
+                    @if (section.paragraphs?.length) {
+                      @for (paragraph of section.paragraphs; track $index) {
+                        <p>{{ paragraph }}</p>
+                      }
+                    }
+                    @if (section.items?.length) {
+                      <ul class="about-detail-page__accent-list">
+                        @for (item of section.items; track item) {
+                          <li>{{ item }}</li>
+                        }
+                      </ul>
+                    }
+                  </section>
+                }
               }
             </div>
           }
         </article>
-
-        <aside class="about-detail-page__aside">
-          <section class="about-detail-page__panel">
-            <p class="about-detail-page__kicker">In This Section</p>
-            <ul class="about-detail-page__link-list">
-              @for (link of sectionLinks; track link.label) {
-                <li>
-                  <a [routerLink]="link.path" [fragment]="link.fragment">{{ link.label }}</a>
-                </li>
-              }
-            </ul>
-          </section>
-
-          <section class="about-detail-page__panel">
-            <p class="about-detail-page__kicker">Related Links</p>
-            <ul class="about-detail-page__link-list">
-              @for (link of relatedLinks; track link.label) {
-                <li>
-                  <a [routerLink]="link.path">{{ link.label }}</a>
-                </li>
-              }
-            </ul>
-          </section>
-
-          <section class="about-detail-page__panel about-detail-page__panel--accent">
-            <p class="about-detail-page__kicker">Key Highlights</p>
-            <ul class="about-detail-page__accent-list">
-              @for (item of detailPage.highlights; track item) {
-                <li>{{ item }}</li>
-              }
-            </ul>
-          </section>
-        </aside>
       </div>
     </section>
   </div>

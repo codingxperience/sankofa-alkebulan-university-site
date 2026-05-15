@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 32" width="480" height="32" role="presentation" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+    <line x1="2" y1="16" x2="200" y2="16"></line>
+    <line x1="280" y1="16" x2="478" y2="16"></line>
+  </g>
+  <g transform="translate(240 16)">
+
+    <path d="M 0 -11 L 9.5 0 L 0 11 L -9.5 0 Z" fill="currentColor"></path>
+
+    <path d="M 0 -5.5 L 4.6 0 L 0 5.5 L -4.6 0 Z" fill="#ffffff" opacity="0.85"></path>
+    <circle cx="0" cy="0" r="1.6" fill="currentColor"></circle>
+
+    <circle cx="-22" cy="0" r="1.6" fill="currentColor"></circle>
+    <circle cx="22" cy="0" r="1.6" fill="currentColor"></circle>
+    <circle cx="-32" cy="0" r="1" fill="currentColor"></circle>
+    <circle cx="32" cy="0" r="1" fill="currentColor"></circle>
+  </g>
+</svg>

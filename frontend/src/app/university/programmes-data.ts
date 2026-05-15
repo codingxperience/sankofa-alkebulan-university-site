@@ -1,4 +1,5 @@
 import { DEPARTMENT_PAGES, ProgramDetail, getDepartmentPagePath } from './department-pages';
+import { ACADEMIC_ARCHITECTURE_COLLEGES } from './academic-architecture';
 
 export type ProgrammeLevel =
   | 'phd'
@@ -76,6 +77,46 @@ const resolveLevel = (program: ProgramDetail): ProgrammeLevel | null => {
     return 'certificate';
   }
   return null;
+};
+
+const resolveLevelFromTitle = (programTitle: string): ProgrammeLevel | null => {
+  const title = programTitle.toLowerCase();
+  if (title.startsWith('phd') || title.includes('doctoral')) {
+    return 'phd';
+  }
+  if (title.startsWith('msc') || title.startsWith('ma ') || title.startsWith('master')) {
+    return 'masters';
+  }
+  if (title.includes('postgraduate diploma')) {
+    return 'postgraduate-diploma';
+  }
+  if (title.startsWith('diploma')) {
+    return 'diploma';
+  }
+  if (title.startsWith('certificate')) {
+    return 'certificate';
+  }
+  if (/^(ba|bba|bed|bpharm|bsc|llb|mbchb|bachelor)\b/.test(title)) {
+    return 'bachelors';
+  }
+  return null;
+};
+
+const durationForLevel = (level: ProgrammeLevel, title: string): string => {
+  if (title.toLowerCase().startsWith('mbchb')) {
+    return '5 years';
+  }
+
+  const durations: Record<ProgrammeLevel, string> = {
+    phd: '3 to 5 years',
+    masters: '2 years',
+    'postgraduate-diploma': '1 year',
+    bachelors: '3 to 4 years',
+    diploma: '2 years',
+    certificate: '6 to 12 months',
+  };
+
+  return durations[level];
 };
 
 export const PROGRAMME_CATEGORIES: readonly ProgrammeCategory[] = [
@@ -224,6 +265,33 @@ DEPARTMENT_PAGES.forEach((page) => {
       tuition: program.tuition[0] ?? 'Contact admissions for tuition',
       college: page.title,
       path: getDepartmentPagePath(page),
+      detailPath: `/home/${level}/${slug}`,
+      anchor: slug,
+      slug,
+      level,
+    });
+  });
+});
+
+ACADEMIC_ARCHITECTURE_COLLEGES.forEach((college) => {
+  college.programmes.forEach((programTitle) => {
+    const level = resolveLevelFromTitle(programTitle);
+    if (!level) {
+      return;
+    }
+
+    const slug = toAnchor(programTitle);
+    if (programmeCards.some((card) => card.slug === slug && card.college === college.name)) {
+      return;
+    }
+
+    programmeCards.push({
+      title: programTitle,
+      summary: `${programTitle} is housed in ${college.name}, supported by school-level academic formation and aligned research through ${college.researchAlignment}.`,
+      duration: durationForLevel(level, programTitle),
+      tuition: 'Contact admissions for tuition',
+      college: college.name,
+      path: '/faculties-schools',
       detailPath: `/home/${level}/${slug}`,
       anchor: slug,
       slug,

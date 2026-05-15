@@ -1,0 +1,221 @@
+<div class="v2-shell">
+  <!-- Breadcrumb -->
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">›</span>
+        <span class="here" aria-current="page">Academics</span>
+      </nav>
+      <div class="actions">
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-calendar" aria-hidden="true"></i> Academic calendar</a>
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Course catalogue</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="pg-hero pg-hero--paper" aria-labelledby="ac-hero">
+    <div class="pg-hero__dots" aria-hidden="true"></div>
+    <div class="v2-container">
+      <div class="pg-hero__grid">
+        <div class="pg-hero__copy">
+          <span class="v2-kicker">Six colleges, seventeen schools, four institutes</span>
+          <h1 id="ac-hero">Choose by the question, <span class="accent">not the catalogue.</span></h1>
+          <p class="pg-hero__lead">
+            Sankofa is organised around the questions African scholarship continues to answer.
+            Each college pursues one of those questions; each school sharpens the methods; each
+            programme prepares the next contributor.
+          </p>
+          <div class="pg-hero__actions">
+            <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg">Apply for September 2026 <span aria-hidden="true">→</span></a>
+            <a routerLink="/faculties-schools" fragment="programmes" class="v2-btn v2-btn--ghost v2-btn--lg">Browse programmes</a>
+          </div>
+        </div>
+        <aside class="ac-hero__search">
+          <span class="v2-kicker">Find a programme</span>
+          <label class="ac-search-input" aria-label="Search programmes">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="search" placeholder="Search by field or programme name" />
+          </label>
+          <div class="ac-hero__chips">
+            @for (chip of heroChips; track chip.label) {
+              <a class="v2-chip"><i class="fa-solid {{ chip.icon }}"></i>{{ chip.label }}</a>
+            }
+          </div>
+          <ul class="ac-hero__quick">
+            @for (p of quickProgrammes; track p.b) {
+              <li>
+                @if (p.route) {
+                  <a [routerLink]="p.route"><b>{{ p.b }}</b><span>{{ p.s }}</span></a>
+                } @else {
+                  <a href="#"><b>{{ p.b }}</b><span>{{ p.s }}</span></a>
+                }
+              </li>
+            }
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured college -->
+  <section class="v2-section v2-section--quiet">
+    <div class="v2-container">
+      <div class="v2-section-head" data-reveal>
+        <span class="v2-kicker">In focus this term</span>
+        <h2>College of African Civilizational Studies.</h2>
+      </div>
+      <article class="ac-feature" data-reveal>
+        <div class="ac-feature__img">
+          <img src="assets/academic-civilization-culture.jpg" alt="African students in a cultural studies classroom" />
+          <span class="stamp">College — African Civilizational Studies</span>
+          <div class="overlay">
+            <h3>The continent's history is not a footnote. It's the syllabus.</h3>
+            <p>Five schools — civilization, heritage, languages, philosophy, and the visual arts — read together as one tradition.</p>
+          </div>
+        </div>
+        <div class="ac-feature__body">
+          <div class="grid">
+            <div>
+              <h4>Six anchor questions</h4>
+              <ul>
+                @for (q of anchorQuestions; track q) {
+                  <li>{{ q }}</li>
+                }
+              </ul>
+            </div>
+            <div>
+              <h4>Programmes you can enter</h4>
+              <ul class="ac-list">
+                @for (p of featureProgrammes; track p.b) {
+                  <li>
+                    @if (p.route) {
+                      <a [routerLink]="p.route"><b>{{ p.b }}</b><span>{{ p.s }}</span></a>
+                    } @else {
+                      <a><b>{{ p.b }}</b><span>{{ p.s }}</span></a>
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+          <div class="ac-feature__foot">
+            <a href="#" class="v2-btn v2-btn--primary">Visit the college <span aria-hidden="true">→</span></a>
+            <span class="meta"><i class="fa-regular fa-clock"></i> Updated — January 2026</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- The six colleges -->
+  <section class="v2-section" id="colleges">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split" data-reveal>
+        <div>
+          <span class="v2-kicker">The six colleges</span>
+          <h2>One question per college. Each pursued without apology.</h2>
+        </div>
+        <p class="right">Click any college to read its schools, faculty, and current research projects.</p>
+      </div>
+      <div class="ac-cols" data-reveal>
+        @for (c of colleges; track c.num) {
+          <a href="#" class="ac-col" [class.is-feature]="c.feature">
+            <span class="num">{{ c.num }}</span>
+            <div>
+              <b>{{ c.b }}</b>
+              <p>{{ c.p }}</p>
+              <span class="tags"><i class="fa-solid {{ c.icon }}"></i> {{ c.tags }}</span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Ribbon -->
+  <div class="v2-container"><div class="pg-divider-row"><div class="pg-divider" aria-hidden="true"><img src="assets/pattern-mark.svg" alt=""></div></div></div>
+
+  <!-- Pathways -->
+  <section class="v2-section" id="programmes">
+    <div class="v2-container">
+      <div class="v2-section-head" data-reveal>
+        <span class="v2-kicker">Pathways</span>
+        <h2>Four ways to enter Sankofa.</h2>
+      </div>
+      <div class="ac-pathways" data-reveal>
+        @for (path of pathways; track path.b) {
+          <article class="ac-path">
+            <header><i class="fa-solid {{ path.icon }}"></i><b>{{ path.b }}</b></header>
+            <p>{{ path.p }}</p>
+            <ul>
+              @for (m of path.meta; track m) {
+                <li>{{ m }}</li>
+              }
+            </ul>
+            <a routerLink="/admissions" class="v2-btn v2-btn--link">{{ path.cta }}</a>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories chip rail -->
+  <section class="v2-section v2-section--quiet">
+    <div class="v2-container">
+      <div class="v2-categories" data-reveal>
+        <h3>Explore by field of study</h3>
+        <div class="v2-categories__rail">
+          @for (c of categories; track c.label) {
+            <a class="v2-chip" [class.is-selected]="c.selected"><i class="fa-solid {{ c.icon }}"></i>{{ c.label }}</a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Institutes -->
+  <section class="v2-section">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split" data-reveal>
+        <div>
+          <span class="v2-kicker">Continental institutes</span>
+          <h2>Four institutes, working across colleges.</h2>
+        </div>
+        <p class="right">Institutes hold the research, public scholarship, and policy partnerships that the colleges feed into.</p>
+      </div>
+      <div class="ac-institutes" data-reveal>
+        @for (inst of institutes; track inst.h) {
+          <article class="ac-inst">
+            <div class="ac-inst__icon"><i class="fa-solid {{ inst.icon }}"></i></div>
+            <h4>{{ inst.h }}</h4>
+            <p>{{ inst.p }}</p>
+            <span class="meta">{{ inst.meta }}</span>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Academic standards -->
+  <section class="v2-section v2-section--quiet">
+    <div class="v2-container">
+      <div class="ac-standards" data-reveal>
+        <div>
+          <span class="v2-kicker">Academic standards</span>
+          <h2>Quality assurance, calendar, and regulations.</h2>
+          <p>Every programme is governed by a public set of standards: a curriculum framework, learning-outcome maps, and regulations for assessment, appeals, and academic integrity.</p>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="#" class="v2-btn v2-btn--primary">Read the regulations handbook <span aria-hidden="true">→</span></a>
+            <a href="#" class="v2-btn v2-btn--ghost">Quality assurance reports</a>
+          </div>
+        </div>
+        <ul class="ac-standards__list">
+          @for (s of standards; track s) {
+            <li><i class="fa-solid fa-circle-check"></i>{{ s }}</li>
+          }
+        </ul>
+      </div>
+    </div>
+  </section></div>

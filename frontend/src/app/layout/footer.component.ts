@@ -6,65 +6,75 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <footer class="site-footer">
-      <div class="container">
-        <section class="footer-primary" aria-label="Sankofa Alkebulan University footer">
-          <div class="footer-identity">
-            <span class="footer-logo-mark">
-              <img
-                src="/assets/branding/sankofa_university_logo-remove-background.com.png"
-                alt="Sankofa Alkebulan University logo"
-              />
-            </span>
-            <div>
-              <p class="footer-kicker">Sankofa Alkebulan University</p>
-              <h3>Pan-African scholarship for a changing world.</h3>
-              <p>
-                A modern university experience for study, research, leadership, and public
-                impact across Africa and the global academy.
-              </p>
-            </div>
+      <div class="container footer-shell">
+        <section class="footer-intro" aria-label="Sankofa Alkebulan University footer">
+          <a routerLink="/home" class="footer-logo" aria-label="Sankofa Alkebulan University home">
+            <img src="/assets/design/logo-primary.png" alt="Sankofa Alkebulan University logo" />
+          </a>
+          <div>
+            <p class="footer-kicker">Sankofa Alkebulan University</p>
+            <h2>A continental research university advancing African scholarship.</h2>
+            <p>
+              Independent, multidisciplinary, public-spirited. Founded on the Akan principle of Sankofa.
+            </p>
           </div>
         </section>
 
         <nav class="footer-nav" aria-label="Footer navigation">
           <section>
-            <h4>Study</h4>
-            <a routerLink="/admissions">Admissions</a>
-            <a routerLink="/programs">Programs</a>
-            <a routerLink="/faculties-schools">Faculties and Schools</a>
-            <span class="footer-disabled">Virtual Campus</span>
+            <h3>Study</h3>
+            <a routerLink="/home/bachelors">Undergraduate</a>
+            <a routerLink="/home/masters">Postgraduate</a>
+            <a routerLink="/home/phd">Doctoral</a>
+            <a routerLink="/admissions">Apply now</a>
+            <a routerLink="/faculties-schools">Course catalogue</a>
           </section>
 
           <section>
-            <h4>Research</h4>
-            <a routerLink="/research-innovation">Research Institutes</a>
-            <a routerLink="/library-repository">Library Repository</a>
-            <a routerLink="/university-press">University Press</a>
-            <a routerLink="/ai-advanced-tools">AI and Advanced Tools</a>
+            <h3>Research</h3>
+            <a routerLink="/research-innovation">Institutes</a>
+            <a routerLink="/research-innovation">Projects</a>
+            <a routerLink="/library-repository">Publications</a>
+            <a routerLink="/events-conferences">Open science</a>
+            <a routerLink="/services">Funding portal</a>
           </section>
 
           <section>
-            <h4>University</h4>
+            <h3>University</h3>
             <a routerLink="/about">About</a>
-            <a routerLink="/governance-compliance">Governance</a>
-            <a routerLink="/sustainability">Sustainability</a>
-            <a routerLink="/emergency-safety">Emergency and Safety</a>
+            <a routerLink="/about/executive-team">Leadership</a>
+            <a routerLink="/about/sankofa-charter">Charter</a>
+            <a routerLink="/events-conferences">Annual reports</a>
+            <a routerLink="/events-conferences">Press</a>
           </section>
 
           <section>
-            <h4>Connect</h4>
-            <a routerLink="/events-conferences">Events</a>
-            <a routerLink="/partnerships-global">Partnerships</a>
-            <span class="footer-disabled">Media</span>
-            <a href="mailto:sankofalkebulanuniversity@outlook.com">
-              sankofalkebulanuniversity@outlook.com
-            </a>
+            <h3>Connect</h3>
+            <a routerLink="/contact">Contact</a>
+            <a routerLink="/student-life">Student life</a>
+            <a routerLink="/admissions">Apply now</a>
+            <a href="mailto:SanAlkeU@outlook.com">SanAlkeU@outlook.com</a>
+            <div class="footer-social" aria-label="Social links">
+              <a href="https://www.facebook.com/share/18epzuCc9P/" target="_blank" rel="noopener">Facebook</a>
+              <a href="https://x.com/Kaija1133706" target="_blank" rel="noopener">X</a>
+              <a href="https://www.tiktok.com/@salkebulaniversity?_r=1&_t=ZS-961VzQ09pfZ" target="_blank" rel="noopener">TikTok</a>
+              <a href="https://youtube.com/@sankofalkebulaniversity?si=5ObT7pysdzPSeTHN" target="_blank" rel="noopener">YouTube</a>
+              <a href="https://www.linkedin.com/in/sankofa-alkebulan-university-b177a03a9?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">LinkedIn</a>
+              <a href="https://chat.whatsapp.com/Dv2lTXXzhfMDf6sClAxpEP" target="_blank" rel="noopener">WhatsApp</a>
+            </div>
           </section>
         </nav>
 
+        <p class="footer-motto">Return. <span>Restore.</span> Reimagine.</p>
+
         <div class="footer-bottom">
-          <p>&copy; 2026 Sankofa Alkebulan University.</p>
-          <p>Return to knowledge. Restore possibility. Reimagine the future.</p>
+          <p>&copy; 2026 Sankofa Alkebulan University. All rights reserved.</p>
+          <nav aria-label="Footer legal links">
+            <a routerLink="/about/university-policies">Privacy</a>
+            <a routerLink="/services">Accessibility</a>
+            <a routerLink="/about/sankofa-charter">Charter</a>
+            <a routerLink="/contact">Cookies</a>
+          </nav>
         </div>
       </div>
     </footer>
@@ -80,243 +90,221 @@ import { RouterLink } from '@angular/router';
       position: relative;
       overflow: hidden;
       margin-top: auto;
+      border-top: 1px solid rgb(15 76 129 / 10%);
       background:
-        radial-gradient(circle at 8% 0%, rgb(212 162 47 / 12%), transparent 22rem),
-        radial-gradient(circle at 92% 12%, rgb(47 125 184 / 13%), transparent 24rem),
-        linear-gradient(180deg, #08243a 0%, #051b2c 100%);
-      color: #d9e9f6;
-      border-top: 1px solid rgb(255 255 255 / 8%);
+        radial-gradient(circle at 10% 0%, rgb(212 162 47 / 10%), transparent 18rem),
+        linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+      color: #0a2d49;
     }
 
     .site-footer::before {
       content: 'Sankofa';
       position: absolute;
-      right: -0.08em;
-      bottom: -0.28em;
-      color: rgb(255 255 255 / 15%);
+      left: 50%;
+      bottom: 1.4rem;
+      transform: translateX(-50%);
+      color: rgb(15 76 129 / 12%);
       font-family: var(--font-family-heading);
       font-size: clamp(7rem, 22vw, 20rem);
-      font-weight: 800;
-      letter-spacing: -0.08em;
+      font-weight: 900;
+      letter-spacing: -0.09em;
+      line-height: 0.7;
       pointer-events: none;
       white-space: nowrap;
     }
 
-    .site-footer > .container {
+    .footer-shell {
       position: relative;
       z-index: 1;
+      display: grid;
+      gap: clamp(1.6rem, 4vw, 3rem);
       max-width: 1480px;
-      padding-top: 2.4rem;
-      padding-bottom: 1.2rem;
+      padding-top: clamp(2rem, 5vw, 4rem);
+      padding-bottom: 1.4rem;
     }
 
-    .footer-primary {
+    .footer-intro {
       display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: end;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid rgb(255 255 255 / 10%);
-    }
-
-    .footer-identity {
-      display: grid;
-      grid-template-columns: 150px minmax(0, 1fr);
+      grid-template-columns: 104px minmax(0, 1fr);
       gap: 1.2rem;
       align-items: center;
-      min-width: 0;
+      max-width: 50rem;
     }
 
-    .footer-logo-mark {
-      display: grid;
-      place-items: center;
-      width: 150px;
-      min-height: 150px;
-      padding: 0.35rem;
-      border: 0;
-      border-radius: 0;
+    .footer-logo {
+      display: block;
+      width: 104px;
+      min-width: 104px;
       background: transparent;
-      box-shadow: none;
+      text-decoration: none;
     }
 
-    .footer-logo-mark img {
+    .footer-logo img {
+      display: block;
       width: 100%;
       height: auto;
-      display: block;
-      filter:
-        drop-shadow(0 16px 28px rgb(255 255 255 / 14%))
-        drop-shadow(0 8px 16px rgb(0 0 0 / 45%));
-      opacity: 1;
+      filter: drop-shadow(0 14px 24px rgb(8 36 58 / 10%));
     }
 
     .footer-kicker {
-      margin: 0 0 0.55rem;
-      color: #f1cf83;
-      font-size: 0.72rem;
+      margin: 0 0 0.45rem;
+      color: #9a6a18;
+      font-size: 0.68rem;
       font-weight: 900;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
     }
 
-    h3 {
-      max-width: 16ch;
+    .footer-intro h2 {
+      max-width: 22ch;
       margin: 0;
-      color: #ffffff;
+      color: #08243a;
       font-family: var(--font-family-heading);
-      font-size: clamp(2.1rem, 4.2vw, 4.25rem);
-      line-height: 0.96;
-      letter-spacing: -0.045em;
+      font-size: clamp(1.5rem, 3vw, 2.45rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
       text-wrap: balance;
     }
 
-    .footer-identity p:not(.footer-kicker) {
-      max-width: 42rem;
-      margin: 0.75rem 0 0;
-      color: #aac3d8;
-      font-size: 1rem;
-      line-height: 1.62;
+    .footer-intro p:not(.footer-kicker) {
+      max-width: 36rem;
+      margin: 0.65rem 0 0;
+      color: #5c7286;
+      line-height: 1.58;
     }
 
     .footer-nav {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 1.1rem;
-      padding: 2rem 0;
+      gap: clamp(1rem, 4vw, 3rem);
+      padding-top: 1.5rem;
+      border-top: 1px solid rgb(15 76 129 / 9%);
     }
 
     .footer-nav section {
       min-width: 0;
-      padding-top: 1rem;
-      border-top: 1px solid rgb(255 255 255 / 10%);
     }
 
-    h4 {
+    .footer-nav h3 {
       margin: 0 0 0.8rem;
-      color: #ffffff;
+      color: #08243a;
       font-family: var(--font-family-heading);
-      font-size: 1rem;
+      font-size: 0.92rem;
       letter-spacing: -0.01em;
     }
 
-    .footer-nav a,
-    .footer-disabled {
-      position: relative;
+    .footer-nav a {
       display: block;
       width: fit-content;
       max-width: 100%;
-      margin-top: 0.52rem;
-      color: #bdd8ed;
+      margin-top: 0.48rem;
+      color: #49677f;
+      font-size: 0.88rem;
       text-decoration: none;
       overflow-wrap: anywhere;
       transition: color 160ms ease, transform 160ms ease;
     }
 
-    .footer-disabled {
-      opacity: 0.58;
-      cursor: default;
-    }
-
-    .footer-nav a::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -0.16rem;
-      height: 1px;
-      background: #d4a22f;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 180ms ease;
-    }
-
     .footer-nav a:hover {
-      color: #ffffff;
+      color: #0f4c81;
       transform: translateX(2px);
     }
 
-    .footer-nav a:hover::after {
-      transform: scaleX(1);
+    .footer-social {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.38rem;
+      margin-top: 0.78rem;
+    }
+
+    .footer-social a {
+      margin-top: 0;
+      padding: 0.34rem 0.58rem;
+      border: 1px solid rgb(15 76 129 / 12%);
+      border-radius: 999px;
+      background: #ffffff;
+      color: #0f4c81;
+      font-size: 0.72rem;
+      font-weight: 850;
+    }
+
+    .footer-motto {
+      margin: 0;
+      padding: 1.5rem 0 0.2rem;
+      border-top: 1px solid rgb(15 76 129 / 9%);
+      color: #0f4c81;
+      font-family: var(--font-family-heading);
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      text-align: center;
+    }
+
+    .footer-motto span {
+      margin: 0 0.8rem;
     }
 
     .footer-bottom {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 0.65rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgb(255 255 255 / 10%);
-      color: #91aec5;
-      font-size: 0.84rem;
+      gap: 0.8rem;
+      color: #71889b;
+      font-size: 0.78rem;
     }
 
     .footer-bottom p {
       margin: 0;
-      overflow-wrap: anywhere;
     }
 
-    @media (max-width: 980px) {
-      .footer-primary {
-        grid-template-columns: 1fr;
-        align-items: start;
-      }
+    .footer-bottom nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+    }
 
+    .footer-bottom a {
+      color: #71889b;
+      text-decoration: none;
+    }
+
+    .footer-bottom a:hover {
+      color: #0f4c81;
+    }
+
+    @media (max-width: 920px) {
       .footer-nav {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 640px) {
-      .site-footer > .container {
-        padding-top: 1.45rem;
+      .site-footer::before {
+        color: rgb(15 76 129 / 9%);
+        font-size: 8.5rem;
+        bottom: 4rem;
       }
 
-      .footer-primary {
-        gap: 1.2rem;
-        padding-bottom: 1.45rem;
+      .footer-intro {
+        grid-template-columns: 78px minmax(0, 1fr);
       }
 
-      .footer-identity {
-        grid-template-columns: 108px minmax(0, 1fr);
-        gap: 0.85rem;
-        align-items: start;
-      }
-
-      .footer-logo-mark {
-        width: 108px;
-        min-height: 108px;
-        border-radius: 0;
-      }
-
-      .footer-logo-mark img {
-        width: 100%;
-      }
-
-      .footer-kicker {
-        margin-bottom: 0.45rem;
-        font-size: 0.66rem;
-        letter-spacing: 0.13em;
-      }
-
-      h3 {
-        max-width: 12ch;
-        font-size: clamp(1.85rem, 9.4vw, 2.55rem);
-        line-height: 0.98;
-      }
-
-      .footer-identity p:not(.footer-kicker) {
-        grid-column: 1 / -1;
-        margin-top: 0.2rem;
-        font-size: 0.92rem;
+      .footer-logo {
+        width: 78px;
+        min-width: 78px;
       }
 
       .footer-nav {
         grid-template-columns: 1fr;
-        gap: 0;
-        padding: 1.4rem 0;
+        gap: 1.2rem;
       }
 
-      .footer-nav section {
-        padding: 1rem 0;
+      .footer-motto {
+        text-align: left;
+      }
+
+      .footer-motto span {
+        margin: 0 0.35rem;
       }
 
       .footer-bottom {

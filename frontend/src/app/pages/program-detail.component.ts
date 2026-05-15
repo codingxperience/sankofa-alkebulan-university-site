@@ -9,6 +9,7 @@ import {
   getDepartmentPageLabel,
   getDepartmentPagePath,
 } from '../university/department-pages';
+import { ACADEMIC_ARCHITECTURE_COLLEGES, AcademicArchitectureCollege } from '../university/academic-architecture';
 
 interface ProgramSection {
   readonly id: string;
@@ -67,6 +68,14 @@ export class ProgramDetailComponent {
         return { page, program };
       }
     }
+
+    for (const college of ACADEMIC_ARCHITECTURE_COLLEGES) {
+      const title = college.programmes.find((candidate) => this.normalizeSlug(candidate) === slug);
+      if (title) {
+        return this.createArchitectureProgramContext(college, title);
+      }
+    }
+
     return null;
   });
 
@@ -408,18 +417,89 @@ export class ProgramDetailComponent {
       .replace(/(^-|-$)/g, '');
   }
 
+  private createArchitectureProgramContext(
+    college: AcademicArchitectureCollege,
+    title: string,
+  ): ProgramMatch {
+    const award = title.split(' ')[0] || title;
+    const program: ProgramDetail = {
+      title,
+      award,
+      overview: `${title} is part of Sankofa Alkebulan University's upgraded Pan-African college architecture. It is housed in ${college.name}, connected to school-level academic formation, applied learning systems, and research alignment through ${college.researchAlignment}.`,
+      admissions: [
+        'Applicants must meet the entry requirements for the selected award level.',
+        'Certified academic records and identification documents are required for admissions verification.',
+        'International applicants may submit equivalent qualifications for review.',
+      ],
+      duration: this.durationForTitle(title),
+      tuition: ['Contact admissions for the current tuition schedule'],
+      outline: [
+        {
+          title: 'Academic Home',
+          items: college.schools,
+        },
+        {
+          title: 'Research Alignment',
+          items: [college.researchAlignment],
+        },
+        {
+          title: 'Student Formation',
+          items: [
+            'Discipline-based coursework',
+            'Applied learning through clubs and professional societies',
+            'Research literacy and ethical scholarship',
+            'Career and postgraduate progression guidance',
+          ],
+        },
+      ],
+    };
+
+    const page: DepartmentPage = {
+      slug: this.normalizeSlug(college.name),
+      title: college.name,
+      overview: `${college.name} coordinates schools, programmes, and research pathways within the University architecture.`,
+      departments: [...college.schools],
+      featuredDepartment: {
+        name: college.schools[0] ?? college.name,
+        programs: [program],
+      },
+    };
+
+    return { page, program };
+  }
+
+  private durationForTitle(title: string): string {
+    const normalized = title.toLowerCase();
+    if (normalized.startsWith('phd')) {
+      return '3 to 5 years';
+    }
+    if (normalized.startsWith('msc') || normalized.startsWith('ma ') || normalized.startsWith('master')) {
+      return '2 years';
+    }
+    if (normalized.startsWith('diploma')) {
+      return '2 years';
+    }
+    if (normalized.startsWith('certificate')) {
+      return '6 to 12 months';
+    }
+    if (normalized.startsWith('mbchb')) {
+      return '5 years';
+    }
+    return '3 to 4 years';
+  }
+
   private resolveLevel(program: ProgramDetail): string {
     const title = program.title.toLowerCase();
     if (title.includes('phd') || title.includes('doctor of philosophy')) {
       return 'phd';
     }
-    if (title.includes('master') || title.includes('masters')) {
+    if (title.includes('master') || title.includes('masters') || title.startsWith('msc')) {
       return 'masters';
     }
     if (title.includes('postgraduate diploma')) {
       return 'postgraduate-diploma';
     }
-    if (title.includes('bachelor')) {
+    if (/^(ba|bba|bed|bpharm|bsc|llb|mbchb|bachelor)\b/.test(title)) {
       return 'bachelors';
     }
     if (title.includes('diploma')) {

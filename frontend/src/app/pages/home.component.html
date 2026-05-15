@@ -1,283 +1,182 @@
-<div class="home-shell">
-  <section class="hero section">
-    <div class="container">
-      <div class="hero-stage">
-        <div class="hero-stage__banner">
-          @for (slide of heroSlides; track slide.title; let idx = $index) {
-            <article
-              class="hero-banner"
-              [class.hero-banner--active]="idx === activeBannerIndex()"
-              [class.hero-banner--content-right]="slide.contentSide === 'right'"
-              [attr.data-tone]="slide.tone"
-              [style.--hero-object-position]="slide.imagePosition"
-              [style.--hero-content-width]="slide.contentWidth || null"
-              [style.--hero-title-width]="slide.titleWidth || null"
-              [style.--hero-summary-width]="slide.summaryWidth || null"
-              [style.--hero-pan-x]="slide.panX || null"
-              [style.--hero-pan-y]="slide.panY || null"
-            >
-              <img
-                [ngSrc]="slide.image"
-                [alt]="slide.title"
-                width="1600"
-                height="900"
-                [priority]="idx === 0"
-              />
-              <div class="hero-banner__veil"></div>
-              <div class="hero-banner__pattern"></div>
-
-              <div class="hero-banner__content">
-                <p class="hero-kicker">Sankofa Alkebulan University</p>
-                <p class="hero-label">{{ slide.badge }}</p>
-                <h1>{{ slide.title }}</h1>
-                <p class="hero-summary">{{ slide.subtitle }}</p>
-
-                <p class="hero-tagline">
-                  <span>Return</span>
-                  <span>Restore</span>
-                  <span>Reimagine</span>
-                </p>
-
-                <div class="hero-actions">
-                  <a [routerLink]="slide.ctaPath" class="btn btn--hero-primary">{{ slide.ctaLabel }}</a>
-                  @if (slide.secondaryLabel && slide.secondaryPath) {
-                    <a [routerLink]="slide.secondaryPath" class="btn btn--hero-secondary">
-                      {{ slide.secondaryLabel }}
-                    </a>
-                  }
-                </div>
-              </div>
-            </article>
-          }
-        </div>
-
-        <div class="hero-stage__controls">
-          <div class="hero-pips" role="tablist" aria-label="Homepage hero slides">
-            @for (slide of heroSlides; track slide.title; let idx = $index) {
-              <button
-                type="button"
-                class="hero-pip"
-                [class.hero-pip--active]="idx === activeBannerIndex()"
-                [attr.aria-label]="'Show hero slide ' + (idx + 1)"
-                [attr.aria-selected]="idx === activeBannerIndex()"
-                (click)="selectBanner(idx)"
-              ></button>
-            }
-          </div>
-        </div>
-
-        <button type="button" class="hero-control-btn hero-control-btn--left" aria-label="Previous slide" (click)="previousBanner()">
-          &#10094;
-        </button>
-        <button type="button" class="hero-control-btn hero-control-btn--right" aria-label="Next slide" (click)="nextBanner()">
-          &#10095;
-        </button>
-      </div>
-
-      <div class="launch-grid">
-        @for (pathway of pathwayCards; track pathway.title) {
-          <a [routerLink]="pathway.path" class="launch-card">
-            <span class="launch-card__icon" aria-hidden="true"><i [class]="pathway.iconClass"></i></span>
-            <span class="launch-card__body">
-              <span class="launch-card__eyebrow">{{ pathway.eyebrow }}</span>
-              <strong>{{ pathway.title }}</strong>
-              <span>{{ pathway.description }}</span>
-            </span>
-            <span class="launch-card__arrow" aria-hidden="true">&rarr;</span>
-          </a>
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--quiet">
-    <div class="container">
-      <div class="story-shell">
-        <div class="story-copy">
-          <p class="section-kicker">Why Sankofa</p>
-          <h2>An academic home for restoration, imagination, and rigorous scholarship.</h2>
-          <p>
-            Sankofa Alkebulan University brings African civilizational thought, modern science, public
-            leadership, and spiritual inquiry into one ambitious institution. The experience is serious,
-            global, and rooted.
-          </p>
-        </div>
-
-        <div class="story-pillars">
-          @for (pillar of promisePillars; track pillar.index) {
-            <article class="story-pillar">
-              <p class="story-pillar__index">{{ pillar.index }}</p>
-              <h3>{{ pillar.title }}</h3>
-              <p>{{ pillar.description }}</p>
-            </article>
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="section-heading section-heading--split">
-        <div>
-          <p class="section-kicker">Academics</p>
-          <h2>Choose a school with a clear academic identity.</h2>
-        </div>
-        <p>
-          Browse focused colleges across heritage, theology, governance, technology, law, health,
-          engineering, agriculture, and the creative arts.
-        </p>
-      </div>
-
-      <div class="department-carousel">
-        <div class="department-carousel__controls">
-          <button
-            type="button"
-            aria-label="Previous departments"
-            (click)="previousDepartmentPage()"
-            [disabled]="departmentPageIndex() === 0"
-          >
-            &lsaquo;
-          </button>
-          <button
-            type="button"
-            aria-label="Next departments"
-            (click)="nextDepartmentPage()"
-            [disabled]="departmentPageIndex() === departmentPageCount() - 1"
-          >
-            &rsaquo;
-          </button>
-        </div>
-
-        <div class="department-carousel__track" [style.--department-columns]="departmentsPerPage()">
-          @for (department of safeDepartments(); track department.title) {
-            <article class="dept-card">
-              <span class="dept-card__icon" aria-hidden="true">
-                <fa-icon [icon]="department.icon" [fixedWidth]="true"></fa-icon>
-              </span>
-              <h3>{{ department.title }}</h3>
-              <p>{{ department.description }}</p>
-              <a [routerLink]="department.path" class="dept-card__link">
-                Read more <span aria-hidden="true">&rarr;</span>
+<div class="v2-shell">
+  <main>
+    <!-- Hero — Concept A editorial typographic -->
+    <section class="v2-hero v2-hero--editorial">
+      <div class="v2-hero__dots" aria-hidden="true"></div>
+      <div class="v2-container">
+        <div class="v2-hero__inner">
+          <div class="v2-hero__copy" data-reveal>
+            <span class="v2-kicker">Sankofa Alkebulan University</span>
+            <h1 class="v2-hero__display">
+              Knowledge<br />
+              <em>that returns</em><br />
+              to itself.
+            </h1>
+            <p class="v2-hero__lead">
+              A continental research university advancing African civilizational thought,
+              modern science, and ethical leadership — in one academic estate.
+            </p>
+            <div class="v2-hero__actions">
+              <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg">
+                Begin an application <span aria-hidden="true">→</span>
               </a>
-            </article>
-          }
-        </div>
-
-        <div class="department-carousel__dots" role="tablist" aria-label="Department carousel navigation">
-          @for (page of departmentPages(); track page) {
-            <button
-              type="button"
-              class="department-carousel__dot"
-              [class.department-carousel__dot--active]="page === departmentPageIndex()"
-              [attr.aria-selected]="page === departmentPageIndex()"
-              [attr.aria-label]="'Show departments page ' + (page + 1)"
-              (click)="setDepartmentPage(page)"
-            ></button>
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--quiet">
-    <div class="container">
-      <div class="section-heading section-heading--split">
-        <div>
-          <p class="section-kicker">Research, News, and Events</p>
-          <h2>Current pathways into the university.</h2>
-        </div>
-        <p>
-          A lean set of entry points for what matters now: admissions, research, events, and academic
-          discovery.
-        </p>
-      </div>
-
-      <div class="signal-grid">
-        @for (signal of currentSignals; track signal.title) {
-          <article class="signal-card" [attr.data-theme]="signal.theme">
-            <div class="signal-card__top">
-              <p class="signal-card__stamp">{{ signal.stamp }}</p>
-              <span class="signal-card__icon" aria-hidden="true"><i [class]="signal.iconClass"></i></span>
+              <a routerLink="/faculties-schools" class="v2-btn v2-btn--ghost v2-btn--lg">
+                Explore programmes
+              </a>
             </div>
-            <h3>{{ signal.title }}</h3>
-            <p>{{ signal.description }}</p>
-            <a [routerLink]="signal.path" class="signal-card__link">
-              {{ signal.ctaLabel }} <span aria-hidden="true">&rarr;</span>
-            </a>
-          </article>
-        }
+            <div class="v2-hero__trust">
+              <div class="stat"><div class="num">Est. 2024</div><div class="lbl">Founded as an independent institution</div></div>
+              <span class="divider" aria-hidden="true"></span>
+              <div class="stat"><div class="num">17 schools</div><div class="lbl">Across six colleges</div></div>
+              <span class="divider" aria-hidden="true"></span>
+              <div class="stat"><div class="num">54 nations</div><div class="lbl">In present cohort</div></div>
+            </div>
+          </div>
+
+          <aside class="v2-hero__index" data-reveal aria-label="Currently open at SAU">
+            <div class="head">
+              <h3>An index of what's open</h3>
+              <span>Updated — 13 May</span>
+            </div>
+            <ol>
+              @for (item of indexItems; track item.label) {
+                <li><b>{{ item.label }}</b><span>{{ item.meta }}</span></li>
+              }
+            </ol>
+          </aside>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="experience-shell">
-        <div class="experience-copy">
-          <p class="section-kicker">Student Experience</p>
-          <h2>A campus experience designed to feel guided, calm, and globally connected.</h2>
-          <p>
-            Sankofa pairs rigorous academic pathways with mentorship, digital learning, career direction,
-            and support systems that keep the journey human.
-          </p>
-
-          <div class="experience-list">
-            @for (item of experienceCards; track item.title) {
-              <a [routerLink]="item.path" class="experience-item">
-                <span class="experience-item__icon" aria-hidden="true"><i [class]="item.iconClass"></i></span>
-                <span class="experience-item__body">
-                  <strong>{{ item.title }}</strong>
-                  <span>{{ item.description }}</span>
-                </span>
+    <!-- Tiles + Categories -->
+    <section class="v2-section v2-section--quiet">
+      <div class="v2-container">
+        <div class="v2-tiles" data-reveal>
+          @for (t of tiles; track t.title) {
+            @if (t.route) {
+              <a [routerLink]="t.route" class="v2-tile" [class.v2-tile--warm]="t.warm">
+                <div>
+                  <h3>{{ t.title }}</h3>
+                  <p>{{ t.body }}</p>
+                </div>
+                <div class="v2-tile__icon"><i class="fa-solid {{ t.icon }}"></i></div>
+              </a>
+            } @else {
+              <a href="#" class="v2-tile" [class.v2-tile--warm]="t.warm">
+                <div>
+                  <h3>{{ t.title }}</h3>
+                  <p>{{ t.body }}</p>
+                </div>
+                <div class="v2-tile__icon"><i class="fa-solid {{ t.icon }}"></i></div>
+              </a>
+            }
+          }
+        </div>
+        <div class="v2-categories" style="margin-top: 56px" data-reveal>
+          <h3>Explore by field of study</h3>
+          <div class="v2-categories__rail">
+            @for (c of categories; track c.label) {
+              <a href="#" class="v2-chip" [class.is-selected]="c.selected">
+                <i class="fa-solid {{ c.icon }}"></i>{{ c.label }}
               </a>
             }
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="experience-media">
-          <figure class="experience-media__frame experience-media__frame--primary">
-            <img
-              ngSrc="/assets/hero/hero-campus-banner.png"
-              alt="Students in a vibrant learning environment"
-              width="1200"
-              height="900"
-            />
-          </figure>
-          <figure class="experience-media__frame experience-media__frame--secondary">
-            <img
-              ngSrc="/assets/hero/hero-lab-banner.png"
-              alt="Research and laboratory innovation"
-              width="900"
-              height="900"
-            />
-          </figure>
-          <div class="experience-media__note">
-            <p>Digital campus</p>
-            <strong>Live chat, virtual tools, and AI guidance</strong>
+    <!-- Story rail -->
+    <section class="v2-section">
+      <div class="v2-container">
+        <div class="v2-story">
+          <div class="v2-story__art" data-reveal>
+            <img src="assets/photo-study-african-campus.jpg" alt="African university students in a modern learning space" />
+          </div>
+          <div data-reveal>
+            <div class="v2-section-head" style="margin-bottom: 28px">
+              <span class="v2-kicker">Why study with us</span>
+              <h2>A scholarly home for restoration, imagination, and rigour.</h2>
+            </div>
+            <div class="v2-story__points">
+              @for (p of points; track p.n) {
+                <div class="v2-story__point">
+                  <span class="n">{{ p.n }}</span>
+                  <div>
+                    <h4>{{ p.h }}</h4>
+                    <p>{{ p.p }}</p>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section section--sm">
-    <div class="container">
-      <article class="final-cta">
-        <div class="final-cta__copy">
-          <p class="section-kicker section-kicker--light">Contact</p>
-          <h2>Ready to explore Sankofa?</h2>
-          <p>
-            Email:
-            <a href="mailto:sankofalkebulanuniversity@outlook.com">sankofalkebulanuniversity@outlook.com</a>
-          </p>
+    <!-- Ribbon divider -->
+    <div class="v2-container">
+      <div class="pg-divider-row">
+        <div class="pg-divider" aria-hidden="true">
+          <img src="assets/pattern-mark.svg" alt="" />
         </div>
-
-        <div class="quick-row">
-          <a routerLink="/contact" class="btn btn--hero-primary">Open contact center</a>
-          <a routerLink="/admissions" class="btn btn--hero-secondary">Apply now</a>
-        </div>
-      </article>
+      </div>
     </div>
-  </section>
-</div>
+
+    <!-- Departments -->
+    <section class="v2-section">
+      <div class="v2-container">
+        <div class="v2-section-head v2-section-head--split" data-reveal>
+          <div>
+            <span class="v2-kicker">Six colleges, seventeen schools</span>
+            <h2>Choose by the question, not the catalogue.</h2>
+          </div>
+          <p class="right">Each college is organised around a continuing African question and the schools, programmes, and institutes that pursue it.</p>
+        </div>
+        <div class="v2-depts" data-reveal>
+          @for (d of departments; track d.t) {
+            <a class="v2-dept" routerLink="/faculties-schools">
+              <div class="v2-dept__icon"><i class="fa-solid {{ d.icon }}"></i></div>
+              <h4>{{ d.t }}</h4>
+              <p>{{ d.d }}</p>
+              <div class="v2-dept__meta">
+                <span><i class="fa-solid fa-building-columns"></i>{{ d.schools }}</span>
+                <span><i class="fa-solid fa-graduation-cap"></i>{{ d.level }}</span>
+              </div>
+            </a>
+          }
+        </div>
+        <div style="margin-top: 32px" data-reveal>
+          <a routerLink="/faculties-schools" class="v2-btn v2-btn--link">View the full academic estate</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Signals -->
+    <section class="v2-section v2-section--quiet">
+      <div class="v2-container">
+        <div class="v2-section-head" data-reveal>
+          <span class="v2-kicker">Currently at SAU</span>
+          <h2>What's open, on, and in the works.</h2>
+        </div>
+        <div class="v2-signals" data-reveal>
+          @for (s of signals; track s.h) {
+            @if (s.route) {
+              <a class="v2-signal" [attr.data-tone]="s.tone" [routerLink]="s.route">
+                <span class="v2-signal__date">{{ s.date }}</span>
+                <h4>{{ s.h }}</h4>
+                <p>{{ s.p }}</p>
+                <span class="more">{{ s.more }} </span>
+              </a>
+            } @else {
+              <a class="v2-signal" [attr.data-tone]="s.tone" href="#">
+                <span class="v2-signal__date">{{ s.date }}</span>
+                <h4>{{ s.h }}</h4>
+                <p>{{ s.p }}</p>
+                <span class="more">{{ s.more }} </span>
+              </a>
+            }
+          }
+        </div>
+      </div>
+    </section>
+  </main></div>

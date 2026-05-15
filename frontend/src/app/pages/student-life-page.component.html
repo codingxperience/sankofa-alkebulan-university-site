@@ -1,0 +1,155 @@
+<div class="v2-shell">
+  <!-- Breadcrumb -->
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">›</span>
+        <span class="here" aria-current="page">Student Life</span>
+      </nav>
+      <div class="actions">
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-calendar" aria-hidden="true"></i> Term calendar</a>
+        <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-solid fa-house-chimney" aria-hidden="true"></i> Housing portal</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editorial hero -->
+  <section class="pg-hero pg-hero--editorial" aria-labelledby="sl-hero">
+    <div class="pg-hero__dots" aria-hidden="true"></div>
+    <div class="v2-container">
+      <div class="pg-hero__grid">
+        <div class="pg-hero__copy">
+          <span class="v2-kicker">Student Life</span>
+          <h1 id="sl-hero">A life of the <em>mind,</em><br>and of <em>each other.</em></h1>
+          <p class="pg-hero__lead">
+            Sankofa is not only what you study. It is how you live alongside fellow scholars
+            — in residences, libraries, studios, and student societies. The university
+            backs that life with housing, wellbeing, athletics, faith, and leadership infrastructure.
+          </p>
+          <div class="pg-hero__actions">
+            <a routerLink="/student-life" fragment="pillars" class="v2-btn v2-btn--primary v2-btn--lg">See what's here <span aria-hidden="true">→</span></a>
+            <a routerLink="/student-life" fragment="calendar" class="v2-btn v2-btn--ghost v2-btn--lg">Term calendar</a>
+          </div>
+        </div>
+
+        <!-- Portrait mosaic of Sankofa students -->
+        <aside class="sl-hero__mosaic" aria-label="Sankofa students">
+          @for (p of portraits; track p.name) {
+            <figure class="sl-portrait" [class]="p.cls">
+              <img [src]="p.img" [alt]="p.name + ', ' + p.programme">
+              <figcaption><b>{{ p.name }}</b><span>{{ p.programme }}</span></figcaption>
+            </figure>
+          }
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillars -->
+  <section class="v2-section" id="pillars">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split" data-reveal>
+        <div>
+          <span class="v2-kicker">What student life means here</span>
+          <h2>Six commitments the university holds.</h2>
+        </div>
+        <p class="right">Each commitment has a public team, a budget, and an annual reporting line — not just a page.</p>
+      </div>
+      <div class="sl-pillars" data-reveal>
+        @for (pillar of pillars; track pillar.ek) {
+          <article class="sl-pillar">
+            <div class="sl-pillar__photo"><img [src]="pillar.photo" alt=""></div>
+            <div class="sl-pillar__body">
+              <span class="ek">{{ pillar.ek }}</span>
+              <h3>{{ pillar.h }}</h3>
+              <p>{{ pillar.p }}</p>
+              <a href="#" class="v2-btn v2-btn--link">{{ pillar.cta }}</a>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider mark -->
+  <div class="v2-container"><div class="pg-divider-row"><div class="pg-divider" aria-hidden="true"><img src="assets/pattern-mark.svg" alt=""></div></div></div>
+
+  <!-- Voices -->
+  <section class="v2-section v2-section--quiet" id="voices">
+    <div class="v2-container">
+      <div class="v2-section-head" data-reveal>
+        <span class="v2-kicker">Student voices</span>
+        <h2>In their own words.</h2>
+      </div>
+      <div class="sl-voices" data-reveal>
+        @for (v of voices; track v.name) {
+          <article class="sl-voice">
+            <p>{{ v.quote }}</p>
+            <footer>
+              <img [src]="v.img" alt="">
+              <div><b>{{ v.name }}</b><span>{{ v.meta }}</span></div>
+            </footer>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Calendar -->
+  <section class="v2-section" id="calendar">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split" data-reveal>
+        <div>
+          <span class="v2-kicker">This term</span>
+          <h2>What's on, in the next four weeks.</h2>
+        </div>
+        <p class="right">A small selection — the full term calendar lives in the student portal.</p>
+      </div>
+      <ul class="sl-cal" data-reveal>
+        @for (event of calendar; track event.h) {
+          <li>
+            <div class="d"><b>{{ event.day }}</b><span>{{ event.mon }}</span></div>
+            <div class="body">
+              <h4>{{ event.h }}</h4>
+              <p>{{ event.p }}</p>
+              <span class="meta"><i class="fa-regular fa-clock"></i> {{ event.meta }}</span>
+            </div>
+            <a class="v2-btn v2-btn--ghost">{{ event.action }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Quote slab -->
+  <section class="pg-quote" aria-label="A note from the executive director of student affairs">
+    <div class="v2-container">
+      <div class="pg-quote__portrait">
+        <img src="assets/portrait-mukashema.jpeg" alt="">
+      </div>
+      <div class="pg-quote__body">
+        <p>Student life at Sankofa is not a separate department. It is the way a serious university
+          looks after the people who do its serious work — quietly, well, and on a budget you can read.</p>
+        <div class="pg-quote__attr">
+          <b>Winnie Mukashema</b>
+          <span>Executive Director — Student Affairs</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA strip -->
+  <section class="sl-cta" data-reveal>
+    <div class="v2-container">
+      <div>
+        <span class="v2-kicker">For prospective students</span>
+        <h2>Come see the campus.</h2>
+        <p>Open days, virtual campus tours, and overnight visits for shortlisted applicants. The fastest way to know if Sankofa is for you is to walk through it.</p>
+      </div>
+      <div class="actions">
+        <a href="#" class="v2-btn v2-btn--primary v2-btn--lg">Book a visit <span aria-hidden="true">→</span></a>
+        <a href="#" class="v2-btn v2-btn--ghost v2-btn--lg">Virtual campus tour</a>
+      </div>
+    </div>
+  </section></div>

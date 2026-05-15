@@ -36,5 +36,5 @@ export class TeamProfilePageComponent {
         return { label: 'Back to Founders & Chancellor', path: '/about', fragment: 'leadership-team' };
     }
   });
-  readonly adminEmail = 'sankofalkebulanuniversity@outlook.com';
+  readonly adminEmail = 'SanAlkeU@outlook.com';
 }
