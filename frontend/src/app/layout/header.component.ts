@@ -431,13 +431,14 @@ type MobileGroup = 'about' | 'academics';
       padding: 1.2rem;
       border: 1px solid rgb(15 76 129 / 10%);
       border-radius: 18px;
-      background: rgb(255 255 255 / 96%);
+      background: rgb(255 253 248 / 90%);
       box-shadow: 0 26px 60px rgb(8 36 58 / 18%);
       opacity: 0;
       pointer-events: none;
       transform: translateX(-50%) translateY(10px);
       transition: opacity 170ms ease, transform 170ms ease;
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(22px) saturate(150%);
+      -webkit-backdrop-filter: blur(22px) saturate(150%);
     }
 
     .nav-panel--about {
@@ -459,7 +460,7 @@ type MobileGroup = 'about' | 'academics';
       height: 16px;
       border-left: 1px solid rgb(15 76 129 / 10%);
       border-top: 1px solid rgb(15 76 129 / 10%);
-      background: #ffffff;
+      background: rgb(255 253 248 / 90%);
       transform: translateX(-50%) rotate(45deg);
     }
 
@@ -470,16 +471,20 @@ type MobileGroup = 'about' | 'academics';
       min-height: 100%;
       padding: 1.05rem;
       border-radius: 14px;
+      border: 1px solid rgb(255 255 255 / 54%);
       background:
-        radial-gradient(circle at 92% 0%, rgb(212 162 47 / 18%), transparent 8rem),
-        linear-gradient(180deg, #f7f1e6 0%, #ffffff 100%);
+        radial-gradient(circle at 92% 0%, rgb(179 92 42 / 12%), transparent 8rem),
+        linear-gradient(180deg, rgb(255 253 248 / 64%) 0%, rgb(255 255 255 / 42%) 100%);
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%);
+      backdrop-filter: blur(12px) saturate(145%);
+      -webkit-backdrop-filter: blur(12px) saturate(145%);
     }
 
     .nav-panel__intro span,
     .nav-panel__columns h3,
     .mobile-drawer__eyebrow,
     .mobile-group__links span {
-      color: #9a6a18;
+      color: var(--sau-return, #b35c2a);
       font-family: var(--font-family-heading);
       font-size: 0.68rem;
       font-weight: 900;
@@ -673,7 +678,7 @@ type MobileGroup = 'about' | 'academics';
       position: relative;
       z-index: 1;
       margin: 0;
-      color: #f0d28a;
+      color: #f4c3a4;
     }
 
     .mobile-drawer__nav {
@@ -724,7 +729,7 @@ type MobileGroup = 'about' | 'academics';
     .mobile-group--active > button::after,
     .mobile-group--open > button,
     .mobile-group--open > button::after {
-      color: #f1cf83;
+      color: #f4c3a4;
     }
 
     .mobile-construction {
@@ -770,7 +775,7 @@ type MobileGroup = 'about' | 'academics';
 
     .mobile-group__links span {
       margin-top: 0.6rem;
-      color: #f1cf83;
+      color: #f4c3a4;
       font-size: 0.62rem;
     }
 

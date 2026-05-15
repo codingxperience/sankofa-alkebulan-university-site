@@ -4,7 +4,7 @@
   --detail-text: #46627a;
   --detail-blue: #0f4c81;
   --detail-blue-deep: #082841;
-  --detail-accent: #d4a22f;
+  --detail-accent: var(--sau-return, #b35c2a);
   --detail-border: #d7e3ed;
   --detail-surface: #ffffff;
   --detail-muted: #f6f8fb;
@@ -157,7 +157,7 @@
 
 .about-detail-page__nav-title {
   margin: 0 0 0.7rem;
-  color: #1f2d3a;
+  color: var(--sau-return, #b35c2a);
   font-size: 0.73rem;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -187,7 +187,7 @@
 
 .about-detail-page__section-nav a:hover,
 .about-detail-page__section-nav a:focus-visible {
-  color: var(--detail-blue-deep);
+  color: var(--detail-accent);
   padding-left: 0.45rem;
 }
 
@@ -358,7 +358,9 @@
     padding: 0.7rem 0.85rem;
     border: 1px solid var(--detail-border);
     border-right: 0;
-    background: #ffffff;
+    background: rgb(255 255 255 / 64%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .about-detail-page__section-nav a:last-child {

@@ -101,8 +101,8 @@
   margin-bottom: -1px;
   transition: color var(--sau-dur-fast), border-color var(--sau-dur-fast);
 }
-.ab-subnav a:hover { color: var(--sau-blue-700); }
-.ab-subnav a.active { color: var(--sau-blue-700); border-color: var(--sau-blue-500); }
+.ab-subnav a:hover { color: var(--sau-return); }
+.ab-subnav a.active { color: var(--sau-return); border-color: var(--sau-return); }
 
 /* ========== Mission ========== */
 .ab-mission {

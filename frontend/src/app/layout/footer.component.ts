@@ -148,7 +148,7 @@ import { RouterLink } from '@angular/router';
 
     .footer-kicker {
       margin: 0 0 0.45rem;
-      color: #9a6a18;
+      color: var(--sau-return, #b35c2a);
       font-size: 0.68rem;
       font-weight: 900;
       letter-spacing: 0.15em;
@@ -279,28 +279,105 @@ import { RouterLink } from '@angular/router';
     }
 
     @media (max-width: 640px) {
+      .site-footer {
+        background:
+          radial-gradient(circle at 16% 0%, rgb(179 92 42 / 10%), transparent 14rem),
+          linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+      }
+
       .site-footer::before {
-        color: rgb(15 76 129 / 9%);
-        font-size: 8.5rem;
-        bottom: 4rem;
+        color: rgb(15 76 129 / 6%);
+        font-size: clamp(5.6rem, 34vw, 8.8rem);
+        left: auto;
+        right: -1.1rem;
+        bottom: 1.2rem;
+        transform: none;
+      }
+
+      .footer-shell {
+        gap: 1.15rem;
+        padding-top: 1.35rem;
+        padding-bottom: 1rem;
       }
 
       .footer-intro {
-        grid-template-columns: 78px minmax(0, 1fr);
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 0.85rem;
+        padding: 1rem;
+        border: 1px solid rgb(15 76 129 / 9%);
+        border-radius: 22px;
+        background: rgb(255 255 255 / 66%);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
       }
 
       .footer-logo {
-        width: 78px;
-        min-width: 78px;
+        width: 76px;
+        min-width: 76px;
+      }
+
+      .footer-kicker {
+        margin-bottom: 0.35rem;
+        color: var(--sau-return, #b35c2a);
+        font-size: 0.62rem;
+      }
+
+      .footer-intro h2 {
+        max-width: 20ch;
+        font-size: clamp(1.42rem, 8vw, 2rem);
+        letter-spacing: -0.045em;
+      }
+
+      .footer-intro p:not(.footer-kicker) {
+        margin-top: 0.55rem;
+        font-size: 0.9rem;
       }
 
       .footer-nav {
-        grid-template-columns: 1fr;
-        gap: 1.2rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+        padding-top: 0;
+        border-top: 0;
+      }
+
+      .footer-nav section {
+        padding: 0.85rem;
+        border: 1px solid rgb(15 76 129 / 9%);
+        border-radius: 18px;
+        background: rgb(255 255 255 / 46%);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      .footer-nav h3 {
+        margin-bottom: 0.62rem;
+        color: var(--sau-return, #b35c2a);
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .footer-nav a {
+        margin-top: 0.42rem;
+        font-size: 0.82rem;
+        line-height: 1.28;
+      }
+
+      .footer-social {
+        gap: 0.28rem;
+      }
+
+      .footer-social a {
+        padding: 0.28rem 0.45rem;
+        font-size: 0.66rem;
       }
 
       .footer-motto {
-        text-align: left;
+        padding-top: 1rem;
+        color: var(--sau-return, #b35c2a);
+        font-size: clamp(1.05rem, 6vw, 1.25rem);
+        text-align: center;
       }
 
       .footer-motto span {
@@ -309,6 +386,19 @@ import { RouterLink } from '@angular/router';
 
       .footer-bottom {
         display: grid;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .footer-bottom nav {
+        justify-content: center;
+        gap: 0.7rem;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .footer-nav {
+        grid-template-columns: 1fr;
       }
     }
   `],
