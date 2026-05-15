@@ -85,6 +85,7 @@
   --sau-gold-200: #f1cf83;
   --sau-gold-100: #f4e3b7;
   --sau-gold-050: #f7f1e6;
+  --sau-return: #b35c2a;
   --sau-ink: #102a43;
   --sau-ink-soft: #243c51;
   --sau-slate-700: #4a647d;
@@ -991,12 +992,13 @@ button { font: inherit; cursor: pointer; background: none; border: 0; }
 .v2-hero__dots {
   position: absolute; inset: 0;
   background-image:
-    radial-gradient(circle, rgba(15, 76, 129, 0.20) 1.1px, transparent 1.5px),
-    radial-gradient(circle, rgba(15, 76, 129, 0.10) 0.9px, transparent 1.3px);
+    radial-gradient(circle, rgba(15, 76, 129, 0.30) 1.15px, transparent 1.55px),
+    radial-gradient(circle, rgba(179, 92, 42, 0.18) 0.95px, transparent 1.35px);
   background-size: 26px 26px, 18px 18px;
   background-position: 0 0, 9px 9px;
-  -webkit-mask-image: radial-gradient(ellipse 55% 65% at 86% 40%, #000 0%, transparent 76%);
-          mask-image: radial-gradient(ellipse 55% 65% at 86% 40%, #000 0%, transparent 76%);
+  opacity: 0.96;
+  -webkit-mask-image: radial-gradient(ellipse 62% 72% at 86% 40%, #000 0%, transparent 84%);
+          mask-image: radial-gradient(ellipse 62% 72% at 86% 40%, #000 0%, transparent 84%);
   animation: sau-dot-drift var(--sau-dur-pan) linear infinite;
   pointer-events: none;
 }
@@ -1192,12 +1194,13 @@ button { font: inherit; cursor: pointer; background: none; border: 0; }
 .pg-hero__dots {
   position: absolute; inset: 0;
   background-image:
-    radial-gradient(circle, rgba(15, 76, 129, 0.18) 1.1px, transparent 1.5px),
-    radial-gradient(circle, rgba(15, 76, 129, 0.10) 0.9px, transparent 1.3px);
+    radial-gradient(circle, rgba(15, 76, 129, 0.30) 1.15px, transparent 1.55px),
+    radial-gradient(circle, rgba(179, 92, 42, 0.18) 0.95px, transparent 1.35px);
   background-size: 26px 26px, 18px 18px;
   background-position: 0 0, 9px 9px;
-  -webkit-mask-image: radial-gradient(ellipse 55% 60% at 90% 36%, #000 0%, transparent 76%);
-          mask-image: radial-gradient(ellipse 55% 60% at 90% 36%, #000 0%, transparent 76%);
+  opacity: 0.96;
+  -webkit-mask-image: radial-gradient(ellipse 62% 68% at 90% 36%, #000 0%, transparent 84%);
+          mask-image: radial-gradient(ellipse 62% 68% at 90% 36%, #000 0%, transparent 84%);
   animation: sau-dot-drift var(--sau-dur-pan) linear infinite;
   pointer-events: none;
 }

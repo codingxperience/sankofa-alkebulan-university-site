@@ -4,7 +4,7 @@
     <div class="v2-container">
       <nav aria-label="Breadcrumb">
         <a routerLink="/home">Home</a>
-        <span aria-hidden="true">›</span>
+        <span aria-hidden="true">â€º</span>
         <span class="here" aria-current="page">Student Life</span>
       </nav>
       <div class="actions">
@@ -24,11 +24,11 @@
           <h1 id="sl-hero">A life of the <em>mind,</em><br>and of <em>each other.</em></h1>
           <p class="pg-hero__lead">
             Sankofa is not only what you study. It is how you live alongside fellow scholars
-            — in residences, libraries, studios, and student societies. The university
+            â€” in residences, libraries, studios, and student societies. The university
             backs that life with housing, wellbeing, athletics, faith, and leadership infrastructure.
           </p>
           <div class="pg-hero__actions">
-            <a routerLink="/student-life" fragment="pillars" class="v2-btn v2-btn--primary v2-btn--lg">See what's here <span aria-hidden="true">→</span></a>
+            <a routerLink="/student-life" fragment="pillars" class="v2-btn v2-btn--primary v2-btn--lg">See what's here <span aria-hidden="true">â†’</span></a>
             <a routerLink="/student-life" fragment="calendar" class="v2-btn v2-btn--ghost v2-btn--lg">Term calendar</a>
           </div>
         </div>
@@ -54,7 +54,7 @@
           <span class="v2-kicker">What student life means here</span>
           <h2>Six commitments the university holds.</h2>
         </div>
-        <p class="right">Each commitment has a public team, a budget, and an annual reporting line — not just a page.</p>
+        <p class="right">Each commitment has a public team, a budget, and an annual reporting line â€” not just a page.</p>
       </div>
       <div class="sl-pillars" data-reveal>
         @for (pillar of pillars; track pillar.ek) {
@@ -87,7 +87,7 @@
           <article class="sl-voice">
             <p>{{ v.quote }}</p>
             <footer>
-              <img [src]="v.img" alt="">
+              <img [src]="v.img" [alt]="v.name">
               <div><b>{{ v.name }}</b><span>{{ v.meta }}</span></div>
             </footer>
           </article>
@@ -104,7 +104,7 @@
           <span class="v2-kicker">This term</span>
           <h2>What's on, in the next four weeks.</h2>
         </div>
-        <p class="right">A small selection — the full term calendar lives in the student portal.</p>
+        <p class="right">A small selection â€” the full term calendar lives in the student portal.</p>
       </div>
       <ul class="sl-cal" data-reveal>
         @for (event of calendar; track event.h) {
@@ -130,10 +130,10 @@
       </div>
       <div class="pg-quote__body">
         <p>Student life at Sankofa is not a separate department. It is the way a serious university
-          looks after the people who do its serious work — quietly, well, and on a budget you can read.</p>
+          looks after the people who do its serious work â€” quietly, well, and on a budget you can read.</p>
         <div class="pg-quote__attr">
           <b>Winnie Mukashema</b>
-          <span>Executive Director — Student Affairs</span>
+          <span>Executive Director â€” Student Affairs</span>
         </div>
       </div>
     </div>
@@ -148,7 +148,7 @@
         <p>Open days, virtual campus tours, and overnight visits for shortlisted applicants. The fastest way to know if Sankofa is for you is to walk through it.</p>
       </div>
       <div class="actions">
-        <a href="#" class="v2-btn v2-btn--primary v2-btn--lg">Book a visit <span aria-hidden="true">→</span></a>
+        <a href="#" class="v2-btn v2-btn--primary v2-btn--lg">Book a visit <span aria-hidden="true">â†’</span></a>
         <a href="#" class="v2-btn v2-btn--ghost v2-btn--lg">Virtual campus tour</a>
       </div>
     </div>
