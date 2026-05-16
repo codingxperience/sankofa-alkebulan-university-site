@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../directives/reveal.directive';
+import { TEAM_CATEGORY_GROUPS, TEAM_MEMBERS } from '../university/team-members';
 
 @Component({
   selector: 'app-about-page',
@@ -13,12 +14,16 @@ export class AboutPageComponent implements AfterViewInit {
   @ViewChild('heroVideo') heroVideo?: ElementRef<HTMLVideoElement>;
 
   readonly subnav = [
-    { label: 'Mission & philosophy', id: 'mission' },
-    { label: 'History', id: 'history' },
-    { label: 'Governance', id: 'governance' },
-    { label: 'Leadership', id: 'leadership' },
-    { label: 'Identity & charter', id: 'identity' },
-    { label: 'Impact', id: 'impact' },
+    { label: 'Mission & philosophy', path: '/about', fragment: 'mission' },
+    { label: 'History', path: '/about', fragment: 'history' },
+    { label: 'Governance', path: '/about', fragment: 'governance' },
+    { label: 'Leadership', path: '/about', fragment: 'leadership' },
+    { label: 'Executive Team', path: '/about/executive-team', fragment: undefined },
+    { label: 'Board of Governance', path: '/about/board-of-governance', fragment: undefined },
+    { label: 'Advisory Council', path: '/about/advisory-council', fragment: undefined },
+    { label: 'Research & Scholarly Team', path: '/about/research-scholarly-team', fragment: undefined },
+    { label: 'Identity & charter', path: '/about', fragment: 'identity' },
+    { label: 'Impact', path: '/about', fragment: 'impact' },
   ];
 
   readonly values = [
@@ -35,7 +40,7 @@ export class AboutPageComponent implements AfterViewInit {
     {
       n: '03',
       b: 'Public scholarship',
-      p: 'Research that contributes to public policy, social transformation, and cultural renewal — not only the seminar room.',
+      p: 'Research that contributes to public policy, social transformation, and cultural renewal - not only the seminar room.',
     },
     {
       n: '04',
@@ -111,48 +116,30 @@ export class AboutPageComponent implements AfterViewInit {
     },
   ];
 
-  readonly leadership = [
-    {
-      photo: 'assets/portrait-founder.jpeg',
-      b: 'Prof. Emmanuel Mihiingo Kaija',
-      s: 'Founder & President',
-      p: "Architect of the university's founding vision; chairs the Board of Governance.",
-    },
-    {
-      photo: 'assets/portrait-prof-ruhinda.jpeg',
-      b: 'Prof. Gumaritahigwa B. Ruhinda',
-      s: 'Chair — Academic Senate',
-      p: 'Leads academic standards, curriculum review, and faculty appointments across the colleges.',
-    },
-    {
-      photo: 'assets/portrait-prof-mubiru.jpeg',
-      b: 'Prof. Mubiru Kisekwa',
-      s: 'Executive Director — Research',
-      p: "Oversees the four continental institutes and the university's research strategy.",
-    },
-    {
-      photo: 'assets/portrait-prof-mutabazi.jpeg',
-      b: 'Prof. Mutabazi Mugisha',
-      s: 'Executive Director — Academic Affairs',
-      p: 'Programmes, registry, and student academic experience across all six colleges.',
-    },
-    {
-      photo: 'assets/portrait-mukashema.jpeg',
-      b: 'Winnie Mukashema',
-      s: 'Executive Director — Student Affairs',
-      p: 'Admissions, financial aid, wellbeing, residence life, and student leadership.',
-    },
-    {
-      photo: 'assets/portrait-musanjufu.jpeg',
-      b: 'Benjamin Kavubu Musanjufu',
-      s: 'Executive Director — Institutional Development',
-      p: "Strategy, partnerships, philanthropy, and the university's continental footprint.",
-    },
-  ];
+  readonly leadership = TEAM_MEMBERS
+    .filter((member) => member.categories.includes('founders'))
+    .map((member) => ({
+      photo: member.image,
+      b: member.name,
+      s: member.role,
+      p: member.summary,
+      route: ['/about/team', member.slug] as const,
+      objectPosition: member.objectPosition ?? '50% 30%',
+    }));
 
+  readonly teamGateways = TEAM_CATEGORY_GROUPS
+    .filter((group) => group.id !== 'founders')
+    .map((group) => ({
+      label: group.label,
+      count: group.members.length,
+      route: this.teamRoute(group.id),
+      icon: this.teamIcon(group.id),
+      summary: this.teamSummary(group.id),
+      preview: group.members.slice(0, 4),
+    }));
   readonly identityDocs = [
     { icon: 'fa-solid fa-scroll', b: 'Institutional charter', s: '2025' },
-    { icon: 'fa-regular fa-compass', b: 'Strategic plan', s: '2026–2031' },
+    { icon: 'fa-regular fa-compass', b: 'Strategic plan', s: '2026-2031' },
     { icon: 'fa-solid fa-scale-balanced', b: 'Code of ethics', s: 'Senate-ratified' },
     { icon: 'fa-solid fa-book', b: 'Regulations handbook', s: '2026' },
     { icon: 'fa-regular fa-calendar', b: 'Academic calendar', s: '2026 / 2027' },
@@ -177,6 +164,51 @@ export class AboutPageComponent implements AfterViewInit {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced && this.heroVideo) {
       this.heroVideo.nativeElement.pause();
+    }
+  }
+
+  private teamRoute(categoryId: string): string {
+    switch (categoryId) {
+      case 'executive':
+        return '/about/executive-team';
+      case 'board':
+        return '/about/board-of-governance';
+      case 'advisory':
+        return '/about/advisory-council';
+      case 'research-scholarly':
+        return '/about/research-scholarly-team';
+      default:
+        return '/about';
+    }
+  }
+
+  private teamIcon(categoryId: string): string {
+    switch (categoryId) {
+      case 'executive':
+        return 'fa-compass-drafting';
+      case 'board':
+        return 'fa-building-shield';
+      case 'advisory':
+        return 'fa-people-arrows';
+      case 'research-scholarly':
+        return 'fa-book-open-reader';
+      default:
+        return 'fa-users';
+    }
+  }
+
+  private teamSummary(categoryId: string): string {
+    switch (categoryId) {
+      case 'executive':
+        return 'Operational leadership carrying policy, student systems, and institutional implementation.';
+      case 'board':
+        return 'Supervisory stewardship for institutional authority, compliance, and long-range stability.';
+      case 'advisory':
+        return 'Independent counsel strengthening academic direction, partnerships, and public judgement.';
+      case 'research-scholarly':
+        return 'Scholarly contributors supporting inquiry, documentation, and knowledge-system formation.';
+      default:
+        return 'Leadership directory.';
     }
   }
 }

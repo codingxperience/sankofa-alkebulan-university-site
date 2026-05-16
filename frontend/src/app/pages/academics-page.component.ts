@@ -97,12 +97,7 @@ export class AcademicsPageComponent {
 
   readonly anchorQuestions = computed(() => {
     const college = this.featuredCollege();
-    return [
-      `What question is ${college.name} brave enough to hold?`,
-      'Which school gives that question a method?',
-      'Where does it become curriculum, supervision, and public work?',
-      'Which programme lets a learner carry it into recognised practice?',
-    ];
+    return this.anchorQuestionsForCollege(college.name);
   });
 
   readonly featureProgrammes = computed(() =>
@@ -268,5 +263,88 @@ export class AcademicsPageComponent {
     if (name.includes('Law')) return 'Justice systems, constitutional development, regulation, and legal transformation.';
     if (name.includes('Security')) return 'Peacebuilding, strategic studies, human security, and continental stability.';
     return 'A cross-disciplinary research unit aligned to colleges, departments, and public impact.';
+  }
+
+  private anchorQuestionsForCollege(name: string): readonly string[] {
+    const lowerName = name.toLowerCase();
+
+    if (lowerName.includes('divine wisdom') || lowerName.includes('spiritual') || lowerName.includes('religion')) {
+      return [
+        'What wisdom survives when empire teaches a people to distrust their own sacred memory?',
+        'How can consciousness, ethics, and ritual knowledge become public responsibility rather than private sentiment?',
+        'Where does inner formation meet governance, healing, ecology, and civilisational renewal?',
+        'Which programme turns wisdom into disciplined practice, service, and human transformation?',
+      ];
+    }
+
+    if (lowerName.includes('indigenous') || lowerName.includes('civilisation') || lowerName.includes('humanities')) {
+      return [
+        'What does Africa remember that the modern archive still fails to hold?',
+        'How can memory become method without becoming nostalgia?',
+        'Where do language, philosophy, history, and identity become a living academic system?',
+        'Which programme trains a scholar to recover knowledge and make it usable again?',
+      ];
+    }
+
+    if (lowerName.includes('law') || lowerName.includes('governance') || lowerName.includes('diplomacy') || lowerName.includes('security')) {
+      return [
+        'What kind of institution can govern power without surrendering justice?',
+        'How do law, policy, diplomacy, and security become instruments of public dignity?',
+        'Where does constitutional order meet African statecraft and continental responsibility?',
+        'Which programme prepares a learner to move from argument to accountable leadership?',
+      ];
+    }
+
+    if (lowerName.includes('health') || lowerName.includes('medicine') || lowerName.includes('pharmacy') || lowerName.includes('biomedical')) {
+      return [
+        'What would health systems look like if care, science, and community trust were designed together?',
+        'How do clinical practice, public health, medicines, and diagnostics become one accountable system?',
+        'Where does laboratory knowledge become protection for families, cities, and nations?',
+        'Which programme prepares a practitioner to serve both patient and public life?',
+      ];
+    }
+
+    if (lowerName.includes('agriculture') || lowerName.includes('food') || lowerName.includes('climate') || lowerName.includes('water') || lowerName.includes('environment')) {
+      return [
+        'What must be restored when land, food, water, and climate are treated as one living system?',
+        'How does ecological knowledge become food sovereignty, public health, and economic resilience?',
+        'Where do field practice, policy, and science meet the daily survival of communities?',
+        'Which programme prepares a learner to protect the systems that keep life possible?',
+      ];
+    }
+
+    if (lowerName.includes('computing') || lowerName.includes('data') || lowerName.includes('digital') || lowerName.includes('robotics') || lowerName.includes('space')) {
+      return [
+        'Who owns the intelligence systems that will shape African public life?',
+        'How can computation, data, automation, and infrastructure serve sovereignty rather than dependency?',
+        'Where does software become policy, industry, security, and human capability?',
+        'Which programme prepares a builder to make technology answerable to society?',
+      ];
+    }
+
+    if (lowerName.includes('business') || lowerName.includes('finance') || lowerName.includes('trade') || lowerName.includes('entrepreneurship')) {
+      return [
+        'What kind of economy grows when enterprise is measured by dignity as well as profit?',
+        'How do finance, trade, management, and innovation become systems of continental capacity?',
+        'Where does value creation meet ethics, logistics, institutions, and public consequence?',
+        'Which programme prepares a learner to build ventures that can outlast the pitch deck?',
+      ];
+    }
+
+    if (lowerName.includes('engineering') || lowerName.includes('manufacturing') || lowerName.includes('energy') || lowerName.includes('transport')) {
+      return [
+        'What must be built when infrastructure is understood as public imagination made physical?',
+        'How do energy, machines, materials, and mobility become a continental operating system?',
+        'Where does design discipline meet maintenance, safety, production, and social trust?',
+        'Which programme prepares a builder to turn technical knowledge into durable systems?',
+      ];
+    }
+
+    return [
+      'What question is this college responsible enough to hold for a generation?',
+      'How does its school structure turn curiosity into method?',
+      'Where do departments convert knowledge into curriculum, supervision, and public work?',
+      'Which programme lets a learner carry that responsibility into recognised practice?',
+    ];
   }
 }

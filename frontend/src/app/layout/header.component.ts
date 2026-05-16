@@ -980,6 +980,26 @@ export class HeaderComponent implements OnInit {
       description: 'Academic standards, curricula, research, and quality assurance.',
     },
     {
+      label: 'Executive Team',
+      path: '/about/executive-team',
+      description: 'Senior operators carrying policy into institutional work.',
+    },
+    {
+      label: 'Board of Governance',
+      path: '/about/board-of-governance',
+      description: 'Supervisory stewardship and institutional authority.',
+    },
+    {
+      label: 'Advisory Council',
+      path: '/about/advisory-council',
+      description: 'Independent counsel for scholarship and public direction.',
+    },
+    {
+      label: 'Research & Scholarly Team',
+      path: '/about/research-scholarly-team',
+      description: 'Contributors supporting inquiry and knowledge formation.',
+    },
+    {
       label: 'University Policies',
       path: '/about/university-policies',
       description: 'Academic, student, finance, technology, and ethics policies.',

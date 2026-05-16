@@ -28,7 +28,6 @@ interface CollegeRow {
   readonly schools: number;
   readonly departments: number;
   readonly programmes: number;
-  readonly image: AcademicCardVisual;
 }
 
 interface SchoolRow {
@@ -53,7 +52,6 @@ interface DepartmentRow {
 interface ResearchRow {
   readonly name: string;
   readonly alignedColleges: readonly string[];
-  readonly image: AcademicCardVisual;
 }
 
 @Component({
@@ -68,8 +66,10 @@ export class AcademicDirectoryPageComponent {
 
   readonly query = signal('');
   readonly heroIndex = signal(0);
+  readonly pageIndex = signal(0);
   readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
   readonly heroVisuals = ACADEMIC_HERO_VISUALS;
+  readonly pageSize = 12;
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -89,7 +89,6 @@ export class AcademicDirectoryPageComponent {
     schools: college.schoolStructure.length,
     departments: college.schoolStructure.reduce((total, school) => total + school.departments.length, 0),
     programmes: college.programmes.length,
-    image: academicImageForName(college.name),
   }));
 
   readonly schoolRows: readonly SchoolRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
@@ -122,7 +121,6 @@ export class AcademicDirectoryPageComponent {
     alignedColleges: ACADEMIC_ARCHITECTURE_COLLEGES
       .filter((college) => college.researchInstitute === name || college.researchAlignment === name)
       .map((college) => college.name),
-    image: academicImageForName(name),
   }));
 
   readonly config = computed(() => {
@@ -190,12 +188,22 @@ export class AcademicDirectoryPageComponent {
     this.researchRows.filter((row) => this.matches(`${row.name} ${row.alignedColleges.join(' ')}`)),
   );
 
+  readonly pagedColleges = computed(() => this.paginate(this.filteredColleges()));
+  readonly pagedResearch = computed(() => this.paginate(this.filteredResearch()));
+  readonly pageCount = computed(() => {
+    const total = this.mode() === 'research' ? this.filteredResearch().length : this.filteredColleges().length;
+    return Math.max(1, Math.ceil(total / this.pageSize));
+  });
+  readonly currentPage = computed(() => Math.min(this.pageIndex(), this.pageCount() - 1));
+
   setSearch(value: string): void {
     this.query.set(value);
+    this.pageIndex.set(0);
   }
 
   clearSearch(): void {
     this.query.set('');
+    this.pageIndex.set(0);
   }
 
   nextVisual(): void {
@@ -208,6 +216,14 @@ export class AcademicDirectoryPageComponent {
 
   setVisual(index: number): void {
     this.heroIndex.set(index);
+  }
+
+  nextPage(): void {
+    this.pageIndex.update((index) => Math.min(index + 1, this.pageCount() - 1));
+  }
+
+  previousPage(): void {
+    this.pageIndex.update((index) => Math.max(index - 1, 0));
   }
 
   visibleCount(): number {
@@ -240,6 +256,10 @@ export class AcademicDirectoryPageComponent {
     return academicIconForName(row.name);
   }
 
+  researchIcon(row: ResearchRow): string {
+    return academicIconForName(row.name);
+  }
+
   collegeRoute(name: string): readonly string[] {
     return buildCollegeRoute(name);
   }
@@ -263,6 +283,11 @@ export class AcademicDirectoryPageComponent {
   private matches(text: string): boolean {
     const term = this.query().trim().toLowerCase();
     return !term || text.toLowerCase().includes(term);
+  }
+
+  private paginate<T>(rows: readonly T[]): readonly T[] {
+    const page = Math.min(this.pageIndex(), Math.max(0, Math.ceil(rows.length / this.pageSize) - 1));
+    return rows.slice(page * this.pageSize, page * this.pageSize + this.pageSize);
   }
 
   private modeFromUrl(url: string): AcademicDirectoryMode {

@@ -8,6 +8,18 @@
         <span aria-hidden="true">&rsaquo;</span>
         <span class="here" aria-current="page">{{ config().label }}</span>
       </nav>
+      @if (mode() === 'colleges') {
+        <div class="actions directory-quick-links">
+          <a href="#" class="v2-btn v2-btn--ghost">
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+            Academic calendar
+          </a>
+          <a href="#" class="v2-btn v2-btn--ghost">
+            <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+            Course catalogue
+          </a>
+        </div>
+      }
     </div>
   </div>
 
@@ -73,11 +85,8 @@
 
       @if (mode() === 'colleges') {
         <div class="college-card-grid">
-          @for (row of filteredColleges(); track row.college.id) {
+          @for (row of pagedColleges(); track row.college.id) {
             <a class="college-card" [routerLink]="collegeRoute(row.college.name)">
-              <div class="directory-card-media">
-                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
-              </div>
               <div class="college-card__top">
                 <span class="college-card__num">{{ row.college.id.toString().padStart(2, '0') }}</span>
                 <span class="college-card__icon"><i class="fa-solid {{ collegeIcon(row) }}" aria-hidden="true"></i></span>
@@ -103,6 +112,17 @@
             </a>
           }
         </div>
+        @if (pageCount() > 1) {
+          <div class="directory-pager" aria-label="College directory pages">
+            <button type="button" class="directory-pager__button" (click)="previousPage()" [disabled]="currentPage() === 0" aria-label="Previous colleges">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            </button>
+            <span class="directory-pager__count">{{ currentPage() + 1 }} / {{ pageCount() }}</span>
+            <button type="button" class="directory-pager__button" (click)="nextPage()" [disabled]="currentPage() + 1 >= pageCount()" aria-label="Next colleges">
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        }
       }
 
       @if (mode() === 'schools') {
@@ -149,12 +169,9 @@
 
       @if (mode() === 'research') {
         <div class="research-grid">
-          @for (row of filteredResearch(); track row.name) {
+          @for (row of pagedResearch(); track row.name) {
             <article class="research-tile">
-              <div class="directory-card-media">
-                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
-              </div>
-              <span class="research-tile__icon"><i class="fa-solid fa-flask"></i></span>
+              <span class="research-tile__icon"><i class="fa-solid {{ researchIcon(row) }}"></i></span>
               <h2>{{ row.name }}</h2>
               @if (row.alignedColleges.length) {
                 <p>Aligned colleges</p>
@@ -173,6 +190,17 @@
             </article>
           }
         </div>
+        @if (pageCount() > 1) {
+          <div class="directory-pager" aria-label="Research institute directory pages">
+            <button type="button" class="directory-pager__button" (click)="previousPage()" [disabled]="currentPage() === 0" aria-label="Previous institutes">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            </button>
+            <span class="directory-pager__count">{{ currentPage() + 1 }} / {{ pageCount() }}</span>
+            <button type="button" class="directory-pager__button" (click)="nextPage()" [disabled]="currentPage() + 1 >= pageCount()" aria-label="Next institutes">
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        }
       }
     </div>
   </section>
