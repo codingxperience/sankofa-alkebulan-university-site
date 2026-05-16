@@ -300,6 +300,120 @@ export const ACADEMIC_SCHOOL_STRUCTURE_BY_COLLEGE_ID: Record<number, readonly Ac
     { name: 'School of Transformation Systems', departments: ['Department of Systems Transformation', 'Department of Innovation Systems', 'Department of Institutional Change'] },
     { name: 'School of Civilisational Futures', departments: ['Department of Civilisational Modelling', 'Department of Global Futures', 'Department of Strategic Transformation'] },
   ],
+  50: [
+    {
+      name: 'School of African Spirituality and Indigenous Wisdom Systems',
+      departments: [
+        'Department of African Cosmology',
+        'Department of Indigenous Spiritual Systems',
+        'Department of Sacred Oral Traditions',
+        'Department of African Ritual and Symbolic Systems',
+        'Department of Ancestral Knowledge Studies',
+        'Department of Indigenous Sacred Governance Systems',
+        'Department of Sacred African Philosophies',
+      ],
+    },
+    {
+      name: 'School of Comparative Theology and Sacred Civilisations',
+      departments: [
+        'Department of Comparative Theology',
+        'Department of Abrahamic Studies',
+        'Department of Eastern Spiritual Traditions',
+        'Department of Sacred Texts and Hermeneutics',
+        'Department of Theology and Civilisational Ethics',
+        'Department of Interfaith Dialogue and Diplomacy',
+        'Department of Religion and Global Civilisations',
+      ],
+    },
+    {
+      name: 'School of Consciousness, Metaphysics and Human Potential',
+      departments: [
+        'Department of Consciousness Studies',
+        'Department of Metaphysics and Ontology',
+        'Department of Human Potential Systems',
+        'Department of Meditation Sciences',
+        'Department of Spiritual Intelligence Studies',
+        'Department of Mind and Reality Studies',
+        'Department of Transcendental Studies',
+      ],
+    },
+    {
+      name: 'School of Ethics, Moral Leadership and Civilisational Governance',
+      departments: [
+        'Department of Ethical Leadership',
+        'Department of Moral Philosophy',
+        'Department of Spiritual Governance Systems',
+        'Department of Justice and Restorative Ethics',
+        'Department of Public Integrity and Moral Institutions',
+        'Department of Civilisational Governance',
+        'Department of Leadership and Human Responsibility',
+      ],
+    },
+    {
+      name: 'School of Sacred Arts, Symbolism and Spiritual Expression',
+      departments: [
+        'Department of Sacred Music and Sound Studies',
+        'Department of Spiritual Symbolism',
+        'Department of Sacred Architecture',
+        'Department of Ritual Arts and Ceremonial Systems',
+        'Department of Spiritual Literature',
+        'Department of Sacred Performance Arts',
+        'Department of Healing Arts and Symbolic Communication',
+      ],
+    },
+    {
+      name: 'School of Peace, Healing and Transformative Studies',
+      departments: [
+        'Department of Peace and Reconciliation Studies',
+        'Department of Spiritual Healing Systems',
+        'Department of Trauma and Human Restoration',
+        'Department of Community Transformation',
+        'Department of Conflict Resolution and Mediation',
+        'Department of Humanitarian Spiritual Systems',
+      ],
+    },
+    {
+      name: 'School of Sacred Ecology and Planetary Harmony',
+      departments: [
+        'Department of Sacred Ecology',
+        'Department of Environmental Ethics',
+        'Department of Indigenous Ecological Systems',
+        'Department of Ecological Spirituality',
+        'Department of Planetary Consciousness',
+        'Department of Nature and Human Harmony Studies',
+      ],
+    },
+    {
+      name: 'School of Mysticism, Meditation and Contemplative Sciences',
+      departments: [
+        'Department of Meditation and Breath Sciences',
+        'Department of Mystical Traditions',
+        'Department of Silence and Contemplative Studies',
+        'Department of Spiritual Energy Systems',
+        'Department of Inner Transformation Studies',
+      ],
+    },
+    {
+      name: 'School of Spiritual Psychology and Human Development',
+      departments: [
+        'Department of Spiritual Psychology',
+        'Department of Psycho-Spiritual Development',
+        'Department of Human Identity and Consciousness',
+        'Department of Emotional and Spiritual Intelligence',
+        'Department of Holistic Human Development',
+      ],
+    },
+    {
+      name: 'School of Prophetic Studies and Future Civilisations',
+      departments: [
+        'Department of Futures Consciousness Studies',
+        'Department of Prophetic Traditions and Societies',
+        'Department of Civilisational Foresight',
+        'Department of Spiritual Futures and Human Destiny',
+        'Department of Wisdom and Future Systems',
+      ],
+    },
+  ],
 };
 
 export const ACADEMIC_RESEARCH_INSTITUTES: readonly string[] = [
@@ -352,6 +466,16 @@ export const ACADEMIC_RESEARCH_INSTITUTES: readonly string[] = [
   'Institute for Tourism, Hospitality & Cultural Economy',
   'Institute for Futures, Foresight & Strategic Systems',
   'Institute for Civilisational Transformation & Global Systems',
+  'Institute for African Sacred Civilisations',
+  'Institute for Consciousness and Human Transformation',
+  'Institute for Ethics and Moral Governance',
+  'Institute for Sacred Ecology and Planetary Harmony',
+  'Institute for Peace, Reconciliation and Human Unity',
+  'Institute for Mysticism and Contemplative Sciences',
+  'Institute for Spiritual Psychology and Human Flourishing',
+  'Institute for Comparative Sacred Knowledge',
+  'Institute for Civilisational Futures and Prophetic Studies',
+  'Institute for Indigenous Wisdom Recovery and Preservation',
 ] as const;
 
 export const ACADEMIC_RESEARCH_INSTITUTES_BY_COLLEGE_ID: Record<number, string> = {
@@ -404,4 +528,5 @@ export const ACADEMIC_RESEARCH_INSTITUTES_BY_COLLEGE_ID: Record<number, string> 
   47: 'Institute for Leadership & Human Capital Systems',
   48: 'Institute for Space, Aerospace & Satellite Systems',
   49: 'Institute for Futures, Foresight & Strategic Systems',
+  50: 'Institute for African Sacred Civilisations',
 } as const;

@@ -1,6 +1,51 @@
-import { Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../directives/reveal.directive';
+import {
+  ACADEMIC_ARCHITECTURE_COLLEGES,
+  ACADEMIC_ARCHITECTURE_TOTALS,
+  type AcademicArchitectureCollege,
+} from '../university/academic-architecture';
+import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments';
+
+interface AcademicDomain {
+  readonly label: string;
+  readonly description: string;
+  readonly ids: readonly number[];
+}
+
+interface UnitGroup {
+  readonly label: string;
+  readonly items: readonly string[];
+}
+
+const ACADEMIC_DOMAINS: readonly AcademicDomain[] = [
+  {
+    label: 'Science and computation',
+    description: 'Mathematics, physical science, life science, data, AI, robotics, and space systems.',
+    ids: [1, 2, 3, 4, 5, 17, 18, 19, 20, 48],
+  },
+  {
+    label: 'Health and earth futures',
+    description: 'Medicine, public health, food systems, climate, environment, water, energy, and human wellbeing.',
+    ids: [6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 39, 40, 41, 43, 45, 46],
+  },
+  {
+    label: 'Governance and enterprise',
+    description: 'Law, policy, diplomacy, security, leadership, finance, business, logistics, and institutional systems.',
+    ids: [21, 22, 23, 24, 25, 26, 27, 28, 29, 47],
+  },
+  {
+    label: 'Civilisation, culture, and sacred knowledge',
+    description: 'Humanities, indigenous knowledge, religion, languages, arts, media, tourism, and divine wisdom.',
+    ids: [30, 31, 32, 33, 34, 35, 36, 44, 49, 50],
+  },
+  {
+    label: 'Built worlds and mobility',
+    description: 'Engineering, architecture, cities, transport, maritime systems, infrastructure, and applied futures.',
+    ids: [14, 37, 38, 42],
+  },
+] as const;
 
 @Component({
   selector: 'app-academics-page',
@@ -8,166 +53,126 @@ import { RevealDirective } from '../directives/reveal.directive';
   imports: [RouterLink, RevealDirective],
   templateUrl: './academics-page.component.html',
   styleUrl: './academics-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcademicsPageComponent {
-  readonly heroChips = [
-    { icon: 'fa-graduation-cap', label: 'Undergraduate' },
-    { icon: 'fa-user-graduate', label: 'Postgraduate' },
-    { icon: 'fa-flask', label: 'Doctoral' },
-    { icon: 'fa-laptop', label: 'Online' },
-  ];
+  readonly colleges = ACADEMIC_ARCHITECTURE_COLLEGES;
+  readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
+  readonly researchInstitutes = ACADEMIC_RESEARCH_INSTITUTES;
+  readonly domains = ACADEMIC_DOMAINS;
 
-  readonly quickProgrammes = [
-    { b: 'BA — African Civilizational Studies', s: '4 years — UG — September 2026', route: null },
-    { b: 'MA — Pan-African Studies', s: '2 years — PG — September 2026', route: '/programmes/ma-pan-african-studies' },
-    { b: 'PhD — Indigenous Knowledge Systems', s: '4 years — Funded — September 2026', route: null },
-    { b: 'BSc — Computing & Data for Africa', s: '4 years — UG — September 2026', route: null },
-  ];
+  readonly query = signal('');
+  readonly activeCollegeId = signal(50);
 
-  readonly anchorQuestions = [
-    'What does it mean to do African philosophy today?',
-    'How do we read pre-colonial governance systems?',
-    'What is the future of African languages in scholarship?',
-    'How is heritage curated, contested, and renewed?',
-    'What can ancient civilizations teach modern policy?',
-    'How do we publish African thought, in African hands?',
-  ];
+  readonly visibleColleges = computed(() => {
+    const query = this.query().trim().toLowerCase();
+    if (!query) {
+      return this.colleges;
+    }
 
-  readonly featureProgrammes = [
-    { b: 'BA — African Civilizational Studies', s: '4 yrs — UG', route: null },
-    { b: 'MA — Pan-African Studies', s: '2 yrs — PG', route: '/programmes/ma-pan-african-studies' },
-    { b: 'MA — African Political Thought', s: '2 yrs — PG', route: null },
-    { b: 'PhD — Indigenous Knowledge Systems', s: '4 yrs — Funded', route: null },
-    { b: 'Diploma — African Languages', s: '1 yr — Online', route: null },
-  ];
+    return this.colleges.filter((college) => this.searchText(college).includes(query));
+  });
 
-  readonly colleges = [
-    {
-      num: '01',
-      feature: true,
-      b: 'College of African Civilizational Studies',
-      p: 'Civilization, heritage, languages, philosophy, and the visual arts read together as one tradition.',
-      icon: 'fa-landmark',
-      tags: '5 schools — UG — PG — PhD',
-    },
-    {
-      num: '02',
-      feature: false,
-      b: 'College of Science, Technology & Innovation',
-      p: 'Computing, climate, biotech, and applied engineering for continental priorities.',
-      icon: 'fa-microscope',
-      tags: '5 schools — UG — PG — PhD',
-    },
-    {
-      num: '03',
-      feature: false,
-      b: 'College of Governance, Law & Public Policy',
-      p: 'Constitutional studies, public administration, and ethics for a continent in transition.',
-      icon: 'fa-scale-balanced',
-      tags: '3 schools — UG — PG',
-    },
-    {
-      num: '04',
-      feature: false,
-      b: 'College of Health, Wellbeing & Society',
-      p: 'Medicine, public health, and indigenous health systems for African and diasporic communities.',
-      icon: 'fa-heart-pulse',
-      tags: '4 schools — UG — PG — MD',
-    },
-    {
-      num: '05',
-      feature: false,
-      b: 'College of Business, Enterprise & Economics',
-      p: 'African economies, finance, and entrepreneurship rooted in continental practice.',
-      icon: 'fa-chart-line',
-      tags: '3 schools — UG — PG — MBA',
-    },
-    {
-      num: '06',
-      feature: false,
-      b: 'College of Education & Teacher Development',
-      p: 'Pedagogy, curriculum design, and educational leadership across formal and informal systems.',
-      icon: 'fa-people-roof',
-      tags: '2 schools — UG — PG',
-    },
-  ];
+  readonly activeCollege = computed(() => {
+    const visible = this.visibleColleges();
+    return visible.find((college) => college.id === this.activeCollegeId()) ?? visible[0] ?? this.colleges[0];
+  });
 
-  readonly pathways = [
-    {
-      icon: 'fa-graduation-cap',
-      b: 'Undergraduate',
-      p: "Three- and four-year bachelor's degrees across all six colleges. Open to school leavers and mature candidates.",
-      meta: ['Duration — 3–4 years', 'Modality — On-campus, hybrid', 'Domestic — UGX 3.2 M / yr', 'International — USD 2,200 / yr'],
-      cta: 'Explore undergraduate programmes',
-    },
-    {
-      icon: 'fa-user-graduate',
-      b: 'Postgraduate',
-      p: "One- to two-year MA, MSc, and professional master's degrees and postgraduate diplomas.",
-      meta: ['Duration — 1–2 years', 'Modality — On-campus, hybrid', 'Domestic — UGX 4.8 M / yr', 'International — USD 3,200 / yr'],
-      cta: 'Explore postgraduate programmes',
-    },
-    {
-      icon: 'fa-flask',
-      b: 'Doctoral',
-      p: 'Funded PhD positions across institutes and schools. Cohort-based with continental supervision teams.',
-      meta: ['Duration — 3–4 years', 'Modality — On-campus, residencies', 'Funding — Full stipend + tuition', 'Next intake — September 2026'],
-      cta: 'Explore doctoral programmes',
-    },
-    {
-      icon: 'fa-laptop',
-      b: 'Online & short courses',
-      p: 'Stackable digital learning across African languages, computing for Africa, public policy, and creative practice.',
-      meta: ['Duration — 4 weeks — 1 year', 'Modality — Fully online', 'Tuition — USD 80 — 480 per course', 'Aid — Need-based available'],
-      cta: 'Explore online learning',
-    },
-  ];
+  readonly heroIndex = computed(() => {
+    const active = this.activeCollege();
+    return [
+      {
+        number: '01',
+        label: 'Colleges live in one source of truth',
+        value: `${this.totals.colleges} colleges`,
+      },
+      {
+        number: '02',
+        label: 'Schools and departments expand per college',
+        value: `${this.totals.schools} schools / ${this.totals.departments} departments`,
+      },
+      {
+        number: '03',
+        label: 'Programmes resolve into the admissions and programme-detail system',
+        value: `${this.totals.programmes} programmes`,
+      },
+      {
+        number: '04',
+        label: `Open now: ${active.name}`,
+        value: `${active.schoolStructure.length} schools`,
+      },
+    ];
+  });
 
-  readonly categories = [
-    { icon: 'fa-landmark', label: 'Civilizational studies', selected: true },
-    { icon: 'fa-microscope', label: 'Science & innovation', selected: false },
-    { icon: 'fa-scale-balanced', label: 'Governance & law', selected: false },
-    { icon: 'fa-heart-pulse', label: 'Health & society', selected: false },
-    { icon: 'fa-chart-line', label: 'Economics & enterprise', selected: false },
-    { icon: 'fa-leaf', label: 'Agriculture & climate', selected: false },
-    { icon: 'fa-book-open', label: 'Humanities', selected: false },
-    { icon: 'fa-laptop-code', label: 'Computing & data', selected: false },
-    { icon: 'fa-people-roof', label: 'Education', selected: false },
-    { icon: 'fa-globe-africa', label: 'Pan-African studies', selected: false },
-    { icon: 'fa-palette', label: 'Creative arts', selected: false },
-  ];
+  readonly featuredDomain = computed(() =>
+    this.domains.find((domain) => domain.ids.includes(this.activeCollege().id)) ?? this.domains[0],
+  );
 
-  readonly institutes = [
-    {
-      icon: 'fa-globe-africa',
-      h: 'Institute of Pan-African Studies',
-      p: 'Diaspora studies, continental political thought, and public-scholarship publishing.',
-      meta: '12 active projects — 4 fellows',
-    },
-    {
-      icon: 'fa-seedling',
-      h: 'Institute of Indigenous Knowledge Systems',
-      p: 'Methods, ethics, and stewardship of African indigenous knowledge in research practice.',
-      meta: '8 active projects — 6 fellows',
-    },
-    {
-      icon: 'fa-temperature-low',
-      h: 'Institute of Climate & African Futures',
-      p: "Climate science, adaptation policy, and just transitions across the continent's regions.",
-      meta: '7 active projects — 5 fellows',
-    },
-    {
-      icon: 'fa-microchip',
-      h: 'Institute for AI in Africa',
-      p: 'African-language NLP, public-sector AI ethics, and applied data work for civic institutions.',
-      meta: '9 active projects — 7 fellows',
-    },
-  ];
+  setSearch(value: string) {
+    this.query.set(value);
+  }
 
-  readonly standards = [
-    'Outcome-based curriculum frameworks across all programmes',
-    'External examiners drawn from continental and global universities',
-    'Public regulations on appeals, plagiarism, and academic integrity',
-    'Annual quality-assurance audits, published in full',
-  ];
+  setActiveCollege(id: number) {
+    this.activeCollegeId.set(id);
+  }
+
+  clearSearch() {
+    this.query.set('');
+  }
+
+  collegeMeta(college: AcademicArchitectureCollege) {
+    const departmentCount = college.schoolStructure.reduce((total, school) => total + school.departments.length, 0);
+    return `${college.schoolStructure.length} schools / ${departmentCount} departments / ${college.programmes.length} programmes`;
+  }
+
+  programmePath(programme: string) {
+    return ['/programmes', this.slugify(programme)];
+  }
+
+  preview<T>(items: readonly T[], count: number): readonly T[] {
+    return items.slice(0, count);
+  }
+
+  remainingCount(items: readonly unknown[], count: number) {
+    return Math.max(items.length - count, 0);
+  }
+
+  unitGroups(college: AcademicArchitectureCollege): readonly UnitGroup[] {
+    return [
+      { label: 'Centres of Excellence', items: college.centresOfExcellence ?? [] },
+      { label: 'Laboratories', items: college.laboratories ?? [] },
+      { label: 'Observatories', items: college.observatories ?? [] },
+      { label: 'Clinics', items: college.clinics ?? [] },
+      { label: 'Archives', items: college.archives ?? [] },
+      { label: 'Missions', items: college.missions ?? [] },
+      { label: 'Specialized Units', items: college.specializedUnits ?? [] },
+    ].filter((group) => group.items.length);
+  }
+
+  private searchText(college: AcademicArchitectureCollege) {
+    return [
+      college.name,
+      college.researchInstitute,
+      ...college.schools,
+      ...college.programmes,
+      ...college.schoolStructure.flatMap((school) => [school.name, ...school.departments]),
+      ...(college.centresOfExcellence ?? []),
+      ...(college.laboratories ?? []),
+      ...(college.observatories ?? []),
+      ...(college.clinics ?? []),
+      ...(college.archives ?? []),
+      ...(college.missions ?? []),
+      ...(college.specializedUnits ?? []),
+    ]
+      .join(' ')
+      .toLowerCase();
+  }
+
+  private slugify(value: string) {
+    return value
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
 }
