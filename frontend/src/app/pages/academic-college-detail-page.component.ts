@@ -11,12 +11,30 @@ import {
 
 interface UnitGroup {
   readonly title: string;
+  readonly icon: string;
   readonly items: readonly string[];
 }
 
 interface ProgrammeGroup {
   readonly title: string;
+  readonly icon: string;
+  readonly summary: string;
   readonly items: readonly string[];
+}
+
+interface AcademicNavLink {
+  readonly label: string;
+  readonly route: string | readonly string[];
+  readonly icon: string;
+  readonly caption: string;
+  readonly active?: boolean;
+}
+
+interface JourneyStep {
+  readonly step: string;
+  readonly title: string;
+  readonly text: string;
+  readonly icon: string;
 }
 
 @Component({
@@ -33,6 +51,21 @@ export class AcademicCollegeDetailPageComponent {
     initialValue: '',
   });
 
+  readonly academicNav: readonly AcademicNavLink[] = [
+    { label: 'Overview', route: '/academics', icon: 'fa-compass', caption: 'Academic front door' },
+    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', caption: 'Top-level homes', active: true },
+    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap', caption: 'Academic methods' },
+    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group', caption: 'Teaching units' },
+    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask', caption: 'Institutes and labs' },
+  ];
+
+  readonly journeySteps: readonly JourneyStep[] = [
+    { step: '01', title: 'College', text: 'Choose the academic home that holds the broad question.', icon: 'fa-building-columns' },
+    { step: '02', title: 'Schools', text: 'Enter the disciplinary method layer inside that college.', icon: 'fa-sitemap' },
+    { step: '03', title: 'Departments', text: 'See where curriculum, teaching, and research ownership sit.', icon: 'fa-layer-group' },
+    { step: '04', title: 'Programmes', text: 'Open awards and continue into programme detail pages.', icon: 'fa-graduation-cap' },
+  ];
+
   readonly college = computed<AcademicArchitectureCollege | undefined>(() =>
     ACADEMIC_ARCHITECTURE_COLLEGES.find((college) => this.slugify(college.name) === this.slug()),
   );
@@ -44,14 +77,36 @@ export class AcademicCollegeDetailPageComponent {
   readonly programmeGroups = computed<readonly ProgrammeGroup[]>(() => {
     const programmes = this.college()?.programmes ?? [];
     return [
-      { title: 'Certificate programmes', items: programmes.filter((item) => item.startsWith('Certificate')) },
-      { title: 'Diploma programmes', items: programmes.filter((item) => item.startsWith('Diploma')) },
+      {
+        title: 'Certificate programmes',
+        icon: 'fa-certificate',
+        summary: 'Short academic entry points and focused competency routes.',
+        items: programmes.filter((item) => item.startsWith('Certificate')),
+      },
+      {
+        title: 'Diploma programmes',
+        icon: 'fa-scroll',
+        summary: 'Practice-facing award routes for foundational and applied study.',
+        items: programmes.filter((item) => item.startsWith('Diploma')),
+      },
       {
         title: 'Bachelor programmes',
+        icon: 'fa-graduation-cap',
+        summary: 'Full undergraduate degrees that lead into professional and research identity.',
         items: programmes.filter((item) => item.startsWith('Bachelor') || item.startsWith('BA') || item.startsWith('BSc') || item.startsWith('BBA') || item.startsWith('BEd') || item.startsWith('BPharm') || item.startsWith('LLB') || item.startsWith('MBChB')),
       },
-      { title: 'Master programmes', items: programmes.filter((item) => item.startsWith('Master') || item.startsWith('MA') || item.startsWith('MSc')) },
-      { title: 'Doctoral programmes', items: programmes.filter((item) => item.startsWith('PhD')) },
+      {
+        title: 'Master programmes',
+        icon: 'fa-user-graduate',
+        summary: 'Advanced postgraduate pathways connected to institutes and field work.',
+        items: programmes.filter((item) => item.startsWith('Master') || item.startsWith('MA') || item.startsWith('MSc')),
+      },
+      {
+        title: 'Doctoral programmes',
+        icon: 'fa-microscope',
+        summary: 'Original research pathways shaped by departments and institutes.',
+        items: programmes.filter((item) => item.startsWith('PhD')),
+      },
     ].filter((group) => group.items.length);
   });
 
@@ -60,16 +115,24 @@ export class AcademicCollegeDetailPageComponent {
     if (!college) return [];
 
     return [
-      { title: 'Research institutes', items: [college.researchInstitute] },
-      { title: 'Centres of excellence', items: college.centresOfExcellence ?? [] },
-      { title: 'Laboratories', items: college.laboratories ?? [] },
-      { title: 'Observatories', items: college.observatories ?? [] },
-      { title: 'Clinics', items: college.clinics ?? [] },
-      { title: 'Archives', items: college.archives ?? [] },
-      { title: 'Missions', items: college.missions ?? [] },
-      { title: 'Specialized units', items: college.specializedUnits ?? [] },
+      { title: 'Research institutes', icon: 'fa-flask', items: [college.researchInstitute] },
+      { title: 'Centres of excellence', icon: 'fa-star', items: college.centresOfExcellence ?? [] },
+      { title: 'Laboratories', icon: 'fa-vial', items: college.laboratories ?? [] },
+      { title: 'Observatories', icon: 'fa-binoculars', items: college.observatories ?? [] },
+      { title: 'Clinics', icon: 'fa-hand-holding-heart', items: college.clinics ?? [] },
+      { title: 'Archives', icon: 'fa-box-archive', items: college.archives ?? [] },
+      { title: 'Missions', icon: 'fa-route', items: college.missions ?? [] },
+      { title: 'Specialized units', icon: 'fa-cubes-stacked', items: college.specializedUnits ?? [] },
     ].filter((group) => group.items.length);
   });
+
+  featuredSchools(count = 4): readonly string[] {
+    return this.college()?.schools.slice(0, count) ?? [];
+  }
+
+  programmeRoute(programme: string): readonly string[] {
+    return ['/programmes', this.slugify(programme)];
+  }
 
   slugify(value: string): string {
     return value

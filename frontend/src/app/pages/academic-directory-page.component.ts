@@ -13,6 +13,14 @@ import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments
 
 type AcademicDirectoryMode = 'colleges' | 'schools' | 'departments' | 'research';
 
+interface AcademicNavLink {
+  readonly label: string;
+  readonly route: string;
+  readonly icon: string;
+  readonly caption: string;
+  readonly mode?: AcademicDirectoryMode;
+}
+
 interface CollegeRow {
   readonly college: AcademicArchitectureCollege;
   readonly slug: string;
@@ -52,6 +60,14 @@ export class AcademicDirectoryPageComponent {
 
   readonly query = signal('');
   readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
+
+  readonly academicNav: readonly AcademicNavLink[] = [
+    { label: 'Overview', route: '/academics', icon: 'fa-compass', caption: 'Academic front door' },
+    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', caption: 'Top-level homes', mode: 'colleges' },
+    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap', caption: 'Academic methods', mode: 'schools' },
+    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group', caption: 'Teaching units', mode: 'departments' },
+    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask', caption: 'Institutes and labs', mode: 'research' },
+  ];
 
   readonly mode = toSignal(
     this.route.data.pipe(map((data) => (data['mode'] as AcademicDirectoryMode | undefined) ?? 'colleges')),
@@ -166,6 +182,10 @@ export class AcademicDirectoryPageComponent {
     this.query.set('');
   }
 
+  isNavActive(item: AcademicNavLink): boolean {
+    return item.mode === this.mode();
+  }
+
   visibleCount(): number {
     switch (this.mode()) {
       case 'schools':
@@ -186,6 +206,17 @@ export class AcademicDirectoryPageComponent {
       .replace(/&/g, 'and')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
+  }
+
+  collegeIcon(row: CollegeRow): string {
+    const name = row.college.name.toLowerCase();
+    if (name.includes('health') || name.includes('medicine') || name.includes('pharmaceutical')) return 'fa-heart-pulse';
+    if (name.includes('computing') || name.includes('data') || name.includes('digital') || name.includes('robotics')) return 'fa-microchip';
+    if (name.includes('law') || name.includes('governance') || name.includes('diplomacy')) return 'fa-scale-balanced';
+    if (name.includes('agriculture') || name.includes('food') || name.includes('climate') || name.includes('environment')) return 'fa-leaf';
+    if (name.includes('divine') || name.includes('religion') || name.includes('spiritual')) return 'fa-dove';
+    if (name.includes('arts') || name.includes('media') || name.includes('languages')) return 'fa-palette';
+    return 'fa-building-columns';
   }
 
   preview(items: readonly string[], count = 4): readonly string[] {

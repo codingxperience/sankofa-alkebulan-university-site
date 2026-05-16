@@ -17,6 +17,17 @@
     </div>
   </div>
 
+  <nav class="academic-subnav" aria-label="Academic architecture navigation">
+    <div class="v2-container academic-subnav__grid">
+      @for (item of academicNav; track item.label) {
+        <a class="academic-subnav__item" [class.is-active]="isNavActive(item)" [routerLink]="item.route">
+          <span class="academic-subnav__icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>
+          <span><b>{{ item.label }}</b><small>{{ item.caption }}</small></span>
+        </a>
+      }
+    </div>
+  </nav>
+
   <section class="academic-directory-hero" aria-labelledby="directory-title">
     <div class="v2-container academic-directory-hero__grid">
       <div>
@@ -45,27 +56,34 @@
       </div>
 
       @if (mode() === 'colleges') {
-        <div class="directory-list directory-list--colleges" data-reveal>
+        <div class="college-card-grid" data-reveal>
           @for (row of filteredColleges(); track row.college.id) {
-            <a class="directory-row directory-row--college" [routerLink]="['/academics/colleges', row.slug]">
-              <span class="directory-row__num">{{ row.college.id.toString().padStart(2, '0') }}</span>
-              <div class="directory-row__body">
+            <a class="college-card" [routerLink]="['/academics/colleges', row.slug]">
+              <div class="college-card__top">
+                <span class="college-card__num">{{ row.college.id.toString().padStart(2, '0') }}</span>
+                <span class="college-card__icon"><i class="fa-solid {{ collegeIcon(row) }}" aria-hidden="true"></i></span>
+              </div>
+              <div class="college-card__body">
                 <h2>{{ row.college.name }}</h2>
                 <p>{{ row.college.researchInstitute }}</p>
-                <div class="directory-meta">
-                  <span>{{ row.schools }} schools</span>
-                  <span>{{ row.departments }} departments</span>
-                  <span>{{ row.programmes }} programmes</span>
-                </div>
+              </div>
+              <div class="college-card__map" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="directory-meta">
+                <span>{{ row.schools }} schools</span>
+                <span>{{ row.departments }} departments</span>
+                <span>{{ row.programmes }} programmes</span>
               </div>
               <div class="directory-preview" aria-label="Schools preview">
-                @for (school of preview(row.college.schools, 4); track school) {
+                @for (school of preview(row.college.schools, 3); track school) {
                   <span>{{ school }}</span>
                 }
-                @if (remaining(row.college.schools, 4)) {
-                  <span>+{{ remaining(row.college.schools, 4) }} more</span>
+                @if (remaining(row.college.schools, 3)) {
+                  <span>+{{ remaining(row.college.schools, 3) }} more</span>
                 }
               </div>
+              <strong class="college-card__cta">Open college <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
             </a>
           }
         </div>

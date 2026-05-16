@@ -22,6 +22,14 @@ export class AcademicsPageComponent {
     { icon: 'fa-flask', label: 'Research institutes', route: '/academics/research-institutes' },
   ];
 
+  readonly academicNav = [
+    { icon: 'fa-compass', label: 'Overview', caption: 'Academic front door', route: '/academics', active: true },
+    { icon: 'fa-building-columns', label: 'Colleges', caption: 'Top-level homes', route: '/academics/colleges', active: false },
+    { icon: 'fa-sitemap', label: 'Schools', caption: 'Academic methods', route: '/academics/schools', active: false },
+    { icon: 'fa-layer-group', label: 'Departments', caption: 'Teaching units', route: '/academics/departments', active: false },
+    { icon: 'fa-flask', label: 'Research', caption: 'Institutes and labs', route: '/academics/research-institutes', active: false },
+  ];
+
   readonly quickProgrammes = [
     { b: 'Bachelor of Divine Wisdom Studies', s: 'Undergraduate - College of Divine Wisdom', route: '/programmes/bachelor-of-divine-wisdom-studies' },
     { b: 'MA - Pan-African Studies', s: 'Postgraduate - September 2026', route: '/programmes/ma-pan-african-studies' },

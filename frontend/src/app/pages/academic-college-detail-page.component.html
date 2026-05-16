@@ -17,38 +17,88 @@
     </div>
   </div>
 
+  <nav class="academic-subnav" aria-label="Academic architecture navigation">
+    <div class="v2-container academic-subnav__grid">
+      @for (item of academicNav; track item.label) {
+        <a class="academic-subnav__item" [class.is-active]="item.active" [routerLink]="item.route">
+          <span class="academic-subnav__icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>
+          <span><b>{{ item.label }}</b><small>{{ item.caption }}</small></span>
+        </a>
+      }
+    </div>
+  </nav>
+
   @if (college(); as current) {
     <section class="college-detail-hero" aria-labelledby="college-title">
       <div class="v2-container college-detail-hero__grid">
-        <div>
+        <div class="college-detail-hero__copy">
           <span class="v2-kicker">College {{ current.id.toString().padStart(2, '0') }}</span>
           <h1 id="college-title">{{ current.name }}</h1>
           <p>
-            This college is presented as a complete academic system: schools, departments,
-            programmes, and research alignment. The overview page stays clean while the detail
-            page carries the depth.
+            A guided academic system: the college opens into schools, departments, programmes,
+            and research units without flattening the structure into one crowded page.
           </p>
+          <div class="college-hero-actions">
+            <a href="#schools" class="v2-btn v2-btn--primary">View schools <span aria-hidden="true">&rarr;</span></a>
+            <a href="#programmes" class="v2-btn v2-btn--ghost">Programme pathways</a>
+          </div>
         </div>
-        <aside class="college-detail-index" aria-label="College summary">
-          <div><b>{{ current.schoolStructure.length }}</b><span>schools</span></div>
-          <div><b>{{ departmentCount() }}</b><span>departments</span></div>
-          <div><b>{{ current.programmes.length }}</b><span>programmes</span></div>
+
+        <aside class="college-atlas" aria-label="College visual system">
+          <div class="college-atlas__mark" aria-hidden="true">Sankofa</div>
+          <div class="college-atlas__orbit" aria-hidden="true"></div>
+          <div class="college-atlas__node college-atlas__node--one">
+            <i class="fa-solid fa-building-columns"></i><span>{{ current.schoolStructure.length }} schools</span>
+          </div>
+          <div class="college-atlas__node college-atlas__node--two">
+            <i class="fa-solid fa-layer-group"></i><span>{{ departmentCount() }} departments</span>
+          </div>
+          <div class="college-atlas__node college-atlas__node--three">
+            <i class="fa-solid fa-graduation-cap"></i><span>{{ current.programmes.length }} programmes</span>
+          </div>
+          <div class="college-atlas__card">
+            <span>Research alignment</span>
+            <b>{{ current.researchInstitute }}</b>
+          </div>
         </aside>
       </div>
     </section>
 
-    <section class="v2-section college-detail-main">
+    <section class="college-journey" aria-label="Academic journey">
+      <div class="v2-container college-journey__grid">
+        @for (step of journeySteps; track step.step) {
+          <article class="journey-step" data-reveal>
+            <span class="journey-step__num">{{ step.step }}</span>
+            <i class="fa-solid {{ step.icon }}" aria-hidden="true"></i>
+            <h2>{{ step.title }}</h2>
+            <p>{{ step.text }}</p>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="v2-section college-detail-main" id="schools">
       <div class="v2-container college-detail-grid">
         <main class="college-detail-primary">
-          <section class="college-panel" data-reveal>
-            <span class="v2-kicker">Schools and departments</span>
-            <h2>Academic delivery structure</h2>
+          <section class="college-panel college-panel--schools" data-reveal>
+            <div class="college-panel__head">
+              <div>
+                <span class="v2-kicker">Schools and departments</span>
+                <h2>From college question to departmental ownership.</h2>
+              </div>
+              <p>Each school is treated as a chapter. Departments sit inside the chapter so the user can understand the route before opening programme details.</p>
+            </div>
+
             <div class="school-stack">
-              @for (school of current.schoolStructure; track school.name) {
+              @for (school of current.schoolStructure; track school.name; let index = $index) {
                 <article class="school-block">
                   <header>
-                    <h3>{{ school.name }}</h3>
-                    <span>{{ school.departments.length }} departments</span>
+                    <span class="school-block__index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+                    <div>
+                      <h3>{{ school.name }}</h3>
+                      <p>{{ school.departments.length }} departments connected to this school.</p>
+                    </div>
+                    <a href="#programmes" class="school-block__link">Programmes <span aria-hidden="true">&rarr;</span></a>
                   </header>
                   <div class="department-list">
                     @for (department of school.departments; track department) {
@@ -60,16 +110,33 @@
             </div>
           </section>
 
-          <section class="college-panel" data-reveal>
-            <span class="v2-kicker">Programmes</span>
-            <h2>Awards and study pathways</h2>
+          <section class="college-panel college-panel--programmes" id="programmes" data-reveal>
+            <div class="college-panel__head">
+              <div>
+                <span class="v2-kicker">Programmes</span>
+                <h2>Award pathways with direct programme detail links.</h2>
+              </div>
+              <p>Programme cards are grouped by level. Each title routes into its programme detail page so the architecture becomes a usable journey, not a static directory.</p>
+            </div>
+
             <div class="programme-groups">
               @for (group of programmeGroups(); track group.title) {
                 <article class="programme-group">
-                  <h3>{{ group.title }}</h3>
+                  <header>
+                    <span class="programme-group__icon"><i class="fa-solid {{ group.icon }}" aria-hidden="true"></i></span>
+                    <div>
+                      <h3>{{ group.title }}</h3>
+                      <p>{{ group.summary }}</p>
+                    </div>
+                  </header>
                   <ul>
                     @for (programme of group.items; track programme) {
-                      <li><a [routerLink]="['/programmes', slugify(programme)]">{{ programme }}</a></li>
+                      <li>
+                        <a [routerLink]="programmeRoute(programme)">
+                          <span>{{ programme }}</span>
+                          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                      </li>
                     }
                   </ul>
                 </article>
@@ -79,9 +146,19 @@
         </main>
 
         <aside class="college-detail-secondary">
+          <section class="college-map-card" data-reveal>
+            <span class="v2-kicker">Academic map</span>
+            <h2>How to read this college</h2>
+            <ol>
+              <li><b>Start with schools</b><span>Understand the academic chapters.</span></li>
+              <li><b>Read departments</b><span>See the exact teaching and research units.</span></li>
+              <li><b>Open programmes</b><span>Move into award routes and detail pages.</span></li>
+            </ol>
+          </section>
+
           @for (group of unitGroups(); track group.title) {
             <section class="college-side-panel" data-reveal>
-              <h2>{{ group.title }}</h2>
+              <h2><i class="fa-solid {{ group.icon }}" aria-hidden="true"></i>{{ group.title }}</h2>
               <ul>
                 @for (item of group.items; track item) {
                   <li>{{ item }}</li>
