@@ -1,51 +1,8 @@
-﻿import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../directives/reveal.directive';
-import {
-  ACADEMIC_ARCHITECTURE_COLLEGES,
-  ACADEMIC_ARCHITECTURE_TOTALS,
-  type AcademicArchitectureCollege,
-} from '../university/academic-architecture';
+import { ACADEMIC_ARCHITECTURE_COLLEGES, ACADEMIC_ARCHITECTURE_TOTALS } from '../university/academic-architecture';
 import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments';
-
-interface AcademicDomain {
-  readonly label: string;
-  readonly description: string;
-  readonly ids: readonly number[];
-}
-
-interface UnitGroup {
-  readonly label: string;
-  readonly items: readonly string[];
-}
-
-const ACADEMIC_DOMAINS: readonly AcademicDomain[] = [
-  {
-    label: 'Science and computation',
-    description: 'Mathematics, physical science, life science, data, AI, robotics, and space systems.',
-    ids: [1, 2, 3, 4, 5, 17, 18, 19, 20, 48],
-  },
-  {
-    label: 'Health and earth futures',
-    description: 'Medicine, public health, food systems, climate, environment, water, energy, and human wellbeing.',
-    ids: [6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 39, 40, 41, 43, 45, 46],
-  },
-  {
-    label: 'Governance and enterprise',
-    description: 'Law, policy, diplomacy, security, leadership, finance, business, logistics, and institutional systems.',
-    ids: [21, 22, 23, 24, 25, 26, 27, 28, 29, 47],
-  },
-  {
-    label: 'Civilisation, culture, and sacred knowledge',
-    description: 'Humanities, indigenous knowledge, religion, languages, arts, media, tourism, and divine wisdom.',
-    ids: [30, 31, 32, 33, 34, 35, 36, 44, 49, 50],
-  },
-  {
-    label: 'Built worlds and mobility',
-    description: 'Engineering, architecture, cities, transport, maritime systems, infrastructure, and applied futures.',
-    ids: [14, 37, 38, 42],
-  },
-] as const;
 
 @Component({
   selector: 'app-academics-page',
@@ -53,126 +10,181 @@ const ACADEMIC_DOMAINS: readonly AcademicDomain[] = [
   imports: [RouterLink, RevealDirective],
   templateUrl: './academics-page.component.html',
   styleUrl: './academics-page.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcademicsPageComponent {
-  readonly colleges = ACADEMIC_ARCHITECTURE_COLLEGES;
   readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
-  readonly researchInstitutes = ACADEMIC_RESEARCH_INSTITUTES;
-  readonly domains = ACADEMIC_DOMAINS;
+  readonly featuredCollege = ACADEMIC_ARCHITECTURE_COLLEGES.find((college) => college.id === 50) ?? ACADEMIC_ARCHITECTURE_COLLEGES[0];
 
-  readonly query = signal('');
-  readonly activeCollegeId = signal(50);
+  readonly heroChips = [
+    { icon: 'fa-building-columns', label: 'Colleges', route: '/academics/colleges' },
+    { icon: 'fa-sitemap', label: 'Schools', route: '/academics/schools' },
+    { icon: 'fa-layer-group', label: 'Departments', route: '/academics/departments' },
+    { icon: 'fa-flask', label: 'Research institutes', route: '/academics/research-institutes' },
+  ];
 
-  readonly visibleColleges = computed(() => {
-    const query = this.query().trim().toLowerCase();
-    if (!query) {
-      return this.colleges;
-    }
+  readonly quickProgrammes = [
+    { b: 'Bachelor of Divine Wisdom Studies', s: 'Undergraduate - College of Divine Wisdom', route: '/programmes/bachelor-of-divine-wisdom-studies' },
+    { b: 'MA - Pan-African Studies', s: 'Postgraduate - September 2026', route: '/programmes/ma-pan-african-studies' },
+    { b: 'PhD - Indigenous Knowledge Systems', s: 'Doctoral - Epistemic systems', route: '/programmes/phd-indigenous-knowledge-systems' },
+    { b: 'BSc - Artificial Intelligence', s: 'Undergraduate - Computing & digital systems', route: '/programmes/bsc-artificial-intelligence' },
+  ];
 
-    return this.colleges.filter((college) => this.searchText(college).includes(query));
-  });
+  readonly anchorQuestions = [
+    'How do colleges organise serious African and global knowledge without flattening it?',
+    'Where do schools, departments, programmes, and institutes meet in the academic journey?',
+    'How does a student move from field of interest to recognised professional identity?',
+    'Which research institute carries each programme into public scholarship and innovation?',
+    'How do indigenous, scientific, technological, civic, and sacred knowledge systems coexist?',
+    'What is the clearest route from admission to study, research, publication, and service?',
+  ];
 
-  readonly activeCollege = computed(() => {
-    const visible = this.visibleColleges();
-    return visible.find((college) => college.id === this.activeCollegeId()) ?? visible[0] ?? this.colleges[0];
-  });
+  readonly featureProgrammes = this.featuredCollege.programmes.slice(0, 7).map((programme) => ({
+    b: programme,
+    s: this.programmePathway(programme),
+    route: ['/programmes', this.slugify(programme)],
+  }));
 
-  readonly heroIndex = computed(() => {
-    const active = this.activeCollege();
-    return [
-      {
-        number: '01',
-        label: 'Colleges live in one source of truth',
-        value: `${this.totals.colleges} colleges`,
-      },
-      {
-        number: '02',
-        label: 'Schools and departments expand per college',
-        value: `${this.totals.schools} schools / ${this.totals.departments} departments`,
-      },
-      {
-        number: '03',
-        label: 'Programmes resolve into the admissions and programme-detail system',
-        value: `${this.totals.programmes} programmes`,
-      },
-      {
-        number: '04',
-        label: `Open now: ${active.name}`,
-        value: `${active.schoolStructure.length} schools`,
-      },
-    ];
-  });
+  readonly architectureLanes = [
+    {
+      num: '01',
+      feature: true,
+      b: 'Colleges',
+      p: 'The highest academic homes. Each college gathers schools, programmes, research alignment, and professional direction.',
+      icon: 'fa-building-columns',
+      tags: `${this.totals.colleges} colleges`,
+      route: '/academics/colleges',
+    },
+    {
+      num: '02',
+      feature: false,
+      b: 'Schools',
+      p: 'The method layer. Schools group related disciplines and show how broad fields become teachable academic systems.',
+      icon: 'fa-sitemap',
+      tags: `${this.totals.schools} schools`,
+      route: '/academics/schools',
+    },
+    {
+      num: '03',
+      feature: false,
+      b: 'Departments',
+      p: 'The delivery layer. Departments hold curriculum ownership, teaching focus, and research responsibilities.',
+      icon: 'fa-layer-group',
+      tags: `${this.totals.departments} departments`,
+      route: '/academics/departments',
+    },
+    {
+      num: '04',
+      feature: false,
+      b: 'Programmes',
+      p: 'The award layer. Certificates, diplomas, bachelor degrees, master degrees, and doctoral pathways are kept separate from the overview.',
+      icon: 'fa-graduation-cap',
+      tags: `${this.totals.programmes} programmes`,
+      route: '/programmes',
+    },
+    {
+      num: '05',
+      feature: false,
+      b: 'Research Institutes',
+      p: 'The advanced knowledge layer. Institutes carry cross-disciplinary research, policy work, publishing, and innovation.',
+      icon: 'fa-flask',
+      tags: `${ACADEMIC_RESEARCH_INSTITUTES.length} institutes`,
+      route: '/academics/research-institutes',
+    },
+    {
+      num: '06',
+      feature: false,
+      b: 'College of Divine Wisdom',
+      p: 'A complete sacred knowledge, consciousness, ethics, and civilisational transformation architecture.',
+      icon: 'fa-dove',
+      tags: `${this.featuredCollege.schools.length} schools - ${this.featuredCollege.programmes.length} programmes`,
+      route: ['/academics/colleges', this.slugify(this.featuredCollege.name)],
+    },
+  ];
 
-  readonly featuredDomain = computed(() =>
-    this.domains.find((domain) => domain.ids.includes(this.activeCollege().id)) ?? this.domains[0],
-  );
+  readonly pathways = [
+    {
+      icon: 'fa-graduation-cap',
+      b: 'Undergraduate',
+      p: "Bachelor's degrees and undergraduate diplomas organised through colleges and schools, with professional and research continuity.",
+      meta: ['Certificates, diplomas, and bachelor degrees', 'College-led admissions pathways', 'Programme detail pages stay separate', 'September 2026 intake'],
+      cta: 'Explore undergraduate programmes',
+      route: '/home/bachelors',
+    },
+    {
+      icon: 'fa-user-graduate',
+      b: 'Postgraduate',
+      p: "Master's degrees, postgraduate diplomas, and advanced professional pathways connected to institutes and external practice.",
+      meta: ['Masters and postgraduate diplomas', 'Research and professional tracks', 'Supervision alignment by school', 'Hybrid and on-campus options'],
+      cta: 'Explore postgraduate programmes',
+      route: '/home/masters',
+    },
+    {
+      icon: 'fa-flask',
+      b: 'Doctoral',
+      p: 'Doctoral study anchored in departments and research institutes, with a clearer route into publication and public scholarship.',
+      meta: ['PhD pathways across the colleges', 'Institute-linked research culture', 'Supervision governance', 'Thesis and dissertation standards'],
+      cta: 'Explore doctoral programmes',
+      route: '/home/phd',
+    },
+    {
+      icon: 'fa-laptop',
+      b: 'Online & short courses',
+      p: 'Short, stackable digital routes for learners who need focused study before entering a longer award pathway.',
+      meta: ['Certificate-ready learning blocks', 'Professional skills and academic bridges', 'Digital learning support', 'Future LMS alignment'],
+      cta: 'Explore online learning',
+      route: '/digital-campus',
+    },
+  ];
 
-  setSearch(value: string) {
-    this.query.set(value);
+  readonly categories = [
+    { icon: 'fa-landmark', label: 'Civilisational systems', selected: true },
+    { icon: 'fa-microscope', label: 'Science & innovation', selected: false },
+    { icon: 'fa-scale-balanced', label: 'Governance & law', selected: false },
+    { icon: 'fa-heart-pulse', label: 'Health & society', selected: false },
+    { icon: 'fa-chart-line', label: 'Economics & enterprise', selected: false },
+    { icon: 'fa-leaf', label: 'Agriculture & climate', selected: false },
+    { icon: 'fa-book-open', label: 'Humanities', selected: false },
+    { icon: 'fa-laptop-code', label: 'Computing & data', selected: false },
+    { icon: 'fa-people-roof', label: 'Education', selected: false },
+    { icon: 'fa-globe-africa', label: 'Pan-African systems', selected: false },
+    { icon: 'fa-dove', label: 'Divine wisdom', selected: false },
+  ];
+
+  readonly institutes = ACADEMIC_RESEARCH_INSTITUTES.slice(0, 4).map((name, index) => ({
+    icon: ['fa-globe-africa', 'fa-building-shield', 'fa-scale-balanced', 'fa-shield-halved'][index] ?? 'fa-flask',
+    h: name,
+    p: this.instituteSummary(name),
+    meta: 'Cross-college research architecture',
+  }));
+
+  readonly standards = [
+    'Colleges, schools, departments, programmes, and institutes are separated for clean navigation.',
+    'The full academic architecture remains available through dedicated pages instead of being compressed into one page.',
+    'Programme detail pages remain focused on admissions, curriculum, outcomes, and funding.',
+    'Research institutes stay visible as the bridge between teaching, policy, publication, and innovation.',
+  ];
+
+  programmePathway(programme: string): string {
+    if (programme.startsWith('PhD')) return 'Doctoral pathway';
+    if (programme.startsWith('Master') || programme.startsWith('MSc') || programme.startsWith('MA')) return 'Postgraduate pathway';
+    if (programme.startsWith('Diploma')) return 'Diploma pathway';
+    if (programme.startsWith('Certificate')) return 'Certificate pathway';
+    return 'Undergraduate pathway';
   }
 
-  setActiveCollege(id: number) {
-    this.activeCollegeId.set(id);
-  }
-
-  clearSearch() {
-    this.query.set('');
-  }
-
-  collegeMeta(college: AcademicArchitectureCollege) {
-    const departmentCount = college.schoolStructure.reduce((total, school) => total + school.departments.length, 0);
-    return `${college.schoolStructure.length} schools / ${departmentCount} departments / ${college.programmes.length} programmes`;
-  }
-
-  programmePath(programme: string) {
-    return ['/programmes', this.slugify(programme)];
-  }
-
-  preview<T>(items: readonly T[], count: number): readonly T[] {
-    return items.slice(0, count);
-  }
-
-  remainingCount(items: readonly unknown[], count: number) {
-    return Math.max(items.length - count, 0);
-  }
-
-  unitGroups(college: AcademicArchitectureCollege): readonly UnitGroup[] {
-    return [
-      { label: 'Centres of Excellence', items: college.centresOfExcellence ?? [] },
-      { label: 'Laboratories', items: college.laboratories ?? [] },
-      { label: 'Observatories', items: college.observatories ?? [] },
-      { label: 'Clinics', items: college.clinics ?? [] },
-      { label: 'Archives', items: college.archives ?? [] },
-      { label: 'Missions', items: college.missions ?? [] },
-      { label: 'Specialized Units', items: college.specializedUnits ?? [] },
-    ].filter((group) => group.items.length);
-  }
-
-  private searchText(college: AcademicArchitectureCollege) {
-    return [
-      college.name,
-      college.researchInstitute,
-      ...college.schools,
-      ...college.programmes,
-      ...college.schoolStructure.flatMap((school) => [school.name, ...school.departments]),
-      ...(college.centresOfExcellence ?? []),
-      ...(college.laboratories ?? []),
-      ...(college.observatories ?? []),
-      ...(college.clinics ?? []),
-      ...(college.archives ?? []),
-      ...(college.missions ?? []),
-      ...(college.specializedUnits ?? []),
-    ]
-      .join(' ')
-      .toLowerCase();
-  }
-
-  private slugify(value: string) {
+  slugify(value: string): string {
     return value
       .toLowerCase()
       .replace(/&/g, 'and')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
+  }
+
+  private instituteSummary(name: string): string {
+    if (name.includes('Pan-African')) return 'Civilisational thought, public scholarship, continental identity, and historical continuity.';
+    if (name.includes('Governance')) return 'Statecraft, institutional reform, policy systems, and public administration.';
+    if (name.includes('Law')) return 'Justice systems, constitutional development, regulation, and legal transformation.';
+    if (name.includes('Security')) return 'Peacebuilding, strategic studies, human security, and continental stability.';
+    return 'A cross-disciplinary research unit aligned to colleges, departments, and public impact.';
   }
 }

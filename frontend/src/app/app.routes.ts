@@ -4,6 +4,8 @@ import { HomeComponent } from './pages/home.component';
 import { AboutPageComponent } from './pages/about-page.component';
 import { AboutDetailPageComponent } from './pages/about-detail-page.component';
 import { AcademicsPageComponent } from './pages/academics-page.component';
+import { AcademicCollegeDetailPageComponent } from './pages/academic-college-detail-page.component';
+import { AcademicDirectoryPageComponent } from './pages/academic-directory-page.component';
 import { AdmissionsApplyPageComponent } from './pages/admissions-apply-page.component';
 import { StudentLifePageComponent } from './pages/student-life-page.component';
 import { TeamCategoryPageComponent } from './pages/team-category-page.component';
@@ -132,7 +134,12 @@ export const routes: Routes = [
       { path: 'about/team/:slug', component: TeamProfilePageComponent },
       { path: 'about/:slug', component: AboutDetailPageComponent },
       { path: 'academics', component: AcademicsPageComponent },
-      { path: 'faculties-schools', component: AcademicsPageComponent },
+      { path: 'academics/colleges', component: AcademicDirectoryPageComponent, data: { mode: 'colleges' } },
+      { path: 'academics/colleges/:slug', component: AcademicCollegeDetailPageComponent },
+      { path: 'academics/schools', component: AcademicDirectoryPageComponent, data: { mode: 'schools' } },
+      { path: 'academics/departments', component: AcademicDirectoryPageComponent, data: { mode: 'departments' } },
+      { path: 'academics/research-institutes', component: AcademicDirectoryPageComponent, data: { mode: 'research' } },
+      { path: 'faculties-schools', component: AcademicDirectoryPageComponent, data: { mode: 'colleges' } },
       { path: 'admissions', component: AdmissionsApplyPageComponent },
       { path: 'apply', redirectTo: '/admissions', pathMatch: 'full' },
       { path: 'student-life', component: StudentLifePageComponent },

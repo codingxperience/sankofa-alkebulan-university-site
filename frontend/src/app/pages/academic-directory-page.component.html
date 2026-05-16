@@ -1,0 +1,134 @@
+<div class="v2-shell academic-directory-shell">
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a routerLink="/academics">Academics</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <span class="here" aria-current="page">{{ config().label }}</span>
+      </nav>
+      <div class="actions">
+        <a routerLink="/academics/colleges" class="v2-btn v2-btn--ghost">Colleges</a>
+        <a routerLink="/academics/schools" class="v2-btn v2-btn--ghost">Schools</a>
+        <a routerLink="/academics/departments" class="v2-btn v2-btn--ghost">Departments</a>
+        <a routerLink="/academics/research-institutes" class="v2-btn v2-btn--ghost">Research</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="academic-directory-hero" aria-labelledby="directory-title">
+    <div class="v2-container academic-directory-hero__grid">
+      <div>
+        <span class="v2-kicker">{{ config().eyebrow }}</span>
+        <h1 id="directory-title">{{ config().title }}</h1>
+        <p>{{ config().lead }}</p>
+      </div>
+      <aside class="directory-index" aria-label="Directory summary">
+        <b>{{ config().count }}</b>
+        <span>{{ config().label }}</span>
+        <small>{{ visibleCount() }} visible now</small>
+      </aside>
+    </div>
+  </section>
+
+  <section class="v2-section academic-directory-main">
+    <div class="v2-container">
+      <div class="directory-toolbar" data-reveal>
+        <label class="directory-search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" [value]="query()" [placeholder]="config().placeholder" (input)="setSearch($any($event.target).value)" />
+        </label>
+        @if (query()) {
+          <button type="button" class="directory-clear" (click)="clearSearch()">Clear search</button>
+        }
+      </div>
+
+      @if (mode() === 'colleges') {
+        <div class="directory-list directory-list--colleges" data-reveal>
+          @for (row of filteredColleges(); track row.college.id) {
+            <a class="directory-row directory-row--college" [routerLink]="['/academics/colleges', row.slug]">
+              <span class="directory-row__num">{{ row.college.id.toString().padStart(2, '0') }}</span>
+              <div class="directory-row__body">
+                <h2>{{ row.college.name }}</h2>
+                <p>{{ row.college.researchInstitute }}</p>
+                <div class="directory-meta">
+                  <span>{{ row.schools }} schools</span>
+                  <span>{{ row.departments }} departments</span>
+                  <span>{{ row.programmes }} programmes</span>
+                </div>
+              </div>
+              <div class="directory-preview" aria-label="Schools preview">
+                @for (school of preview(row.college.schools, 4); track school) {
+                  <span>{{ school }}</span>
+                }
+                @if (remaining(row.college.schools, 4)) {
+                  <span>+{{ remaining(row.college.schools, 4) }} more</span>
+                }
+              </div>
+            </a>
+          }
+        </div>
+      }
+
+      @if (mode() === 'schools') {
+        <div class="directory-list" data-reveal>
+          @for (row of filteredSchools(); track row.college + row.name) {
+            <a class="directory-row" [routerLink]="['/academics/colleges', row.collegeSlug]">
+              <span class="directory-row__mark"><i class="fa-solid fa-sitemap"></i></span>
+              <div class="directory-row__body">
+                <h2>{{ row.name }}</h2>
+                <p>{{ row.college }}</p>
+                <div class="directory-meta"><span>{{ row.departments.length }} departments</span></div>
+              </div>
+              <div class="directory-preview" aria-label="Departments preview">
+                @for (department of preview(row.departments, 3); track department) {
+                  <span>{{ department }}</span>
+                }
+                @if (remaining(row.departments, 3)) {
+                  <span>+{{ remaining(row.departments, 3) }} more</span>
+                }
+              </div>
+            </a>
+          }
+        </div>
+      }
+
+      @if (mode() === 'departments') {
+        <div class="department-grid" data-reveal>
+          @for (row of filteredDepartments(); track row.college + row.school + row.name) {
+            <a class="department-tile" [routerLink]="['/academics/colleges', row.collegeSlug]">
+              <span>{{ row.college }}</span>
+              <h2>{{ row.name }}</h2>
+              <p>{{ row.school }}</p>
+            </a>
+          }
+        </div>
+      }
+
+      @if (mode() === 'research') {
+        <div class="research-grid" data-reveal>
+          @for (row of filteredResearch(); track row.name) {
+            <article class="research-tile">
+              <span class="research-tile__icon"><i class="fa-solid fa-flask"></i></span>
+              <h2>{{ row.name }}</h2>
+              @if (row.alignedColleges.length) {
+                <p>Aligned colleges</p>
+                <div class="directory-preview directory-preview--full">
+                  @for (college of preview(row.alignedColleges, 5); track college) {
+                    <span>{{ college }}</span>
+                  }
+                  @if (remaining(row.alignedColleges, 5)) {
+                    <span>+{{ remaining(row.alignedColleges, 5) }} more</span>
+                  }
+                </div>
+              } @else {
+                <p>Cross-college research platform.</p>
+              }
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

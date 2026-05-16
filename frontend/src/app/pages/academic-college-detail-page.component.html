@@ -1,0 +1,105 @@
+<div class="v2-shell college-detail-shell">
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a routerLink="/academics">Academics</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a routerLink="/academics/colleges">Colleges</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <span class="here" aria-current="page">{{ college()?.name ?? 'College' }}</span>
+      </nav>
+      <div class="actions">
+        <a routerLink="/academics/schools" class="v2-btn v2-btn--ghost">Schools</a>
+        <a routerLink="/academics/departments" class="v2-btn v2-btn--ghost">Departments</a>
+      </div>
+    </div>
+  </div>
+
+  @if (college(); as current) {
+    <section class="college-detail-hero" aria-labelledby="college-title">
+      <div class="v2-container college-detail-hero__grid">
+        <div>
+          <span class="v2-kicker">College {{ current.id.toString().padStart(2, '0') }}</span>
+          <h1 id="college-title">{{ current.name }}</h1>
+          <p>
+            This college is presented as a complete academic system: schools, departments,
+            programmes, and research alignment. The overview page stays clean while the detail
+            page carries the depth.
+          </p>
+        </div>
+        <aside class="college-detail-index" aria-label="College summary">
+          <div><b>{{ current.schoolStructure.length }}</b><span>schools</span></div>
+          <div><b>{{ departmentCount() }}</b><span>departments</span></div>
+          <div><b>{{ current.programmes.length }}</b><span>programmes</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="v2-section college-detail-main">
+      <div class="v2-container college-detail-grid">
+        <main class="college-detail-primary">
+          <section class="college-panel" data-reveal>
+            <span class="v2-kicker">Schools and departments</span>
+            <h2>Academic delivery structure</h2>
+            <div class="school-stack">
+              @for (school of current.schoolStructure; track school.name) {
+                <article class="school-block">
+                  <header>
+                    <h3>{{ school.name }}</h3>
+                    <span>{{ school.departments.length }} departments</span>
+                  </header>
+                  <div class="department-list">
+                    @for (department of school.departments; track department) {
+                      <span>{{ department }}</span>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="college-panel" data-reveal>
+            <span class="v2-kicker">Programmes</span>
+            <h2>Awards and study pathways</h2>
+            <div class="programme-groups">
+              @for (group of programmeGroups(); track group.title) {
+                <article class="programme-group">
+                  <h3>{{ group.title }}</h3>
+                  <ul>
+                    @for (programme of group.items; track programme) {
+                      <li><a [routerLink]="['/programmes', slugify(programme)]">{{ programme }}</a></li>
+                    }
+                  </ul>
+                </article>
+              }
+            </div>
+          </section>
+        </main>
+
+        <aside class="college-detail-secondary">
+          @for (group of unitGroups(); track group.title) {
+            <section class="college-side-panel" data-reveal>
+              <h2>{{ group.title }}</h2>
+              <ul>
+                @for (item of group.items; track item) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+            </section>
+          }
+        </aside>
+      </div>
+    </section>
+  } @else {
+    <section class="v2-section">
+      <div class="v2-container not-found-panel">
+        <span class="v2-kicker">College not found</span>
+        <h1>We could not find that college.</h1>
+        <p>Return to the college directory and choose from the current academic architecture.</p>
+        <a routerLink="/academics/colleges" class="v2-btn v2-btn--primary">Back to colleges</a>
+      </div>
+    </section>
+  }
+</div>
