@@ -9,14 +9,16 @@ import {
 } from '../university/academic-architecture';
 import {
   ACADEMIC_HERO_VISUALS,
+  type AcademicCardVisual,
+  academicImageForName,
   academicIconForName,
-  departmentRoute,
+  departmentRoute as buildDepartmentRoute,
   programmeDuration,
   programmeLevel,
-  programmeRoute,
+  programmeRoute as buildProgrammeRoute,
   programmeSummary,
   programmesForAcademicNode,
-  schoolRoute,
+  schoolRoute as buildSchoolRoute,
   slugifyAcademic,
 } from '../university/academic-navigation';
 import type { AcademicArchitectureSchool } from '../university/academic-departments';
@@ -30,6 +32,13 @@ interface ProgrammeCard {
   readonly summary: string;
   readonly route: readonly string[];
   readonly icon: string;
+  readonly image: AcademicCardVisual;
+}
+
+interface DepartmentCard {
+  readonly name: string;
+  readonly icon: string;
+  readonly image: AcademicCardVisual;
 }
 
 @Component({
@@ -73,6 +82,17 @@ export class AcademicStructureDetailPageComponent {
     return programmesForAcademicNode(college.programmes, school.name, this.departmentName());
   });
 
+  readonly departmentCards = computed<readonly DepartmentCard[]>(() => {
+    const college = this.college();
+    const school = this.school();
+    if (!college || !school) return [];
+    return school.departments.map((department) => ({
+      name: department,
+      icon: academicIconForName(department),
+      image: academicImageForName(`${college.name} ${school.name} ${department}`),
+    }));
+  });
+
   readonly programmeCards = computed<readonly ProgrammeCard[]>(() => {
     const college = this.college();
     if (!college) return [];
@@ -81,8 +101,9 @@ export class AcademicStructureDetailPageComponent {
       level: programmeLevel(programme),
       duration: programmeDuration(programme),
       summary: programmeSummary(programme, college.name),
-      route: programmeRoute(programme),
+      route: buildProgrammeRoute(programme),
       icon: academicIconForName(programme),
+      image: academicImageForName(`${college.name} ${programme}`),
     }));
   });
 
@@ -94,9 +115,9 @@ export class AcademicStructureDetailPageComponent {
     const department = this.departmentName();
     if (!college || !school) return '';
     if (department) {
-      return `${department} is the teaching and research ownership layer inside ${school.name}. From here, students move into award pathways connected to ${college.name}.`;
+      return `${department} turns the subject into curriculum, supervision, research, and public work. Programme pathways continue below.`;
     }
-    return `${school.name} is the method layer inside ${college.name}. Open a department to see the programme pathways connected to that academic ownership.`;
+    return `${school.name} gives ${college.name} its method. Choose a department to see where the work is held.`;
   });
 
   nextVisual(): void {
@@ -112,15 +133,15 @@ export class AcademicStructureDetailPageComponent {
   }
 
   schoolRoute(collegeName: string, schoolName: string): readonly string[] {
-    return schoolRoute(collegeName, schoolName);
+    return buildSchoolRoute(collegeName, schoolName);
   }
 
   departmentRoute(collegeName: string, schoolName: string, departmentName: string): readonly string[] {
-    return departmentRoute(collegeName, schoolName, departmentName);
+    return buildDepartmentRoute(collegeName, schoolName, departmentName);
   }
 
   programmeRoute(programme: string): readonly string[] {
-    return programmeRoute(programme);
+    return buildProgrammeRoute(programme);
   }
 
   iconFor(value: string): string {

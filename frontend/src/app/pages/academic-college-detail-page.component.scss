@@ -13,14 +13,13 @@
   display: grid;
   align-items: center;
   overflow: hidden;
-  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
   background: #fbf8f0;
   isolation: isolate;
 }
 
 .college-hero-media {
   position: absolute;
-  inset: 0 0 0 42%;
+  inset: 0 0 0 38%;
   z-index: 0;
   overflow: hidden;
 }
@@ -39,7 +38,7 @@
   inset: 0;
   z-index: 1;
   background:
-    linear-gradient(90deg, #fbf8f0 0%, rgba(251,248,240,0.96) 29%, rgba(251,248,240,0.62) 48%, rgba(251,248,240,0.12) 66%, rgba(5,27,44,0.14) 100%),
+    linear-gradient(90deg, #fbf8f0 0%, rgba(251,248,240,0.98) 31%, rgba(251,248,240,0.74) 47%, rgba(251,248,240,0.18) 68%, rgba(5,27,44,0.12) 100%),
     radial-gradient(circle at 22% 28%, rgba(212,162,47,0.16), transparent 22rem),
     linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(5,27,44,0.18) 100%);
   pointer-events: none;
@@ -63,8 +62,8 @@
   margin: 10px 0 18px;
   max-width: 940px;
   font-family: var(--sau-font-display);
-  font-size: clamp(44px, 6.8vw, 94px);
-  line-height: 0.95;
+  font-size: clamp(36px, 4.9vw, 64px);
+  line-height: 0.98;
   letter-spacing: -0.065em;
   color: var(--sau-blue-950, #061f35);
   text-wrap: balance;
@@ -85,56 +84,19 @@
   margin-top: 26px;
 }
 
-.college-hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: 34px;
-  max-width: 590px;
-  border: 1px solid rgba(15, 76, 129, 0.1);
-  border-radius: 20px;
-  overflow: hidden;
-  background: rgba(255,255,255,0.78);
-  backdrop-filter: blur(12px);
-}
-
-.college-hero-metrics div {
-  padding: 16px;
-  background: rgba(255,255,255,0.58);
-}
-
-.college-hero-metrics b {
-  display: block;
-  font-family: var(--sau-font-display);
-  font-size: clamp(28px, 3.2vw, 42px);
-  line-height: 0.9;
-  color: var(--sau-blue-950, #061f35);
-  letter-spacing: -0.07em;
-}
-
-.college-hero-metrics span {
-  display: block;
-  margin-top: 8px;
-  color: var(--sau-blue-700);
-  font-family: var(--sau-font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .college-control {
   position: absolute;
   top: 50%;
   z-index: 4;
   width: 48px;
   height: 48px;
-  border: 1px solid rgba(15, 76, 129, 0.12);
+  border: 2px solid rgba(15, 76, 129, 0.62);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.86);
   color: var(--sau-blue-800);
-  box-shadow: 0 18px 46px rgba(8, 35, 58, 0.14);
+  box-shadow: 0 16px 40px rgba(8, 35, 58, 0.11);
   cursor: pointer;
   transform: translateY(-50%);
   transition: transform 180ms cubic-bezier(.2,.8,.2,1), background 180ms cubic-bezier(.2,.8,.2,1), border-color 180ms cubic-bezier(.2,.8,.2,1);
@@ -142,60 +104,73 @@
 
 .college-control:hover {
   transform: translateY(-50%) scale(1.05);
-  border-color: rgba(179, 92, 42, 0.38);
+  border-color: var(--sau-return, #b35c2a);
   background: #fff8f2;
   color: var(--sau-return, #b35c2a);
 }
 .college-control--prev { left: clamp(16px, 2.3vw, 32px); }
 .college-control--next { right: clamp(16px, 2.3vw, 32px); }
 
-.college-dots {
+.college-carousel-dots {
   position: absolute;
   z-index: 4;
   left: 50%;
   bottom: clamp(18px, 3vw, 34px);
   display: inline-flex;
-  gap: 9px;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  min-height: 38px;
+  padding: 0 18px;
+  border: 1px solid rgba(15, 76, 129, 0.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.82);
+  box-shadow: 0 14px 34px rgba(8, 35, 58, 0.1), inset 0 1px 0 rgba(255,255,255,0.82);
   transform: translateX(-50%);
+  backdrop-filter: blur(12px);
 }
-.college-dots button {
-  width: 9px;
-  height: 9px;
-  border: 1px solid rgba(15, 76, 129, 0.34);
+
+.college-carousel-dots button {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border: 0;
   border-radius: 50%;
-  background: rgba(255,255,255,0.86);
+  background: var(--sau-blue-800, #0f4c81);
   cursor: pointer;
-  transition: transform 180ms cubic-bezier(.2,.8,.2,1), background 180ms cubic-bezier(.2,.8,.2,1), border-color 180ms cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 0 0 1px rgba(15, 76, 129, 0.12);
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), background 180ms cubic-bezier(.2,.8,.2,1), opacity 180ms cubic-bezier(.2,.8,.2,1);
 }
-.college-dots button.is-active {
-  transform: scale(1.35);
-  border-color: var(--sau-blue-800);
-  background: var(--sau-blue-800);
+
+.college-carousel-dots button::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #ffffff;
 }
+
+.college-carousel-dots button.is-active {
+  transform: scale(1.08);
+  background: var(--sau-return, #b35c2a);
+}
+
+.college-carousel-dots button:not(.is-active) { opacity: 0.96; }
 
 .college-detail-main { padding-top: clamp(36px, 5vw, 64px); }
 
 .college-detail-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
-  gap: clamp(24px, 4vw, 44px);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
-.college-detail-primary,
-.college-detail-secondary {
+.college-detail-primary {
   display: grid;
   gap: 16px;
 }
 
-.college-detail-secondary {
-  position: sticky;
-  top: 112px;
-}
-
 .college-panel,
-.college-side-panel,
-.college-map-card,
 .not-found-panel {
   border: 1px solid rgba(15, 76, 129, 0.1);
   border-radius: 30px;
@@ -238,7 +213,7 @@
 
 .school-card {
   position: relative;
-  min-height: 280px;
+  min-height: 410px;
   display: grid;
   align-content: start;
   gap: 12px;
@@ -266,6 +241,35 @@
   border-radius: 48px;
   transform: rotate(18deg);
   background: rgba(255,255,255,0.22);
+  z-index: 0;
+}
+
+.school-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.school-card__media {
+  margin: -22px -22px 2px;
+  height: clamp(150px, 15vw, 190px);
+  overflow: hidden;
+  border-radius: 23px 23px 17px 17px;
+  background: rgba(15, 76, 129, 0.08);
+}
+
+.school-card__media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(1.02) contrast(1.02);
+  transform: scale(1.01);
+  transition: transform 680ms cubic-bezier(.2,.8,.2,1), filter 680ms cubic-bezier(.2,.8,.2,1);
+}
+
+.school-card:hover .school-card__media img {
+  transform: scale(1.06);
+  filter: saturate(1.08) contrast(1.04);
 }
 
 .school-card:hover {
@@ -296,8 +300,7 @@
 }
 
 .school-card h3,
-.college-side-panel h2,
-.college-map-card h2 {
+.college-research-strip h3 {
   position: relative;
   z-index: 1;
   margin: 0;
@@ -349,66 +352,50 @@
 .school-card strong i { transition: transform 180ms cubic-bezier(.2,.8,.2,1); }
 .school-card:hover strong i { transform: translateX(3px); }
 
-.college-map-card h2 {
-  margin: 8px 0 16px;
-  font-size: 22px;
+.college-research-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(18px, 3vw, 32px);
+  align-items: end;
+  margin-top: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid rgba(179, 92, 42, 0.18);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 95% 10%, rgba(179,92,42,0.12), transparent 15rem),
+    linear-gradient(135deg, rgba(255,248,242,0.94), rgba(255,255,255,0.82));
 }
 
-.college-side-panel h2 {
+.college-research-strip h3 {
+  margin-top: 8px;
+  font-size: clamp(22px, 2.4vw, 32px);
+  max-width: 24ch;
+}
+
+.college-research-strip__units {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.college-research-strip__units span {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-  font-size: 18px;
-}
-.college-side-panel h2 i {
-  color: var(--sau-return, #b35c2a);
-  font-size: 15px;
-}
-
-.college-side-panel ul,
-.college-map-card ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 9px;
-}
-
-.college-map-card li {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
-  padding: 13px 0;
-  border-top: 1px solid rgba(15, 76, 129, 0.08);
-}
-.college-map-card li:first-child { border-top: 0; }
-.college-map-card b {
-  color: var(--sau-blue-900);
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid rgba(15, 76, 129, 0.1);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.74);
+  color: var(--sau-blue-800);
   font-family: var(--sau-font-heading);
-}
-.college-map-card span {
-  color: var(--sau-fg-muted);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 12px;
 }
 
-.college-side-panel li {
-  position: relative;
-  padding-left: 15px;
-  color: var(--sau-ink-soft);
-  line-height: 1.45;
-  font-size: 13.5px;
-}
-.college-side-panel li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.68em;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--sau-return, #b35c2a);
+.college-research-strip__units i {
+  color: var(--sau-return, #b35c2a);
+  font-size: 11px;
 }
 
 .not-found-panel {
@@ -424,9 +411,9 @@
 }
 
 @media (max-width: 1100px) {
-  .college-detail-grid,
   .college-panel__head { grid-template-columns: 1fr; }
-  .college-detail-secondary { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .college-research-strip { grid-template-columns: 1fr; }
+  .college-research-strip__units { justify-content: flex-start; }
 }
 
 @media (max-width: 860px) {
@@ -439,28 +426,28 @@
   .college-detail-hero__inner { grid-template-columns: 1fr; }
   .college-detail-hero__copy { max-width: 760px; padding-inline: 10px; }
   .college-control { width: 42px; height: 42px; }
-  .school-card-grid,
-  .college-detail-secondary { grid-template-columns: 1fr; }
+  .school-card-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
   .college-detail-hero { min-height: 700px; }
   .college-detail-hero__inner { min-height: 700px; }
-  .college-hero-metrics { grid-template-columns: 1fr; }
   .college-control--prev { left: 10px; }
   .college-control--next { right: 10px; }
   .school-card,
   .college-panel,
-  .college-side-panel,
-  .college-map-card,
+  .college-research-strip,
   .not-found-panel { border-radius: 24px; }
+  .school-card { min-height: 360px; }
+  .school-card__media { height: 165px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .college-hero-media img { animation: none; }
   .college-control,
-  .college-dots button,
+  .college-carousel-dots button,
   .school-card,
+  .school-card__media img,
   .school-card strong i { transition: none; }
   .college-control:hover,
   .school-card:hover { transform: none; }

@@ -103,8 +103,8 @@ type MobileGroup = 'about' | 'academics';
                   <div class="nav-panel nav-panel--academics" [class.nav-panel--open]="isAcademicsMenuOpen()">
                     <div class="nav-panel__intro">
                       <span>Academic Estate</span>
-                      <strong>Colleges, schools, programmes, and research institutes.</strong>
-                      <p>Choose by intellectual question first, then move into the full academic architecture.</p>
+                      <strong>Choose the question, then the route.</strong>
+                      <p>Colleges, schools, departments, programmes, and institutes in one clear academic path.</p>
                     </div>
                     <div class="nav-panel__columns">
                       @for (column of academicsMega; track column.title) {
@@ -524,6 +524,7 @@ type MobileGroup = 'about' | 'academics';
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 1rem;
       min-width: 0;
+      align-items: start;
     }
 
     .nav-panel__columns--two {
@@ -555,6 +556,12 @@ type MobileGroup = 'about' | 'academics';
       grid-template-columns: 2rem minmax(0, 1fr);
       align-items: start;
       column-gap: 0.62rem;
+      min-height: 4.25rem;
+      padding: 0.62rem 0.58rem;
+      border-top: 0;
+      border-radius: 0.88rem;
+      background: rgb(255 255 255 / 42%);
+      box-shadow: inset 0 0 0 1px rgb(15 76 129 / 6%);
     }
 
     .nav-panel__columns a.mega-link > i {
@@ -575,9 +582,10 @@ type MobileGroup = 'about' | 'academics';
     }
 
     .nav-panel__columns a:hover {
-      padding-left: 0.28rem;
+      padding-left: 0.58rem;
       color: #0f4c81;
       text-decoration: none;
+      background: rgb(255 255 255 / 68%);
     }
 
     .nav-panel__columns strong {
@@ -986,32 +994,32 @@ export class HeaderComponent implements OnInit {
           label: 'Colleges',
           path: '/academics/colleges',
           icon: 'fa-building-columns',
-          description: 'Top-level homes. Open a college, then move into schools.',
+          description: 'Start with the academic home.',
         },
         {
           label: 'Schools',
           path: '/academics/schools',
           icon: 'fa-sitemap',
-          description: 'The academic method layer inside each college.',
+          description: 'Choose the method inside a college.',
         },
         {
           label: 'Departments',
           path: '/academics/departments',
           icon: 'fa-layer-group',
-          description: 'Teaching and research ownership leading into programmes.',
+          description: 'Enter the teaching and research home.',
         },
         {
           label: 'Research',
           path: '/academics/research-institutes',
           icon: 'fa-flask',
-          description: 'Institutes, labs, and cross-college research alignment.',
+          description: 'Institutes, labs, and public scholarship.',
         },
       ],
     },
     {
       title: 'Programmes',
       links: [
-        { label: 'All Programmes', path: '/programs', icon: 'fa-book-open', description: 'Certificates through doctorates.' },
+        { label: 'Programme Levels', path: '/academics', fragment: 'programmes', icon: 'fa-book-open', description: 'Certificates through doctorates.' },
         { label: 'PhD Programmes', path: '/home/phd', icon: 'fa-microscope', description: 'Doctoral research pathways.' },
         { label: 'Masters Programmes', path: '/home/masters', icon: 'fa-user-graduate', description: 'Advanced professional and research pathways.' },
         { label: 'Undergraduate Studies', path: '/home/bachelors', icon: 'fa-graduation-cap', description: 'Bachelor degree academic formation.' },

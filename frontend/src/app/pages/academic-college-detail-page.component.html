@@ -32,22 +32,17 @@
           <span class="v2-kicker">College {{ current.id.toString().padStart(2, '0') }}</span>
           <h1 id="college-title">{{ current.name }}</h1>
           <p>
-            Start here with the college. Then open a school, move into departments, and continue
-            into programme detail pages from the department that owns the academic pathway.
+            Start with the college question. Then choose a school, enter its departments,
+            and continue into the programmes carried by that academic home.
           </p>
           <div class="college-hero-actions">
             <a href="#schools" class="v2-btn v2-btn--primary v2-btn--lg">View schools <span aria-hidden="true">&rarr;</span></a>
             <a routerLink="/academics/colleges" class="v2-btn v2-btn--ghost v2-btn--lg">Back to colleges</a>
           </div>
-          <div class="college-hero-metrics" aria-label="College metrics">
-            <div><b>{{ current.schoolStructure.length }}</b><span>schools</span></div>
-            <div><b>{{ departmentCount() }}</b><span>departments</span></div>
-            <div><b>{{ current.programmes.length }}</b><span>programmes</span></div>
-          </div>
         </div>
       </div>
 
-      <div class="college-dots" aria-label="College image carousel pagination">
+      <div class="college-carousel-dots" aria-label="College image carousel pagination">
         @for (visual of heroVisuals; track visual.src; let index = $index) {
           <button
             type="button"
@@ -66,14 +61,17 @@
             <div class="college-panel__head">
               <div>
                 <span class="v2-kicker">Schools</span>
-                <h2>Choose the method layer before the department layer.</h2>
+                <h2>Choose the school that gives the question its method.</h2>
               </div>
-              <p>Each school opens into its own page, where departments are presented as the next decision. This keeps the architecture clear without compressing everything into one long page.</p>
+              <p>Schools are the first decision inside a college. Each one opens the departments that hold teaching, research, and programme pathways.</p>
             </div>
 
             <div class="school-card-grid">
-              @for (school of current.schoolStructure; track school.name; let index = $index) {
+              @for (school of schoolCards(); track school.name; let index = $index) {
                 <a class="school-card" [routerLink]="schoolRoute(current.name, school.name)">
+                  <div class="school-card__media">
+                    <img [src]="school.image.src" [alt]="school.image.alt" loading="lazy" />
+                  </div>
                   <span class="school-card__index">{{ (index + 1).toString().padStart(2, '0') }}</span>
                   <span class="school-card__icon"><i class="fa-solid {{ iconFor(school.name) }}" aria-hidden="true"></i></span>
                   <h3>{{ school.name }}</h3>
@@ -90,31 +88,20 @@
                 </a>
               }
             </div>
+
+            <div class="college-research-strip">
+              <div>
+                <span class="v2-kicker">Research home</span>
+                <h3>{{ current.researchInstitute }}</h3>
+              </div>
+              <div class="college-research-strip__units" aria-label="College research units">
+                @for (group of unitGroups().slice(1, 4); track group.title) {
+                  <span><i class="fa-solid {{ group.icon }}" aria-hidden="true"></i>{{ group.title }}</span>
+                }
+              </div>
+            </div>
           </section>
         </main>
-
-        <aside class="college-detail-secondary">
-          <section class="college-map-card" data-reveal>
-            <span class="v2-kicker">Academic map</span>
-            <h2>How this college flows</h2>
-            <ol>
-              <li><b>Schools</b><span>Academic method homes inside the college.</span></li>
-              <li><b>Departments</b><span>Teaching and research ownership inside each school.</span></li>
-              <li><b>Programmes</b><span>Award routes opened from departments into detail pages.</span></li>
-            </ol>
-          </section>
-
-          @for (group of unitGroups(); track group.title) {
-            <section class="college-side-panel" data-reveal>
-              <h2><i class="fa-solid {{ group.icon }}" aria-hidden="true"></i>{{ group.title }}</h2>
-              <ul>
-                @for (item of group.items; track item) {
-                  <li>{{ item }}</li>
-                }
-              </ul>
-            </section>
-          }
-        </aside>
       </div>
     </section>
   } @else {

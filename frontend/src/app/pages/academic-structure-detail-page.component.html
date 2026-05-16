@@ -56,15 +56,10 @@
                 <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]" class="v2-btn v2-btn--ghost v2-btn--lg">Back to college</a>
               }
             </div>
-            <div class="structure-hero__facts" aria-label="Academic structure facts">
-              <div><b>{{ currentSchool.departments.length }}</b><span>departments</span></div>
-              <div><b>{{ matchedProgrammes().length }}</b><span>programme routes</span></div>
-              <div><b>{{ currentCollege.id.toString().padStart(2, '0') }}</b><span>college number</span></div>
-            </div>
           </div>
         </div>
 
-        <div class="structure-dots" aria-label="Academic image carousel pagination">
+        <div class="structure-carousel-dots" aria-label="Academic image carousel pagination">
           @for (visual of visuals; track visual.src; let index = $index) {
             <button
               type="button"
@@ -84,18 +79,21 @@
                 <div class="structure-panel__head">
                   <div>
                     <span class="v2-kicker">Departments</span>
-                    <h2>Open the ownership layer.</h2>
+                    <h2>Choose where the work is held.</h2>
                   </div>
-                  <p>Each department keeps the hierarchy explicit: college, school, department, then programme pathways. No flat directory guesswork.</p>
+                  <p>The college gives the question. The school gives the method. The department holds the teaching and research.</p>
                 </div>
 
                 <div class="node-grid">
-                  @for (department of currentSchool.departments; track department; let index = $index) {
-                    <a class="node-card" [routerLink]="departmentRoute(currentCollege.name, currentSchool.name, department)">
+                  @for (department of departmentCards(); track department.name; let index = $index) {
+                    <a class="node-card" [routerLink]="departmentRoute(currentCollege.name, currentSchool.name, department.name)">
+                      <div class="node-card__media">
+                        <img [src]="department.image.src" [alt]="department.image.alt" loading="lazy" />
+                      </div>
                       <span class="node-card__number">{{ (index + 1).toString().padStart(2, '0') }}</span>
-                      <span class="node-card__icon"><i class="fa-solid {{ iconFor(department) }}" aria-hidden="true"></i></span>
-                      <h3>{{ department }}</h3>
-                      <p>Open this department to see programme routes and the research connection inside {{ currentCollege.name }}.</p>
+                      <span class="node-card__icon"><i class="fa-solid {{ department.icon }}" aria-hidden="true"></i></span>
+                      <h3>{{ department.name }}</h3>
+                      <p>See the programme pathways carried by this department.</p>
                       <strong>View programmes <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
                     </a>
                   }
@@ -108,14 +106,17 @@
                 <div class="structure-panel__head">
                   <div>
                     <span class="v2-kicker">Programmes</span>
-                    <h2>Programme cards connected to detail pages.</h2>
+                    <h2>Programme pathways from this department.</h2>
                   </div>
-                  <p>These are the closest live programme pathways for this department, resolved from the college catalogue and routed into the existing programme detail system.</p>
+                  <p>Each card opens a live programme page with admissions, duration, curriculum, and application guidance.</p>
                 </div>
 
                 <div class="programme-path-grid">
                   @for (programme of programmeCards(); track programme.title) {
                     <a class="programme-path-card" [routerLink]="programme.route">
+                      <div class="programme-path-card__media">
+                        <img [src]="programme.image.src" [alt]="programme.image.alt" loading="lazy" />
+                      </div>
                       <span class="programme-path-card__level">{{ programme.level }}</span>
                       <span class="programme-path-card__icon"><i class="fa-solid {{ programme.icon }}" aria-hidden="true"></i></span>
                       <h3>{{ programme.title }}</h3>
@@ -131,53 +132,6 @@
               </section>
             }
           </main>
-
-          <aside class="structure-secondary">
-            <section class="structure-side-card" data-reveal>
-              <span class="v2-kicker">Hierarchy</span>
-              <h2>Where you are</h2>
-              <ol>
-                <li><b>College</b><span>{{ currentCollege.name }}</span></li>
-                <li><b>School</b><span>{{ currentSchool.name }}</span></li>
-                @if (departmentName(); as currentDepartment) {
-                  <li><b>Department</b><span>{{ currentDepartment }}</span></li>
-                }
-              </ol>
-            </section>
-
-            <section class="structure-side-card" data-reveal>
-              <span class="v2-kicker">Research alignment</span>
-              <h2>{{ currentCollege.researchInstitute }}</h2>
-              <p>Research institutes connect programmes to advanced inquiry, policy work, publication, innovation, and public scholarship.</p>
-              <a routerLink="/academics/research-institutes">Open research directory <span aria-hidden="true">&rarr;</span></a>
-            </section>
-
-            @if (view() === 'department') {
-              <section class="structure-side-card" data-reveal>
-                <span class="v2-kicker">Same school</span>
-                <h2>Other departments</h2>
-                <div class="mini-link-stack">
-                  @for (department of currentSchool.departments; track department) {
-                    <a [routerLink]="departmentRoute(currentCollege.name, currentSchool.name, department)" [class.is-active]="department === departmentName()">
-                      {{ department }}
-                    </a>
-                  }
-                </div>
-              </section>
-            } @else {
-              <section class="structure-side-card" data-reveal>
-                <span class="v2-kicker">Same college</span>
-                <h2>Schools</h2>
-                <div class="mini-link-stack">
-                  @for (schoolItem of currentCollege.schoolStructure; track schoolItem.name) {
-                    <a [routerLink]="schoolRoute(currentCollege.name, schoolItem.name)" [class.is-active]="schoolItem.name === currentSchool.name">
-                      {{ schoolItem.name }}
-                    </a>
-                  }
-                </div>
-              </section>
-            }
-          </aside>
         </div>
       </section>
     } @else {

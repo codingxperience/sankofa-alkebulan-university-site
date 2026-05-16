@@ -8,41 +8,40 @@ export interface AcademicHeroVisual {
   readonly tone: AcademicVisualTone;
 }
 
+export interface AcademicCardVisual {
+  readonly src: string;
+  readonly alt: string;
+  readonly credit: string;
+}
+
 export const ACADEMIC_HERO_VISUALS: readonly AcademicHeroVisual[] = [
   {
-    src: 'https://images.pexels.com/photos/34162714/pexels-photo-34162714.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    alt: 'African learners studying together in a classroom',
-    label: 'Learning environments shaped around serious attention',
-    credit: 'Photo: Tosin Olowoleni / Pexels',
+    src: '/assets/design/academic-heritage.jpg',
+    alt: 'African cultural gathering and heritage expression',
+    label: 'Culture treated as knowledge, not decoration',
+    credit: 'Sankofa academic visual archive',
+    tone: 'culture',
+  },
+  {
+    src: '/assets/design/academic-science.jpg',
+    alt: 'African scholar using a laptop in a contemporary learning space',
+    label: 'Modern study with African intellectual posture',
+    credit: 'Sankofa academic visual archive',
     tone: 'study',
   },
   {
-    src: 'https://images.pexels.com/photos/8197511/pexels-photo-8197511.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    alt: 'University students studying in a lecture room',
-    label: 'Programme pathways with a clear academic home',
-    credit: 'Photo: Monstera Production / Pexels',
+    src: '/assets/design/academic-governance.jpg',
+    alt: 'Scholars reviewing documents in a governance setting',
+    label: 'Policy, law, and institutional judgement',
+    credit: 'Sankofa academic visual archive',
     tone: 'systems',
   },
   {
-    src: 'https://images.pexels.com/photos/7683734/pexels-photo-7683734.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    alt: 'Students studying outdoors with books and digital tools',
-    label: 'Schools, departments, and peer academic formation',
-    credit: 'Photo: RDNE Stock project / Pexels',
-    tone: 'study',
-  },
-  {
-    src: 'https://images.pexels.com/photos/8325912/pexels-photo-8325912.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    alt: 'Researcher working in a laboratory',
-    label: 'Research institutes connect teaching to public evidence',
-    credit: 'Photo: Mikhail Nilov / Pexels',
-    tone: 'science',
-  },
-  {
-    src: 'https://images.pexels.com/photos/7683896/pexels-photo-7683896.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    alt: 'Students collaborating in a modern learning setting',
-    label: 'A collegiate system built for movement, not confusion',
-    credit: 'Photo: RDNE Stock project / Pexels',
-    tone: 'culture',
+    src: '/assets/design/academic-health.jpg',
+    alt: 'African agricultural field work in a green landscape',
+    label: 'Land, food, climate, and public life',
+    credit: 'Sankofa academic visual archive',
+    tone: 'research',
   },
 ];
 
@@ -68,6 +67,88 @@ export function academicIconForName(value: string): string {
   if (name.includes('space') || name.includes('aerospace') || name.includes('satellite')) return 'fa-satellite';
   if (name.includes('security') || name.includes('peace') || name.includes('strategic')) return 'fa-shield-halved';
   return 'fa-building-columns';
+}
+
+export function academicImageForName(value: string): AcademicCardVisual {
+  const name = value.toLowerCase();
+
+  if (name.includes('health') || name.includes('medicine') || name.includes('pharmacy') || name.includes('pharmaceutical') || name.includes('biomedical') || name.includes('laboratory')) {
+    return {
+      src: '/assets/design/academic-health.jpg',
+      alt: 'African agricultural and public health field context',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('computing') || name.includes('data') || name.includes('digital') || name.includes('robotics') || name.includes('ai') || name.includes('telecommunication') || name.includes('software')) {
+    return {
+      src: '/assets/design/academic-science.jpg',
+      alt: 'African scholar using a laptop in a contemporary learning space',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('law') || name.includes('justice') || name.includes('governance') || name.includes('diplomacy') || name.includes('policy') || name.includes('security') || name.includes('peace')) {
+    return {
+      src: '/assets/design/academic-governance.jpg',
+      alt: 'Scholars reviewing documents in a governance setting',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('agriculture') || name.includes('food') || name.includes('climate') || name.includes('environment') || name.includes('water') || name.includes('ecology') || name.includes('hemp')) {
+    return {
+      src: '/assets/design/academic-health.jpg',
+      alt: 'African agricultural field work in a green landscape',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('divine') || name.includes('religion') || name.includes('spiritual') || name.includes('wisdom') || name.includes('sacred') || name.includes('civilisation') || name.includes('indigenous')) {
+    return {
+      src: '/assets/design/academic-heritage.jpg',
+      alt: 'African cultural gathering and heritage expression',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('arts') || name.includes('media') || name.includes('language') || name.includes('creative') || name.includes('culture') || name.includes('tourism')) {
+    return {
+      src: '/assets/design/academic-heritage.jpg',
+      alt: 'African cultural gathering and heritage expression',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('engineering') || name.includes('manufacturing') || name.includes('energy') || name.includes('infrastructure') || name.includes('architecture') || name.includes('urban') || name.includes('transport') || name.includes('space') || name.includes('aerospace')) {
+    return {
+      src: '/assets/design/academic-science.jpg',
+      alt: 'African scholar using a laptop in a contemporary learning space',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('business') || name.includes('finance') || name.includes('banking') || name.includes('trade') || name.includes('entrepreneurship') || name.includes('logistics')) {
+    return {
+      src: '/assets/design/academic-governance.jpg',
+      alt: 'Scholars reviewing documents in a governance setting',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  if (name.includes('sports') || name.includes('psychology') || name.includes('performance') || name.includes('human development')) {
+    return {
+      src: '/assets/design/academic-science.jpg',
+      alt: 'African scholar using a laptop in a contemporary learning space',
+      credit: 'Sankofa academic visual archive',
+    };
+  }
+
+  return {
+    src: '/assets/design/academic-science.jpg',
+    alt: 'African scholar using a laptop in a contemporary learning space',
+    credit: 'Sankofa academic visual archive',
+  };
 }
 
 export function collegeRoute(collegeName: string): readonly string[] {
@@ -115,7 +196,7 @@ export function programmeDuration(programme: string): string {
 
 export function programmeSummary(programme: string, collegeName: string): string {
   const level = programmeLevel(programme).toLowerCase();
-  return `${programme} is a ${level} pathway housed in ${collegeName}, connected to school-level teaching, departmental ownership, and research alignment.`;
+  return `${programme} is a ${level} pathway in ${collegeName}, linked to its school, department, and research home.`;
 }
 
 const PROGRAMME_STOP_WORDS = new Set([

@@ -4,9 +4,9 @@
       <div class="v2-container">
         <nav aria-label="Breadcrumb">
           <a routerLink="/faculties-schools">Academics</a>
-          <span aria-hidden="true">›</span>
+          <span aria-hidden="true">&rsaquo;</span>
           <a [routerLink]="sourcePagePath()">{{ sourcePageLabel() }}</a>
-          <span aria-hidden="true">›</span>
+          <span aria-hidden="true">&rsaquo;</span>
           <span class="here" aria-current="page">{{ program.title }}</span>
         </nav>
         <div class="actions" aria-label="Programme actions">
@@ -24,7 +24,7 @@
       <div class="pd-hero__dots" aria-hidden="true"></div>
       <div class="v2-container pd-hero__grid">
         <div class="pd-hero__copy">
-          <span class="v2-kicker">{{ levelLabel() }} · {{ program.award }}</span>
+          <span class="v2-kicker">{{ levelLabel() }} &middot; {{ program.award }}</span>
           <h1 id="program-title">{{ program.title }}</h1>
           @for (paragraph of overviewParagraphs().slice(0, 2); track paragraph) {
             <p class="pd-hero__lead">{{ paragraph }}</p>
@@ -44,7 +44,7 @@
           <div class="row"><span class="lbl">Application deadline</span><b>30 June 2026</b></div>
           <div class="row"><span class="lbl">Next intake</span><b>{{ intakeTerm() }}</b></div>
           <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg apply-cta">
-            Apply for 2026 intake <span aria-hidden="true">→</span>
+            Apply for 2026 intake <span aria-hidden="true">&rarr;</span>
           </a>
           <p class="note">Saved progress, document uploads, and status tracking are handled in the applicant workflow.</p>
         </aside>
@@ -170,7 +170,7 @@
               <div>
                 <b>{{ sourcePageLabel() }}</b>
                 <span>{{ program.award }} programme</span>
-                <a [routerLink]="sourcePagePath()">View school →</a>
+                <a [routerLink]="sourcePagePath()">View academic home &rarr;</a>
               </div>
             </div>
           </div>
@@ -180,7 +180,7 @@
               <h5>Related programmes</h5>
               <ul class="links">
                 @for (related of page.featuredDepartment.programs.slice(0, 4); track related.title) {
-                  <li><a [routerLink]="sourcePagePath()">{{ related.title }} →</a></li>
+                  <li><a [routerLink]="sourcePagePath()">{{ related.title }} &rarr;</a></li>
                 }
               </ul>
             </div>
@@ -218,15 +218,15 @@
           <h2 id="programme-apply-title">One application. Saved as you go.</h2>
           <p>Begin the 2026 application, upload documents, return through your applicant account, and track status from one place.</p>
         </div>
-        <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg">Begin an application <span aria-hidden="true">→</span></a>
+        <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg">Begin an application <span aria-hidden="true">&rarr;</span></a>
       </div>
     </section>
   } @else {
     <section class="pd-not-found">
-      <span class="v2-kicker">Programme lookup</span>
+      <span class="v2-kicker">Academic route</span>
       <h1>Programme details unavailable</h1>
-      <p>We could not find the requested programme details. Please return to the programmes directory.</p>
-      <a class="v2-btn v2-btn--primary" [routerLink]="['/home', level() || 'bachelors']">Return to programmes</a>
+      <p>This path did not match a live programme page. Return to the academic architecture and continue from the correct college, school, or department.</p>
+      <a class="v2-btn v2-btn--primary" routerLink="/academics/colleges">Back to academic architecture</a>
     </section>
   }
 </main>

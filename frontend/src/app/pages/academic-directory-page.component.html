@@ -44,15 +44,10 @@
             <a routerLink="/academics/colleges" class="v2-btn v2-btn--ghost v2-btn--lg">View colleges</a>
           }
         </div>
-        <div class="directory-hero-metrics" aria-label="Directory metrics">
-          <div><b>{{ config().count }}</b><span>{{ config().label }}</span></div>
-          <div><b>{{ visibleCount() }}</b><span>visible now</span></div>
-          <div><b>{{ heroIndex() + 1 }}</b><span>visual frame</span></div>
-        </div>
       </div>
     </div>
 
-    <div class="directory-dots" aria-label="Academic image carousel pagination">
+    <div class="directory-carousel-dots" aria-label="Academic image carousel pagination">
       @for (visual of heroVisuals; track visual.src; let index = $index) {
         <button
           type="button"
@@ -77,9 +72,12 @@
       </div>
 
       @if (mode() === 'colleges') {
-        <div class="college-card-grid" data-reveal>
+        <div class="college-card-grid">
           @for (row of filteredColleges(); track row.college.id) {
             <a class="college-card" [routerLink]="collegeRoute(row.college.name)">
+              <div class="directory-card-media">
+                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
+              </div>
               <div class="college-card__top">
                 <span class="college-card__num">{{ row.college.id.toString().padStart(2, '0') }}</span>
                 <span class="college-card__icon"><i class="fa-solid {{ collegeIcon(row) }}" aria-hidden="true"></i></span>
@@ -108,9 +106,12 @@
       }
 
       @if (mode() === 'schools') {
-        <div class="school-card-grid" data-reveal>
+        <div class="school-card-grid">
           @for (row of filteredSchools(); track row.college + row.name) {
             <a class="school-card" [routerLink]="schoolRoute(row.college, row.name)">
+              <div class="directory-card-media">
+                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
+              </div>
               <span class="school-card__icon"><i class="fa-solid {{ schoolIcon(row) }}" aria-hidden="true"></i></span>
               <span class="school-card__college">{{ row.college }}</span>
               <h2>{{ row.name }}</h2>
@@ -130,9 +131,12 @@
       }
 
       @if (mode() === 'departments') {
-        <div class="department-grid" data-reveal>
+        <div class="department-grid">
           @for (row of filteredDepartments(); track row.college + row.school + row.name) {
             <a class="department-tile" [routerLink]="departmentRoute(row.college, row.school, row.name)">
+              <div class="directory-card-media">
+                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
+              </div>
               <span class="department-tile__college">{{ row.college }}</span>
               <span class="department-tile__icon"><i class="fa-solid {{ departmentIcon(row) }}" aria-hidden="true"></i></span>
               <h2>{{ row.name }}</h2>
@@ -144,9 +148,12 @@
       }
 
       @if (mode() === 'research') {
-        <div class="research-grid" data-reveal>
+        <div class="research-grid">
           @for (row of filteredResearch(); track row.name) {
             <article class="research-tile">
+              <div class="directory-card-media">
+                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
+              </div>
               <span class="research-tile__icon"><i class="fa-solid fa-flask"></i></span>
               <h2>{{ row.name }}</h2>
               @if (row.alignedColleges.length) {

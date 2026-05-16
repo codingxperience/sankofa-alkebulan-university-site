@@ -11,10 +11,12 @@ import {
 import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments';
 import {
   ACADEMIC_HERO_VISUALS,
+  type AcademicCardVisual,
+  academicImageForName,
   academicIconForName,
-  collegeRoute,
-  departmentRoute,
-  schoolRoute,
+  collegeRoute as buildCollegeRoute,
+  departmentRoute as buildDepartmentRoute,
+  schoolRoute as buildSchoolRoute,
   slugifyAcademic,
 } from '../university/academic-navigation';
 
@@ -26,6 +28,7 @@ interface CollegeRow {
   readonly schools: number;
   readonly departments: number;
   readonly programmes: number;
+  readonly image: AcademicCardVisual;
 }
 
 interface SchoolRow {
@@ -34,6 +37,7 @@ interface SchoolRow {
   readonly collegeSlug: string;
   readonly schoolSlug: string;
   readonly departments: readonly string[];
+  readonly image: AcademicCardVisual;
 }
 
 interface DepartmentRow {
@@ -43,11 +47,13 @@ interface DepartmentRow {
   readonly collegeSlug: string;
   readonly schoolSlug: string;
   readonly departmentSlug: string;
+  readonly image: AcademicCardVisual;
 }
 
 interface ResearchRow {
   readonly name: string;
   readonly alignedColleges: readonly string[];
+  readonly image: AcademicCardVisual;
 }
 
 @Component({
@@ -83,6 +89,7 @@ export class AcademicDirectoryPageComponent {
     schools: college.schoolStructure.length,
     departments: college.schoolStructure.reduce((total, school) => total + school.departments.length, 0),
     programmes: college.programmes.length,
+    image: academicImageForName(college.name),
   }));
 
   readonly schoolRows: readonly SchoolRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
@@ -92,6 +99,7 @@ export class AcademicDirectoryPageComponent {
       collegeSlug: slugifyAcademic(college.name),
       schoolSlug: slugifyAcademic(school.name),
       departments: school.departments,
+      image: academicImageForName(`${college.name} ${school.name}`),
     })),
   );
 
@@ -104,6 +112,7 @@ export class AcademicDirectoryPageComponent {
         collegeSlug: slugifyAcademic(college.name),
         schoolSlug: slugifyAcademic(school.name),
         departmentSlug: slugifyAcademic(department),
+        image: academicImageForName(`${college.name} ${school.name} ${department}`),
       })),
     ),
   );
@@ -113,6 +122,7 @@ export class AcademicDirectoryPageComponent {
     alignedColleges: ACADEMIC_ARCHITECTURE_COLLEGES
       .filter((college) => college.researchInstitute === name || college.researchAlignment === name)
       .map((college) => college.name),
+    image: academicImageForName(name),
   }));
 
   readonly config = computed(() => {
@@ -120,8 +130,8 @@ export class AcademicDirectoryPageComponent {
       case 'schools':
         return {
           eyebrow: 'Schools directory',
-          title: 'Schools translate colleges into teachable academic worlds.',
-          lead: 'Schools are listed as academic chapters under their parent colleges. Open a school to see its department cards, then continue into programme pathways.',
+          title: 'Schools give each college its method.',
+          lead: 'Choose a school, then enter the departments that hold teaching, research, and programme pathways.',
           count: this.totals.schools,
           label: 'schools',
           placeholder: 'Search by school, college, or department',
@@ -129,8 +139,8 @@ export class AcademicDirectoryPageComponent {
       case 'departments':
         return {
           eyebrow: 'Departments directory',
-          title: 'Departments make the academic system precise.',
-          lead: 'Departments are shown with their school and college context. Open a department to see the closest programme pathways connected to that academic ownership.',
+          title: 'Departments hold the work.',
+          lead: 'A department is where the subject becomes curriculum, supervision, research, and a path into programmes.',
           count: this.totals.departments,
           label: 'departments',
           placeholder: 'Search by department, school, or college',
@@ -138,8 +148,8 @@ export class AcademicDirectoryPageComponent {
       case 'research':
         return {
           eyebrow: 'Research institutes',
-          title: 'Research has its own architecture beyond the programme catalogue.',
-          lead: 'Institutes carry advanced research, policy advisory work, publication, innovation, and cross-college collaboration.',
+          title: 'Research is a public instrument.',
+          lead: 'Institutes carry inquiry beyond the classroom into publication, policy, innovation, and continental service.',
           count: this.totals.researchInstitutes,
           label: 'institutes',
           placeholder: 'Search by institute or aligned college',
@@ -148,8 +158,8 @@ export class AcademicDirectoryPageComponent {
       default:
         return {
           eyebrow: 'Colleges directory',
-          title: 'Colleges are the first layer of the Sankofa academic estate.',
-          lead: 'Start with a college, then move into its schools. Each school opens departments, and each department leads to programme detail pages.',
+          title: 'Choose the question, then the college.',
+          lead: 'Each college holds a field of responsibility. From there, the route moves to schools, departments, and live programme pages.',
           count: this.totals.colleges,
           label: 'colleges',
           placeholder: 'Search by college, school, programme, or institute',
@@ -231,15 +241,15 @@ export class AcademicDirectoryPageComponent {
   }
 
   collegeRoute(name: string): readonly string[] {
-    return collegeRoute(name);
+    return buildCollegeRoute(name);
   }
 
   schoolRoute(collegeName: string, schoolName: string): readonly string[] {
-    return schoolRoute(collegeName, schoolName);
+    return buildSchoolRoute(collegeName, schoolName);
   }
 
   departmentRoute(collegeName: string, schoolName: string, departmentName: string): readonly string[] {
-    return departmentRoute(collegeName, schoolName, departmentName);
+    return buildDepartmentRoute(collegeName, schoolName, departmentName);
   }
 
   preview(items: readonly string[], count = 4): readonly string[] {

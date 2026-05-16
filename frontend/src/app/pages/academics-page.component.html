@@ -23,9 +23,8 @@
           <span class="v2-kicker">Academic architecture</span>
           <h1 id="ac-hero">Choose by the question, <span class="accent">not the catalogue.</span></h1>
           <p class="pg-hero__lead">
-            Sankofa's academic system is now separated into clear layers: colleges, schools,
-            departments, programmes, and research institutes. This page is the front door;
-            the full architecture lives on dedicated pages so every layer can breathe.
+            Colleges hold the question. Schools give it method. Departments hold the work.
+            Programmes become awards. Institutes carry research into public life.
           </p>
           <div class="pg-hero__actions">
             <a routerLink="/admissions" class="v2-btn v2-btn--primary v2-btn--lg">Apply for September 2026 <span aria-hidden="true">&rarr;</span></a>
@@ -33,22 +32,25 @@
           </div>
         </div>
         <aside class="ac-hero__search">
-          <span class="v2-kicker">Open the system</span>
-          <div class="ac-architecture-counts" aria-label="Academic architecture totals">
-            <b>{{ totals.colleges }}</b><span>colleges</span>
-            <b>{{ totals.schools }}</b><span>schools</span>
-            <b>{{ totals.departments }}</b><span>departments</span>
-            <b>{{ totals.programmes }}</b><span>programmes</span>
-          </div>
+          <span class="v2-kicker">Find your academic route</span>
+          <label class="ac-live-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+              type="search"
+              [value]="searchQuery()"
+              placeholder="Search colleges, schools, departments, programmes"
+              (input)="setSearch($any($event.target).value)"
+            />
+          </label>
           <div class="ac-hero__chips">
             @for (chip of heroChips; track chip.label) {
               <a class="v2-chip" [routerLink]="chip.route"><i class="fa-solid {{ chip.icon }}"></i>{{ chip.label }}</a>
             }
           </div>
           <ul class="ac-hero__quick">
-            @for (p of quickProgrammes; track p.b) {
+            @for (p of searchResults(); track p.label) {
               <li>
-                <a [routerLink]="p.route"><b>{{ p.b }}</b><span>{{ p.s }}</span></a>
+                <a [routerLink]="p.route"><b>{{ p.label }}</b><span>{{ p.eyebrow }} - {{ p.description }}</span></a>
               </li>
             }
           </ul>
@@ -62,23 +64,29 @@
     <div class="v2-container">
       <div class="v2-section-head" data-reveal>
         <span class="v2-kicker">Featured academic system</span>
-        <h2>{{ featuredCollege.name }}.</h2>
+        <h2>One college, one living route.</h2>
       </div>
       <article class="ac-feature" data-reveal>
         <div class="ac-feature__img">
-          <img src="assets/academic-civilization-culture.jpg" alt="African students in a cultural learning environment" />
-          <span class="stamp">College - Sacred knowledge, ethics, consciousness</span>
-          <div class="overlay">
-            <h3>Not every knowledge system fits inside a conventional faculty.</h3>
-            <p>{{ featuredCollege.name }} holds sacred knowledge, consciousness, ethics, healing, symbolism, and future civilisations as a serious academic estate.</p>
-          </div>
+          <img [src]="featuredImage().src" [alt]="featuredImage().alt" />
+          <span class="stamp">{{ featuredImage().credit }}</span>
         </div>
         <div class="ac-feature__body">
+          <div class="ac-feature__intro">
+            <span class="v2-kicker">Featured college</span>
+            <h3>{{ featuredCollege().name }}</h3>
+            <p>{{ featuredCollege().researchInstitute }}</p>
+            <div class="ac-feature__stats" aria-label="Featured college summary">
+              <span><b>{{ featuredCollege().schoolStructure.length }}</b> schools</span>
+              <span><b>{{ featuredCollege().programmes.length }}</b> programmes</span>
+              <span><b>{{ featuredCollege().id.toString().padStart(2, '0') }}</b> college</span>
+            </div>
+          </div>
           <div class="grid">
             <div>
-              <h4>Six anchor questions</h4>
+              <h4>Anchor questions</h4>
               <ul>
-                @for (q of anchorQuestions; track q) {
+                @for (q of anchorQuestions(); track q) {
                   <li>{{ q }}</li>
                 }
               </ul>
@@ -86,7 +94,7 @@
             <div>
               <h4>Featured programmes</h4>
               <ul class="ac-list">
-                @for (p of featureProgrammes; track p.b) {
+                @for (p of featureProgrammes(); track p.b) {
                   <li>
                     <a [routerLink]="p.route"><b>{{ p.b }}</b><span>{{ p.s }}</span></a>
                   </li>
@@ -95,8 +103,8 @@
             </div>
           </div>
           <div class="ac-feature__foot">
-            <a [routerLink]="['/academics/colleges', slugify(featuredCollege.name)]" class="v2-btn v2-btn--primary">Visit the college <span aria-hidden="true">&rarr;</span></a>
-            <span class="meta"><i class="fa-regular fa-clock"></i> Updated - 2026</span>
+            <a [routerLink]="['/academics/colleges', slugify(featuredCollege().name)]" class="v2-btn v2-btn--primary">Visit the college <span aria-hidden="true">&rarr;</span></a>
+            <span class="meta"><i class="fa-regular fa-clock"></i> Rotates every 2 minutes</span>
           </div>
         </div>
       </article>
@@ -109,12 +117,12 @@
       <div class="v2-section-head v2-section-head--split" data-reveal>
         <div>
           <span class="v2-kicker">Colleges - schools - departments - institutes</span>
-          <h2>One system, separated into the right pages.</h2>
+          <h2>A clear route through the academic estate.</h2>
         </div>
-        <p class="right">The overview stays clean. The full academic architecture remains complete, searchable, and deeper where it belongs.</p>
+        <p class="right">Start broad, then move with intention: college, school, department, programme, research.</p>
       </div>
       <div class="ac-cols" data-reveal>
-        @for (lane of architectureLanes; track lane.num) {
+        @for (lane of architectureLanes(); track lane.num) {
           <a class="ac-col" [class.is-feature]="lane.feature" [routerLink]="lane.route">
             <span class="num">{{ lane.num }}</span>
             <div>

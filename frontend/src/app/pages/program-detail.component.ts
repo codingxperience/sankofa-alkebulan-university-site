@@ -117,7 +117,15 @@ export class ProgramDetailComponent {
 
   readonly sourcePagePath = computed(() => {
     const page = this.sourcePage();
-    return page ? getDepartmentPagePath(page) : '/home';
+    if (!page) {
+      return '/academics/colleges';
+    }
+
+    const architectureCollege = ACADEMIC_ARCHITECTURE_COLLEGES.find(
+      (college) => this.normalizeSlug(college.name) === page.slug,
+    );
+
+    return architectureCollege ? `/academics/colleges/${page.slug}` : getDepartmentPagePath(page);
   });
 
   readonly studyLabel = computed(() => {

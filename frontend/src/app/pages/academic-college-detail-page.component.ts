@@ -9,15 +9,22 @@ import {
 } from '../university/academic-architecture';
 import {
   ACADEMIC_HERO_VISUALS,
+  type AcademicCardVisual,
+  academicImageForName,
   academicIconForName,
-  schoolRoute,
+  schoolRoute as buildSchoolRoute,
   slugifyAcademic,
 } from '../university/academic-navigation';
+import type { AcademicArchitectureSchool } from '../university/academic-departments';
 
 interface UnitGroup {
   readonly title: string;
   readonly icon: string;
   readonly items: readonly string[];
+}
+
+interface SchoolCard extends AcademicArchitectureSchool {
+  readonly image: AcademicCardVisual;
 }
 
 @Component({
@@ -45,6 +52,15 @@ export class AcademicCollegeDetailPageComponent {
   readonly departmentCount = computed(() =>
     this.college()?.schoolStructure.reduce((total, school) => total + school.departments.length, 0) ?? 0,
   );
+
+  readonly schoolCards = computed<readonly SchoolCard[]>(() => {
+    const college = this.college();
+    if (!college) return [];
+    return college.schoolStructure.map((school) => ({
+      ...school,
+      image: academicImageForName(`${college.name} ${school.name}`),
+    }));
+  });
 
   readonly unitGroups = computed<readonly UnitGroup[]>(() => {
     const college = this.college();
@@ -75,7 +91,7 @@ export class AcademicCollegeDetailPageComponent {
   }
 
   schoolRoute(collegeName: string, schoolName: string): readonly string[] {
-    return schoolRoute(collegeName, schoolName);
+    return buildSchoolRoute(collegeName, schoolName);
   }
 
   slugify(value: string): string {

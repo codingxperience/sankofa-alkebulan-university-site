@@ -1,8 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../directives/reveal.directive';
 import { ACADEMIC_ARCHITECTURE_COLLEGES, ACADEMIC_ARCHITECTURE_TOTALS } from '../university/academic-architecture';
 import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments';
+import {
+  academicImageForName,
+  programmeRoute,
+  slugifyAcademic,
+} from '../university/academic-navigation';
+
+interface AcademicSearchResult {
+  readonly label: string;
+  readonly eyebrow: string;
+  readonly description: string;
+  readonly route: readonly string[] | string;
+}
 
 @Component({
   selector: 'app-academics-page',
@@ -12,8 +24,14 @@ import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments
   styleUrl: './academics-page.component.scss',
 })
 export class AcademicsPageComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
   readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
-  readonly featuredCollege = ACADEMIC_ARCHITECTURE_COLLEGES.find((college) => college.id === 50) ?? ACADEMIC_ARCHITECTURE_COLLEGES[0];
+  readonly searchQuery = signal('');
+  readonly featuredIndex = signal(0);
+
+  readonly featuredCollege = computed(() => ACADEMIC_ARCHITECTURE_COLLEGES[this.featuredIndex() % ACADEMIC_ARCHITECTURE_COLLEGES.length]);
+  readonly featuredImage = computed(() => academicImageForName(this.featuredCollege().name));
 
   readonly heroChips = [
     { icon: 'fa-building-columns', label: 'Colleges', route: '/academics/colleges' },
@@ -22,84 +40,138 @@ export class AcademicsPageComponent {
     { icon: 'fa-flask', label: 'Research institutes', route: '/academics/research-institutes' },
   ];
 
-  readonly quickProgrammes = [
-    { b: 'Bachelor of Divine Wisdom Studies', s: 'Undergraduate - College of Divine Wisdom', route: '/programmes/bachelor-of-divine-wisdom-studies' },
-    { b: 'MA - Pan-African Studies', s: 'Postgraduate - September 2026', route: '/programmes/ma-pan-african-studies' },
-    { b: 'PhD - Indigenous Knowledge Systems', s: 'Doctoral - Epistemic systems', route: '/programmes/phd-indigenous-knowledge-systems' },
-    { b: 'BSc - Artificial Intelligence', s: 'Undergraduate - Computing & digital systems', route: '/programmes/bsc-artificial-intelligence' },
+  readonly allSearchItems: readonly AcademicSearchResult[] = [
+    ...ACADEMIC_ARCHITECTURE_COLLEGES.map((college) => ({
+      label: college.name,
+      eyebrow: 'College',
+      description: `${college.schoolStructure.length} schools, ${college.programmes.length} programmes, ${college.researchInstitute}`,
+      route: ['/academics/colleges', slugifyAcademic(college.name)] as const,
+    })),
+    ...ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
+      college.schoolStructure.map((school) => ({
+        label: school.name,
+        eyebrow: 'School',
+        description: `${school.departments.length} departments inside ${college.name}`,
+        route: ['/academics/colleges', slugifyAcademic(college.name), 'schools', slugifyAcademic(school.name)] as const,
+      })),
+    ),
+    ...ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
+      college.schoolStructure.flatMap((school) =>
+        school.departments.map((department) => ({
+          label: department,
+          eyebrow: 'Department',
+          description: `${school.name} - ${college.name}`,
+          route: [
+            '/academics/colleges',
+            slugifyAcademic(college.name),
+            'schools',
+            slugifyAcademic(school.name),
+            'departments',
+            slugifyAcademic(department),
+          ] as const,
+        })),
+      ),
+    ),
+    ...ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
+      college.programmes.map((programme) => ({
+        label: programme,
+        eyebrow: 'Programme',
+        description: college.name,
+        route: programmeRoute(programme),
+      })),
+    ),
   ];
 
-  readonly anchorQuestions = [
-    'How do colleges organise serious African and global knowledge without flattening it?',
-    'Where do schools, departments, programmes, and institutes meet in the academic journey?',
-    'How does a student move from field of interest to recognised professional identity?',
-    'Which research institute carries each programme into public scholarship and innovation?',
-    'How do indigenous, scientific, technological, civic, and sacred knowledge systems coexist?',
-    'What is the clearest route from admission to study, research, publication, and service?',
-  ];
+  readonly searchResults = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    if (!query) {
+      return this.allSearchItems
+        .filter((item) => ['College', 'Programme'].includes(item.eyebrow))
+        .slice(0, 5);
+    }
 
-  readonly featureProgrammes = this.featuredCollege.programmes.slice(0, 7).map((programme) => ({
-    b: programme,
-    s: this.programmePathway(programme),
-    route: ['/programmes', this.slugify(programme)],
-  }));
+    return this.allSearchItems
+      .filter((item) => `${item.label} ${item.eyebrow} ${item.description}`.toLowerCase().includes(query))
+      .slice(0, 7);
+  });
 
-  readonly architectureLanes = [
-    {
-      num: '01',
-      feature: true,
-      b: 'Colleges',
-      p: 'The highest academic homes. Each college gathers schools, programmes, research alignment, and professional direction.',
-      icon: 'fa-building-columns',
-      tags: `${this.totals.colleges} colleges`,
-      route: '/academics/colleges',
-    },
-    {
-      num: '02',
-      feature: false,
-      b: 'Schools',
-      p: 'The method layer. Schools group related disciplines and show how broad fields become teachable academic systems.',
-      icon: 'fa-sitemap',
-      tags: `${this.totals.schools} schools`,
-      route: '/academics/schools',
-    },
-    {
-      num: '03',
-      feature: false,
-      b: 'Departments',
-      p: 'The delivery layer. Departments hold curriculum ownership, teaching focus, and research responsibilities.',
-      icon: 'fa-layer-group',
-      tags: `${this.totals.departments} departments`,
-      route: '/academics/departments',
-    },
-    {
-      num: '04',
-      feature: false,
-      b: 'Programmes',
-      p: 'The award layer. Certificates, diplomas, bachelor degrees, master degrees, and doctoral pathways are kept separate from the overview.',
-      icon: 'fa-graduation-cap',
-      tags: `${this.totals.programmes} programmes`,
-      route: '/programmes',
-    },
-    {
-      num: '05',
-      feature: false,
-      b: 'Research Institutes',
-      p: 'The advanced knowledge layer. Institutes carry cross-disciplinary research, policy work, publishing, and innovation.',
-      icon: 'fa-flask',
-      tags: `${ACADEMIC_RESEARCH_INSTITUTES.length} institutes`,
-      route: '/academics/research-institutes',
-    },
-    {
-      num: '06',
-      feature: false,
-      b: 'College of Divine Wisdom',
-      p: 'A complete sacred knowledge, consciousness, ethics, and civilisational transformation architecture.',
-      icon: 'fa-dove',
-      tags: `${this.featuredCollege.schools.length} schools - ${this.featuredCollege.programmes.length} programmes`,
-      route: ['/academics/colleges', this.slugify(this.featuredCollege.name)],
-    },
-  ];
+  readonly anchorQuestions = computed(() => {
+    const college = this.featuredCollege();
+    return [
+      `What question is ${college.name} brave enough to hold?`,
+      'Which school gives that question a method?',
+      'Where does it become curriculum, supervision, and public work?',
+      'Which programme lets a learner carry it into recognised practice?',
+    ];
+  });
+
+  readonly featureProgrammes = computed(() =>
+    this.featuredCollege().programmes.slice(0, 7).map((programme) => ({
+      b: programme,
+      s: this.programmePathway(programme),
+      route: programmeRoute(programme),
+    })),
+  );
+
+  readonly architectureLanes = computed(() => {
+    const featured = this.featuredCollege();
+    return [
+      {
+        num: '01',
+        feature: true,
+        b: 'Colleges',
+        p: 'Where the question lives.',
+        icon: 'fa-building-columns',
+        tags: `${this.totals.colleges} colleges`,
+        route: '/academics/colleges',
+      },
+      {
+        num: '02',
+        feature: false,
+        b: 'Schools',
+        p: 'Where the method forms.',
+        icon: 'fa-sitemap',
+        tags: `${this.totals.schools} schools`,
+        route: '/academics/schools',
+      },
+      {
+        num: '03',
+        feature: false,
+        b: 'Departments',
+        p: 'Where teaching and research are held.',
+        icon: 'fa-layer-group',
+        tags: `${this.totals.departments} departments`,
+        route: '/academics/departments',
+      },
+      {
+        num: '04',
+        feature: false,
+        b: 'Programmes',
+        p: 'Where study becomes an award.',
+        icon: 'fa-graduation-cap',
+        tags: `${this.totals.programmes} programmes`,
+        route: '/programmes',
+      },
+      {
+        num: '05',
+        feature: false,
+        b: 'Research Institutes',
+        p: 'Where scholarship meets public consequence.',
+        icon: 'fa-flask',
+        tags: `${ACADEMIC_RESEARCH_INSTITUTES.length} institutes`,
+        route: '/academics/research-institutes',
+      },
+      {
+        num: '06',
+        feature: false,
+        b: featured.name,
+        p: `${featured.researchInstitute}.`,
+        icon: 'fa-dove',
+        tags: `${featured.schools.length} schools - ${featured.programmes.length} programmes`,
+        route: ['/academics/colleges', slugifyAcademic(featured.name)],
+      },
+    ];
+  });
 
   readonly pathways = [
     {
@@ -164,6 +236,20 @@ export class AcademicsPageComponent {
     'Research institutes stay visible as the bridge between teaching, policy, publication, and innovation.',
   ];
 
+  constructor() {
+    if (typeof window !== 'undefined') {
+      this.featuredIndex.set(Math.floor(Math.random() * ACADEMIC_ARCHITECTURE_COLLEGES.length));
+      const timer = window.setInterval(() => {
+        this.featuredIndex.set(Math.floor(Math.random() * ACADEMIC_ARCHITECTURE_COLLEGES.length));
+      }, 120000);
+      this.destroyRef.onDestroy(() => window.clearInterval(timer));
+    }
+  }
+
+  setSearch(value: string): void {
+    this.searchQuery.set(value);
+  }
+
   programmePathway(programme: string): string {
     if (programme.startsWith('PhD')) return 'Doctoral pathway';
     if (programme.startsWith('Master') || programme.startsWith('MSc') || programme.startsWith('MA')) return 'Postgraduate pathway';
@@ -173,11 +259,7 @@ export class AcademicsPageComponent {
   }
 
   slugify(value: string): string {
-    return value
-      .toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    return slugifyAcademic(value);
   }
 
   private instituteSummary(name: string): string {
