@@ -9,22 +9,16 @@ import {
   type AcademicArchitectureCollege,
 } from '../university/academic-architecture';
 import { ACADEMIC_RESEARCH_INSTITUTES } from '../university/academic-departments';
+import {
+  ACADEMIC_HERO_VISUALS,
+  academicIconForName,
+  collegeRoute,
+  departmentRoute,
+  schoolRoute,
+  slugifyAcademic,
+} from '../university/academic-navigation';
 
 type AcademicDirectoryMode = 'colleges' | 'schools' | 'departments' | 'research';
-
-interface AcademicNavLink {
-  readonly label: string;
-  readonly route: string;
-  readonly icon: string;
-  readonly mode: AcademicDirectoryMode;
-}
-
-interface HeroVisual {
-  readonly src: string;
-  readonly alt: string;
-  readonly label: string;
-  readonly credit: string;
-}
 
 interface CollegeRow {
   readonly college: AcademicArchitectureCollege;
@@ -38,6 +32,7 @@ interface SchoolRow {
   readonly name: string;
   readonly college: string;
   readonly collegeSlug: string;
+  readonly schoolSlug: string;
   readonly departments: readonly string[];
 }
 
@@ -46,6 +41,8 @@ interface DepartmentRow {
   readonly school: string;
   readonly college: string;
   readonly collegeSlug: string;
+  readonly schoolSlug: string;
+  readonly departmentSlug: string;
 }
 
 interface ResearchRow {
@@ -66,34 +63,7 @@ export class AcademicDirectoryPageComponent {
   readonly query = signal('');
   readonly heroIndex = signal(0);
   readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
-
-  readonly academicNav: readonly AcademicNavLink[] = [
-    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', mode: 'colleges' },
-    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap', mode: 'schools' },
-    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group', mode: 'departments' },
-    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask', mode: 'research' },
-  ];
-
-  readonly heroVisuals: readonly HeroVisual[] = [
-    {
-      src: 'https://images.pexels.com/photos/34162714/pexels-photo-34162714.jpeg?auto=compress&cs=tinysrgb&w=1400',
-      alt: 'African learners studying together in a classroom',
-      label: 'Focused African learning environments',
-      credit: 'Photo: Tosin Olowoleni / Pexels',
-    },
-    {
-      src: 'https://images.pexels.com/photos/7683902/pexels-photo-7683902.jpeg?auto=compress&cs=tinysrgb&w=1400',
-      alt: 'Students gathered around an outdoor campus table',
-      label: 'Schools, methods, and academic community',
-      credit: 'Photo: RDNE Stock project / Pexels',
-    },
-    {
-      src: 'https://images.pexels.com/photos/7683734/pexels-photo-7683734.jpeg?auto=compress&cs=tinysrgb&w=1400',
-      alt: 'University students studying outdoors with books and tablets',
-      label: 'Departments, programmes, and practice',
-      credit: 'Photo: RDNE Stock project / Pexels',
-    },
-  ];
+  readonly heroVisuals = ACADEMIC_HERO_VISUALS;
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -119,7 +89,8 @@ export class AcademicDirectoryPageComponent {
     college.schoolStructure.map((school) => ({
       name: school.name,
       college: college.name,
-      collegeSlug: this.slugify(college.name),
+      collegeSlug: slugifyAcademic(college.name),
+      schoolSlug: slugifyAcademic(school.name),
       departments: school.departments,
     })),
   );
@@ -130,7 +101,9 @@ export class AcademicDirectoryPageComponent {
         name: department,
         school: school.name,
         college: college.name,
-        collegeSlug: this.slugify(college.name),
+        collegeSlug: slugifyAcademic(college.name),
+        schoolSlug: slugifyAcademic(school.name),
+        departmentSlug: slugifyAcademic(department),
       })),
     ),
   );
@@ -148,7 +121,7 @@ export class AcademicDirectoryPageComponent {
         return {
           eyebrow: 'Schools directory',
           title: 'Schools translate colleges into teachable academic worlds.',
-          lead: 'Schools are listed as academic chapters under their parent colleges. Open the college when you want the full schools, departments, programmes, and research connection.',
+          lead: 'Schools are listed as academic chapters under their parent colleges. Open a school to see its department cards, then continue into programme pathways.',
           count: this.totals.schools,
           label: 'schools',
           placeholder: 'Search by school, college, or department',
@@ -157,7 +130,7 @@ export class AcademicDirectoryPageComponent {
         return {
           eyebrow: 'Departments directory',
           title: 'Departments make the academic system precise.',
-          lead: 'Departments are shown with their school and college context, so the user knows exactly where curriculum ownership sits before moving into programmes.',
+          lead: 'Departments are shown with their school and college context. Open a department to see the closest programme pathways connected to that academic ownership.',
           count: this.totals.departments,
           label: 'departments',
           placeholder: 'Search by department, school, or college',
@@ -176,7 +149,7 @@ export class AcademicDirectoryPageComponent {
         return {
           eyebrow: 'Colleges directory',
           title: 'Colleges are the first layer of the Sankofa academic estate.',
-          lead: 'Start with a college, then move into its schools, departments, programmes, and research institutes from one coherent detail page.',
+          lead: 'Start with a college, then move into its schools. Each school opens departments, and each department leads to programme detail pages.',
           count: this.totals.colleges,
           label: 'colleges',
           placeholder: 'Search by college, school, programme, or institute',
@@ -215,16 +188,16 @@ export class AcademicDirectoryPageComponent {
     this.query.set('');
   }
 
-  isNavActive(item: AcademicNavLink): boolean {
-    return item.mode === this.mode();
-  }
-
   nextVisual(): void {
     this.heroIndex.update((index) => (index + 1) % this.heroVisuals.length);
   }
 
   previousVisual(): void {
     this.heroIndex.update((index) => (index + this.heroVisuals.length - 1) % this.heroVisuals.length);
+  }
+
+  setVisual(index: number): void {
+    this.heroIndex.set(index);
   }
 
   visibleCount(): number {
@@ -242,22 +215,31 @@ export class AcademicDirectoryPageComponent {
   }
 
   slugify(value: string): string {
-    return value
-      .toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    return slugifyAcademic(value);
   }
 
   collegeIcon(row: CollegeRow): string {
-    const name = row.college.name.toLowerCase();
-    if (name.includes('health') || name.includes('medicine') || name.includes('pharmaceutical')) return 'fa-heart-pulse';
-    if (name.includes('computing') || name.includes('data') || name.includes('digital') || name.includes('robotics')) return 'fa-microchip';
-    if (name.includes('law') || name.includes('governance') || name.includes('diplomacy')) return 'fa-scale-balanced';
-    if (name.includes('agriculture') || name.includes('food') || name.includes('climate') || name.includes('environment')) return 'fa-leaf';
-    if (name.includes('divine') || name.includes('religion') || name.includes('spiritual')) return 'fa-dove';
-    if (name.includes('arts') || name.includes('media') || name.includes('languages')) return 'fa-palette';
-    return 'fa-building-columns';
+    return academicIconForName(row.college.name);
+  }
+
+  schoolIcon(row: SchoolRow): string {
+    return academicIconForName(row.name);
+  }
+
+  departmentIcon(row: DepartmentRow): string {
+    return academicIconForName(row.name);
+  }
+
+  collegeRoute(name: string): readonly string[] {
+    return collegeRoute(name);
+  }
+
+  schoolRoute(collegeName: string, schoolName: string): readonly string[] {
+    return schoolRoute(collegeName, schoolName);
+  }
+
+  departmentRoute(collegeName: string, schoolName: string, departmentName: string): readonly string[] {
+    return departmentRoute(collegeName, schoolName, departmentName);
   }
 
   preview(items: readonly string[], count = 4): readonly string[] {

@@ -1,0 +1,203 @@
+<div class="v2-shell academic-structure-shell">
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a routerLink="/academics">Academics</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a routerLink="/academics/colleges">Colleges</a>
+        @if (college(); as currentCollege) {
+          <span aria-hidden="true">&rsaquo;</span>
+          <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]">{{ currentCollege.name }}</a>
+        }
+        @if (school(); as currentSchool) {
+          <span aria-hidden="true">&rsaquo;</span>
+          @if (view() === 'department' && college(); as currentCollege) {
+            <a [routerLink]="schoolRoute(currentCollege.name, currentSchool.name)">{{ currentSchool.name }}</a>
+          } @else {
+            <span class="here" aria-current="page">{{ currentSchool.name }}</span>
+          }
+        }
+        @if (departmentName(); as currentDepartment) {
+          <span aria-hidden="true">&rsaquo;</span>
+          <span class="here" aria-current="page">{{ currentDepartment }}</span>
+        }
+      </nav>
+    </div>
+  </div>
+
+  @if (college(); as currentCollege) {
+    @if (school(); as currentSchool) {
+      <section class="structure-hero" aria-labelledby="structure-title">
+        <div class="structure-hero__media" aria-hidden="true">
+          <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
+        </div>
+        <div class="structure-hero__fade" aria-hidden="true"></div>
+
+        <button type="button" class="structure-control structure-control--prev" (click)="previousVisual()" aria-label="Previous academic image">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <button type="button" class="structure-control structure-control--next" (click)="nextVisual()" aria-label="Next academic image">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div class="v2-container structure-hero__inner">
+          <div class="structure-hero__copy" data-reveal>
+            <span class="v2-kicker">{{ view() === 'department' ? 'Department pathway' : 'School pathway' }}</span>
+            <h1 id="structure-title">{{ title() }}</h1>
+            <p>{{ lead() }}</p>
+            <div class="structure-hero__actions">
+              @if (view() === 'department') {
+                <a href="#programmes" class="v2-btn v2-btn--primary v2-btn--lg">View programmes <span aria-hidden="true">&rarr;</span></a>
+                <a [routerLink]="schoolRoute(currentCollege.name, currentSchool.name)" class="v2-btn v2-btn--ghost v2-btn--lg">Back to school</a>
+              } @else {
+                <a href="#departments" class="v2-btn v2-btn--primary v2-btn--lg">View departments <span aria-hidden="true">&rarr;</span></a>
+                <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]" class="v2-btn v2-btn--ghost v2-btn--lg">Back to college</a>
+              }
+            </div>
+            <div class="structure-hero__facts" aria-label="Academic structure facts">
+              <div><b>{{ currentSchool.departments.length }}</b><span>departments</span></div>
+              <div><b>{{ matchedProgrammes().length }}</b><span>programme routes</span></div>
+              <div><b>{{ currentCollege.id.toString().padStart(2, '0') }}</b><span>college number</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="structure-dots" aria-label="Academic image carousel pagination">
+          @for (visual of visuals; track visual.src; let index = $index) {
+            <button
+              type="button"
+              [class.is-active]="index === heroIndex() % visuals.length"
+              (click)="setVisual(index)"
+              [attr.aria-label]="'Show image ' + (index + 1)"
+            ></button>
+          }
+        </div>
+      </section>
+
+      <section class="v2-section structure-main">
+        <div class="v2-container structure-grid">
+          <main class="structure-primary">
+            @if (view() === 'school') {
+              <section class="structure-panel" id="departments" data-reveal>
+                <div class="structure-panel__head">
+                  <div>
+                    <span class="v2-kicker">Departments</span>
+                    <h2>Open the ownership layer.</h2>
+                  </div>
+                  <p>Each department keeps the hierarchy explicit: college, school, department, then programme pathways. No flat directory guesswork.</p>
+                </div>
+
+                <div class="node-grid">
+                  @for (department of currentSchool.departments; track department; let index = $index) {
+                    <a class="node-card" [routerLink]="departmentRoute(currentCollege.name, currentSchool.name, department)">
+                      <span class="node-card__number">{{ (index + 1).toString().padStart(2, '0') }}</span>
+                      <span class="node-card__icon"><i class="fa-solid {{ iconFor(department) }}" aria-hidden="true"></i></span>
+                      <h3>{{ department }}</h3>
+                      <p>Open this department to see programme routes and the research connection inside {{ currentCollege.name }}.</p>
+                      <strong>View programmes <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
+                    </a>
+                  }
+                </div>
+              </section>
+            }
+
+            @if (view() === 'department') {
+              <section class="structure-panel" id="programmes" data-reveal>
+                <div class="structure-panel__head">
+                  <div>
+                    <span class="v2-kicker">Programmes</span>
+                    <h2>Programme cards connected to detail pages.</h2>
+                  </div>
+                  <p>These are the closest live programme pathways for this department, resolved from the college catalogue and routed into the existing programme detail system.</p>
+                </div>
+
+                <div class="programme-path-grid">
+                  @for (programme of programmeCards(); track programme.title) {
+                    <a class="programme-path-card" [routerLink]="programme.route">
+                      <span class="programme-path-card__level">{{ programme.level }}</span>
+                      <span class="programme-path-card__icon"><i class="fa-solid {{ programme.icon }}" aria-hidden="true"></i></span>
+                      <h3>{{ programme.title }}</h3>
+                      <p>{{ programme.summary }}</p>
+                      <div class="programme-path-card__meta">
+                        <span>{{ programme.duration }}</span>
+                        <span>September 2026 intake</span>
+                      </div>
+                      <strong>View programme detail <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
+                    </a>
+                  }
+                </div>
+              </section>
+            }
+          </main>
+
+          <aside class="structure-secondary">
+            <section class="structure-side-card" data-reveal>
+              <span class="v2-kicker">Hierarchy</span>
+              <h2>Where you are</h2>
+              <ol>
+                <li><b>College</b><span>{{ currentCollege.name }}</span></li>
+                <li><b>School</b><span>{{ currentSchool.name }}</span></li>
+                @if (departmentName(); as currentDepartment) {
+                  <li><b>Department</b><span>{{ currentDepartment }}</span></li>
+                }
+              </ol>
+            </section>
+
+            <section class="structure-side-card" data-reveal>
+              <span class="v2-kicker">Research alignment</span>
+              <h2>{{ currentCollege.researchInstitute }}</h2>
+              <p>Research institutes connect programmes to advanced inquiry, policy work, publication, innovation, and public scholarship.</p>
+              <a routerLink="/academics/research-institutes">Open research directory <span aria-hidden="true">&rarr;</span></a>
+            </section>
+
+            @if (view() === 'department') {
+              <section class="structure-side-card" data-reveal>
+                <span class="v2-kicker">Same school</span>
+                <h2>Other departments</h2>
+                <div class="mini-link-stack">
+                  @for (department of currentSchool.departments; track department) {
+                    <a [routerLink]="departmentRoute(currentCollege.name, currentSchool.name, department)" [class.is-active]="department === departmentName()">
+                      {{ department }}
+                    </a>
+                  }
+                </div>
+              </section>
+            } @else {
+              <section class="structure-side-card" data-reveal>
+                <span class="v2-kicker">Same college</span>
+                <h2>Schools</h2>
+                <div class="mini-link-stack">
+                  @for (schoolItem of currentCollege.schoolStructure; track schoolItem.name) {
+                    <a [routerLink]="schoolRoute(currentCollege.name, schoolItem.name)" [class.is-active]="schoolItem.name === currentSchool.name">
+                      {{ schoolItem.name }}
+                    </a>
+                  }
+                </div>
+              </section>
+            }
+          </aside>
+        </div>
+      </section>
+    } @else {
+      <section class="v2-section">
+        <div class="v2-container structure-not-found">
+          <span class="v2-kicker">School not found</span>
+          <h1>We could not find that school.</h1>
+          <p>Return to the college and choose one of its current schools.</p>
+          <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]" class="v2-btn v2-btn--primary">Back to college</a>
+        </div>
+      </section>
+    }
+  } @else {
+    <section class="v2-section">
+      <div class="v2-container structure-not-found">
+        <span class="v2-kicker">College not found</span>
+        <h1>We could not find that college.</h1>
+        <p>Return to the college directory and choose from the current academic architecture.</p>
+        <a routerLink="/academics/colleges" class="v2-btn v2-btn--primary">Back to colleges</a>
+      </div>
+    </section>
+  }
+</div>

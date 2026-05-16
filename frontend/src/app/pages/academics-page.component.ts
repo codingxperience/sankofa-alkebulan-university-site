@@ -22,13 +22,6 @@ export class AcademicsPageComponent {
     { icon: 'fa-flask', label: 'Research institutes', route: '/academics/research-institutes' },
   ];
 
-  readonly academicNav = [
-    { icon: 'fa-building-columns', label: 'Colleges', route: '/academics/colleges' },
-    { icon: 'fa-sitemap', label: 'Schools', route: '/academics/schools' },
-    { icon: 'fa-layer-group', label: 'Departments', route: '/academics/departments' },
-    { icon: 'fa-flask', label: 'Research', route: '/academics/research-institutes' },
-  ];
-
   readonly quickProgrammes = [
     { b: 'Bachelor of Divine Wisdom Studies', s: 'Undergraduate - College of Divine Wisdom', route: '/programmes/bachelor-of-divine-wisdom-studies' },
     { b: 'MA - Pan-African Studies', s: 'Postgraduate - September 2026', route: '/programmes/ma-pan-african-studies' },
@@ -138,8 +131,8 @@ export class AcademicsPageComponent {
       b: 'Online & short courses',
       p: 'Short, stackable digital routes for learners who need focused study before entering a longer award pathway.',
       meta: ['Certificate-ready learning blocks', 'Professional skills and academic bridges', 'Digital learning support', 'Future LMS alignment'],
-      cta: 'Explore online learning',
-      route: '/digital-campus',
+      cta: 'Explore certificate pathways',
+      route: '/home/certificate',
     },
   ];
 

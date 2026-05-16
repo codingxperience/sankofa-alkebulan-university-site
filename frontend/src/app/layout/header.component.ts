@@ -22,6 +22,7 @@ interface MegaLink {
   readonly path: string;
   readonly fragment?: string;
   readonly description?: string;
+  readonly icon?: string;
 }
 
 interface MegaColumn {
@@ -110,11 +111,16 @@ type MobileGroup = 'about' | 'academics';
                         <section>
                           <h3>{{ column.title }}</h3>
                           @for (link of column.links; track link.label) {
-                            <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
-                              <strong>{{ link.label }}</strong>
-                              @if (link.description) {
-                                <span>{{ link.description }}</span>
+                            <a class="mega-link" [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                              @if (link.icon) {
+                                <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
                               }
+                              <div>
+                                <strong>{{ link.label }}</strong>
+                                @if (link.description) {
+                                  <span>{{ link.description }}</span>
+                                }
+                              </div>
                             </a>
                           }
                         </section>
@@ -205,11 +211,16 @@ type MobileGroup = 'about' | 'academics';
                     Academics
                   </button>
                   <div class="mobile-group__links">
-                    <a routerLink="/faculties-schools" (click)="closeMenus()">Academic overview</a>
+                    <a routerLink="/academics" (click)="closeMenus()">Academic overview</a>
                     @for (column of academicsMega; track column.title) {
                       <span>{{ column.title }}</span>
                       @for (link of column.links; track link.label) {
-                        <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">{{ link.label }}</a>
+                        <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                          @if (link.icon) {
+                            <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
+                          }
+                          {{ link.label }}
+                        </a>
                       }
                     }
                   </div>
@@ -540,6 +551,29 @@ type MobileGroup = 'about' | 'academics';
       transition: padding-left 160ms ease, color 160ms ease;
     }
 
+    .nav-panel__columns a.mega-link {
+      grid-template-columns: 2rem minmax(0, 1fr);
+      align-items: start;
+      column-gap: 0.62rem;
+    }
+
+    .nav-panel__columns a.mega-link > i {
+      width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      border-radius: 0.72rem;
+      background: rgb(179 92 42 / 9%);
+      color: var(--sau-return, #b35c2a);
+      font-size: 0.82rem;
+      transition: background-color 160ms ease, color 160ms ease;
+    }
+
+    .nav-panel__columns a.mega-link:hover > i {
+      background: rgb(15 76 129 / 9%);
+      color: #0f4c81;
+    }
+
     .nav-panel__columns a:hover {
       padding-left: 0.28rem;
       color: #0f4c81;
@@ -767,10 +801,25 @@ type MobileGroup = 'about' | 'academics';
     }
 
     .mobile-group__links a {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
       padding: 0.48rem 0.2rem;
       color: rgb(255 255 255 / 76%);
       font-size: 0.86rem;
       text-decoration: none;
+    }
+
+    .mobile-group__links a i {
+      width: 1.45rem;
+      height: 1.45rem;
+      display: grid;
+      place-items: center;
+      border-radius: 0.5rem;
+      background: rgb(244 195 164 / 10%);
+      color: #f4c3a4;
+      font-size: 0.72rem;
+      flex: 0 0 auto;
     }
 
     .mobile-group__links span {
@@ -869,7 +918,7 @@ export class HeaderComponent implements OnInit {
 
   readonly primaryLinks: readonly NavLink[] = [
     { label: 'About', path: '/about', kind: 'about' },
-    { label: 'Academics', path: '/faculties-schools', kind: 'academics' },
+    { label: 'Academics', path: '/academics', kind: 'academics' },
     { label: 'Admissions', path: '/admissions' },
     { label: 'Research', path: '/research-innovation' },
     { label: 'Digital Campus', path: '/digital-learning', disabled: true },
@@ -934,31 +983,38 @@ export class HeaderComponent implements OnInit {
       title: 'Academic Structure',
       links: [
         {
-          label: 'Colleges Overview',
-          path: '/faculties-schools',
-          description: 'The full Pan-African college system.',
+          label: 'Colleges',
+          path: '/academics/colleges',
+          icon: 'fa-building-columns',
+          description: 'Top-level homes. Open a college, then move into schools.',
         },
         {
-          label: 'Schools & Departments',
-          path: '/faculties-schools',
-          fragment: 'academic-architecture',
-          description: 'School-level homes with department detail.',
+          label: 'Schools',
+          path: '/academics/schools',
+          icon: 'fa-sitemap',
+          description: 'The academic method layer inside each college.',
         },
         {
-          label: 'Academic Architecture',
-          path: '/faculties-schools',
-          fragment: 'academic-architecture',
-          description: 'Colleges, schools, departments, programmes, and institutes.',
+          label: 'Departments',
+          path: '/academics/departments',
+          icon: 'fa-layer-group',
+          description: 'Teaching and research ownership leading into programmes.',
+        },
+        {
+          label: 'Research',
+          path: '/academics/research-institutes',
+          icon: 'fa-flask',
+          description: 'Institutes, labs, and cross-college research alignment.',
         },
       ],
     },
     {
       title: 'Programmes',
       links: [
-        { label: 'All Programmes', path: '/programs', description: 'Certificates through doctorates.' },
-        { label: 'PhD Programmes', path: '/home/phd', description: 'Doctoral research pathways.' },
-        { label: 'Masters Programmes', path: '/home/masters', description: 'Advanced professional and research pathways.' },
-        { label: 'Undergraduate Studies', path: '/home/bachelors', description: 'Bachelor degree academic formation.' },
+        { label: 'All Programmes', path: '/programs', icon: 'fa-book-open', description: 'Certificates through doctorates.' },
+        { label: 'PhD Programmes', path: '/home/phd', icon: 'fa-microscope', description: 'Doctoral research pathways.' },
+        { label: 'Masters Programmes', path: '/home/masters', icon: 'fa-user-graduate', description: 'Advanced professional and research pathways.' },
+        { label: 'Undergraduate Studies', path: '/home/bachelors', icon: 'fa-graduation-cap', description: 'Bachelor degree academic formation.' },
       ],
     },
     {
@@ -966,17 +1022,20 @@ export class HeaderComponent implements OnInit {
       links: [
         {
           label: 'Research Institutes',
-          path: '/research-innovation',
+          path: '/academics/research-institutes',
+          icon: 'fa-flask',
           description: '49 institute pathways aligned to the colleges.',
         },
         {
           label: 'Graduate School',
           path: '/home/graduate-school',
+          icon: 'fa-scroll',
           description: 'Postgraduate coordination and higher degrees quality assurance.',
         },
         {
           label: 'University Press',
           path: '/university-press',
+          icon: 'fa-newspaper',
           description: 'Journals, books, proceedings, and scholarly publishing.',
         },
       ],
@@ -987,16 +1046,19 @@ export class HeaderComponent implements OnInit {
         {
           label: 'Clubs & Societies',
           path: '/student-life',
+          icon: 'fa-people-group',
           description: 'Cultural societies, clubs, and professional societies.',
         },
         {
           label: 'Admissions',
           path: '/admissions',
+          icon: 'fa-file-signature',
           description: 'Choose a level, intake, and application route.',
         },
         {
           label: 'Support Services',
           path: '/services',
+          icon: 'fa-life-ring',
           description: 'Routing for applicants, students, scholars, and partners.',
         },
       ],
@@ -1044,6 +1106,7 @@ export class HeaderComponent implements OnInit {
     const url = this.router.url;
     return (
       url.startsWith('/faculties-schools') ||
+      url.startsWith('/academics') ||
       url.startsWith('/program') ||
       url.startsWith('/programmes') ||
       url.startsWith('/home/phd') ||

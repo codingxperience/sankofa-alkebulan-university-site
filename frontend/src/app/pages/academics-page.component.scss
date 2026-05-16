@@ -1,53 +1,6 @@
 /* Academics page - editorial overview. Dedicated architecture pages carry the depth. */
 :host { display: block; }
 
-.academic-subnav {
-  position: sticky;
-  top: var(--sau-header-offset, 0px);
-  z-index: 8;
-  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
-  background: rgba(251, 248, 240, 0.82);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.academic-subnav__grid {
-  display: flex;
-  gap: 10px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.academic-subnav__grid::-webkit-scrollbar { display: none; }
-
-.academic-subnav__item {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid rgba(15, 76, 129, 0.08);
-  border-radius: 999px;
-  color: var(--sau-blue-900);
-  background: rgba(255,255,255,0.6);
-  box-shadow: 0 10px 24px rgba(8, 35, 58, 0.035);
-  font-family: var(--sau-font-heading);
-  font-size: 13.5px;
-  transition: transform 220ms cubic-bezier(.2,.8,.2,1), border-color 220ms cubic-bezier(.2,.8,.2,1), background 220ms cubic-bezier(.2,.8,.2,1);
-}
-
-.academic-subnav__item:hover,
-.academic-subnav__item.is-active {
-  transform: translateY(-1px);
-  border-color: rgba(212, 162, 47, 0.55);
-  background: rgba(255,255,255,0.92);
-}
-
-.academic-subnav__item i { color: var(--sau-gold-700, #a66428); }
-
 /* ========== Hero search panel ========== */
 .ac-hero__search {
   position: relative;
@@ -423,7 +376,6 @@
   .ac-standards { grid-template-columns: 1fr; gap: 32px; }
 }
 @media (max-width: 720px) {
-  .academic-subnav { position: static; }
   .ac-feature__foot { align-items: flex-start; flex-direction: column; }
   .ac-hero__quick li a,
   .ac-feature__body .ac-list a { grid-template-columns: 1fr; gap: 4px; }
@@ -435,9 +387,4 @@
   .ac-col { grid-template-columns: 42px 1fr; padding: 18px; }
   .ac-col .num { font-size: 15px; }
   .ac-section-action { justify-content: flex-start; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .academic-subnav__item { transition: none; }
-  .academic-subnav__item:hover { transform: none; }
 }

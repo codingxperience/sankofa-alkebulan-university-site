@@ -58,6 +58,14 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'academics/colleges/:slug/schools/:schoolSlug/departments/:departmentSlug',
+    renderMode: RenderMode.Server
+  },
+  {
+    path: 'academics/colleges/:slug/schools/:schoolSlug',
+    renderMode: RenderMode.Server
+  },
+  {
     path: 'academics/colleges/:slug',
     renderMode: RenderMode.Server
   },

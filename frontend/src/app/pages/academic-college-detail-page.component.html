@@ -10,58 +10,52 @@
         <span aria-hidden="true">&rsaquo;</span>
         <span class="here" aria-current="page">{{ college()?.name ?? 'College' }}</span>
       </nav>
-      <div class="actions">
-        <a routerLink="/academics/schools" class="v2-btn v2-btn--ghost">Schools</a>
-        <a routerLink="/academics/departments" class="v2-btn v2-btn--ghost">Departments</a>
-      </div>
     </div>
   </div>
 
-  <nav class="academic-subnav" aria-label="Academic architecture navigation">
-    <div class="v2-container academic-subnav__grid">
-      @for (item of academicNav; track item.label) {
-        <a class="academic-subnav__item" [class.is-active]="item.active" [routerLink]="item.route">
-          <i class="fa-solid {{ item.icon }}" aria-hidden="true"></i>
-          <span>{{ item.label }}</span>
-        </a>
-      }
-    </div>
-  </nav>
-
   @if (college(); as current) {
     <section class="college-detail-hero" aria-labelledby="college-title">
-      <div class="v2-container college-detail-hero__grid">
-        <div class="college-detail-hero__copy">
+      <div class="college-hero-media" aria-hidden="true">
+        <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
+      </div>
+      <div class="college-hero-fade" aria-hidden="true"></div>
+
+      <button type="button" class="college-control college-control--prev" (click)="previousVisual()" aria-label="Previous college image">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <button type="button" class="college-control college-control--next" (click)="nextVisual()" aria-label="Next college image">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+      <div class="v2-container college-detail-hero__inner">
+        <div class="college-detail-hero__copy" data-reveal>
           <span class="v2-kicker">College {{ current.id.toString().padStart(2, '0') }}</span>
           <h1 id="college-title">{{ current.name }}</h1>
           <p>
-            Open the college as a living academic pathway: schools first, departments inside
-            the schools, programmes as award routes, and research units as the advanced layer.
+            Start here with the college. Then open a school, move into departments, and continue
+            into programme detail pages from the department that owns the academic pathway.
           </p>
           <div class="college-hero-actions">
-            <a href="#schools" class="v2-btn v2-btn--primary">View schools <span aria-hidden="true">&rarr;</span></a>
-            <a href="#programmes" class="v2-btn v2-btn--ghost">Programme pathways</a>
+            <a href="#schools" class="v2-btn v2-btn--primary v2-btn--lg">View schools <span aria-hidden="true">&rarr;</span></a>
+            <a routerLink="/academics/colleges" class="v2-btn v2-btn--ghost v2-btn--lg">Back to colleges</a>
           </div>
-        </div>
-
-        <aside class="college-visual" aria-label="College visual carousel">
-          <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
-          <div class="college-visual__veil" aria-hidden="true"></div>
-          <div class="college-visual__caption">
-            <span>{{ heroVisual().label }}</span>
-            <small>{{ heroVisual().credit }}</small>
-          </div>
-          <div class="college-visual__metrics">
+          <div class="college-hero-metrics" aria-label="College metrics">
             <div><b>{{ current.schoolStructure.length }}</b><span>schools</span></div>
             <div><b>{{ departmentCount() }}</b><span>departments</span></div>
             <div><b>{{ current.programmes.length }}</b><span>programmes</span></div>
           </div>
-          <div class="visual-controls" aria-label="Visual controls">
-            <button type="button" (click)="previousVisual()" aria-label="Previous image"><i class="fa-solid fa-arrow-left"></i></button>
-            <span>{{ heroIndex() + 1 }} / {{ heroVisuals.length }}</span>
-            <button type="button" (click)="nextVisual()" aria-label="Next image"><i class="fa-solid fa-arrow-right"></i></button>
-          </div>
-        </aside>
+        </div>
+      </div>
+
+      <div class="college-dots" aria-label="College image carousel pagination">
+        @for (visual of heroVisuals; track visual.src; let index = $index) {
+          <button
+            type="button"
+            [class.is-active]="index === heroIndex() % heroVisuals.length"
+            (click)="setVisual(index)"
+            [attr.aria-label]="'Show image ' + (index + 1)"
+          ></button>
+        }
       </div>
     </section>
 
@@ -71,63 +65,29 @@
           <section class="college-panel college-panel--schools" data-reveal>
             <div class="college-panel__head">
               <div>
-                <span class="v2-kicker">Schools and departments</span>
-                <h2>From college question to departmental ownership.</h2>
+                <span class="v2-kicker">Schools</span>
+                <h2>Choose the method layer before the department layer.</h2>
               </div>
-              <p>Each school is treated as a chapter. Departments sit inside the chapter so the user can understand the route before opening programme details.</p>
+              <p>Each school opens into its own page, where departments are presented as the next decision. This keeps the architecture clear without compressing everything into one long page.</p>
             </div>
 
-            <div class="school-stack">
+            <div class="school-card-grid">
               @for (school of current.schoolStructure; track school.name; let index = $index) {
-                <article class="school-block">
-                  <header>
-                    <span class="school-block__index">{{ (index + 1).toString().padStart(2, '0') }}</span>
-                    <div>
-                      <h3>{{ school.name }}</h3>
-                      <p>{{ school.departments.length }} departments connected to this school.</p>
-                    </div>
-                    <a href="#programmes" class="school-block__link">Programmes <span aria-hidden="true">&rarr;</span></a>
-                  </header>
-                  <div class="department-list">
-                    @for (department of school.departments; track department) {
+                <a class="school-card" [routerLink]="schoolRoute(current.name, school.name)">
+                  <span class="school-card__index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+                  <span class="school-card__icon"><i class="fa-solid {{ iconFor(school.name) }}" aria-hidden="true"></i></span>
+                  <h3>{{ school.name }}</h3>
+                  <p>{{ school.departments.length }} departments inside this school.</p>
+                  <div class="school-card__preview" aria-label="Departments preview">
+                    @for (department of school.departments.slice(0, 3); track department) {
                       <span>{{ department }}</span>
                     }
-                  </div>
-                </article>
-              }
-            </div>
-          </section>
-
-          <section class="college-panel college-panel--programmes" id="programmes" data-reveal>
-            <div class="college-panel__head">
-              <div>
-                <span class="v2-kicker">Programmes</span>
-                <h2>Award pathways with direct programme detail links.</h2>
-              </div>
-              <p>Programme cards are grouped by level. Each title routes into its programme detail page so the architecture becomes a usable journey, not a static directory.</p>
-            </div>
-
-            <div class="programme-groups">
-              @for (group of programmeGroups(); track group.title) {
-                <article class="programme-group">
-                  <header>
-                    <span class="programme-group__icon"><i class="fa-solid {{ group.icon }}" aria-hidden="true"></i></span>
-                    <div>
-                      <h3>{{ group.title }}</h3>
-                      <p>{{ group.summary }}</p>
-                    </div>
-                  </header>
-                  <ul>
-                    @for (programme of group.items; track programme) {
-                      <li>
-                        <a [routerLink]="programmeRoute(programme)">
-                          <span>{{ programme }}</span>
-                          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-                        </a>
-                      </li>
+                    @if (school.departments.length > 3) {
+                      <span>+{{ school.departments.length - 3 }} more</span>
                     }
-                  </ul>
-                </article>
+                  </div>
+                  <strong>Open departments <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
+                </a>
               }
             </div>
           </section>
@@ -136,11 +96,11 @@
         <aside class="college-detail-secondary">
           <section class="college-map-card" data-reveal>
             <span class="v2-kicker">Academic map</span>
-            <h2>How to read this college</h2>
+            <h2>How this college flows</h2>
             <ol>
-              <li><b>Schools</b><span>Academic chapters inside the college.</span></li>
-              <li><b>Departments</b><span>Teaching and research ownership.</span></li>
-              <li><b>Programmes</b><span>Award routes leading into programme details.</span></li>
+              <li><b>Schools</b><span>Academic method homes inside the college.</span></li>
+              <li><b>Departments</b><span>Teaching and research ownership inside each school.</span></li>
+              <li><b>Programmes</b><span>Award routes opened from departments into detail pages.</span></li>
             </ol>
           </section>
 

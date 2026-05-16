@@ -14,17 +14,6 @@
     </div>
   </div>
 
-  <nav class="academic-subnav" aria-label="Academic architecture navigation">
-    <div class="v2-container academic-subnav__grid">
-      @for (item of academicNav; track item.label) {
-        <a class="academic-subnav__item" [routerLink]="item.route">
-          <i class="fa-solid {{ item.icon }}" aria-hidden="true"></i>
-          <span>{{ item.label }}</span>
-        </a>
-      }
-    </div>
-  </nav>
-
   <!-- Hero -->
   <section class="pg-hero pg-hero--paper" aria-labelledby="ac-hero">
     <div class="pg-hero__dots" aria-hidden="true"></div>
