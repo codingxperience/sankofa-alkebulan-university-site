@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -26,15 +26,14 @@ interface AcademicNavLink {
   readonly label: string;
   readonly route: string | readonly string[];
   readonly icon: string;
-  readonly caption: string;
   readonly active?: boolean;
 }
 
-interface JourneyStep {
-  readonly step: string;
-  readonly title: string;
-  readonly text: string;
-  readonly icon: string;
+interface HeroVisual {
+  readonly src: string;
+  readonly alt: string;
+  readonly label: string;
+  readonly credit: string;
 }
 
 @Component({
@@ -51,20 +50,37 @@ export class AcademicCollegeDetailPageComponent {
     initialValue: '',
   });
 
+  readonly heroIndex = signal(0);
+
   readonly academicNav: readonly AcademicNavLink[] = [
-    { label: 'Overview', route: '/academics', icon: 'fa-compass', caption: 'Academic front door' },
-    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', caption: 'Top-level homes', active: true },
-    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap', caption: 'Academic methods' },
-    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group', caption: 'Teaching units' },
-    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask', caption: 'Institutes and labs' },
+    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', active: true },
+    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap' },
+    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group' },
+    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask' },
   ];
 
-  readonly journeySteps: readonly JourneyStep[] = [
-    { step: '01', title: 'College', text: 'Choose the academic home that holds the broad question.', icon: 'fa-building-columns' },
-    { step: '02', title: 'Schools', text: 'Enter the disciplinary method layer inside that college.', icon: 'fa-sitemap' },
-    { step: '03', title: 'Departments', text: 'See where curriculum, teaching, and research ownership sit.', icon: 'fa-layer-group' },
-    { step: '04', title: 'Programmes', text: 'Open awards and continue into programme detail pages.', icon: 'fa-graduation-cap' },
+  readonly heroVisuals: readonly HeroVisual[] = [
+    {
+      src: 'https://images.pexels.com/photos/34162714/pexels-photo-34162714.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      alt: 'African learners studying together in a classroom',
+      label: 'Schools, departments, programmes',
+      credit: 'Photo: Tosin Olowoleni / Pexels',
+    },
+    {
+      src: 'https://images.pexels.com/photos/7683902/pexels-photo-7683902.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      alt: 'Students collaborating around an outdoor campus table',
+      label: 'Academic community and method',
+      credit: 'Photo: RDNE Stock project / Pexels',
+    },
+    {
+      src: 'https://images.pexels.com/photos/7683734/pexels-photo-7683734.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      alt: 'Students studying outdoors with books and digital tools',
+      label: 'From college to programme detail',
+      credit: 'Photo: RDNE Stock project / Pexels',
+    },
   ];
+
+  readonly heroVisual = computed(() => this.heroVisuals[this.heroIndex() % this.heroVisuals.length]);
 
   readonly college = computed<AcademicArchitectureCollege | undefined>(() =>
     ACADEMIC_ARCHITECTURE_COLLEGES.find((college) => this.slugify(college.name) === this.slug()),
@@ -126,8 +142,12 @@ export class AcademicCollegeDetailPageComponent {
     ].filter((group) => group.items.length);
   });
 
-  featuredSchools(count = 4): readonly string[] {
-    return this.college()?.schools.slice(0, count) ?? [];
+  nextVisual(): void {
+    this.heroIndex.update((index) => (index + 1) % this.heroVisuals.length);
+  }
+
+  previousVisual(): void {
+    this.heroIndex.update((index) => (index + this.heroVisuals.length - 1) % this.heroVisuals.length);
   }
 
   programmeRoute(programme: string): readonly string[] {

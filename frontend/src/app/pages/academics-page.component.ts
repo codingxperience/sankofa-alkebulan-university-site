@@ -23,11 +23,10 @@ export class AcademicsPageComponent {
   ];
 
   readonly academicNav = [
-    { icon: 'fa-compass', label: 'Overview', caption: 'Academic front door', route: '/academics', active: true },
-    { icon: 'fa-building-columns', label: 'Colleges', caption: 'Top-level homes', route: '/academics/colleges', active: false },
-    { icon: 'fa-sitemap', label: 'Schools', caption: 'Academic methods', route: '/academics/schools', active: false },
-    { icon: 'fa-layer-group', label: 'Departments', caption: 'Teaching units', route: '/academics/departments', active: false },
-    { icon: 'fa-flask', label: 'Research', caption: 'Institutes and labs', route: '/academics/research-institutes', active: false },
+    { icon: 'fa-building-columns', label: 'Colleges', route: '/academics/colleges' },
+    { icon: 'fa-sitemap', label: 'Schools', route: '/academics/schools' },
+    { icon: 'fa-layer-group', label: 'Departments', route: '/academics/departments' },
+    { icon: 'fa-flask', label: 'Research', route: '/academics/research-institutes' },
   ];
 
   readonly quickProgrammes = [

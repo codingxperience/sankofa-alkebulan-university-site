@@ -1,8 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { filter, map, startWith } from 'rxjs';
 import { RevealDirective } from '../directives/reveal.directive';
 import {
   ACADEMIC_ARCHITECTURE_COLLEGES,
@@ -17,8 +16,14 @@ interface AcademicNavLink {
   readonly label: string;
   readonly route: string;
   readonly icon: string;
-  readonly caption: string;
-  readonly mode?: AcademicDirectoryMode;
+  readonly mode: AcademicDirectoryMode;
+}
+
+interface HeroVisual {
+  readonly src: string;
+  readonly alt: string;
+  readonly label: string;
+  readonly credit: string;
 }
 
 interface CollegeRow {
@@ -56,23 +61,51 @@ interface ResearchRow {
   styleUrl: './academic-directory-page.component.scss',
 })
 export class AcademicDirectoryPageComponent {
-  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly query = signal('');
+  readonly heroIndex = signal(0);
   readonly totals = ACADEMIC_ARCHITECTURE_TOTALS;
 
   readonly academicNav: readonly AcademicNavLink[] = [
-    { label: 'Overview', route: '/academics', icon: 'fa-compass', caption: 'Academic front door' },
-    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', caption: 'Top-level homes', mode: 'colleges' },
-    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap', caption: 'Academic methods', mode: 'schools' },
-    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group', caption: 'Teaching units', mode: 'departments' },
-    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask', caption: 'Institutes and labs', mode: 'research' },
+    { label: 'Colleges', route: '/academics/colleges', icon: 'fa-building-columns', mode: 'colleges' },
+    { label: 'Schools', route: '/academics/schools', icon: 'fa-sitemap', mode: 'schools' },
+    { label: 'Departments', route: '/academics/departments', icon: 'fa-layer-group', mode: 'departments' },
+    { label: 'Research', route: '/academics/research-institutes', icon: 'fa-flask', mode: 'research' },
   ];
 
-  readonly mode = toSignal(
-    this.route.data.pipe(map((data) => (data['mode'] as AcademicDirectoryMode | undefined) ?? 'colleges')),
-    { initialValue: 'colleges' as AcademicDirectoryMode },
+  readonly heroVisuals: readonly HeroVisual[] = [
+    {
+      src: 'https://images.pexels.com/photos/34162714/pexels-photo-34162714.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      alt: 'African learners studying together in a classroom',
+      label: 'Focused African learning environments',
+      credit: 'Photo: Tosin Olowoleni / Pexels',
+    },
+    {
+      src: 'https://images.pexels.com/photos/7683902/pexels-photo-7683902.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      alt: 'Students gathered around an outdoor campus table',
+      label: 'Schools, methods, and academic community',
+      credit: 'Photo: RDNE Stock project / Pexels',
+    },
+    {
+      src: 'https://images.pexels.com/photos/7683734/pexels-photo-7683734.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      alt: 'University students studying outdoors with books and tablets',
+      label: 'Departments, programmes, and practice',
+      credit: 'Photo: RDNE Stock project / Pexels',
+    },
+  ];
+
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      startWith(null),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
   );
+
+  readonly mode = computed<AcademicDirectoryMode>(() => this.modeFromUrl(this.currentUrl()));
+  readonly heroVisual = computed(() => this.heroVisuals[this.heroIndex() % this.heroVisuals.length]);
 
   readonly collegeRows: readonly CollegeRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.map((college) => ({
     college,
@@ -115,7 +148,7 @@ export class AcademicDirectoryPageComponent {
         return {
           eyebrow: 'Schools directory',
           title: 'Schools translate colleges into teachable academic worlds.',
-          lead: 'Every school is shown with its parent college and departments, so the structure remains readable without compressing the whole university into one page.',
+          lead: 'Schools are listed as academic chapters under their parent colleges. Open the college when you want the full schools, departments, programmes, and research connection.',
           count: this.totals.schools,
           label: 'schools',
           placeholder: 'Search by school, college, or department',
@@ -123,8 +156,8 @@ export class AcademicDirectoryPageComponent {
       case 'departments':
         return {
           eyebrow: 'Departments directory',
-          title: 'Departments are where curriculum, teaching, and research ownership becomes precise.',
-          lead: 'Browse the full departmental layer across the colleges and schools. Each department keeps its academic context visible.',
+          title: 'Departments make the academic system precise.',
+          lead: 'Departments are shown with their school and college context, so the user knows exactly where curriculum ownership sits before moving into programmes.',
           count: this.totals.departments,
           label: 'departments',
           placeholder: 'Search by department, school, or college',
@@ -132,7 +165,7 @@ export class AcademicDirectoryPageComponent {
       case 'research':
         return {
           eyebrow: 'Research institutes',
-          title: 'Research has its own architecture, beyond the programme catalogue.',
+          title: 'Research has its own architecture beyond the programme catalogue.',
           lead: 'Institutes carry advanced research, policy advisory work, publication, innovation, and cross-college collaboration.',
           count: this.totals.researchInstitutes,
           label: 'institutes',
@@ -143,7 +176,7 @@ export class AcademicDirectoryPageComponent {
         return {
           eyebrow: 'Colleges directory',
           title: 'Colleges are the first layer of the Sankofa academic estate.',
-          lead: 'Each college opens into schools, departments, programmes, and research alignment. This page gives the full list without forcing all details onto the main Academics page.',
+          lead: 'Start with a college, then move into its schools, departments, programmes, and research institutes from one coherent detail page.',
           count: this.totals.colleges,
           label: 'colleges',
           placeholder: 'Search by college, school, programme, or institute',
@@ -184,6 +217,14 @@ export class AcademicDirectoryPageComponent {
 
   isNavActive(item: AcademicNavLink): boolean {
     return item.mode === this.mode();
+  }
+
+  nextVisual(): void {
+    this.heroIndex.update((index) => (index + 1) % this.heroVisuals.length);
+  }
+
+  previousVisual(): void {
+    this.heroIndex.update((index) => (index + this.heroVisuals.length - 1) % this.heroVisuals.length);
   }
 
   visibleCount(): number {
@@ -230,5 +271,12 @@ export class AcademicDirectoryPageComponent {
   private matches(text: string): boolean {
     const term = this.query().trim().toLowerCase();
     return !term || text.toLowerCase().includes(term);
+  }
+
+  private modeFromUrl(url: string): AcademicDirectoryMode {
+    if (url.includes('/academics/schools')) return 'schools';
+    if (url.includes('/academics/departments')) return 'departments';
+    if (url.includes('/academics/research-institutes')) return 'research';
+    return 'colleges';
   }
 }

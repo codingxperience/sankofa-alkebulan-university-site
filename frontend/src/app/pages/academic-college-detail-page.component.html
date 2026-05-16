@@ -21,8 +21,8 @@
     <div class="v2-container academic-subnav__grid">
       @for (item of academicNav; track item.label) {
         <a class="academic-subnav__item" [class.is-active]="item.active" [routerLink]="item.route">
-          <span class="academic-subnav__icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>
-          <span><b>{{ item.label }}</b><small>{{ item.caption }}</small></span>
+          <i class="fa-solid {{ item.icon }}" aria-hidden="true"></i>
+          <span>{{ item.label }}</span>
         </a>
       }
     </div>
@@ -35,8 +35,8 @@
           <span class="v2-kicker">College {{ current.id.toString().padStart(2, '0') }}</span>
           <h1 id="college-title">{{ current.name }}</h1>
           <p>
-            A guided academic system: the college opens into schools, departments, programmes,
-            and research units without flattening the structure into one crowded page.
+            Open the college as a living academic pathway: schools first, departments inside
+            the schools, programmes as award routes, and research units as the advanced layer.
           </p>
           <div class="college-hero-actions">
             <a href="#schools" class="v2-btn v2-btn--primary">View schools <span aria-hidden="true">&rarr;</span></a>
@@ -44,36 +44,24 @@
           </div>
         </div>
 
-        <aside class="college-atlas" aria-label="College visual system">
-          <div class="college-atlas__mark" aria-hidden="true">Sankofa</div>
-          <div class="college-atlas__orbit" aria-hidden="true"></div>
-          <div class="college-atlas__node college-atlas__node--one">
-            <i class="fa-solid fa-building-columns"></i><span>{{ current.schoolStructure.length }} schools</span>
+        <aside class="college-visual" aria-label="College visual carousel">
+          <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
+          <div class="college-visual__veil" aria-hidden="true"></div>
+          <div class="college-visual__caption">
+            <span>{{ heroVisual().label }}</span>
+            <small>{{ heroVisual().credit }}</small>
           </div>
-          <div class="college-atlas__node college-atlas__node--two">
-            <i class="fa-solid fa-layer-group"></i><span>{{ departmentCount() }} departments</span>
+          <div class="college-visual__metrics">
+            <div><b>{{ current.schoolStructure.length }}</b><span>schools</span></div>
+            <div><b>{{ departmentCount() }}</b><span>departments</span></div>
+            <div><b>{{ current.programmes.length }}</b><span>programmes</span></div>
           </div>
-          <div class="college-atlas__node college-atlas__node--three">
-            <i class="fa-solid fa-graduation-cap"></i><span>{{ current.programmes.length }} programmes</span>
-          </div>
-          <div class="college-atlas__card">
-            <span>Research alignment</span>
-            <b>{{ current.researchInstitute }}</b>
+          <div class="visual-controls" aria-label="Visual controls">
+            <button type="button" (click)="previousVisual()" aria-label="Previous image"><i class="fa-solid fa-arrow-left"></i></button>
+            <span>{{ heroIndex() + 1 }} / {{ heroVisuals.length }}</span>
+            <button type="button" (click)="nextVisual()" aria-label="Next image"><i class="fa-solid fa-arrow-right"></i></button>
           </div>
         </aside>
-      </div>
-    </section>
-
-    <section class="college-journey" aria-label="Academic journey">
-      <div class="v2-container college-journey__grid">
-        @for (step of journeySteps; track step.step) {
-          <article class="journey-step" data-reveal>
-            <span class="journey-step__num">{{ step.step }}</span>
-            <i class="fa-solid {{ step.icon }}" aria-hidden="true"></i>
-            <h2>{{ step.title }}</h2>
-            <p>{{ step.text }}</p>
-          </article>
-        }
       </div>
     </section>
 
@@ -150,9 +138,9 @@
             <span class="v2-kicker">Academic map</span>
             <h2>How to read this college</h2>
             <ol>
-              <li><b>Start with schools</b><span>Understand the academic chapters.</span></li>
-              <li><b>Read departments</b><span>See the exact teaching and research units.</span></li>
-              <li><b>Open programmes</b><span>Move into award routes and detail pages.</span></li>
+              <li><b>Schools</b><span>Academic chapters inside the college.</span></li>
+              <li><b>Departments</b><span>Teaching and research ownership.</span></li>
+              <li><b>Programmes</b><span>Award routes leading into programme details.</span></li>
             </ol>
           </section>
 

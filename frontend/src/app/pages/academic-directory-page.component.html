@@ -21,8 +21,8 @@
     <div class="v2-container academic-subnav__grid">
       @for (item of academicNav; track item.label) {
         <a class="academic-subnav__item" [class.is-active]="isNavActive(item)" [routerLink]="item.route">
-          <span class="academic-subnav__icon"><i class="fa-solid {{ item.icon }}" aria-hidden="true"></i></span>
-          <span><b>{{ item.label }}</b><small>{{ item.caption }}</small></span>
+          <i class="fa-solid {{ item.icon }}" aria-hidden="true"></i>
+          <span>{{ item.label }}</span>
         </a>
       }
     </div>
@@ -30,15 +30,29 @@
 
   <section class="academic-directory-hero" aria-labelledby="directory-title">
     <div class="v2-container academic-directory-hero__grid">
-      <div>
+      <div class="academic-directory-hero__copy">
         <span class="v2-kicker">{{ config().eyebrow }}</span>
         <h1 id="directory-title">{{ config().title }}</h1>
         <p>{{ config().lead }}</p>
       </div>
-      <aside class="directory-index" aria-label="Directory summary">
-        <b>{{ config().count }}</b>
-        <span>{{ config().label }}</span>
-        <small>{{ visibleCount() }} visible now</small>
+
+      <aside class="directory-visual" aria-label="Academic visual carousel">
+        <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
+        <div class="directory-visual__veil" aria-hidden="true"></div>
+        <div class="directory-visual__caption">
+          <span>{{ heroVisual().label }}</span>
+          <small>{{ heroVisual().credit }}</small>
+        </div>
+        <div class="directory-visual__counter">
+          <b>{{ config().count }}</b>
+          <span>{{ config().label }}</span>
+          <small>{{ visibleCount() }} visible</small>
+        </div>
+        <div class="visual-controls" aria-label="Visual controls">
+          <button type="button" (click)="previousVisual()" aria-label="Previous image"><i class="fa-solid fa-arrow-left"></i></button>
+          <span>{{ heroIndex() + 1 }} / {{ heroVisuals.length }}</span>
+          <button type="button" (click)="nextVisual()" aria-label="Next image"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
       </aside>
     </div>
   </section>
@@ -92,7 +106,7 @@
       @if (mode() === 'schools') {
         <div class="directory-list" data-reveal>
           @for (row of filteredSchools(); track row.college + row.name) {
-            <a class="directory-row" [routerLink]="['/academics/colleges', row.collegeSlug]">
+            <article class="directory-row">
               <span class="directory-row__mark"><i class="fa-solid fa-sitemap"></i></span>
               <div class="directory-row__body">
                 <h2>{{ row.name }}</h2>
@@ -107,7 +121,8 @@
                   <span>+{{ remaining(row.departments, 3) }} more</span>
                 }
               </div>
-            </a>
+              <a class="directory-open" [routerLink]="['/academics/colleges', row.collegeSlug]">Open college <i class="fa-solid fa-arrow-right"></i></a>
+            </article>
           }
         </div>
       }
@@ -115,11 +130,12 @@
       @if (mode() === 'departments') {
         <div class="department-grid" data-reveal>
           @for (row of filteredDepartments(); track row.college + row.school + row.name) {
-            <a class="department-tile" [routerLink]="['/academics/colleges', row.collegeSlug]">
+            <article class="department-tile">
               <span>{{ row.college }}</span>
               <h2>{{ row.name }}</h2>
               <p>{{ row.school }}</p>
-            </a>
+              <a class="directory-open" [routerLink]="['/academics/colleges', row.collegeSlug]">Open college <i class="fa-solid fa-arrow-right"></i></a>
+            </article>
           }
         </div>
       }
