@@ -2,38 +2,86 @@
 :host { display: block; }
 
 /* ========== Hero: brand-adapted illustrator video ========== */
-.ab-hero { padding: 96px 0 88px; position: relative; }
+.ab-hero {
+  min-height: clamp(520px, 62vh, 700px);
+  padding: 82px 0 76px;
+  position: relative;
+  isolation: isolate;
+}
+
+.ab-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(90deg, rgba(247, 241, 230, 0.99) 0%, rgba(247, 241, 230, 0.94) 38%, rgba(247, 241, 230, 0.58) 62%, rgba(247, 241, 230, 0.12) 100%),
+    linear-gradient(180deg, rgba(247, 241, 230, 0.56) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.38) 100%);
+  pointer-events: none;
+}
+
+.ab-hero .v2-container,
+.ab-hero .pg-hero__grid,
+.ab-hero .pg-hero__copy {
+  position: relative;
+  z-index: 2;
+}
+
+.ab-hero .pg-hero__grid {
+  grid-template-columns: minmax(0, 0.98fr) minmax(320px, 0.82fr);
+  align-items: center;
+  gap: clamp(34px, 6vw, 82px);
+}
+
+.ab-hero h1 {
+  max-width: 12.8ch;
+  font-size: clamp(38px, 4.55vw, 64px);
+  line-height: 1.01;
+}
 
 .ab-hero__media {
+  position: relative;
+  z-index: 2;
   display: grid;
   gap: 18px;
+  align-items: start;
   justify-items: center;
+  min-width: 0;
+  pointer-events: auto;
 }
 .ab-hero__video {
   position: relative;
+  display: grid;
+  place-items: center;
   width: 100%;
-  max-width: 600px;
-  /* Match the footage's native 2:1 ratio so the bird is never cropped. */
-  aspect-ratio: 2 / 1;
-  border-radius: 24px;
+  max-width: min(100%, 500px);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 58% 42% 50% 50% / 43% 39% 61% 57%;
   overflow: hidden;
-  box-shadow: var(--sau-shadow-lg);
+  box-shadow: 0 32px 72px rgba(8, 36, 58, 0.10);
   isolation: isolate;
-  background: var(--sau-paper-warm);
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.86) 58%, rgba(235, 242, 247, 0.58) 100%);
 }
 .ab-hero__video video {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 64% center;
   display: block;
   /* Gentle brand-adapt only — the illustration is already blue/white. */
   filter: saturate(1.02) contrast(1.03);
+  transform: scale(1);
+  transform-origin: center center;
   transition: transform 1.2s var(--sau-ease-out);
 }
-.ab-hero__video:hover video { transform: scale(1.03); }
+.ab-hero__video:hover video { transform: scale(1.04); }
 .ab-hero__veil {
   position: absolute; inset: 0;
   background:
-    radial-gradient(120% 80% at 50% 100%, rgba(15, 76, 129, 0.16), transparent 60%),
-    linear-gradient(180deg, rgba(247, 241, 230, 0.08) 0%, rgba(15, 76, 129, 0.03) 60%, rgba(15, 76, 129, 0.10) 100%);
+    linear-gradient(90deg, rgba(247, 241, 230, 0.18) 0%, rgba(247, 241, 230, 0.05) 46%, rgba(247, 241, 230, 0.18) 100%),
+    radial-gradient(120% 80% at 50% 100%, rgba(15, 76, 129, 0.08), transparent 64%);
   pointer-events: none;
 }
 .ab-hero__wordmark {
@@ -52,31 +100,46 @@
   text-transform: lowercase;
 }
 .ab-hero__bird-caption {
+  position: relative;
+  z-index: 2;
   display: grid;
   gap: 4px;
   text-align: center;
-  max-width: 38ch;
-  padding-top: 8px;
-  border-top: 1px solid var(--sau-border-soft);
+  max-width: 42ch;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.ab-hero__bird-caption::before {
+  content: '';
+  justify-self: center;
+  width: 56px;
+  height: 1px;
+  margin-bottom: 4px;
+  background: rgba(15, 76, 129, 0.36);
 }
 .ab-hero__bird-caption .akan {
   font-family: var(--sau-font-display);
   font-weight: 500;
   font-style: italic;
-  font-size: 15.5px;
-  color: var(--sau-blue-700);
+  font-size: clamp(16px, 1.25vw, 19px);
+  color: #08243a;
   letter-spacing: -0.01em;
 }
 .ab-hero__bird-caption .trans {
   font-size: 12.5px;
-  color: var(--sau-fg-muted);
+  color: #536b7d;
   line-height: 1.5;
 }
 
 /* ========== On-page subnav ========== */
 .ab-subnav {
   position: sticky;
-  top: 0;
+  top: 76px;
   z-index: 70;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: saturate(180%) blur(14px);
@@ -85,24 +148,73 @@
   border-bottom: 1px solid var(--sau-border-soft);
 }
 .ab-subnav .v2-container {
-  display: flex; gap: 2px;
+  display: flex;
+  gap: 6px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
 .ab-subnav .v2-container::-webkit-scrollbar { display: none; }
 .ab-subnav a {
+  flex: 0 0 auto;
   font-family: var(--sau-font-heading);
   font-size: 13.5px;
   font-weight: 500;
   color: var(--sau-fg-muted);
   padding: 14px 16px;
   white-space: nowrap;
+  scroll-snap-align: start;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
   transition: color var(--sau-dur-fast), border-color var(--sau-dur-fast);
 }
 .ab-subnav a:hover { color: var(--sau-return); }
-.ab-subnav a.active { color: var(--sau-return); border-color: var(--sau-return); }
+.ab-subnav a.active {
+  color: var(--sau-return);
+  border-color: var(--sau-return);
+  background: rgba(179, 92, 42, 0.08);
+}
+
+@media (max-width: 980px) {
+  .ab-subnav { top: 68px; }
+  .ab-subnav .v2-container {
+    padding-top: 0.46rem;
+    padding-bottom: 0.46rem;
+  }
+  .ab-subnav a {
+    border: 1px solid rgba(15, 76, 129, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.76);
+    padding: 0.58rem 0.86rem;
+    margin-bottom: 0;
+    box-shadow: 0 8px 18px rgba(8, 36, 58, 0.04);
+  }
+  .ab-subnav a.active {
+    background: rgba(179, 92, 42, 0.10);
+  }
+}
+
+@media (max-width: 560px) {
+  .ab-subnav { top: 64px; }
+  .ab-subnav .v2-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+    padding-top: 0.58rem;
+    padding-bottom: 0.58rem;
+  }
+  .ab-subnav a {
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0.58rem 0.7rem;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.15;
+  }
+}
 
 /* ========== Mission ========== */
 .ab-mission {
@@ -358,6 +470,40 @@
   color: var(--sau-fg-muted);
 }
 
+.ab-card-cta {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-top: 16px !important;
+  padding: 11px 15px;
+  border-radius: 999px;
+  background: rgba(8, 36, 58, 0.055);
+  color: #253f53 !important;
+  font-family: var(--sau-font-heading);
+  font-size: 13px !important;
+  font-weight: 850 !important;
+  line-height: 1;
+  transition: background var(--sau-dur-fast), color var(--sau-dur-fast), transform var(--sau-dur-fast);
+}
+
+.ab-card-cta i {
+  font-size: 12px;
+  transition: transform var(--sau-dur-fast);
+}
+
+.ab-person:hover .ab-card-cta,
+.ab-team-gateway:hover .ab-card-cta {
+  background: #08243a;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.ab-person:hover .ab-card-cta i,
+.ab-team-gateway:hover .ab-card-cta i {
+  transform: translateX(3px);
+}
+
 .ab-team-gateways {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -438,7 +584,7 @@
 .ab-team-gateway__faces {
   display: flex;
   align-items: center;
-  margin-top: auto;
+  margin-top: 2px;
   padding-top: 12px;
 }
 .ab-team-gateway__faces img {
@@ -519,6 +665,21 @@
 
 /* ========== Responsive ========== */
 @media (max-width: 1080px) {
+  .ab-hero {
+    min-height: 620px;
+  }
+  .ab-hero .pg-hero__grid { grid-template-columns: 1fr; }
+  .ab-hero__media {
+    inset: auto;
+    width: min(100%, 540px);
+    margin: 0 auto;
+    opacity: 1;
+  }
+  .ab-hero::after {
+    background:
+      linear-gradient(90deg, rgba(247, 241, 230, 0.99) 0%, rgba(247, 241, 230, 0.88) 50%, rgba(247, 241, 230, 0.26) 100%),
+      linear-gradient(180deg, rgba(247, 241, 230, 0.46) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.42) 100%);
+  }
   .ab-mission { grid-template-columns: 1fr; gap: 36px; }
   .ab-mission__values { position: static; }
   .ab-timeline { grid-template-columns: 1fr 1fr; }
@@ -531,6 +692,92 @@
   .ab-org__role { grid-column: 2; justify-self: start; }
 }
 @media (max-width: 640px) {
+  .ab-hero {
+    min-height: auto;
+    padding: 46px 0 42px;
+  }
+  .ab-hero .pg-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .ab-hero .pg-hero__copy {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .ab-hero h1 {
+    max-width: 100%;
+    font-size: clamp(34px, 9.8vw, 40px);
+    line-height: 1.05;
+    overflow-wrap: normal;
+    text-wrap: balance;
+  }
+  .ab-hero .pg-hero__lead {
+    max-width: 100%;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .ab-hero .pg-hero__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 12px;
+  }
+  .ab-hero .pg-hero__actions .v2-btn {
+    width: 100%;
+    min-height: 54px;
+  }
+  .ab-hero .pg-hero__trust {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 16px;
+    margin-top: 6px;
+    padding-top: 22px;
+  }
+  .ab-hero .pg-hero__trust .divider {
+    display: none;
+  }
+  .ab-hero .pg-hero__trust .stat {
+    min-width: 0;
+  }
+  .ab-hero__media {
+    order: -1;
+    position: relative;
+    inset: auto;
+    z-index: 2;
+    width: 100%;
+    margin-top: 4px;
+    opacity: 1;
+  }
+  .ab-hero__video {
+    width: min(100%, 320px);
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    border-radius: 58% 42% 50% 50% / 43% 39% 61% 57%;
+  }
+  .ab-hero__video video {
+    width: 100%;
+    object-position: 64% center;
+    transform: scale(1);
+  }
+  .ab-hero__video:hover video { transform: scale(1.025); }
+  .ab-hero::after {
+    background:
+      linear-gradient(180deg, rgba(247, 241, 230, 0.99) 0%, rgba(247, 241, 230, 0.92) 58%, rgba(247, 241, 230, 0.62) 100%);
+  }
+  .ab-hero__bird-caption {
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .ab-hero__bird-caption .akan {
+    font-size: 14px;
+  }
+  .ab-hero__bird-caption .trans {
+    font-size: 12px;
+  }
   .ab-timeline,
   .ab-team,
   .ab-team--founders,

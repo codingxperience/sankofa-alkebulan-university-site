@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -13,7 +13,7 @@ import {
 @Component({
   selector: 'app-programmes-level',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './programmes-level.component.html',
   styleUrls: ['./programmes-level.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,7 +42,19 @@ export class ProgrammesLevelComponent {
     path: `/home/${item.level}`,
   }));
 
+  readonly programmesPerPage = 9;
+  readonly programmePage = signal(0);
   readonly programmes = computed(() => PROGRAMME_CARDS_BY_LEVEL[this.level()] ?? []);
+  readonly programmePageCount = computed(() =>
+    Math.max(1, Math.ceil(this.programmes().length / this.programmesPerPage)),
+  );
+  readonly currentProgrammePage = computed(() =>
+    Math.min(this.programmePage(), this.programmePageCount() - 1),
+  );
+  readonly visibleProgrammes = computed(() => {
+    const start = this.currentProgrammePage() * this.programmesPerPage;
+    return this.programmes().slice(start, start + this.programmesPerPage);
+  });
   readonly isPhdLayout = computed(() => this.category().layout === 'phd');
   readonly phdSections = PHD_SECTIONS;
   readonly activePhdSectionId = signal(PHD_SECTIONS[0]?.id ?? 'scope');
@@ -87,6 +99,14 @@ export class ProgrammesLevelComponent {
 
   setActivePhdSection(id: string) {
     this.activePhdSectionId.set(id);
+  }
+
+  previousProgrammePage() {
+    this.programmePage.set(Math.max(0, this.currentProgrammePage() - 1));
+  }
+
+  nextProgrammePage() {
+    this.programmePage.set(Math.min(this.programmePageCount() - 1, this.currentProgrammePage() + 1));
   }
 
   constructor() {

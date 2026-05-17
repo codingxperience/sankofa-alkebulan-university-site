@@ -1205,7 +1205,7 @@ button { font: inherit; cursor: pointer; background: none; border: 0; }
   pointer-events: none;
 }
 .pg-hero__grid { position: relative; display: grid; grid-template-columns: 1.25fr 1fr; gap: 64px; align-items: center; }
-.pg-hero__copy { display: grid; gap: 20px; max-width: 62ch; }
+.pg-hero__copy { display: grid; gap: 20px; max-width: 62ch; min-width: 0; }
 .pg-hero h1 {
   margin: 0;
   font-family: var(--sau-font-display);
@@ -1436,6 +1436,21 @@ button { font: inherit; cursor: pointer; background: none; border: 0; }
   .v2-hero h1 { font-size: 40px; }
   .v2-hero__trust { gap: 14px; }
   .v2-hero__trust .divider { display: none; }
+  .pg-crumbs .v2-container { grid-template-columns: 1fr; align-items: start; }
+  .pg-crumbs .actions {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .pg-crumbs .actions::-webkit-scrollbar { display: none; }
+  .pg-hero { padding: 64px 0 72px; }
+  .pg-hero h1 {
+    max-width: 100%;
+    font-size: clamp(40px, 12vw, 52px);
+    line-height: 1.02;
+    overflow-wrap: break-word;
+  }
+  .pg-hero__lead { max-width: 100%; }
   .pg-quote { padding: 64px 0; }
   .pg-quote::after { font-size: 7rem; opacity: 0.75; }
   .v2-footer__inner, .pg-footer__top { grid-template-columns: 1fr; }

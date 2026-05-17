@@ -348,56 +348,39 @@ type MobileGroup = 'about' | 'academics';
     .editorial-brand__name {
       position: relative;
       display: grid;
-      gap: 0.04rem;
-      padding-bottom: 0.32rem;
+      gap: 0;
       font-family: var(--font-family-heading);
-      line-height: 1;
-      letter-spacing: -0.035em;
-    }
-
-    .editorial-brand__name::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0.18rem;
-      bottom: 0;
-      height: 2px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--sau-return, #b35c2a), rgb(15 76 129 / 18%));
-      transform-origin: left center;
-      transition: transform 180ms ease, opacity 180ms ease;
-    }
-
-    .editorial-brand:hover .editorial-brand__name::after {
-      transform: scaleX(0.82);
-      opacity: 0.82;
+      line-height: 0.98;
+      letter-spacing: -0.026em;
+      transform: translateY(1px);
     }
 
     .editorial-brand__name span {
-      color: #123f62;
-      font-size: 0.72rem;
+      color: #08243a;
+      font-size: 0.98rem;
       font-weight: 850;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      text-transform: none;
       white-space: nowrap;
     }
 
     .editorial-brand__name strong {
       color: #08243a;
-      font-size: 1.04rem;
-      font-weight: 900;
+      font-size: 0.98rem;
+      font-weight: 850;
       white-space: nowrap;
     }
 
     .editorial-brand__short {
       display: none;
-      color: var(--sau-return, #b35c2a);
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1.7rem;
-      font-style: italic;
-      font-weight: 800;
-      letter-spacing: -0.08em;
+      color: #08243a;
+      font-family: var(--font-family-heading);
+      font-size: 1.54rem;
+      font-style: normal;
+      font-weight: 900;
+      letter-spacing: -0.045em;
       line-height: 1;
+      transform: translateY(1px);
     }
 
     .editorial-nav {
@@ -531,13 +514,15 @@ type MobileGroup = 'about' | 'academics';
     }
 
     .nav-panel {
-      position: absolute;
-      top: calc(100% + 0.85rem);
-      left: 50%;
+      position: fixed;
+      top: 86px;
+      left: 50vw;
       display: grid;
       grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
       gap: 1.4rem;
       width: min(1040px, calc(100vw - 2rem));
+      max-height: min(660px, calc(100vh - 104px));
+      overflow: auto;
       padding: 1.2rem;
       border: 1px solid rgb(15 76 129 / 10%);
       border-radius: 18px;
@@ -654,15 +639,22 @@ type MobileGroup = 'about' | 'academics';
 
     .nav-panel__columns a.mega-link,
     .nav-panel__columns .mega-link--disabled {
-      grid-template-columns: 2rem minmax(0, 1fr);
+      grid-template-columns: 2.1rem minmax(0, 1fr);
       align-items: start;
-      column-gap: 0.62rem;
+      column-gap: 0.72rem;
       min-height: 4.25rem;
       padding: 0.62rem 0.58rem;
       border-top: 0;
       border-radius: 0.88rem;
       background: rgb(255 255 255 / 42%);
       box-shadow: inset 0 0 0 1px rgb(15 76 129 / 6%);
+    }
+
+    .nav-panel__columns a.mega-link > div,
+    .nav-panel__columns .mega-link--disabled > div {
+      display: grid;
+      gap: 0.24rem;
+      min-width: 0;
     }
 
     .nav-panel__columns a.mega-link > i,
@@ -696,6 +688,7 @@ type MobileGroup = 'about' | 'academics';
     }
 
     .nav-panel__columns strong {
+      display: block;
       color: #123f62;
       font-family: var(--font-family-heading);
       font-size: 0.86rem;
@@ -704,6 +697,7 @@ type MobileGroup = 'about' | 'academics';
     }
 
     .nav-panel__columns span {
+      display: block;
       color: #63798b;
       font-size: 0.74rem;
       line-height: 1.35;
@@ -1022,11 +1016,11 @@ type MobileGroup = 'about' | 'academics';
       }
 
       .editorial-brand__name {
-        display: none;
+        font-size: 0.94rem;
       }
 
       .editorial-brand__short {
-        display: inline-block;
+        display: none;
       }
 
       .editorial-nav,
@@ -1047,6 +1041,20 @@ type MobileGroup = 'about' | 'academics';
       .editorial-brand {
         gap: 0.52rem;
       }
+    }
+
+    @media (max-width: 640px) {
+      .editorial-bar__inner {
+        min-height: 64px;
+      }
+
+      .editorial-brand {
+        gap: 0.52rem;
+      }
+
+      .editorial-brand__name {
+        display: none;
+      }
 
       .editorial-brand__badge {
         width: 42px;
@@ -1054,7 +1062,8 @@ type MobileGroup = 'about' | 'academics';
       }
 
       .editorial-brand__short {
-        font-size: 1.58rem;
+        display: inline-block;
+        font-size: 1.46rem;
       }
 
       .mobile-drawer__surface {

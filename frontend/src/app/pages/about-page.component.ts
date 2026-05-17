@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, inject, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RevealDirective } from '../directives/reveal.directive';
 import { TEAM_CATEGORY_GROUPS, TEAM_MEMBERS } from '../university/team-members';
 
@@ -11,17 +12,18 @@ import { TEAM_CATEGORY_GROUPS, TEAM_MEMBERS } from '../university/team-members';
   styleUrl: './about-page.component.scss',
 })
 export class AboutPageComponent implements AfterViewInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+
   @ViewChild('heroVideo') heroVideo?: ElementRef<HTMLVideoElement>;
+
+  readonly activeFragment = signal('mission');
 
   readonly subnav = [
     { label: 'Mission & philosophy', path: '/about', fragment: 'mission' },
     { label: 'History', path: '/about', fragment: 'history' },
     { label: 'Governance', path: '/about', fragment: 'governance' },
     { label: 'Leadership', path: '/about', fragment: 'leadership' },
-    { label: 'Executive Team', path: '/about/executive-team', fragment: undefined },
-    { label: 'Board of Governance', path: '/about/board-of-governance', fragment: undefined },
-    { label: 'Advisory Council', path: '/about/advisory-council', fragment: undefined },
-    { label: 'Research & Scholarly Team', path: '/about/research-scholarly-team', fragment: undefined },
     { label: 'Identity & charter', path: '/about', fragment: 'identity' },
     { label: 'Impact', path: '/about', fragment: 'impact' },
   ];
@@ -158,6 +160,12 @@ export class AboutPageComponent implements AfterViewInit {
     { num: '100%', lbl: 'Need-met for admitted undergraduates' },
     { num: '38', lbl: 'Languages represented in current cohort' },
   ];
+
+  constructor() {
+    this.route.fragment
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((fragment) => this.activeFragment.set(fragment || 'mission'));
+  }
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined') { return; }

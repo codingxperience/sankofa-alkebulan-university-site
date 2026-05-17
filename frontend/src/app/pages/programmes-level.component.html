@@ -16,25 +16,19 @@
         <p>{{ levelMeta().sub }}</p>
         <div class="programme-hero__actions">
           <a routerLink="/admissions">Apply now</a>
-          <a routerLink="/academics" fragment="programmes">Academic architecture</a>
         </div>
       </div>
-
-      <aside class="programme-hero__panel" aria-label="Pathway summary">
-        <p>{{ category().shortLabel }}</p>
-        <div class="programme-hero__stats">
-          @for (stat of levelMeta().stats; track stat) {
-            <span>{{ stat }}</span>
-          }
-        </div>
-        <strong>{{ programmes().length || 'Live' }}</strong>
-        <small>{{ programmes().length ? 'published programme routes' : 'route being curated' }}</small>
-      </aside>
     </section>
 
     <nav class="programme-levels" aria-label="Programme levels">
       @for (item of navItems; track item.path) {
-        <a [routerLink]="item.path" routerLinkActive="active">{{ item.label }}</a>
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [class.active]="item.path === '/home/' + level()"
+          [attr.aria-current]="item.path === '/home/' + level() ? 'page' : null"
+        >{{ item.label }}</a>
       }
     </nav>
 
@@ -122,10 +116,10 @@
         <section class="masters-program-grid" aria-label="{{ category().shortLabel }} list">
           @if (programmes().length) {
             <div class="programme-grid">
-              @for (program of programmes(); track program.title; let index = $index) {
+              @for (program of visibleProgrammes(); track program.title; let index = $index) {
                 <article class="programme-card">
                   <div class="programme-card__topline">
-                    <span>{{ index + 1 }}</span>
+                    <span>{{ currentProgrammePage() * programmesPerPage + index + 1 }}</span>
                     <small>{{ category().shortLabel }}</small>
                   </div>
                   <div class="programme-card__header">
@@ -141,6 +135,29 @@
                 </article>
               }
             </div>
+            @if (programmePageCount() > 1) {
+              <div class="programme-card-pager" aria-label="Programme card pages">
+                <button
+                  type="button"
+                  class="programme-card-pager__button"
+                  (click)="previousProgrammePage()"
+                  [disabled]="currentProgrammePage() === 0"
+                  aria-label="Previous programmes"
+                >
+                  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                </button>
+                <span>{{ currentProgrammePage() + 1 }} / {{ programmePageCount() }}</span>
+                <button
+                  type="button"
+                  class="programme-card-pager__button"
+                  (click)="nextProgrammePage()"
+                  [disabled]="currentProgrammePage() + 1 >= programmePageCount()"
+                  aria-label="Next programmes"
+                >
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </button>
+              </div>
+            }
           } @else {
             <div class="programme-empty">
               <p class="eyebrow">Programme update</p>

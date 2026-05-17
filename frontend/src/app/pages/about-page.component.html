@@ -59,7 +59,7 @@
           </div>
           <figcaption class="ab-hero__bird-caption">
             <span class="akan">se wo were fi na wosankofa a yenkyi</span>
-            <span class="trans">? it is not taboo to go back and retrieve what you have forgotten.</span>
+            <span class="trans">&mdash; it is not taboo to go back and retrieve what you have forgotten.</span>
           </figcaption>
         </div>
       </div>
@@ -68,9 +68,14 @@
 
   <!-- On-page sub-nav -->
   <nav class="ab-subnav" aria-label="About sections">
-    <div class="v2-container">
-      @for (s of subnav; track s.label; let first = $first) {
-        <a [routerLink]="s.path" [fragment]="s.fragment" [class.active]="first">{{ s.label }}</a>
+      <div class="v2-container">
+        @for (s of subnav; track s.label; let first = $first) {
+        <a
+          [routerLink]="s.path"
+          [fragment]="s.fragment"
+          [class.active]="activeFragment() === s.fragment"
+          [attr.aria-current]="activeFragment() === s.fragment ? 'page' : null"
+        >{{ s.label }}</a>
       }
     </div>
   </nav>
@@ -186,7 +191,12 @@
         @for (person of leadership; track person.b) {
           <a class="ab-person ab-person--founder" [routerLink]="person.route">
             <div class="ab-person__photo"><img [src]="person.photo" [alt]="person.b" [style.object-position]="person.objectPosition"></div>
-            <div><b>{{ person.b }}</b><span>{{ person.s }}</span><p>{{ person.p }}</p></div>
+            <div>
+              <b>{{ person.b }}</b>
+              <span>{{ person.s }}</span>
+              <p>{{ person.p }}</p>
+              <span class="ab-card-cta">View profile <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </div>
           </a>
         }
       </div>
@@ -203,6 +213,7 @@
                 <img [src]="member.image" [alt]="member.name" [style.object-position]="member.objectPosition || '50% 30%'">
               }
             </span>
+            <span class="ab-card-cta">Open directory <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
           </a>
         }
       </div>

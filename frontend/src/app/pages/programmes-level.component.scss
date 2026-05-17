@@ -67,7 +67,7 @@
 .programme-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(250px, 340px);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.2rem, 4vw, 4rem);
   align-items: end;
   min-height: clamp(360px, 44vw, 560px);
@@ -75,8 +75,8 @@
   border-radius: 34px;
   background:
     linear-gradient(100deg, rgba(251, 246, 236, 0.98) 0%, rgba(251, 246, 236, 0.88) 48%, rgba(251, 246, 236, 0.34) 74%, rgba(251, 246, 236, 0.06) 100%),
-    url('/assets/design/academic-heritage.jpg') center right / cover no-repeat;
-  box-shadow: inset 0 0 0 1px rgba(15, 76, 129, 0.08), 0 28px 70px rgba(8, 36, 58, 0.10);
+    url('/assets/programmes/programmes-intellectual-study.jpg') center right / cover no-repeat;
+  box-shadow: 0 28px 70px rgba(8, 36, 58, 0.08);
   overflow: hidden;
 }
 
@@ -94,10 +94,10 @@
   pointer-events: none;
 }
 
-.programme-hero__copy,
-.programme-hero__panel {
+.programme-hero__copy {
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 .programme-hero__copy {
@@ -115,6 +115,7 @@
   line-height: 0.87;
   letter-spacing: -0.088em;
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
 
 .programme-hero__copy p:not(.eyebrow) {
@@ -157,7 +158,6 @@
   color: #ffffff;
 }
 
-.programme-hero__actions a:last-child,
 .btn--secondary {
   border: 1px solid var(--programme-border);
   background: rgba(255, 255, 255, 0.70);
@@ -178,70 +178,20 @@
   border-color: var(--programme-return);
 }
 
-.programme-hero__panel {
-  display: grid;
-  gap: 0.78rem;
-  align-content: start;
-  border: 1px solid rgba(15, 76, 129, 0.12);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.76);
-  padding: clamp(1rem, 2vw, 1.28rem);
-  box-shadow: 0 22px 52px rgba(8, 36, 58, 0.10);
-  backdrop-filter: blur(16px) saturate(130%);
-}
-
-.programme-hero__panel p,
-.programme-hero__panel small {
-  margin: 0;
-  color: var(--programme-text);
-}
-
-.programme-hero__panel p {
-  color: var(--programme-return);
-  font-family: var(--font-family-heading);
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.programme-hero__panel strong {
-  color: var(--programme-ink);
-  font-family: var(--sau-font-display, var(--font-family-heading));
-  font-size: clamp(2.6rem, 5vw, 4.8rem);
-  line-height: 0.9;
-  letter-spacing: -0.075em;
-}
-
-.programme-hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.programme-hero__stats span {
-  border: 1px solid rgba(15, 76, 129, 0.09);
-  border-radius: 999px;
-  background: rgba(251, 246, 236, 0.74);
-  color: #24495f;
-  padding: 0.36rem 0.62rem;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
 .programme-levels {
   position: sticky;
   top: 76px;
   z-index: 5;
   display: flex;
-  gap: 0.35rem;
+  gap: 6px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
   margin: clamp(1rem, 2.4vw, 1.35rem) 0 clamp(1.3rem, 3vw, 2rem);
-  padding: 0.42rem;
-  border: 1px solid var(--programme-border);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: 0 18px 38px rgba(8, 36, 58, 0.06);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   backdrop-filter: blur(14px) saturate(130%);
   scrollbar-width: none;
 }
@@ -253,19 +203,24 @@
 .programme-levels a {
   flex: 0 0 auto;
   border-radius: 999px;
+  border: 1px solid rgba(15, 76, 129, 0.12);
+  background: rgba(255, 255, 255, 0.76);
   color: var(--programme-blue);
   padding: 0.68rem 0.94rem;
   font-family: var(--font-family-heading);
   font-size: 0.82rem;
   font-weight: 900;
   text-decoration: none;
+  scroll-snap-align: start;
 }
 
 .programme-levels a:hover,
 .programme-levels a.active {
-  background: #08243a;
-  color: #ffffff;
+  border-color: rgba(179, 92, 42, 0.38);
+  background: rgba(179, 92, 42, 0.10);
+  color: var(--programme-return);
   text-decoration: none;
+  box-shadow: 0 10px 24px rgba(179, 92, 42, 0.08);
 }
 
 .programme-layout {
@@ -275,15 +230,13 @@
 
 .phd-intro,
 .masters-hero,
-.masters-program-grid,
 .phd-sidebar,
 .phd-section-panel,
 .programme-cta--phd,
-.programme-card,
 .programme-empty {
-  border: 1px solid var(--programme-border);
+  border: 0;
   background: var(--programme-surface);
-  box-shadow: 0 20px 48px rgba(8, 36, 58, 0.065);
+  box-shadow: 0 18px 44px rgba(8, 36, 58, 0.045);
   backdrop-filter: blur(14px) saturate(130%);
 }
 
@@ -297,6 +250,13 @@
   padding: clamp(1.2rem, 3vw, 2rem);
 }
 
+.phd-intro > *,
+.masters-hero > *,
+.masters-program-grid > *,
+.programme-card > * {
+  min-width: 0;
+}
+
 .phd-intro h2,
 .masters-hero h2 {
   margin: 0.42rem 0 0;
@@ -306,6 +266,7 @@
   line-height: 0.96;
   letter-spacing: -0.068em;
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
 
 .phd-hero-copy,
@@ -328,10 +289,11 @@
   display: grid;
   gap: 0.16rem;
   min-width: 0;
-  border: 1px solid rgba(15, 76, 129, 0.10);
+  border: 0;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.64);
   padding: 0.78rem 0.82rem;
+  box-shadow: 0 10px 24px rgba(8, 36, 58, 0.035);
 }
 
 .phd-hero-meta strong,
@@ -435,7 +397,11 @@
 
 .masters-program-grid {
   border-radius: 30px;
-  padding: clamp(1rem, 2.8vw, 1.45rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .programme-grid {
@@ -452,6 +418,10 @@
   min-height: 100%;
   border-radius: 24px;
   padding: 1rem;
+  border: 0;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 38px rgba(8, 36, 58, 0.052);
+  backdrop-filter: blur(12px) saturate(125%);
   transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 280ms ease, border-color 280ms ease;
 }
 
@@ -462,7 +432,7 @@
   bottom: -2.4rem;
   width: 8rem;
   height: 8rem;
-  border: 1px solid rgba(15, 76, 129, 0.08);
+  border: 0;
   border-radius: 30px;
   background: rgba(251, 246, 236, 0.48);
   transform: rotate(15deg);
@@ -470,7 +440,6 @@
 
 .programme-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(179, 92, 42, 0.34);
   box-shadow: 0 28px 62px rgba(8, 36, 58, 0.10);
 }
 
@@ -525,7 +494,7 @@
 .programme-card__badge {
   width: fit-content;
   max-width: 100%;
-  border: 1px solid rgba(15, 76, 129, 0.10);
+  border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.62);
   padding: 0.32rem 0.58rem;
@@ -551,16 +520,54 @@
   margin-top: auto;
 }
 
+.programme-card-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(26px, 5vw, 48px);
+  margin-top: clamp(26px, 4vw, 42px);
+}
+
+.programme-card-pager__button {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(0, 104, 255, 0.72);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--programme-blue);
+  box-shadow: 0 14px 32px rgba(8, 35, 58, 0.08);
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), border-color 180ms cubic-bezier(.2,.8,.2,1), color 180ms cubic-bezier(.2,.8,.2,1), opacity 180ms cubic-bezier(.2,.8,.2,1);
+}
+
+.programme-card-pager__button:not(:disabled):hover {
+  transform: translateY(-2px);
+  border-color: var(--programme-return);
+  color: var(--programme-return);
+}
+
+.programme-card-pager__button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.programme-card-pager span {
+  min-width: 76px;
+  text-align: center;
+  font-family: var(--font-family-heading);
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--programme-ink);
+}
+
 @media (max-width: 1040px) {
   .programme-hero,
   .phd-intro,
   .masters-hero,
   .phd-grid {
     grid-template-columns: 1fr;
-  }
-
-  .programme-hero__panel {
-    max-width: 430px;
   }
 
   .phd-sidebar {
@@ -579,20 +586,54 @@
     border-radius: 26px;
     background:
       linear-gradient(180deg, rgba(251, 246, 236, 0.98) 0%, rgba(251, 246, 236, 0.92) 55%, rgba(251, 246, 236, 0.44) 100%),
-      url('/assets/design/academic-heritage.jpg') center top / cover no-repeat;
+      url('/assets/programmes/programmes-intellectual-study.jpg') center top / cover no-repeat;
   }
 
   .programme-hero h1 {
-    font-size: clamp(2.8rem, 15vw, 4.6rem);
+    max-width: 100%;
+    font-size: clamp(2.6rem, 12.4vw, 3.55rem);
+    line-height: 0.95;
+    letter-spacing: -0.078em;
+  }
+
+  .programme-hero__copy,
+  .programme-hero__copy p:not(.eyebrow) {
+    width: 100%;
+    max-width: min(100%, calc(100vw - 5.5rem));
   }
 
   .programme-levels {
     top: 68px;
-    border-radius: 20px;
   }
 
   .programme-levels a {
     padding: 0.62rem 0.82rem;
+  }
+
+  .phd-intro h2,
+  .masters-hero h2 {
+    font-size: clamp(1.95rem, 8.6vw, 2.7rem);
+    line-height: 1.03;
+    letter-spacing: -0.052em;
+    max-width: 100%;
+  }
+
+  .masters-hero p {
+    max-width: 100%;
+  }
+
+  .masters-hero > div:first-child,
+  .masters-hero-stats {
+    width: 100%;
+    max-width: min(100%, calc(100vw - 5.5rem));
+  }
+
+  .masters-program-grid {
+    overflow: hidden;
+  }
+
+  .masters-hero-stats {
+    grid-template-columns: 1fr;
   }
 
   .programme-grid {
@@ -612,5 +653,26 @@
 
   .programme-hero {
     padding: 1.1rem;
+  }
+
+  .programme-levels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .programme-levels a {
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0.58rem 0.7rem;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.15;
+  }
+
+  .stat-card {
+    padding: 0.72rem;
   }
 }

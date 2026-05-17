@@ -1,5 +1,8 @@
-/* Programme detail — page-specific styles. Shared classes live in src/styles.scss */
-:host { display: block; }
+/* Programme detail - page-specific styles. Shared classes live in src/styles.scss */
+:host {
+  display: block;
+  overflow-x: hidden;
+}
 
 .pd-crumbs {
   background: #ffffff;
@@ -43,7 +46,7 @@
   position: relative;
   display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: start;
 }
-.pd-hero__copy { display: grid; gap: 16px; }
+.pd-hero__copy { display: grid; gap: 16px; min-width: 0; }
 .pd-hero h1 {
   margin: 4px 0 0;
   font-family: var(--sau-font-display);
@@ -61,6 +64,13 @@
   max-width: 56ch;
 }
 .pd-hero__chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.pd-hero__chips .v2-chip {
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 36px;
+  white-space: normal;
+}
 
 .pd-hero__meta {
   background: #ffffff;
@@ -85,11 +95,13 @@
 .pd-tabs {
   background: #ffffff;
   border-bottom: 1px solid var(--sau-border);
-  position: sticky; top: 104px; z-index: 70;
+  position: sticky; top: 76px; z-index: 70;
 }
 .pd-tabs .v2-container {
-  display: flex; gap: 2px;
+  display: flex; gap: 6px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
 .pd-tabs .v2-container::-webkit-scrollbar { display: none; }
@@ -103,6 +115,7 @@
   margin-bottom: -1px;
   transition: color var(--sau-dur-fast), border-color var(--sau-dur-fast);
   white-space: nowrap;
+  scroll-snap-align: start;
   background: transparent;
   border-top: 0;
   border-left: 0;
@@ -112,7 +125,11 @@
 .pd-tabs a:hover,
 .pd-tabs button:hover { color: var(--sau-blue-700); }
 .pd-tabs a.active,
-.pd-tabs button.active { color: var(--sau-blue-700); border-color: var(--sau-blue-500); }
+.pd-tabs button.active {
+  color: var(--sau-return, #b35c2a);
+  border-color: var(--sau-return, #b35c2a);
+  background: rgba(179, 92, 42, 0.08);
+}
 
 /* Body */
 .pd-body { padding: 64px 0; }
@@ -248,10 +265,89 @@
 @media (max-width: 980px) {
   .pd-hero__grid, .pd-body__grid, .pd-apply-strip .v2-container { grid-template-columns: 1fr; }
   .pd-side { position: static; }
-  .pd-tabs { top: 0; }
+  .pd-tabs {
+    top: 68px;
+    border-top: 1px solid var(--sau-border-soft);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+  }
+  .pd-tabs .v2-container {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .pd-tabs button {
+    flex: 0 0 auto;
+    border: 1px solid rgba(15, 76, 129, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    padding: 0.58rem 0.86rem;
+    margin-bottom: 0;
+    box-shadow: 0 8px 18px rgba(8, 36, 58, 0.04);
+  }
+  .pd-tabs button.active {
+    background: rgba(179, 92, 42, 0.10);
+    color: var(--sau-return, #b35c2a);
+    border-color: rgba(179, 92, 42, 0.36);
+    box-shadow: 0 10px 24px rgba(179, 92, 42, 0.08);
+  }
 }
 
 @media (max-width: 640px) {
+  .pd-tabs { top: 64px; }
+
+  .pd-tabs .v2-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .pd-tabs button {
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.15;
+  }
+
+  .pd-crumbs .v2-container {
+    align-items: start;
+    gap: 12px;
+  }
+
+  .pd-crumbs nav,
+  .pd-crumbs .actions {
+    min-width: 0;
+  }
+
+  .pd-crumbs .actions {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .pd-crumbs .actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pd-hero {
+    padding: 44px 0 52px;
+  }
+
+  .pd-hero h1 {
+    font-size: clamp(34px, 10.5vw, 42px);
+    line-height: 1.05;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  .pd-hero__lead {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
   .pd-highlight-grid {
     grid-template-columns: 1fr;
   }

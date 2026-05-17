@@ -484,11 +484,11 @@
 }
 
 @media (max-width: 860px) {
-  .directory-hero-media { opacity: 0.42; }
+  .directory-hero-media { opacity: 0.62; }
   .directory-hero-fade {
     background:
-      linear-gradient(90deg, rgba(251,248,240,0.98) 0%, rgba(251,248,240,0.92) 58%, rgba(251,248,240,0.55) 100%),
-      linear-gradient(180deg, rgba(251,248,240,0.5), rgba(251,248,240,0.95));
+      linear-gradient(90deg, rgba(251,248,240,0.98) 0%, rgba(251,248,240,0.90) 52%, rgba(251,248,240,0.36) 100%),
+      linear-gradient(180deg, rgba(251,248,240,0.42), rgba(251,248,240,0.88));
   }
   .academic-directory-hero__inner { grid-template-columns: 1fr; }
   .academic-directory-hero__copy { max-width: 760px; padding-inline: 10px; }
@@ -506,6 +506,13 @@
 @media (max-width: 560px) {
   .academic-directory-hero { min-height: 700px; }
   .academic-directory-hero__inner { min-height: 700px; }
+  .directory-hero-media { opacity: 0.72; }
+  .directory-hero-media img { object-position: 58% center; }
+  .directory-hero-fade {
+    background:
+      linear-gradient(180deg, rgba(251,248,240,0.98) 0%, rgba(251,248,240,0.90) 46%, rgba(251,248,240,0.30) 100%),
+      linear-gradient(90deg, rgba(251,248,240,0.96) 0%, rgba(251,248,240,0.42) 100%);
+  }
   .directory-control--prev { left: 10px; }
   .directory-control--next { right: 10px; }
   .college-card,
