@@ -52,34 +52,34 @@ export class ProgrammesLevelComponent {
     const current = this.level();
     const common = {
       phd: {
-        hero: 'Doctoral Research Designed for Pan-African Impact',
-        sub: 'Forge original knowledge, join programs with rigorous supervision, and shape policy and innovation across Africa.',
-        stats: ['6 research themes', '250+ faculty mentors', '100% doctoral support'],
+        hero: 'Doctoral study with public consequence.',
+        sub: 'Research programmes for scholars whose questions need supervision, method, evidence, and a continental field of application.',
+        stats: ['6 research themes', '250+ faculty mentors', 'Thesis to public work'],
       },
       masters: {
-        hero: 'Masters Degrees for Career Leaders and Research Champions',
-        sub: 'Deepen expertise with rigorous coursework, applied research projects, and leadership pathways.',
-        stats: ['20+ programs', 'Research projects', 'Professional placements'],
+        hero: 'Masters programmes for serious professional depth.',
+        sub: 'Advanced study for practitioners, researchers, and institution builders moving from competence into leadership.',
+        stats: ['20+ programmes', 'Applied research', 'Professional routes'],
       },
       'postgraduate-diploma': {
-        hero: 'Postgraduate Diplomas for Accelerator Skills and Transition',
-        sub: 'Build focused technical and professional capability for next-level career pivot in 1 year.',
-        stats: ['Skill-focused', 'Industry-aligned', 'Accelerated learning'],
+        hero: 'Postgraduate diplomas for focused transition.',
+        sub: 'Compact, practice-led study for graduates who need a sharper professional method before the next academic or career move.',
+        stats: ['Focused year', 'Practice led', 'Career transition'],
       },
       bachelors: {
-        hero: 'Bachelors Programmes Anchored in African Knowledge Systems',
-        sub: 'Start your leadership journey with interdisciplinary theory, practical labs, and experiential fieldwork.',
-        stats: ['8 semesters', 'Community practice', 'Professional readiness'],
+        hero: 'Undergraduate study with a research spine.',
+        sub: 'Bachelor programmes that join disciplinary foundations, African knowledge systems, applied learning, and public responsibility.',
+        stats: ['8 semesters', 'Field practice', 'Professional readiness'],
       },
       diploma: {
-        hero: 'Diplomas for Fast, Practical Workforce Skills',
-        sub: 'Get career-ready with applied training, labs, and real-world projects in 2 years.',
-        stats: ['2 years', 'Project-based', 'Industry partnerships'],
+        hero: 'Diplomas for applied capability.',
+        sub: 'Practical routes for students building workforce-ready skills, technical confidence, and clear progression into higher awards.',
+        stats: ['2 years', 'Studio and lab', 'Work ready'],
       },
       certificate: {
-        hero: 'Certificates for Immediate Professional Growth',
-        sub: 'Quick, practical credentials to upskill in critical areas and launch your next move.',
-        stats: ['1 year', 'Short modules', 'Career-focused'],
+        hero: 'Certificates for immediate formation.',
+        sub: 'Short, disciplined credentials for focused skills, early access, and professional refresh without a full degree commitment.',
+        stats: ['Short modules', 'Focused skills', 'Stackable routes'],
       },
     } as const;
     return common[current] ?? common.bachelors;
@@ -96,7 +96,7 @@ export class ProgrammesLevelComponent {
       const formal = selected.shortLabel.includes('Programmes')
         ? selected.shortLabel
         : `${selected.shortLabel} Programmes`;
-      title.setTitle(`${formal} · Sankofa Alkebulan University`);
+      title.setTitle(`${formal} - Sankofa Alkebulan University`);
     });
   }
 }

@@ -9,6 +9,12 @@
 
       <h1 class="sr-only">{{ pageLabel() }}</h1>
 
+      <section class="school-page__hero" aria-labelledby="school-page-title">
+        <p class="school-page__eyebrow">{{ pageType() }}</p>
+        <h2 id="school-page-title">{{ pageLabel() }}</h2>
+        <p>{{ page()?.overview }}</p>
+      </section>
+
       <section class="school-page__intro">
         <aside class="leadership-card">
           <div class="leadership-card__image-shell">

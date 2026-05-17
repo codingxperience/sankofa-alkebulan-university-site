@@ -2318,7 +2318,7 @@ export const DEPARTMENT_PAGES: readonly DepartmentPage[] = [
     slug: 'graduate-school',
     title: 'Graduate School',
     overview:
-      'Graduate School offers master’s and doctoral training anchored in interdisciplinary research and Pan-African leadership. Designed for professionals and scholars moving to advanced research and innovation.',
+      'Graduate School offers masters and doctoral training anchored in interdisciplinary research and Pan-African leadership. Designed for professionals and scholars moving to advanced research and innovation.',
     departments: [
       'Department of Postgraduate Studies',
       'Department of Research Methods and Policy',

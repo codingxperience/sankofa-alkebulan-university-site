@@ -81,7 +81,6 @@ export class DepartmentPageComponent {
 
     return [
       `Sankofa Alkebulan University ${this.pageLabel()} advances teaching, applied learning, research, and leadership formation across its academic units.`,
-      page.overview,
       `Students benefit from ${page.departments.length} departments and ${page.featuredDepartment.programs.length} featured programmes designed for rigorous study, innovation, and service.`,
     ];
   });

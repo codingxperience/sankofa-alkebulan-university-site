@@ -33,7 +33,7 @@ export class TeamProfilePageComponent {
       case 'research-scholarly':
         return { label: 'Back to Research & Scholarly Team', path: '/about/research-scholarly-team', fragment: null };
       default:
-        return { label: 'Back to Founders & Chancellor', path: '/about', fragment: 'leadership-team' };
+        return { label: 'Back to Founders & Chancellor', path: '/about', fragment: 'leadership' };
     }
   });
   readonly adminEmail = 'SanAlkeU@outlook.com';

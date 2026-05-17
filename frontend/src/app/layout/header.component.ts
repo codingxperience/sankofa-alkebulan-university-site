@@ -45,7 +45,14 @@ type MobileGroup = 'about' | 'academics';
             aria-label="Sankofa Alkebulan University home"
             (click)="closeMenus()"
           >
-            <img src="/assets/design/logo-primary.png" alt="Sankofa Alkebulan University" />
+            <span class="editorial-brand__badge" aria-hidden="true">
+              <img src="/assets/design/logo-mark.png" alt="" />
+            </span>
+            <span class="editorial-brand__name">
+              <span>Sankofa Alkebulan</span>
+              <strong>University</strong>
+            </span>
+            <span class="editorial-brand__short" aria-hidden="true">SAU</span>
           </a>
 
           <nav class="editorial-nav" aria-label="Primary navigation">
@@ -111,17 +118,31 @@ type MobileGroup = 'about' | 'academics';
                         <section>
                           <h3>{{ column.title }}</h3>
                           @for (link of column.links; track link.label) {
-                            <a class="mega-link" [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
-                              @if (link.icon) {
-                                <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
-                              }
-                              <div>
-                                <strong>{{ link.label }}</strong>
-                                @if (link.description) {
-                                  <span>{{ link.description }}</span>
+                            @if (link.path === '#') {
+                              <span class="mega-link mega-link--disabled" aria-disabled="true">
+                                @if (link.icon) {
+                                  <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
                                 }
-                              </div>
-                            </a>
+                                <div>
+                                  <strong>{{ link.label }}</strong>
+                                  @if (link.description) {
+                                    <span>{{ link.description }}</span>
+                                  }
+                                </div>
+                              </span>
+                            } @else {
+                              <a class="mega-link" [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                                @if (link.icon) {
+                                  <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
+                                }
+                                <div>
+                                  <strong>{{ link.label }}</strong>
+                                  @if (link.description) {
+                                    <span>{{ link.description }}</span>
+                                  }
+                                </div>
+                              </a>
+                            }
                           }
                         </section>
                       }
@@ -165,7 +186,8 @@ type MobileGroup = 'about' | 'academics';
         <div class="mobile-drawer__surface">
           <div class="mobile-drawer__head">
             <a routerLink="/home" class="mobile-drawer__brand" (click)="closeMenus()">
-              <img src="/assets/design/logo-primary.png" alt="Sankofa Alkebulan University" />
+              <img src="/assets/design/logo-mark.png" alt="" aria-hidden="true" />
+              <span>Sankofa Alkebulan</span>
             </a>
             <button type="button" aria-label="Close mobile navigation" (click)="closeMenus()">&times;</button>
           </div>
@@ -213,14 +235,23 @@ type MobileGroup = 'about' | 'academics';
                   <div class="mobile-group__links">
                     <a routerLink="/academics" (click)="closeMenus()">Academic overview</a>
                     @for (column of academicsMega; track column.title) {
-                      <span>{{ column.title }}</span>
+                      <span class="mobile-group__heading">{{ column.title }}</span>
                       @for (link of column.links; track link.label) {
-                        <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
-                          @if (link.icon) {
-                            <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
-                          }
-                          {{ link.label }}
-                        </a>
+                        @if (link.path === '#') {
+                          <span class="mobile-group__disabled">
+                            @if (link.icon) {
+                              <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
+                            }
+                            {{ link.label }}
+                          </span>
+                        } @else {
+                          <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMenus()">
+                            @if (link.icon) {
+                              <i class="fa-solid {{ link.icon }}" aria-hidden="true"></i>
+                            }
+                            {{ link.label }}
+                          </a>
+                        }
                       }
                     }
                   </div>
@@ -287,18 +318,86 @@ type MobileGroup = 'about' | 'academics';
     }
 
     .editorial-brand {
+      position: relative;
       display: inline-flex;
       align-items: center;
+      gap: 0.72rem;
       width: fit-content;
       min-width: 0;
+      color: #08243a;
       text-decoration: none;
     }
 
-    .editorial-brand img {
-      width: auto;
-      height: 54px;
-      max-width: 180px;
+    .editorial-brand__badge {
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      flex: 0 0 auto;
+      border-radius: 16px;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .editorial-brand__badge img {
+      width: 100%;
+      height: 100%;
       object-fit: contain;
+    }
+
+    .editorial-brand__name {
+      position: relative;
+      display: grid;
+      gap: 0.04rem;
+      padding-bottom: 0.32rem;
+      font-family: var(--font-family-heading);
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+
+    .editorial-brand__name::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0.18rem;
+      bottom: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--sau-return, #b35c2a), rgb(15 76 129 / 18%));
+      transform-origin: left center;
+      transition: transform 180ms ease, opacity 180ms ease;
+    }
+
+    .editorial-brand:hover .editorial-brand__name::after {
+      transform: scaleX(0.82);
+      opacity: 0.82;
+    }
+
+    .editorial-brand__name span {
+      color: #123f62;
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .editorial-brand__name strong {
+      color: #08243a;
+      font-size: 1.04rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .editorial-brand__short {
+      display: none;
+      color: var(--sau-return, #b35c2a);
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.7rem;
+      font-style: italic;
+      font-weight: 800;
+      letter-spacing: -0.08em;
+      line-height: 1;
     }
 
     .editorial-nav {
@@ -494,7 +593,7 @@ type MobileGroup = 'about' | 'academics';
     .nav-panel__intro span,
     .nav-panel__columns h3,
     .mobile-drawer__eyebrow,
-    .mobile-group__links span {
+    .mobile-group__heading {
       color: var(--sau-return, #b35c2a);
       font-family: var(--font-family-heading);
       font-size: 0.68rem;
@@ -542,7 +641,8 @@ type MobileGroup = 'about' | 'academics';
       margin: 0 0 0.2rem;
     }
 
-    .nav-panel__columns a {
+    .nav-panel__columns a,
+    .nav-panel__columns .mega-link--disabled {
       display: grid;
       gap: 0.14rem;
       padding: 0.58rem 0;
@@ -552,7 +652,8 @@ type MobileGroup = 'about' | 'academics';
       transition: padding-left 160ms ease, color 160ms ease;
     }
 
-    .nav-panel__columns a.mega-link {
+    .nav-panel__columns a.mega-link,
+    .nav-panel__columns .mega-link--disabled {
       grid-template-columns: 2rem minmax(0, 1fr);
       align-items: start;
       column-gap: 0.62rem;
@@ -564,7 +665,8 @@ type MobileGroup = 'about' | 'academics';
       box-shadow: inset 0 0 0 1px rgb(15 76 129 / 6%);
     }
 
-    .nav-panel__columns a.mega-link > i {
+    .nav-panel__columns a.mega-link > i,
+    .nav-panel__columns .mega-link--disabled > i {
       width: 2rem;
       height: 2rem;
       display: grid;
@@ -579,6 +681,11 @@ type MobileGroup = 'about' | 'academics';
     .nav-panel__columns a.mega-link:hover > i {
       background: rgb(15 76 129 / 9%);
       color: #0f4c81;
+    }
+
+    .nav-panel__columns .mega-link--disabled {
+      cursor: default;
+      opacity: 0.72;
     }
 
     .nav-panel__columns a:hover {
@@ -695,11 +802,27 @@ type MobileGroup = 'about' | 'academics';
       margin-bottom: 0.45rem;
     }
 
+    .mobile-drawer__brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      color: #ffffff;
+      font-family: var(--font-family-heading);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      text-decoration: none;
+    }
+
     .mobile-drawer__brand img {
-      height: 48px;
+      height: 44px;
       width: auto;
       object-fit: contain;
-      filter: brightness(0) invert(1);
+      filter: none;
+    }
+
+    .mobile-drawer__brand span {
+      max-width: 14ch;
+      line-height: 1.05;
     }
 
     .mobile-drawer__head button {
@@ -808,7 +931,8 @@ type MobileGroup = 'about' | 'academics';
       display: grid;
     }
 
-    .mobile-group__links a {
+    .mobile-group__links a,
+    .mobile-group__disabled {
       display: flex;
       align-items: center;
       gap: 0.55rem;
@@ -818,7 +942,12 @@ type MobileGroup = 'about' | 'academics';
       text-decoration: none;
     }
 
-    .mobile-group__links a i {
+    .mobile-group__disabled {
+      opacity: 0.58;
+    }
+
+    .mobile-group__links a i,
+    .mobile-group__disabled i {
       width: 1.45rem;
       height: 1.45rem;
       display: grid;
@@ -830,7 +959,7 @@ type MobileGroup = 'about' | 'academics';
       flex: 0 0 auto;
     }
 
-    .mobile-group__links span {
+    .mobile-group__heading {
       margin-top: 0.6rem;
       color: #f4c3a4;
       font-size: 0.62rem;
@@ -871,7 +1000,7 @@ type MobileGroup = 'about' | 'academics';
 
     @media (max-width: 1160px) {
       .editorial-bar__inner {
-        grid-template-columns: minmax(145px, 180px) minmax(0, 1fr) auto;
+        grid-template-columns: minmax(188px, 220px) minmax(0, 1fr) auto;
       }
 
       .editorial-nav > a,
@@ -887,9 +1016,17 @@ type MobileGroup = 'about' | 'academics';
         min-height: 68px;
       }
 
-      .editorial-brand img {
-        height: 46px;
-        max-width: 136px;
+      .editorial-brand__badge {
+        width: 44px;
+        height: 44px;
+      }
+
+      .editorial-brand__name {
+        display: none;
+      }
+
+      .editorial-brand__short {
+        display: inline-block;
       }
 
       .editorial-nav,
@@ -907,10 +1044,17 @@ type MobileGroup = 'about' | 'academics';
         min-height: 64px;
       }
 
-      .editorial-brand img {
-        height: 44px;
-        max-width: 112px;
-        content: url('/assets/design/logo-mark.png');
+      .editorial-brand {
+        gap: 0.52rem;
+      }
+
+      .editorial-brand__badge {
+        width: 42px;
+        height: 42px;
+      }
+
+      .editorial-brand__short {
+        font-size: 1.58rem;
       }
 
       .mobile-drawer__surface {
@@ -1062,9 +1206,9 @@ export class HeaderComponent implements OnInit {
         },
         {
           label: 'University Press',
-          path: '/university-press',
+          path: '#',
           icon: 'fa-newspaper',
-          description: 'Journals, books, proceedings, and scholarly publishing.',
+          description: 'Scholarly publishing layer reserved for launch.',
         },
       ],
     },

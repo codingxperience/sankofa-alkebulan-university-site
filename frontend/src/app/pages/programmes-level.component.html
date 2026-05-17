@@ -1,35 +1,66 @@
 <section class="programme-shell">
+  <div class="programme-shell__wash" aria-hidden="true"></div>
   <div class="container">
-    <div class="programme-hero">
-      <p class="eyebrow">Sankofa Alkebulan University</p>
-      <div class="programme-hero__top">
-        <div>
-          <p class="programme-hero__crumb">Home / {{ category().shortLabel }}</p>
-          <h1>{{ category().shortLabel }} &middot; Sankofa Alkebulan University</h1>
-          <p class="programme-hero__summary">{{ levelMeta().sub }}</p>
+    <nav class="programme-breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/home">Home</a>
+      <span>/</span>
+      <a routerLink="/academics">Academics</a>
+      <span>/</span>
+      <span>{{ category().shortLabel }}</span>
+    </nav>
+
+    <section class="programme-hero" aria-labelledby="programme-level-title">
+      <div class="programme-hero__copy">
+        <p class="eyebrow">Academic pathway</p>
+        <h1 id="programme-level-title">{{ levelMeta().hero }}</h1>
+        <p>{{ levelMeta().sub }}</p>
+        <div class="programme-hero__actions">
+          <a routerLink="/admissions">Apply now</a>
+          <a routerLink="/academics" fragment="programmes">Academic architecture</a>
         </div>
       </div>
-    </div>
+
+      <aside class="programme-hero__panel" aria-label="Pathway summary">
+        <p>{{ category().shortLabel }}</p>
+        <div class="programme-hero__stats">
+          @for (stat of levelMeta().stats; track stat) {
+            <span>{{ stat }}</span>
+          }
+        </div>
+        <strong>{{ programmes().length || 'Live' }}</strong>
+        <small>{{ programmes().length ? 'published programme routes' : 'route being curated' }}</small>
+      </aside>
+    </section>
+
+    <nav class="programme-levels" aria-label="Programme levels">
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="active">{{ item.label }}</a>
+      }
+    </nav>
 
     @if (isPhdLayout()) {
       <div class="programme-layout programme-layout--phd">
-        <div class="phd-intro">
+        <section class="phd-intro">
           <div>
-            <h2>{{ levelMeta().hero }}</h2>
-            <p class="phd-hero-copy">{{ levelMeta().sub }}</p>
+            <p class="eyebrow">Doctoral route</p>
+            <h2>From research question to defended contribution.</h2>
+            <p class="phd-hero-copy">
+              Doctoral candidates enter a supervised research environment shaped by method, ethics, publication discipline, and public usefulness.
+            </p>
           </div>
           <div class="phd-hero-meta">
             @for (stat of levelMeta().stats; track stat) {
               <div>
-                <strong>{{ stat.split(' ')[0] }}</strong
-                ><span>{{ stat.slice(stat.indexOf(' ') + 1) }}</span>
+                <strong>{{ stat.split(' ')[0] }}</strong>
+                <span>{{ stat.slice(stat.indexOf(' ') + 1) }}</span>
               </div>
             }
           </div>
-        </div>
+        </section>
 
         <div class="phd-grid">
           <aside class="phd-sidebar">
+            <p class="eyebrow">Doctoral handbook</p>
             <ul class="phd-nav-list">
               @for (section of phdSections; track section.id) {
                 <li>
@@ -48,6 +79,7 @@
 
           <article class="phd-main">
             <section class="phd-section-panel">
+              <p class="eyebrow">Current section</p>
               <h3>{{ activePhdSection().title }}</h3>
               <p>{{ activePhdSection().description }}</p>
               @if (activePhdSection().items?.length) {
@@ -60,41 +92,42 @@
             </section>
             <section class="programme-cta programme-cta--phd">
               <h4>Ready to begin?</h4>
-              <p>
-                Submit your concept brief and research direction to be matched with supervisors and
-                funded doctoral cohorts.
-              </p>
+              <p>Submit a concept brief and research direction so admissions can route you to the right college, institute, and supervisory cluster.</p>
               <div class="programme-cta__actions">
-                <a routerLink="/admissions" class="btn">Start PhD Inquiry</a>
-                <a routerLink="/contact" class="btn btn--secondary">Book an advisors call</a>
+                <a routerLink="/admissions" class="btn">Start PhD inquiry</a>
+                <a routerLink="/contact" class="btn btn--secondary">Book an advisor call</a>
               </div>
             </section>
           </article>
         </div>
       </div>
     } @else {
-      <div class="programme-layout programme-layout--masters">
+      <div class="programme-layout programme-layout--cards">
         <section class="masters-hero">
           <div>
             <p class="eyebrow">{{ category().shortLabel }}</p>
-            <h2>{{ levelMeta().hero }}</h2>
-            <p>{{ levelMeta().sub }}</p>
+            <h2>{{ category().title }}</h2>
+            <p>{{ category().description }}</p>
           </div>
           <div class="masters-hero-stats">
             @for (stat of levelMeta().stats; track stat) {
               <div class="stat-card">
-                <strong>{{ stat.split(' ')[0] }}</strong
-                ><span>{{ stat.slice(stat.indexOf(' ') + 1) }}</span>
+                <strong>{{ stat.split(' ')[0] }}</strong>
+                <span>{{ stat.slice(stat.indexOf(' ') + 1) }}</span>
               </div>
             }
           </div>
         </section>
 
-        <section class="masters-program-grid">
+        <section class="masters-program-grid" aria-label="{{ category().shortLabel }} list">
           @if (programmes().length) {
             <div class="programme-grid">
-              @for (program of programmes(); track program.title) {
+              @for (program of programmes(); track program.title; let index = $index) {
                 <article class="programme-card">
+                  <div class="programme-card__topline">
+                    <span>{{ index + 1 }}</span>
+                    <small>{{ category().shortLabel }}</small>
+                  </div>
                   <div class="programme-card__header">
                     <h3>{{ program.title }}</h3>
                     <span class="programme-card__badge">{{ program.college }}</span>
@@ -104,17 +137,16 @@
                     <span>{{ program.duration }}</span>
                     <span>{{ program.tuition }}</span>
                   </div>
-                  <a [routerLink]="program.detailPath" class="programme-card__btn">
-                    View Details
-                  </a>
+                  <a [routerLink]="program.detailPath" class="programme-card__btn">View programme</a>
                 </article>
               }
             </div>
           } @else {
             <div class="programme-empty">
+              <p class="eyebrow">Programme update</p>
               <h3>No programmes listed yet</h3>
               <p>{{ category().emptyState }}</p>
-              <a routerLink="/contact" class="btn btn--secondary">Request Programme Update</a>
+              <a routerLink="/contact" class="btn btn--secondary">Request programme update</a>
             </div>
           }
         </section>
