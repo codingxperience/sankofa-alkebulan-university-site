@@ -88,6 +88,34 @@
               ],
               "outputHashing": "all"
             },
+            "vercel": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
+                },
+                "fonts": {
+                  "inline": false
+                }
+              },
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2.9MB",
+                  "maximumError": "3.2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "80kB",
+                  "maximumError": "100kB"
+                }
+              ],
+              "outputHashing": "all",
+              "server": false,
+              "ssr": false,
+              "outputMode": "static"
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
