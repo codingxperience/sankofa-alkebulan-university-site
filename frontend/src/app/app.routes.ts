@@ -8,6 +8,7 @@ import { AcademicCollegeDetailPageComponent } from './pages/academic-college-det
 import { AcademicDirectoryPageComponent } from './pages/academic-directory-page.component';
 import { AcademicStructureDetailPageComponent } from './pages/academic-structure-detail-page.component';
 import { AdmissionsApplyPageComponent } from './pages/admissions-apply-page.component';
+import { DigitalLearningPageComponent } from './pages/digital-learning-page.component';
 import { StudentLifePageComponent } from './pages/student-life-page.component';
 import { TeamCategoryPageComponent } from './pages/team-category-page.component';
 import { TeamProfilePageComponent } from './pages/team-profile-page.component';
@@ -145,6 +146,8 @@ export const routes: Routes = [
       { path: 'faculties-schools', component: AcademicDirectoryPageComponent, data: { mode: 'colleges' } },
       { path: 'admissions', component: AdmissionsApplyPageComponent },
       { path: 'apply', redirectTo: '/admissions', pathMatch: 'full' },
+      { path: 'digital-learning', component: DigitalLearningPageComponent },
+      { path: 'digital-campus', redirectTo: '/digital-learning', pathMatch: 'full' },
       { path: 'student-life', component: StudentLifePageComponent },
       ...departmentShortcutRoutes,
       { path: 'home/:level/:programSlug', component: ProgramDetailComponent },

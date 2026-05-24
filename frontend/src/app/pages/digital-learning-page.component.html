@@ -1,0 +1,95 @@
+<div class="dl-shell">
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <span class="here" aria-current="page">E-Learning</span>
+      </nav>
+      <div class="actions">
+        <a [href]="platformLinks.learning" class="v2-btn v2-btn--ghost">
+          <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+          Log in
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="dl-hero" aria-labelledby="dl-hero-title">
+      <div class="v2-container dl-hero__grid">
+        <div class="dl-hero__copy" data-reveal>
+          <span class="v2-kicker">Sankofa E-Learning System</span>
+          <h1 id="dl-hero-title">Study anywhere. Stay connected to class.</h1>
+          <p>
+            Access course rooms, live classes, assessments, feedback, and academic support from one
+            simple student learning space.
+          </p>
+          <div class="dl-hero__actions">
+            <a [href]="platformLinks.learning" class="v2-btn v2-btn--primary v2-btn--lg">
+              Start your journey <span aria-hidden="true">&rarr;</span>
+            </a>
+            <a routerLink="/admissions" class="v2-btn v2-btn--ghost v2-btn--lg">
+              Apply for admission
+            </a>
+          </div>
+        </div>
+
+        <aside class="dl-hero-art" aria-hidden="true" data-reveal>
+          <div class="dl-cap-shape">
+            <span></span>
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="dl-paths" aria-label="Learning pathways">
+      <div class="v2-container dl-paths__grid" data-reveal>
+        @for (path of learningPaths; track path.title) {
+          <article class="dl-path-card">
+            <i class="fa-solid {{ path.icon }}" aria-hidden="true"></i>
+            <h2>{{ path.title }}</h2>
+            <p>{{ path.body }}</p>
+            <a [routerLink]="path.href">Learn more <span aria-hidden="true">&rarr;</span></a>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="dl-assurance">
+      <div class="v2-container dl-assurance__grid">
+        <div class="dl-assurance__mark" aria-hidden="true" data-reveal>
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="dl-assurance__copy" data-reveal>
+          <span class="v2-kicker">Online tests and live support</span>
+          <h2>Clear digital learning, secure assessment.</h2>
+          <p>
+            The learning space brings coursework, live teaching, examinations, and support into one
+            clear path for students.
+          </p>
+          <ul>
+            @for (item of assuranceItems; track item) {
+              <li><i class="fa-solid fa-check" aria-hidden="true"></i>{{ item }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="dl-entry" id="learning-campus" aria-label="E-learning access">
+      <div class="v2-container">
+        <div class="dl-entry__panel" data-reveal>
+          <div>
+            <span class="v2-kicker">Student learning space</span>
+            <h2>Courses, enrolment, and live class links stay in one place.</h2>
+          </div>
+          <a [href]="platformLinks.learning" class="v2-btn v2-btn--primary">
+            Enter E-Learning <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

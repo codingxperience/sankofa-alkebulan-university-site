@@ -1,0 +1,321 @@
+:host {
+  display: block;
+}
+
+.dl-shell {
+  overflow: hidden;
+  background: #ffffff;
+  color: var(--sau-blue-900);
+}
+
+.dl-hero {
+  position: relative;
+  padding: clamp(4rem, 8vw, 7rem) 0 clamp(7rem, 11vw, 9.5rem);
+  background:
+    linear-gradient(90deg, rgba(247, 241, 230, 0.98) 0%, rgba(255, 255, 255, 0.96) 50%, rgba(246, 251, 255, 0.9) 100%),
+    url('/assets/pattern-halftone-strip.svg') right 18% top 18% / min(460px, 48vw) auto no-repeat;
+}
+
+.dl-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(280px, 0.72fr);
+  gap: clamp(2rem, 7vw, 6rem);
+  align-items: center;
+}
+
+.dl-hero__copy {
+  max-width: 650px;
+}
+
+.dl-hero h1 {
+  max-width: 13ch;
+  margin: 0.9rem 0 1rem;
+  color: var(--sau-blue-900);
+  font-family: var(--sau-font-display);
+  font-size: clamp(2.85rem, 5.8vw, 5.55rem);
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.dl-hero p {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--sau-slate-700);
+  font-size: clamp(1rem, 1.25vw, 1.12rem);
+  line-height: 1.68;
+}
+
+.dl-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.dl-hero-art {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.dl-cap-shape {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 420px);
+  aspect-ratio: 1;
+}
+
+.dl-cap-shape::before,
+.dl-cap-shape::after,
+.dl-cap-shape span {
+  content: "";
+  position: absolute;
+  border-radius: 8px;
+}
+
+.dl-cap-shape::before {
+  inset: 7%;
+  border: 1px solid rgba(15, 76, 129, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  transform: rotate(-8deg);
+}
+
+.dl-cap-shape::after {
+  inset: 18%;
+  border: 1px solid rgba(212, 162, 47, 0.36);
+  transform: rotate(12deg);
+}
+
+.dl-cap-shape span {
+  inset: 30%;
+  background: rgba(234, 244, 253, 0.78);
+  transform: rotate(-2deg);
+}
+
+.dl-cap-shape i {
+  position: relative;
+  z-index: 1;
+  color: var(--sau-blue-500);
+  font-size: clamp(5rem, 10vw, 8.2rem);
+  filter: drop-shadow(0 18px 26px rgba(15, 76, 129, 0.13));
+}
+
+.dl-paths {
+  position: relative;
+  z-index: 2;
+  margin-top: clamp(-5.5rem, -7vw, -3.5rem);
+  padding-bottom: clamp(4rem, 7vw, 6rem);
+}
+
+.dl-paths__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.35rem);
+}
+
+.dl-path-card {
+  display: grid;
+  gap: 0.9rem;
+  min-height: 252px;
+  padding: clamp(1.45rem, 3vw, 2rem);
+  border-radius: 8px;
+  background: var(--sau-blue-900);
+  color: #ffffff;
+  box-shadow: 0 18px 36px rgba(8, 36, 58, 0.14);
+}
+
+.dl-path-card:nth-child(2) {
+  background: var(--sau-blue-700);
+}
+
+.dl-path-card:nth-child(3) {
+  background: #123f5f;
+}
+
+.dl-path-card i {
+  color: var(--sau-gold-200);
+  font-size: 1.35rem;
+}
+
+.dl-path-card h2 {
+  margin: 0;
+  font-family: var(--sau-font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.16;
+}
+
+.dl-path-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.58;
+}
+
+.dl-path-card a {
+  align-self: end;
+  justify-self: start;
+  color: #ffffff;
+  font-family: var(--sau-font-heading);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dl-path-card a:hover {
+  color: var(--sau-gold-100);
+}
+
+.dl-assurance {
+  padding: clamp(4.5rem, 8vw, 7rem) 0;
+  background: var(--sau-blue-025);
+}
+
+.dl-assurance__grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1fr);
+  gap: clamp(2rem, 7vw, 6rem);
+  align-items: center;
+}
+
+.dl-assurance__mark {
+  display: grid;
+  place-items: center;
+  min-height: 360px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(247, 241, 230, 0.96), rgba(255, 255, 255, 0.78)),
+    url('/assets/pattern-mark.svg') center / min(260px, 62%) auto no-repeat;
+}
+
+.dl-assurance__mark i {
+  color: var(--sau-blue-500);
+  font-size: clamp(4.5rem, 9vw, 7.5rem);
+  filter: drop-shadow(0 18px 28px rgba(15, 76, 129, 0.12));
+}
+
+.dl-assurance__copy {
+  max-width: 650px;
+}
+
+.dl-assurance h2,
+.dl-entry h2 {
+  margin: 0.75rem 0 1rem;
+  color: var(--sau-blue-900);
+  font-family: var(--sau-font-display);
+  font-size: clamp(2rem, 3.4vw, 3.5rem);
+  font-weight: 620;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.dl-assurance p {
+  margin: 0;
+  color: var(--sau-slate-700);
+  line-height: 1.68;
+}
+
+.dl-assurance ul {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1.45rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dl-assurance li {
+  display: flex;
+  gap: 0.72rem;
+  align-items: center;
+  color: var(--sau-blue-900);
+  font-family: var(--sau-font-heading);
+  font-weight: 600;
+}
+
+.dl-assurance li i {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--sau-gold-500);
+  color: var(--sau-blue-900);
+  font-size: 0.75rem;
+  flex: 0 0 auto;
+}
+
+.dl-entry {
+  padding: clamp(4rem, 7vw, 6rem) 0;
+  background: #ffffff;
+}
+
+.dl-entry__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  padding: clamp(1.5rem, 3vw, 2.35rem);
+  border: 1px solid var(--sau-border-soft);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.dl-entry h2 {
+  max-width: 18ch;
+  margin-bottom: 0;
+  font-size: clamp(1.85rem, 3vw, 3rem);
+}
+
+@media (max-width: 980px) {
+  .dl-hero__grid,
+  .dl-assurance__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dl-hero {
+    padding-bottom: 5rem;
+  }
+
+  .dl-hero-art {
+    display: none;
+  }
+
+  .dl-paths {
+    margin-top: -3rem;
+  }
+
+  .dl-paths__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .dl-hero {
+    padding: 3.25rem 0 4.25rem;
+  }
+
+  .dl-hero h1 {
+    font-size: clamp(2.65rem, 13vw, 4rem);
+  }
+
+  .dl-hero__actions,
+  .pg-crumbs .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .dl-path-card {
+    min-height: 0;
+  }
+
+  .dl-assurance__mark {
+    min-height: 240px;
+  }
+
+  .dl-entry__panel {
+    grid-template-columns: 1fr;
+  }
+}

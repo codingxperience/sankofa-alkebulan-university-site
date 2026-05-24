@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="presentation" aria-hidden="true">
+  <defs>
+    <clipPath id="sau-blade" clipPathUnits="objectBoundingBox">
+      <path d="M 0.10 0.18&#xA;               C 0.20 0.05, 0.45 0.00, 0.62 0.04&#xA;               C 0.82 0.10, 0.96 0.30, 0.98 0.52&#xA;               C 0.99 0.74, 0.86 0.92, 0.66 0.96&#xA;               C 0.46 1.00, 0.20 0.96, 0.10 0.82&#xA;               C 0.02 0.68, 0.02 0.32, 0.10 0.18 Z"></path>
+    </clipPath>
+  </defs>
+  <path d="M 60 108&#xA;           C 120 30, 270 0, 372 24&#xA;           C 492 60, 576 180, 588 312&#xA;           C 594 444, 516 552, 396 576&#xA;           C 276 600, 120 576, 60 492&#xA;           C 12 408, 12 192, 60 108 Z" fill="none" stroke="#0f4c81" stroke-width="6" opacity="0.4"></path>
+</svg>

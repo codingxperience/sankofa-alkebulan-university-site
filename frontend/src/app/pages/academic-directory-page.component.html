@@ -25,14 +25,28 @@
 
   <section class="academic-directory-hero" aria-labelledby="directory-title">
     <div class="directory-hero-media" aria-hidden="true">
-      <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
+      <img
+        [src]="heroVisual().src"
+        [alt]="heroVisual().alt"
+        [style.object-position]="heroVisual().position ?? '70% center'"
+      />
     </div>
     <div class="directory-hero-fade" aria-hidden="true"></div>
 
-    <button type="button" class="directory-control directory-control--prev" (click)="previousVisual()" aria-label="Previous academic image">
+    <button
+      type="button"
+      class="directory-control directory-control--prev"
+      (click)="previousVisual()"
+      aria-label="Previous academic image"
+    >
       <i class="fa-solid fa-arrow-left"></i>
     </button>
-    <button type="button" class="directory-control directory-control--next" (click)="nextVisual()" aria-label="Next academic image">
+    <button
+      type="button"
+      class="directory-control directory-control--next"
+      (click)="nextVisual()"
+      aria-label="Next academic image"
+    >
       <i class="fa-solid fa-arrow-right"></i>
     </button>
 
@@ -43,17 +57,31 @@
         <p>{{ config().lead }}</p>
         <div class="directory-hero-actions">
           @if (mode() === 'colleges') {
-            <a routerLink="/academics/colleges" class="v2-btn v2-btn--primary v2-btn--lg">Browse colleges <span aria-hidden="true">&rarr;</span></a>
-            <a routerLink="/programmes" class="v2-btn v2-btn--ghost v2-btn--lg">Programme catalogue</a>
+            <a routerLink="/academics/colleges" class="v2-btn v2-btn--primary v2-btn--lg"
+              >Browse colleges <span aria-hidden="true">&rarr;</span></a
+            >
+            <a routerLink="/programmes" class="v2-btn v2-btn--ghost v2-btn--lg"
+              >Programme catalogue</a
+            >
           } @else if (mode() === 'schools') {
-            <a routerLink="/academics/colleges" class="v2-btn v2-btn--primary v2-btn--lg">Start from colleges <span aria-hidden="true">&rarr;</span></a>
-            <a routerLink="/academics/departments" class="v2-btn v2-btn--ghost v2-btn--lg">Browse departments</a>
+            <a routerLink="/academics/colleges" class="v2-btn v2-btn--primary v2-btn--lg"
+              >Start from colleges <span aria-hidden="true">&rarr;</span></a
+            >
+            <a routerLink="/academics/departments" class="v2-btn v2-btn--ghost v2-btn--lg"
+              >Browse departments</a
+            >
           } @else if (mode() === 'departments') {
-            <a routerLink="/academics/schools" class="v2-btn v2-btn--primary v2-btn--lg">Find a school <span aria-hidden="true">&rarr;</span></a>
+            <a routerLink="/academics/schools" class="v2-btn v2-btn--primary v2-btn--lg"
+              >Find a school <span aria-hidden="true">&rarr;</span></a
+            >
             <a routerLink="/programmes" class="v2-btn v2-btn--ghost v2-btn--lg">All programmes</a>
           } @else {
-            <a routerLink="/academics/research-institutes" class="v2-btn v2-btn--primary v2-btn--lg">Browse institutes <span aria-hidden="true">&rarr;</span></a>
-            <a routerLink="/academics/colleges" class="v2-btn v2-btn--ghost v2-btn--lg">View colleges</a>
+            <a routerLink="/academics/research-institutes" class="v2-btn v2-btn--primary v2-btn--lg"
+              >Browse institutes <span aria-hidden="true">&rarr;</span></a
+            >
+            <a routerLink="/academics/colleges" class="v2-btn v2-btn--ghost v2-btn--lg"
+              >View colleges</a
+            >
           }
         </div>
       </div>
@@ -76,10 +104,17 @@
       <div class="directory-toolbar" data-reveal>
         <label class="directory-search">
           <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-          <input type="search" [value]="query()" [placeholder]="config().placeholder" (input)="setSearch($any($event.target).value)" />
+          <input
+            type="search"
+            [value]="query()"
+            [placeholder]="config().placeholder"
+            (input)="setSearch($any($event.target).value)"
+          />
         </label>
         @if (query()) {
-          <button type="button" class="directory-clear" (click)="clearSearch()">Clear search</button>
+          <button type="button" class="directory-clear" (click)="clearSearch()">
+            Clear search
+          </button>
         }
       </div>
 
@@ -87,9 +122,21 @@
         <div class="college-card-grid">
           @for (row of pagedColleges(); track row.college.id) {
             <a class="college-card" [routerLink]="collegeRoute(row.college.name)">
+              <div class="directory-card-media">
+                <img
+                  [src]="row.image.src"
+                  [alt]="row.image.alt"
+                  [style.object-position]="row.image.position ?? 'center center'"
+                  loading="lazy"
+                />
+              </div>
               <div class="college-card__top">
-                <span class="college-card__num">{{ row.college.id.toString().padStart(2, '0') }}</span>
-                <span class="college-card__icon"><i class="fa-solid {{ collegeIcon(row) }}" aria-hidden="true"></i></span>
+                <span class="college-card__num">{{
+                  row.college.id.toString().padStart(2, '0')
+                }}</span>
+                <span class="college-card__icon"
+                  ><i class="fa-solid {{ collegeIcon(row) }}" aria-hidden="true"></i
+                ></span>
               </div>
               <div class="college-card__body">
                 <h2>{{ row.college.name }}</h2>
@@ -108,17 +155,31 @@
                   <span>+{{ remaining(row.college.schools, 3) }} more</span>
                 }
               </div>
-              <strong class="college-card__cta">Open schools <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
+              <strong class="college-card__cta"
+                >Open schools <i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+              ></strong>
             </a>
           }
         </div>
         @if (pageCount() > 1) {
           <div class="directory-pager" aria-label="College directory pages">
-            <button type="button" class="directory-pager__button" (click)="previousPage()" [disabled]="currentPage() === 0" aria-label="Previous colleges">
+            <button
+              type="button"
+              class="directory-pager__button"
+              (click)="previousPage()"
+              [disabled]="currentPage() === 0"
+              aria-label="Previous colleges"
+            >
               <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
             </button>
             <span class="directory-pager__count">{{ currentPage() + 1 }} / {{ pageCount() }}</span>
-            <button type="button" class="directory-pager__button" (click)="nextPage()" [disabled]="currentPage() + 1 >= pageCount()" aria-label="Next colleges">
+            <button
+              type="button"
+              class="directory-pager__button"
+              (click)="nextPage()"
+              [disabled]="currentPage() + 1 >= pageCount()"
+              aria-label="Next colleges"
+            >
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>
@@ -130,9 +191,16 @@
           @for (row of filteredSchools(); track row.college + row.name) {
             <a class="school-card" [routerLink]="schoolRoute(row.college, row.name)">
               <div class="directory-card-media">
-                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
+                <img
+                  [src]="row.image.src"
+                  [alt]="row.image.alt"
+                  [style.object-position]="row.image.position ?? 'center center'"
+                  loading="lazy"
+                />
               </div>
-              <span class="school-card__icon"><i class="fa-solid {{ schoolIcon(row) }}" aria-hidden="true"></i></span>
+              <span class="school-card__icon"
+                ><i class="fa-solid {{ schoolIcon(row) }}" aria-hidden="true"></i
+              ></span>
               <span class="school-card__college">{{ row.college }}</span>
               <h2>{{ row.name }}</h2>
               <p>{{ row.departments.length }} departments connected to this school.</p>
@@ -144,7 +212,9 @@
                   <span>+{{ remaining(row.departments, 3) }} more</span>
                 }
               </div>
-              <strong class="directory-open">Open departments <i class="fa-solid fa-arrow-right"></i></strong>
+              <strong class="directory-open"
+                >Open departments <i class="fa-solid fa-arrow-right"></i
+              ></strong>
             </a>
           }
         </div>
@@ -153,15 +223,27 @@
       @if (mode() === 'departments') {
         <div class="department-grid">
           @for (row of filteredDepartments(); track row.college + row.school + row.name) {
-            <a class="department-tile" [routerLink]="departmentRoute(row.college, row.school, row.name)">
+            <a
+              class="department-tile"
+              [routerLink]="departmentRoute(row.college, row.school, row.name)"
+            >
               <div class="directory-card-media">
-                <img [src]="row.image.src" [alt]="row.image.alt" loading="lazy" />
+                <img
+                  [src]="row.image.src"
+                  [alt]="row.image.alt"
+                  [style.object-position]="row.image.position ?? 'center center'"
+                  loading="lazy"
+                />
               </div>
               <span class="department-tile__college">{{ row.college }}</span>
-              <span class="department-tile__icon"><i class="fa-solid {{ departmentIcon(row) }}" aria-hidden="true"></i></span>
+              <span class="department-tile__icon"
+                ><i class="fa-solid {{ departmentIcon(row) }}" aria-hidden="true"></i
+              ></span>
               <h2>{{ row.name }}</h2>
               <p>{{ row.school }}</p>
-              <strong class="directory-open">View programmes <i class="fa-solid fa-arrow-right"></i></strong>
+              <strong class="directory-open"
+                >View programmes <i class="fa-solid fa-arrow-right"></i
+              ></strong>
             </a>
           }
         </div>
@@ -171,7 +253,9 @@
         <div class="research-grid">
           @for (row of pagedResearch(); track row.name) {
             <article class="research-tile">
-              <span class="research-tile__icon"><i class="fa-solid {{ researchIcon(row) }}"></i></span>
+              <span class="research-tile__icon"
+                ><i class="fa-solid {{ researchIcon(row) }}"></i
+              ></span>
               <h2>{{ row.name }}</h2>
               @if (row.alignedColleges.length) {
                 <p>Aligned colleges</p>
@@ -183,7 +267,9 @@
                     <span>+{{ remaining(row.alignedColleges, 5) }} more</span>
                   }
                 </div>
-                <a class="directory-open" [routerLink]="collegeRoute(row.alignedColleges[0])">Open aligned college <i class="fa-solid fa-arrow-right"></i></a>
+                <a class="directory-open" [routerLink]="collegeRoute(row.alignedColleges[0])"
+                  >Open aligned college <i class="fa-solid fa-arrow-right"></i
+                ></a>
               } @else {
                 <p>Cross-college research platform.</p>
               }
@@ -192,11 +278,23 @@
         </div>
         @if (pageCount() > 1) {
           <div class="directory-pager" aria-label="Research institute directory pages">
-            <button type="button" class="directory-pager__button" (click)="previousPage()" [disabled]="currentPage() === 0" aria-label="Previous institutes">
+            <button
+              type="button"
+              class="directory-pager__button"
+              (click)="previousPage()"
+              [disabled]="currentPage() === 0"
+              aria-label="Previous institutes"
+            >
               <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
             </button>
             <span class="directory-pager__count">{{ currentPage() + 1 }} / {{ pageCount() }}</span>
-            <button type="button" class="directory-pager__button" (click)="nextPage()" [disabled]="currentPage() + 1 >= pageCount()" aria-label="Next institutes">
+            <button
+              type="button"
+              class="directory-pager__button"
+              (click)="nextPage()"
+              [disabled]="currentPage() + 1 >= pageCount()"
+              aria-label="Next institutes"
+            >
               <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </div>

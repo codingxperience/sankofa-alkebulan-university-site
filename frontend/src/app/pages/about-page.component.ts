@@ -148,17 +148,17 @@ export class AboutPageComponent implements AfterViewInit {
   ];
 
   readonly impactRowA = [
-    { num: '17', lbl: 'Schools across six colleges' },
-    { num: '4', lbl: 'Continental research institutes' },
-    { num: '54', lbl: 'Countries in present cohort' },
-    { num: 'UGX 1.2 B', lbl: 'Need-based aid each year' },
+    { num: '50', lbl: 'Colleges in the academic estate' },
+    { num: '208', lbl: 'Schools mapped across colleges' },
+    { num: '657', lbl: 'Departments in the source architecture' },
+    { num: '275', lbl: 'Programme routes from certificate to PhD' },
   ];
 
   readonly impactRowB = [
-    { num: '320+', lbl: 'Peer-reviewed papers since 2023' },
-    { num: '62', lbl: 'Active continental partnerships' },
-    { num: '100%', lbl: 'Need-met for admitted undergraduates' },
-    { num: '38', lbl: 'Languages represented in current cohort' },
+    { num: '59', lbl: 'Research institutes and aligned centres' },
+    { num: '441', lbl: 'Digital course rooms prepared for launch' },
+    { num: '2026/27', lbl: 'Academic cycle prepared online' },
+    { num: '1', lbl: 'Digital campus front door for students' },
   ];
 
   constructor() {

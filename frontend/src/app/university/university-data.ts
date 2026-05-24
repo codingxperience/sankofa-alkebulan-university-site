@@ -37,7 +37,7 @@ export const UNIVERSITY_HERO_BANNERS: readonly HeroBanner[] = [
   },
   {
     title: 'Research Highlight: Pan-African Innovation Labs',
-    subtitle: '49 institutes advancing health, governance, AI, climate, culture, industry, and community solutions.',
+    subtitle: '59 institutes advancing health, governance, AI, climate, culture, industry, and community solutions.',
     ctaLabel: 'Explore Research',
     ctaPath: '/research-innovation',
   },
@@ -187,7 +187,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
     navLabel: 'Faculties',
     title: 'Faculties and Schools',
     description:
-      'Forty-nine colleges organized through schools, programmes, and research institute alignment.',
+      'Fifty colleges organized through schools, programmes, and research institute alignment.',
     modules: [
       {
         heading: 'Academic Structure',
@@ -206,7 +206,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
       },
     ],
     highlights: [
-      { label: 'Colleges', value: '49' },
+      { label: 'Colleges', value: '50' },
       { label: 'Learning Design', value: 'Outcome-Based' },
       { label: 'Career Ecosystem', value: 'Industry Integrated' },
     ],
@@ -256,7 +256,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
     navLabel: 'Research',
     title: 'Research and Innovation Institutes',
     description:
-      'Eighteen specialized institutes equipped for interdisciplinary research, open collaboration, and innovation transfer.',
+      'Fifty-nine specialized institutes equipped for interdisciplinary research, open collaboration, and innovation transfer.',
     modules: [
       {
         heading: 'Institutes',
@@ -276,7 +276,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
       },
     ],
     highlights: [
-      { label: 'Research Institutes', value: '18' },
+      { label: 'Research Institutes', value: '59' },
       { label: 'Collaboration Stack', value: 'AI + VR + Open Science' },
       { label: 'Impact Pathway', value: 'Policy to Commercialization' },
     ],

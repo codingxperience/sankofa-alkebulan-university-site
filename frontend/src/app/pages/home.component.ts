@@ -65,7 +65,7 @@ export class HomeComponent {
     {
       n: '02',
       h: 'Research with public consequence.',
-      p: 'Four institutes shaping policy, industry, and culture across the continent and the global academy.',
+      p: '59 research institutes shaping policy, industry, culture, science, and public life across the continent.',
     },
     {
       n: '03',

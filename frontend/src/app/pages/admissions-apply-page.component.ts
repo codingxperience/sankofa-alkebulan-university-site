@@ -35,7 +35,7 @@ export class AdmissionsApplyPageComponent {
     {
       id: 'postgraduate',
       title: 'Postgraduate',
-      sub: "Master's degrees and postgraduate diplomas across six colleges",
+      sub: "Master's degrees and postgraduate diplomas across 50 colleges",
     },
     {
       id: 'doctoral',

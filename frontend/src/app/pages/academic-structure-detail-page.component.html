@@ -9,12 +9,16 @@
         <a routerLink="/academics/colleges">Colleges</a>
         @if (college(); as currentCollege) {
           <span aria-hidden="true">&rsaquo;</span>
-          <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]">{{ currentCollege.name }}</a>
+          <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]">{{
+            currentCollege.name
+          }}</a>
         }
         @if (school(); as currentSchool) {
           <span aria-hidden="true">&rsaquo;</span>
           @if (view() === 'department' && college(); as currentCollege) {
-            <a [routerLink]="schoolRoute(currentCollege.name, currentSchool.name)">{{ currentSchool.name }}</a>
+            <a [routerLink]="schoolRoute(currentCollege.name, currentSchool.name)">{{
+              currentSchool.name
+            }}</a>
           } @else {
             <span class="here" aria-current="page">{{ currentSchool.name }}</span>
           }
@@ -31,29 +35,57 @@
     @if (school(); as currentSchool) {
       <section class="structure-hero" aria-labelledby="structure-title">
         <div class="structure-hero__media" aria-hidden="true">
-          <img [src]="heroVisual().src" [alt]="heroVisual().alt" />
+          <img
+            [src]="heroVisual().src"
+            [alt]="heroVisual().alt"
+            [style.object-position]="heroVisual().position ?? '70% center'"
+          />
         </div>
         <div class="structure-hero__fade" aria-hidden="true"></div>
 
-        <button type="button" class="structure-control structure-control--prev" (click)="previousVisual()" aria-label="Previous academic image">
+        <button
+          type="button"
+          class="structure-control structure-control--prev"
+          (click)="previousVisual()"
+          aria-label="Previous academic image"
+        >
           <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <button type="button" class="structure-control structure-control--next" (click)="nextVisual()" aria-label="Next academic image">
+        <button
+          type="button"
+          class="structure-control structure-control--next"
+          (click)="nextVisual()"
+          aria-label="Next academic image"
+        >
           <i class="fa-solid fa-arrow-right"></i>
         </button>
 
         <div class="v2-container structure-hero__inner">
           <div class="structure-hero__copy" data-reveal>
-            <span class="v2-kicker">{{ view() === 'department' ? 'Department pathway' : 'School pathway' }}</span>
+            <span class="v2-kicker">{{
+              view() === 'department' ? 'Department pathway' : 'School pathway'
+            }}</span>
             <h1 id="structure-title">{{ title() }}</h1>
             <p>{{ lead() }}</p>
             <div class="structure-hero__actions">
               @if (view() === 'department') {
-                <a href="#programmes" class="v2-btn v2-btn--primary v2-btn--lg">View programmes <span aria-hidden="true">&rarr;</span></a>
-                <a [routerLink]="schoolRoute(currentCollege.name, currentSchool.name)" class="v2-btn v2-btn--ghost v2-btn--lg">Back to school</a>
+                <a href="#programmes" class="v2-btn v2-btn--primary v2-btn--lg"
+                  >View programmes <span aria-hidden="true">&rarr;</span></a
+                >
+                <a
+                  [routerLink]="schoolRoute(currentCollege.name, currentSchool.name)"
+                  class="v2-btn v2-btn--ghost v2-btn--lg"
+                  >Back to school</a
+                >
               } @else {
-                <a href="#departments" class="v2-btn v2-btn--primary v2-btn--lg">View departments <span aria-hidden="true">&rarr;</span></a>
-                <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]" class="v2-btn v2-btn--ghost v2-btn--lg">Back to college</a>
+                <a href="#departments" class="v2-btn v2-btn--primary v2-btn--lg"
+                  >View departments <span aria-hidden="true">&rarr;</span></a
+                >
+                <a
+                  [routerLink]="['/academics/colleges', slugify(currentCollege.name)]"
+                  class="v2-btn v2-btn--ghost v2-btn--lg"
+                  >Back to college</a
+                >
               }
             </div>
           </div>
@@ -81,20 +113,43 @@
                     <span class="v2-kicker">Departments</span>
                     <h2>Choose where the work is held.</h2>
                   </div>
-                  <p>The college gives the question. The school gives the method. The department holds the teaching and research.</p>
+                  <p>
+                    The college gives the question. The school gives the method. The department
+                    holds the teaching and research.
+                  </p>
                 </div>
 
                 <div class="node-grid">
-                  @for (department of departmentCards(); track department.name; let index = $index) {
-                    <a class="node-card" [routerLink]="departmentRoute(currentCollege.name, currentSchool.name, department.name)">
+                  @for (
+                    department of departmentCards();
+                    track department.name;
+                    let index = $index
+                  ) {
+                    <a
+                      class="node-card"
+                      [routerLink]="
+                        departmentRoute(currentCollege.name, currentSchool.name, department.name)
+                      "
+                    >
                       <div class="node-card__media">
-                        <img [src]="department.image.src" [alt]="department.image.alt" loading="lazy" />
+                        <img
+                          [src]="department.image.src"
+                          [alt]="department.image.alt"
+                          [style.object-position]="department.image.position ?? 'center center'"
+                          loading="lazy"
+                        />
                       </div>
-                      <span class="node-card__number">{{ (index + 1).toString().padStart(2, '0') }}</span>
-                      <span class="node-card__icon"><i class="fa-solid {{ department.icon }}" aria-hidden="true"></i></span>
+                      <span class="node-card__number">{{
+                        (index + 1).toString().padStart(2, '0')
+                      }}</span>
+                      <span class="node-card__icon"
+                        ><i class="fa-solid {{ department.icon }}" aria-hidden="true"></i
+                      ></span>
                       <h3>{{ department.name }}</h3>
                       <p>See the programme pathways carried by this department.</p>
-                      <strong>View programmes <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
+                      <strong
+                        >View programmes <i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+                      ></strong>
                     </a>
                   }
                 </div>
@@ -108,24 +163,37 @@
                     <span class="v2-kicker">Programmes</span>
                     <h2>Programme pathways from this department.</h2>
                   </div>
-                  <p>Each card opens a live programme page with admissions, duration, curriculum, and application guidance.</p>
+                  <p>
+                    Each card opens a live programme page with admissions, duration, curriculum, and
+                    application guidance.
+                  </p>
                 </div>
 
                 <div class="programme-path-grid">
                   @for (programme of programmeCards(); track programme.title) {
                     <a class="programme-path-card" [routerLink]="programme.route">
                       <div class="programme-path-card__media">
-                        <img [src]="programme.image.src" [alt]="programme.image.alt" loading="lazy" />
+                        <img
+                          [src]="programme.image.src"
+                          [alt]="programme.image.alt"
+                          [style.object-position]="programme.image.position ?? 'center center'"
+                          loading="lazy"
+                        />
                       </div>
                       <span class="programme-path-card__level">{{ programme.level }}</span>
-                      <span class="programme-path-card__icon"><i class="fa-solid {{ programme.icon }}" aria-hidden="true"></i></span>
+                      <span class="programme-path-card__icon"
+                        ><i class="fa-solid {{ programme.icon }}" aria-hidden="true"></i
+                      ></span>
                       <h3>{{ programme.title }}</h3>
                       <p>{{ programme.summary }}</p>
                       <div class="programme-path-card__meta">
                         <span>{{ programme.duration }}</span>
                         <span>September 2026 intake</span>
                       </div>
-                      <strong>View programme detail <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></strong>
+                      <strong
+                        >View programme detail
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+                      ></strong>
                     </a>
                   }
                 </div>
@@ -140,7 +208,11 @@
           <span class="v2-kicker">School not found</span>
           <h1>We could not find that school.</h1>
           <p>Return to the college and choose one of its current schools.</p>
-          <a [routerLink]="['/academics/colleges', slugify(currentCollege.name)]" class="v2-btn v2-btn--primary">Back to college</a>
+          <a
+            [routerLink]="['/academics/colleges', slugify(currentCollege.name)]"
+            class="v2-btn v2-btn--primary"
+            >Back to college</a
+          >
         </div>
       </section>
     }

@@ -28,6 +28,7 @@ interface CollegeRow {
   readonly schools: number;
   readonly departments: number;
   readonly programmes: number;
+  readonly image: AcademicCardVisual;
 }
 
 interface SchoolRow {
@@ -81,14 +82,20 @@ export class AcademicDirectoryPageComponent {
   );
 
   readonly mode = computed<AcademicDirectoryMode>(() => this.modeFromUrl(this.currentUrl()));
-  readonly heroVisual = computed(() => this.heroVisuals[this.heroIndex() % this.heroVisuals.length]);
+  readonly heroVisual = computed(
+    () => this.heroVisuals[this.heroIndex() % this.heroVisuals.length],
+  );
 
   readonly collegeRows: readonly CollegeRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.map((college) => ({
     college,
     slug: this.slugify(college.name),
     schools: college.schoolStructure.length,
-    departments: college.schoolStructure.reduce((total, school) => total + school.departments.length, 0),
+    departments: college.schoolStructure.reduce(
+      (total, school) => total + school.departments.length,
+      0,
+    ),
     programmes: college.programmes.length,
+    image: academicImageForName(college.name),
   }));
 
   readonly schoolRows: readonly SchoolRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
@@ -102,25 +109,26 @@ export class AcademicDirectoryPageComponent {
     })),
   );
 
-  readonly departmentRows: readonly DepartmentRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.flatMap((college) =>
-    college.schoolStructure.flatMap((school) =>
-      school.departments.map((department) => ({
-        name: department,
-        school: school.name,
-        college: college.name,
-        collegeSlug: slugifyAcademic(college.name),
-        schoolSlug: slugifyAcademic(school.name),
-        departmentSlug: slugifyAcademic(department),
-        image: academicImageForName(`${college.name} ${school.name} ${department}`),
-      })),
-    ),
+  readonly departmentRows: readonly DepartmentRow[] = ACADEMIC_ARCHITECTURE_COLLEGES.flatMap(
+    (college) =>
+      college.schoolStructure.flatMap((school) =>
+        school.departments.map((department) => ({
+          name: department,
+          school: school.name,
+          college: college.name,
+          collegeSlug: slugifyAcademic(college.name),
+          schoolSlug: slugifyAcademic(school.name),
+          departmentSlug: slugifyAcademic(department),
+          image: academicImageForName(`${college.name} ${school.name} ${department}`),
+        })),
+      ),
   );
 
   readonly researchRows: readonly ResearchRow[] = ACADEMIC_RESEARCH_INSTITUTES.map((name) => ({
     name,
-    alignedColleges: ACADEMIC_ARCHITECTURE_COLLEGES
-      .filter((college) => college.researchInstitute === name || college.researchAlignment === name)
-      .map((college) => college.name),
+    alignedColleges: ACADEMIC_ARCHITECTURE_COLLEGES.filter(
+      (college) => college.researchInstitute === name || college.researchAlignment === name,
+    ).map((college) => college.name),
   }));
 
   readonly config = computed(() => {
@@ -167,17 +175,21 @@ export class AcademicDirectoryPageComponent {
 
   readonly filteredColleges = computed(() =>
     this.collegeRows.filter((row) =>
-      this.matches([
-        row.college.name,
-        row.college.schools.join(' '),
-        row.college.programmes.join(' '),
-        row.college.researchInstitute,
-      ].join(' ')),
+      this.matches(
+        [
+          row.college.name,
+          row.college.schools.join(' '),
+          row.college.programmes.join(' '),
+          row.college.researchInstitute,
+        ].join(' '),
+      ),
     ),
   );
 
   readonly filteredSchools = computed(() =>
-    this.schoolRows.filter((row) => this.matches(`${row.name} ${row.college} ${row.departments.join(' ')}`)),
+    this.schoolRows.filter((row) =>
+      this.matches(`${row.name} ${row.college} ${row.departments.join(' ')}`),
+    ),
   );
 
   readonly filteredDepartments = computed(() =>
@@ -191,7 +203,8 @@ export class AcademicDirectoryPageComponent {
   readonly pagedColleges = computed(() => this.paginate(this.filteredColleges()));
   readonly pagedResearch = computed(() => this.paginate(this.filteredResearch()));
   readonly pageCount = computed(() => {
-    const total = this.mode() === 'research' ? this.filteredResearch().length : this.filteredColleges().length;
+    const total =
+      this.mode() === 'research' ? this.filteredResearch().length : this.filteredColleges().length;
     return Math.max(1, Math.ceil(total / this.pageSize));
   });
   readonly currentPage = computed(() => Math.min(this.pageIndex(), this.pageCount() - 1));
@@ -211,7 +224,9 @@ export class AcademicDirectoryPageComponent {
   }
 
   previousVisual(): void {
-    this.heroIndex.update((index) => (index + this.heroVisuals.length - 1) % this.heroVisuals.length);
+    this.heroIndex.update(
+      (index) => (index + this.heroVisuals.length - 1) % this.heroVisuals.length,
+    );
   }
 
   setVisual(index: number): void {
@@ -268,7 +283,11 @@ export class AcademicDirectoryPageComponent {
     return buildSchoolRoute(collegeName, schoolName);
   }
 
-  departmentRoute(collegeName: string, schoolName: string, departmentName: string): readonly string[] {
+  departmentRoute(
+    collegeName: string,
+    schoolName: string,
+    departmentName: string,
+  ): readonly string[] {
     return buildDepartmentRoute(collegeName, schoolName, departmentName);
   }
 
@@ -286,7 +305,10 @@ export class AcademicDirectoryPageComponent {
   }
 
   private paginate<T>(rows: readonly T[]): readonly T[] {
-    const page = Math.min(this.pageIndex(), Math.max(0, Math.ceil(rows.length / this.pageSize) - 1));
+    const page = Math.min(
+      this.pageIndex(),
+      Math.max(0, Math.ceil(rows.length / this.pageSize) - 1),
+    );
     return rows.slice(page * this.pageSize, page * this.pageSize + this.pageSize);
   }
 
