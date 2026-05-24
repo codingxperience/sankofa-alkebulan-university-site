@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build && cp dist/sankofa-frontend/browser/index.csr.html dist/sankofa-frontend/browser/index.html",
+  "outputDirectory": "dist/sankofa-frontend/browser",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
