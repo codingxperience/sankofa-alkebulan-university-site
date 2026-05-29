@@ -1156,6 +1156,7 @@ export class HeaderComponent implements OnInit {
     { label: 'Student Life', path: '/student-life' },
     { label: 'Library', path: '/library-repository', disabled: true },
     { label: 'Contact', path: '/contact' },
+    { label: 'Press', path: '/university-press' },
   ];
 
   readonly aboutMenuSummary =
@@ -1306,9 +1307,9 @@ export class HeaderComponent implements OnInit {
         },
         {
           label: 'University Press',
-          path: '#',
+          path: '/university-press',
           icon: 'fa-newspaper',
-          description: 'Scholarly publishing layer reserved for launch.',
+          description: 'News releases, field media, films, and publications.',
         },
       ],
     },
@@ -1317,7 +1318,7 @@ export class HeaderComponent implements OnInit {
       links: [
         {
           label: 'Clubs & Societies',
-          path: '/student-life',
+          path: '/clubs-societies',
           icon: 'fa-people-group',
           description: 'Cultural societies, clubs, and professional societies.',
         },

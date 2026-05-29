@@ -1,0 +1,299 @@
+<div class="v2-shell clubs-page">
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a routerLink="/student-life">Student Life</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <span class="here" aria-current="page">Clubs & Societies</span>
+      </nav>
+      <div class="actions">
+        <a routerLink="/student-life" class="v2-btn v2-btn--ghost"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Student life</a>
+        <a routerLink="/clubs-societies" fragment="directory" class="v2-btn v2-btn--ghost"><i class="fa-solid fa-list" aria-hidden="true"></i> Open directory</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="pg-hero pg-hero--editorial cs-hero" aria-labelledby="cs-hero">
+    <div class="pg-hero__dots" aria-hidden="true"></div>
+    <div class="v2-container">
+      <div class="cs-hero__grid">
+        <div class="cs-hero__copy">
+          <span class="v2-kicker">Student organisations</span>
+          <h1 id="cs-hero">Clubs, societies,<br> and <em>professional pathways.</em></h1>
+          <p class="cs-hero__lead">
+            A public directory for student organisations at Sankofa Alkebulan University.
+            Each route sits under a named governance home: membership terms, academic
+            oversight, and an annual output record.
+          </p>
+
+          <dl class="cs-hero__stats" aria-label="Student organisation totals">
+            <div><dt>{{ totalEntries }}</dt><dd>named routes across the directory</dd></div>
+            <div><dt>{{ totalGroups }}</dt><dd>academic clusters</dd></div>
+            <div><dt>3</dt><dd>governance systems</dd></div>
+          </dl>
+
+          <div class="cs-hero__actions">
+            <a routerLink="/clubs-societies" fragment="directory" class="v2-btn v2-btn--primary v2-btn--lg">Browse directory <span aria-hidden="true">&rarr;</span></a>
+            <a href="mailto:SanAlkeU@outlook.com?subject=Student%20organisation%20enquiry" class="v2-btn v2-btn--ghost v2-btn--lg">Contact student affairs</a>
+          </div>
+        </div>
+
+        <figure class="cs-hero__image">
+          <img
+            src="/assets/student-organizations/student-life-culture-societies.jpg"
+            alt="Students in modern traditional African attire gathered together"
+          >
+          <figcaption>
+            <div class="cs-hero__cap-row">
+              <span class="v2-kicker">Membership cycle</span>
+              <span class="cs-hero__cap-dot"></span>
+            </div>
+            <p>Open sign-up · elected officers · staff adviser · annual report.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section" id="systems" aria-labelledby="cs-systems-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Three systems</span>
+          <h2 id="cs-systems-title">Choose the layer that matches the work.</h2>
+        </div>
+        <p class="right">Student organisations sit inside one of three governance systems, each with its own brief, oversight model, and reporting rhythm.</p>
+      </div>
+
+      <div class="cs-systems">
+        @for (summary of summaries; track summary.id) {
+          <button
+            type="button"
+            class="cs-system"
+            [class.cs-system--active]="activeSystemId() === summary.id"
+            [attr.aria-pressed]="activeSystemId() === summary.id"
+            (click)="setSystem(summary.id)"
+          >
+            <span class="cs-system__photo">
+              <img [src]="summary.image" [alt]="summary.imageAlt">
+            </span>
+            <span class="cs-system__body">
+              <span class="cs-system__num">{{ summary.number }}</span>
+              <span class="cs-system__eyebrow">{{ summary.eyebrow }}</span>
+              <span class="cs-system__title">{{ summary.title }}</span>
+              <span class="cs-system__desc">{{ summary.description }}</span>
+            </span>
+            <span class="cs-system__meta">
+              <span><b>{{ summary.groups }}</b> clusters</span>
+              <span><b>{{ summary.entries }}</b> routes</span>
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section v2-section--quiet" aria-labelledby="cs-features-title">
+    <div class="v2-container">
+      <div class="v2-section-head">
+        <span class="v2-kicker">What the directory covers</span>
+        <h2 id="cs-features-title">Student organisations are tied to work, not slogans.</h2>
+      </div>
+
+      <div class="cs-features">
+        @for (route of featureRoutes; track route.title) {
+          <article class="cs-feature">
+            <figure><img [src]="route.image" [alt]="route.title"></figure>
+            <div>
+              <span class="cs-feature__label">{{ route.label }}</span>
+              <h3>{{ route.title }}.</h3>
+              <p>{{ route.text }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section cs-directory-section" id="directory" aria-labelledby="cs-directory-title">
+    <div class="v2-container cs-directory-layout">
+      <aside class="cs-directory__brief" aria-label="Selected organisation system">
+        <span class="v2-kicker">{{ activeSummary().label }}</span>
+        <h2 id="cs-directory-title">{{ activeSummary().directoryTitle }}</h2>
+        <p>{{ activeSystem().description }}</p>
+
+        <div class="cs-governance">
+          <h3>Governance</h3>
+          <ul>
+            @for (item of activeSystem().governance; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+
+        <div class="cs-brief__contact">
+          <p>Have a society to register? Bring eight founding members, an academic adviser, and a one-page brief.</p>
+          <a href="mailto:SanAlkeU@outlook.com?subject=Student%20organisation%20registration" class="v2-btn v2-btn--link">SanAlkeU@outlook.com <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </aside>
+
+      <div class="cs-directory__main">
+        <div class="cs-tools" aria-label="Directory tools">
+          <label class="cs-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+              type="search"
+              [value]="query()"
+              placeholder="Search by society, discipline, language, or interest"
+              (input)="updateQuery($event)"
+            >
+            <span class="cs-search__kbd">Ctrl K</span>
+          </label>
+
+          <div class="cs-system-tabs" role="tablist" aria-label="Organisation system">
+            @for (summary of summaries; track summary.id) {
+              <button
+                type="button"
+                role="tab"
+                [class.is-active]="activeSystemId() === summary.id"
+                [attr.aria-selected]="activeSystemId() === summary.id"
+                (click)="setSystem(summary.id)"
+              >
+                {{ summary.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="cs-group-filter" aria-label="Cluster filter">
+          @for (group of groupOptions(); track group) {
+            <button
+              type="button"
+              [class.is-active]="activeGroup() === group"
+              (click)="setGroup(group)"
+            >
+              {{ group }}
+            </button>
+          }
+        </div>
+
+        <div class="cs-result-line" aria-live="polite">
+          <span>
+            Showing <b>{{ visibleEntries().length }}</b> of <b>{{ filteredEntries().length }}</b>
+            {{ activeSummary().label.toLowerCase() }}
+          </span>
+          @if (query() || activeGroup() !== 'All') {
+            <button type="button" class="cs-clear" (click)="clearFilters()">Clear filters</button>
+          }
+        </div>
+
+        @if (visibleEntries().length) {
+          <ol class="cs-list">
+            @for (entry of visibleEntries(); track entry.id) {
+              <li class="cs-row">
+                <div class="cs-row__mark" [attr.aria-label]="entry.name">{{ entry.initials }}</div>
+                <div class="cs-row__body">
+                  <span class="cs-row__meta">{{ entry.systemLabel }} · {{ entry.groupTitle }}</span>
+                  <h3>{{ entry.name }}</h3>
+                  <p>{{ entry.description }}</p>
+                </div>
+                <dl class="cs-row__details">
+                  <div><dt>Membership</dt><dd>{{ entry.membership }}</dd></div>
+                  <div><dt>Oversight</dt><dd>{{ entry.oversight }}</dd></div>
+                  <div><dt>Output</dt><dd>{{ entry.output }}</dd></div>
+                </dl>
+                <a class="cs-row__action" [href]="entry.mailto">Join interest list <span aria-hidden="true">&rarr;</span></a>
+              </li>
+            }
+          </ol>
+
+          @if (remainingEntries() > 0) {
+            <div class="cs-load">
+              <button type="button" class="v2-btn v2-btn--ghost" (click)="showMore()">Show 36 more societies</button>
+              <button type="button" class="v2-btn v2-btn--link" (click)="showAll()">Show all {{ filteredEntries().length }}</button>
+            </div>
+          }
+        } @else {
+          <div class="cs-empty">
+            <h3>No matches found.</h3>
+            <p>Try a discipline, cultural system, club name, or professional route.</p>
+            <button type="button" class="v2-btn v2-btn--ghost" (click)="clearFilters()">Reset directory</button>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section v2-section--quiet" id="register" aria-labelledby="cs-howto-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Registering a society</span>
+          <h2 id="cs-howto-title">From idea to recognised society in four steps.</h2>
+        </div>
+        <p class="right">Each step is a real review, not a stamp. The student affairs office turns most applications around in 21 working days.</p>
+      </div>
+
+      <ol class="cs-howto">
+        @for (step of howToSteps; track step.number) {
+          <li>
+            <span class="cs-howto__num">{{ step.number }}</span>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <div class="v2-container"><div class="pg-divider-row"><div class="pg-divider" aria-hidden="true"><img src="/assets/pattern-mark.svg" alt=""></div></div></div>
+
+  <section class="v2-section cs-principles" aria-label="Institutional principles">
+    <div class="v2-container">
+      <div class="v2-section-head">
+        <span class="v2-kicker">What we hold</span>
+        <h2>Four commitments under every society on this page.</h2>
+      </div>
+      <div class="cs-principles__grid">
+        @for (principle of principles; track principle.number) {
+          <blockquote>
+            <span class="cs-principles__num">{{ principle.number }}</span>
+            <h3>{{ principle.title }}</h3>
+            <p>{{ principle.text }}</p>
+          </blockquote>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-quote" aria-label="A note from the student affairs office">
+    <div class="v2-container">
+      <div class="pg-quote__portrait">
+        <img src="/assets/portrait-chinaza.jpeg" alt="">
+      </div>
+      <div class="pg-quote__body">
+        <p>I run a society on continental political economy. Eight students at the first meeting, forty at the second, a reading group two years later. That is the version of student life Sankofa backs: serious, public, and well-funded.</p>
+        <div class="pg-quote__attr">
+          <b>Chinaza Ekeoma</b>
+          <span>Chair · Pan-African Scholars' Network · Class of 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sl-cta cs-cta">
+    <div class="v2-container">
+      <div>
+        <span class="v2-kicker">For founders and joiners alike</span>
+        <h2>Find a society, or start one.</h2>
+        <p>Open sign-ups twice a year, with a rolling registration window for new societies through the student affairs office.</p>
+      </div>
+      <div class="actions">
+        <a routerLink="/clubs-societies" fragment="directory" class="v2-btn v2-btn--primary v2-btn--lg">Browse the directory <span aria-hidden="true">&rarr;</span></a>
+        <a href="mailto:SanAlkeU@outlook.com?subject=Register%20a%20new%20student%20society" class="v2-btn v2-btn--ghost v2-btn--lg">Register a new society</a>
+      </div>
+    </div>
+  </section>
+</div>

@@ -10,6 +10,7 @@ import { AcademicStructureDetailPageComponent } from './pages/academic-structure
 import { AdmissionsApplyPageComponent } from './pages/admissions-apply-page.component';
 import { DigitalLearningPageComponent } from './pages/digital-learning-page.component';
 import { StudentLifePageComponent } from './pages/student-life-page.component';
+import { StudentOrganizationsPageComponent } from './pages/student-organizations-page.component';
 import { TeamCategoryPageComponent } from './pages/team-category-page.component';
 import { TeamProfilePageComponent } from './pages/team-profile-page.component';
 import { DepartmentPageComponent } from './pages/department-page.component';
@@ -19,6 +20,7 @@ import { EssayDetailComponent } from './pages/essay-detail.component';
 import { MembershipComponent } from './pages/membership.component';
 import { ShopComponent } from './pages/shop.component';
 import { LibraryComponent } from './pages/library.component';
+import { PressPageComponent } from './pages/press-page.component';
 import { Articles } from './pages/articles/articles';
 import { Admin } from './pages/admin/admin';
 import { Login } from './login/login';
@@ -149,6 +151,13 @@ export const routes: Routes = [
       { path: 'digital-learning', component: DigitalLearningPageComponent },
       { path: 'digital-campus', redirectTo: '/digital-learning', pathMatch: 'full' },
       { path: 'student-life', component: StudentLifePageComponent },
+      { path: 'clubs-societies', component: StudentOrganizationsPageComponent },
+      { path: 'student-organisations', redirectTo: '/clubs-societies', pathMatch: 'full' },
+      { path: 'student-organizations', redirectTo: '/clubs-societies', pathMatch: 'full' },
+      { path: 'professional-societies', component: StudentOrganizationsPageComponent, data: { system: 'professional' } },
+      { path: 'cultural-societies', component: StudentOrganizationsPageComponent, data: { system: 'cultural' } },
+      { path: 'press', component: PressPageComponent },
+      { path: 'university-press', component: PressPageComponent },
       ...departmentShortcutRoutes,
       { path: 'home/:level/:programSlug', component: ProgramDetailComponent },
       { path: 'home/:level', component: ProgrammesLevelComponent },

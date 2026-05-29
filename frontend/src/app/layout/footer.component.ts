@@ -34,7 +34,7 @@ import { RouterLink } from '@angular/router';
             <h3>Research</h3>
             <a routerLink="/research-innovation">Institutes</a>
             <a routerLink="/research-innovation">Projects</a>
-            <a routerLink="/library-repository">Publications</a>
+            <a routerLink="/university-press">Publications</a>
             <a routerLink="/events-conferences">Open science</a>
             <a routerLink="/services">Funding portal</a>
           </section>
@@ -45,13 +45,15 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/about/executive-team">Leadership</a>
             <a routerLink="/about/sankofa-charter">Charter</a>
             <a routerLink="/events-conferences">Annual reports</a>
-            <a routerLink="/events-conferences">Press</a>
+            <a routerLink="/clubs-societies">Clubs & societies</a>
+            <a routerLink="/university-press">Press</a>
           </section>
 
           <section>
             <h3>Connect</h3>
             <a routerLink="/contact">Contact</a>
             <a routerLink="/student-life">Student life</a>
+            <a routerLink="/professional-societies">Professional societies</a>
             <a routerLink="/admissions">Apply now</a>
             <a href="mailto:SanAlkeU@outlook.com">SanAlkeU@outlook.com</a>
             <div class="footer-social" aria-label="Social links">

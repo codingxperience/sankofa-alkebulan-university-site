@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { FooterComponent } from './footer.component';
+import { LanguageSwitcherComponent } from './language-switcher.component';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, LanguageSwitcherComponent],
   template: `
     <app-header></app-header>
 
@@ -14,6 +15,7 @@ import { FooterComponent } from './footer.component';
     </main>
 
     <app-footer></app-footer>
+    <app-language-switcher></app-language-switcher>
   `,
   styles: [`
     :host {

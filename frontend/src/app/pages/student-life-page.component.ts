@@ -34,9 +34,10 @@ export class StudentLifePageComponent {
     {
       photo: 'assets/student-life-culture-societies.jpg',
       ek: '03 - Societies and debate',
-      h: 'Forty-plus student societies, run by students.',
-      p: "Debate, language, faith, music, journalism, model-AU, and a continental scholars' network funded annually with public budgets.",
+      h: 'A full directory of clubs and professional societies.',
+      p: 'Cultural societies, applied clubs, and professional societies are organised with staff advisers, elected officers, membership cycles, and public output records.',
       cta: 'Browse societies',
+      path: '/clubs-societies',
     },
     {
       photo: 'assets/student-life-athletics-field.jpg',
@@ -58,6 +59,7 @@ export class StudentLifePageComponent {
       h: "The students' assembly, and the public work of the university.",
       p: 'An elected student assembly funds civic projects across the city: literacy, archive work, climate adaptation, public health.',
       cta: 'Leadership and service',
+      path: '/clubs-societies',
     },
   ];
 

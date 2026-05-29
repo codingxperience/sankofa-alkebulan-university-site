@@ -60,7 +60,11 @@
               <span class="ek">{{ pillar.ek }}</span>
               <h3>{{ pillar.h }}</h3>
               <p>{{ pillar.p }}</p>
-              <a href="#" class="v2-btn v2-btn--link">{{ pillar.cta }}</a>
+              @if (pillar.path) {
+                <a [routerLink]="pillar.path" class="v2-btn v2-btn--link">{{ pillar.cta }}</a>
+              } @else {
+                <a href="#" class="v2-btn v2-btn--link">{{ pillar.cta }}</a>
+              }
             </div>
           </article>
         }

@@ -1,0 +1,341 @@
+<div class="v2-shell press-page">
+  <div class="pg-crumbs">
+    <div class="v2-container">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <span class="here" aria-current="page">University Press</span>
+      </nav>
+      <div class="actions">
+        <a href="#latest" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-newspaper" aria-hidden="true"></i> Latest releases</a>
+        <a href="#publications" class="v2-btn v2-btn--ghost"><i class="fa-solid fa-book" aria-hidden="true"></i> Publication shelf</a>
+        <a href="mailto:SanAlkeU@outlook.com" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Press desk</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="pg-hero pg-hero--editorial pr-hero" id="press-desk" aria-labelledby="pr-hero">
+    <div class="pg-hero__dots" aria-hidden="true"></div>
+    <div class="v2-container">
+      <div class="pr-hero__grid">
+        <div class="pr-hero__copy">
+          <span class="v2-kicker">Sankofa University Press</span>
+          <h1 id="pr-hero">A public <em>record,</em><br> read across <em>the continent.</em></h1>
+          <p class="pr-hero__lead">
+            The University Press is the working media desk of Sankofa Alkebulan University:
+            releases, field photographs, short films, source notes, and the university's
+            growing shelf of Pan-African scholarship.
+          </p>
+          <div class="pr-hero__actions">
+            <a href="#latest" class="v2-btn v2-btn--primary v2-btn--lg">Latest releases <span aria-hidden="true">&rarr;</span></a>
+            <a href="#publications" class="v2-btn v2-btn--ghost v2-btn--lg">View publications</a>
+          </div>
+
+          <dl class="pr-hero__meta" aria-label="Press desk numbers">
+            @for (stat of stats; track stat.label) {
+              <div>
+                <dt>{{ stat.value }}</dt>
+                <dd>{{ stat.label }}</dd>
+              </div>
+            }
+          </dl>
+        </div>
+
+        <aside class="pr-tearsheet" aria-label="Recent field photographs">
+          <span class="pr-tearsheet__label">Field contact sheet · May 2026</span>
+          <figure class="pr-tear pr-tear--1">
+            <img src="/assets/press/images/diaspora-economic-forum-stage.webp" alt="Convention delegates at Speke Resort">
+            <figcaption><time>22.05.26</time><span>Diaspora Economic Forum</span></figcaption>
+          </figure>
+          <figure class="pr-tear pr-tear--2">
+            <img src="/assets/press/images/liberation-day-procession.webp" alt="Public procession on Liberation Day">
+            <figcaption><time>25.05.26</time><span>Liberation Day · Kampala</span></figcaption>
+          </figure>
+          <figure class="pr-tear pr-tear--3">
+            <img src="/assets/press/images/publication-table-african-thought.webp" alt="Publication table at the convention">
+            <figcaption><time>25.05.26</time><span>Publication table</span></figcaption>
+          </figure>
+          <figure class="pr-tear pr-tear--4">
+            <img src="/assets/press/images/speke-arrival-trio.webp" alt="Delegates arriving at Speke Resort">
+            <figcaption><time>21.05.26</time><span>Speke Resort · Arrival</span></figcaption>
+          </figure>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section pr-feature" id="feature" aria-labelledby="pr-feature-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Field dispatch</span>
+          <h2 id="pr-feature-title">Convention week, May 20-25, Kampala.</h2>
+        </div>
+        <p class="right">A visual and editorial record of arrival diplomacy, diaspora economic dialogue, cultural diplomacy, the SAU publication table, and Liberation Day movement.</p>
+      </div>
+
+      <article class="pr-dispatch">
+        <figure class="pr-dispatch__photo">
+          <img src="/assets/press/images/convention-group-photo-wide.webp" alt="Convention delegates gathered for a formal group photograph">
+          <figcaption>
+            <span>Photographer</span>
+            <b>SAU Press desk</b>
+          </figcaption>
+        </figure>
+        <div class="pr-dispatch__body">
+          <div class="pr-dispatch__meta">
+            <span class="pr-tag pr-tag--field">Dispatch</span>
+            <time>25 May 2026</time>
+            <span>Author · University Press</span>
+            <span>9 min read</span>
+          </div>
+          <h3>SAU press desk archives Pan-African convention week in Kampala.</h3>
+          <p>
+            Kampala's convention week placed African public memory, diaspora capital, cultural
+            diplomacy, tourism, and scholarly publication in the same civic field. The University
+            Press records that field as an institutional archive of who gathered, what themes
+            surfaced, and how knowledge moved through the week.
+          </p>
+          <ul class="pr-dispatch__points">
+            <li>The archive follows the May 20-25 window through diplomacy, arrival, diaspora economic dialogue, public procession, and publication display.</li>
+            <li>POATE 2026 is treated as a parallel public-scholarship case: tourism, culture, enterprise, and destination leadership shape continental development.</li>
+            <li>Photographs, films, and scholarship sit inside one coherent institutional record.</li>
+          </ul>
+          <div class="pr-dispatch__actions">
+            <a href="#latest" class="v2-btn v2-btn--primary">Read the full dispatch <span aria-hidden="true">&rarr;</span></a>
+            <a href="#gallery" class="v2-btn v2-btn--ghost">Open photo archive</a>
+          </div>
+
+          <div class="pr-share" aria-label="Share">
+            <span>Share</span>
+            <a href="mailto:?subject=SAU University Press&body=/university-press" aria-label="Email"><i class="fa-regular fa-envelope"></i></a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=/university-press" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://x.com/intent/tweet?url=/university-press" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="/university-press" aria-label="Copy link"><i class="fa-solid fa-link"></i></a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="v2-section v2-section--quiet" aria-labelledby="pr-chrono-title">
+    <div class="v2-container">
+      <div class="v2-section-head">
+        <span class="v2-kicker">Chronology</span>
+        <h2 id="pr-chrono-title">Convention week, left to right.</h2>
+      </div>
+
+      <ol class="pr-chrono">
+        @for (item of chronology; track item.title) {
+          <li class="pr-chrono__item">
+            <figure><img [src]="item.image" [alt]="item.title"></figure>
+            <div>
+              <time>{{ item.date }}</time>
+              <h4>{{ item.title }}</h4>
+              <p>{{ item.summary }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="v2-section pr-list-section" id="latest" aria-labelledby="pr-latest-title">
+    <div class="v2-container pr-list-layout">
+      <aside class="pr-side" aria-label="Media desk">
+        <span class="v2-kicker">Media desk</span>
+        <nav>
+          @for (link of sideLinks; track link.label) {
+            <a [href]="link.target" [class.is-active]="link.target === '#latest'">{{ link.label }} <span>{{ link.count }}</span></a>
+          }
+        </nav>
+
+        <div class="pr-side__contact">
+          <h5>Press desk</h5>
+          <p>For interviews, archive access, and embargoed releases.</p>
+          <a href="mailto:SanAlkeU@outlook.com" class="v2-btn v2-btn--link">SanAlkeU@outlook.com <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </aside>
+
+      <div class="pr-list">
+        <div class="v2-section-head v2-section-head--split">
+          <div>
+            <span class="v2-kicker">Latest</span>
+            <h2 id="pr-latest-title">Press releases and advisories.</h2>
+          </div>
+          <div class="pr-list__filters" role="tablist" aria-label="Filter releases">
+            <button class="is-active" type="button">All</button>
+            <button type="button">News</button>
+            <button type="button">Advisory</button>
+            <button type="button">Publication</button>
+            <button type="button">Field note</button>
+          </div>
+        </div>
+
+        <ol class="pr-releases">
+          @for (release of releases; track release.title) {
+            <li class="pr-release">
+              <div class="pr-release__meta">
+                <span class="pr-tag" [class.pr-tag--field]="release.type === 'Field Dispatch'" [class.pr-tag--pub]="release.type === 'Publication'">{{ release.type }}</span>
+                <time>{{ release.date }}</time>
+              </div>
+              <div class="pr-release__body">
+                <h3><a [href]="release.href">{{ release.title }}</a></h3>
+                <p>{{ release.summary }}</p>
+              </div>
+              <a [href]="release.href" class="pr-release__cta" aria-label="Open release">&rarr;</a>
+            </li>
+          }
+        </ol>
+
+        <div class="pr-list__more">
+          <a href="#latest" class="v2-btn v2-btn--ghost">Show 48 more releases</a>
+          <a href="#sources" class="v2-btn v2-btn--link">Source notes <i class="fa-solid fa-link" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section v2-section--quiet" id="gallery" aria-labelledby="pr-gallery-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Picture gallery</span>
+          <h2 id="pr-gallery-title">Field photographs from the archive.</h2>
+        </div>
+        <p class="right">Lightly captioned, high-resolution, and free to use for editorial purposes with credit to <i>SAU Press desk</i>.</p>
+      </div>
+
+      <div class="pr-gallery">
+        @for (image of gallery; track image.src) {
+          <figure class="pr-tile" [class.pr-tile--wide]="image.shape === 'wide'" [class.pr-tile--tall]="image.shape === 'tall'">
+            <img [src]="image.src" [alt]="image.alt" loading="lazy">
+            <figcaption><span class="dot"></span>{{ image.caption }}</figcaption>
+          </figure>
+        }
+      </div>
+
+      <div class="pr-gallery__more">
+        <a href="#gallery" class="v2-btn v2-btn--ghost">Open full picture archive <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section pr-films" id="films" aria-labelledby="pr-films-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Short films</span>
+          <h2 id="pr-films-title">Field clips and motion notes.</h2>
+        </div>
+        <p class="right">Compact records from the press desk: delegate moments, public procession, and publication tables.</p>
+      </div>
+
+      <div class="pr-films__row">
+        @for (video of videos; track video.source) {
+          <article class="pr-film">
+            <div class="pr-film__poster">
+              <video controls preload="none" [poster]="video.poster">
+                <source [src]="video.source" type="video/mp4">
+              </video>
+              <span class="pr-duration">{{ video.duration }}</span>
+            </div>
+            <div class="pr-film__body">
+              <time>{{ video.date }}</time>
+              <h3>{{ video.title }}</h3>
+              <p>{{ video.summary }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section v2-section--quiet" id="publications" aria-labelledby="pr-pub-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Publication shelf</span>
+          <h2 id="pr-pub-title">University Press, recent titles.</h2>
+        </div>
+        <p class="right">A working catalogue of monographs, scholarly volumes, and learning resources. Files are open-access and indexed by category.</p>
+      </div>
+
+      <div class="pr-shelf">
+        @for (publication of publications; track publication.title) {
+          <article class="pr-book">
+            <a [href]="publication.pdf" target="_blank" rel="noopener" class="pr-book__cover">
+              <img [src]="publication.cover" [alt]="publication.title + ' cover'" loading="lazy">
+            </a>
+            <div class="pr-book__body">
+              <div class="pr-book__meta"><span>{{ publication.category }}</span><time>{{ publication.date }}</time></div>
+              <h3>{{ publication.title }}</h3>
+              <p>{{ publication.summary }}</p>
+              <a [href]="publication.pdf" target="_blank" rel="noopener" class="v2-btn v2-btn--link">Open publication <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="pr-shelf__more">
+        <a href="#publications" class="v2-btn v2-btn--ghost">Browse the full shelf <span aria-hidden="true">&rarr;</span></a>
+        <a href="mailto:SanAlkeU@outlook.com?subject=Manuscript%20submission" class="v2-btn v2-btn--link">Submit a manuscript</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="v2-container"><div class="pg-divider-row"><div class="pg-divider" aria-hidden="true"><img src="/assets/pattern-mark.svg" alt=""></div></div></div>
+
+  <section class="pg-quote" aria-label="A note from the editor of the University Press">
+    <div class="v2-container">
+      <div class="pg-quote__portrait">
+        <img src="/assets/portrait-emmanuel.jpeg" alt="">
+      </div>
+      <div class="pg-quote__body">
+        <p>A university press is not a marketing arm. It is a public record: written carefully, archived with discipline, and made available to readers who will use it for serious work.</p>
+        <div class="pg-quote__attr">
+          <b>Emmanuel Mihiingo Kaija</b>
+          <span>Editor · Sankofa University Press</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="v2-section" id="sources" aria-labelledby="pr-sources-title">
+    <div class="v2-container">
+      <div class="v2-section-head v2-section-head--split">
+        <div>
+          <span class="v2-kicker">Source notes</span>
+          <h2 id="pr-sources-title">Public context used by the press desk.</h2>
+        </div>
+        <p class="right">A small set of references that helped shape the convention-week archive. The press desk publishes the sources it draws from.</p>
+      </div>
+
+      <ul class="pr-sources">
+        @for (source of sourceNotes; track source.href; let index = $index) {
+          <li>
+            <span class="pr-sources__num">{{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}</span>
+            <div>
+              <h4><a [href]="source.href" target="_blank" rel="noopener">{{ source.label }}</a></h4>
+              <p>{{ source.summary }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="sl-cta pr-cta">
+    <div class="v2-container">
+      <div>
+        <span class="v2-kicker">For journalists and researchers</span>
+        <h2>Talk to the press desk.</h2>
+        <p>Interviews, archival access, embargoed releases, and image clearance. The desk replies within two working days.</p>
+      </div>
+      <div class="actions">
+        <a href="mailto:SanAlkeU@outlook.com" class="v2-btn v2-btn--primary v2-btn--lg">Email the press desk <span aria-hidden="true">&rarr;</span></a>
+        <a href="#sources" class="v2-btn v2-btn--ghost v2-btn--lg">Download media kit</a>
+      </div>
+    </div>
+  </section>
+</div>
