@@ -75,7 +75,7 @@ import { CartService } from '../cart';
               class="product-card card"
               *ngFor="let product of filteredProducts"
             >
-              <div class="product-card__image">
+              <div class="product-card__image" [class.product-card__image--book]="product.category === 'books'">
                 <img [src]="product.image" [alt]="product.name" class="img-responsive">
                 <div class="product-card__badge" *ngIf="product.featured">Featured</div>
                 <button class="product-card__wishlist" (click)="toggleWishlist(product)">
@@ -108,7 +108,12 @@ import { CartService } from '../cart';
           <div class="product-modal-backdrop" (click)="closeDetails()"></div>
           <aside class="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
             <button type="button" class="product-modal__close" (click)="closeDetails()">&times;</button>
-            <img [src]="selectedProduct.image" [alt]="selectedProduct.name" class="product-modal__image">
+            <img
+              [src]="selectedProduct.image"
+              [alt]="selectedProduct.name"
+              class="product-modal__image"
+              [class.product-modal__image--book]="selectedProduct.category === 'books'"
+            >
             <h3 id="product-modal-title">{{ selectedProduct.name }}</h3>
             <p class="product-modal__description">{{ selectedProduct.description }}</p>
             <div class="product-modal__meta">
@@ -257,6 +262,16 @@ import { CartService } from '../cart';
       display: block;
     }
 
+    .product-card__image--book {
+      background: linear-gradient(135deg, #f8f3e9 0%, #e8ded0 100%);
+    }
+
+    .product-card__image--book img {
+      box-sizing: border-box;
+      object-fit: contain;
+      padding: 14px;
+    }
+
     .product-card:hover .product-card__image img {
       transform: scale(1.06) rotate(-0.3deg);
     }
@@ -392,6 +407,13 @@ import { CartService } from '../cart';
       height: 220px;
       object-fit: cover;
       border-radius: 10px;
+    }
+
+    .product-modal__image--book {
+      box-sizing: border-box;
+      object-fit: contain;
+      padding: 14px;
+      background: #f8f3e9;
     }
 
     .product-modal h3 {
@@ -610,6 +632,78 @@ export class ShopComponent {
       price: 14.99,
       image: '/wp-content/uploads/2025/10/black_bottle_sankofa.jpg',
       category: 'merchandise',
+      featured: false
+    },
+    {
+      id: 13,
+      name: 'God of AI: African Digital Futures',
+      description: 'Artificial intelligence, power, governance, digital control, and African futures placed in one public intellectual frame.',
+      price: 29.99,
+      image: '/assets/press/covers/god-of-ai-african-digital-futures.webp',
+      category: 'books',
+      featured: true
+    },
+    {
+      id: 14,
+      name: 'Pan-African Mobilization in a Fragmented Global Order',
+      description: 'Historical foundations, mobilization theory, political economy, governance, security, and strategic continental pathways.',
+      price: 34.99,
+      image: '/assets/press/covers/pan-african-mobilization.webp',
+      category: 'books',
+      featured: true
+    },
+    {
+      id: 15,
+      name: 'African Philosophy',
+      description: 'Cosmology, epistemology, personhood, ethics, law, justice, indigenous economics, and modern African thought.',
+      price: 32.99,
+      image: '/assets/press/covers/african-philosophy.webp',
+      category: 'books',
+      featured: false
+    },
+    {
+      id: 16,
+      name: 'Beneath the Quiet Skin',
+      description: 'A long-form educational and scholarly work by Emmanuel Mihiingo Kaija, published in Uganda and catalogued for the press shelf.',
+      price: 27.99,
+      image: '/assets/press/covers/beneath-the-quiet-skin.webp',
+      category: 'books',
+      featured: false
+    },
+    {
+      id: 17,
+      name: 'Industrial Hemp in Uganda',
+      description: 'Botany, agro-ecology, propagation, market potential, sustainability, pilot projects, and future research needs.',
+      price: 24.99,
+      image: '/assets/press/covers/industrial-hemp-in-uganda.webp',
+      category: 'books',
+      featured: false
+    },
+    {
+      id: 18,
+      name: 'Strategic Defense Mobilization in Africa',
+      description: 'National security, strategic mobilization, training, technology, regional stability, logistics, and policy recommendations.',
+      price: 34.99,
+      image: '/assets/press/covers/strategic-defense-mobilization-africa.webp',
+      category: 'books',
+      featured: false
+    },
+    {
+      id: 19,
+      name: 'Anatomy and Physiology',
+      description: 'A full health sciences teaching text covering cells, tissues, organs, body systems, development, genetics, and references.',
+      price: 39.99,
+      image: '/assets/press/covers/anatomy-and-physiology.webp',
+      category: 'books',
+      featured: false
+    },
+    {
+      id: 20,
+      name: 'Curiosity Unlocks Potential',
+      description: 'A learner-centered title on discovery, feelings, friendship, helpfulness, and steady growth for young readers.',
+      price: 18.99,
+      image: '/assets/press/covers/curiosity-unlocks-potential.webp',
+      category: 'books',
       featured: false
     }
   ];

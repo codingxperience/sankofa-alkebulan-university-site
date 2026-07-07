@@ -72,13 +72,13 @@ export class PressPageComponent {
     { label: 'Field dispatches', target: '#feature', count: '12' },
     { label: 'Picture gallery', target: '#gallery', count: '248' },
     { label: 'Films', target: '#films', count: '9' },
-    { label: 'Publications', target: '#publications', count: '13' },
+    { label: 'Publications', target: '#publications', count: '5' },
     { label: 'Source notes', target: '#sources', count: '-' },
   ];
 
   readonly stats: readonly PressStat[] = [
     { value: '54', label: 'releases and advisories this year' },
-    { value: '13', label: 'publication files indexed on the shelf' },
+    { value: '5', label: 'publication files indexed on the shelf' },
     { value: '2014', label: 'year the press desk was established' },
   ];
 
@@ -252,76 +252,49 @@ export class PressPageComponent {
 
   readonly publications: readonly PublicationItem[] = [
     {
-      title: 'God of AI: African Digital Futures',
-      category: 'Technology and Society',
-      date: 'April 2026',
+      title: "Africa's Next Century: A Grand Strategy for Prosperity, Peace, and Global Leadership",
+      category: 'Continental Strategy',
+      date: 'July 2026',
       summary:
-        'Artificial intelligence, power, governance, digital control, and African futures placed in one public intellectual frame.',
-      cover: '/assets/press/covers/god-of-ai-african-digital-futures.webp',
-      pdf: '/assets/press/publications/god-of-ai-african-digital-futures.pdf',
+        'A strategic framework for Africa\'s political, economic, scientific, security, cultural, environmental, and institutional transformation across the twenty-first century.',
+      cover: '/assets/press/covers/africas-next-century-grand-strategy.webp',
+      pdf: '/assets/press/publications/africas-next-century-grand-strategy.pdf',
     },
     {
-      title: 'Pan-African Mobilization in a Fragmented Global Order',
-      category: 'Pan-African Strategy',
-      date: '10 April 2026',
+      title: "L'avenir des Noirs et la quatrieme revolution industrielle",
+      category: 'AI and Black Futures',
+      date: 'July 2026',
       summary:
-        'Historical foundations, mobilization theory, political economy, governance, security, and strategic continental pathways.',
-      cover: '/assets/press/covers/pan-african-mobilization.webp',
-      pdf: '/assets/press/publications/pan-african-mobilization.pdf',
+        'A French edition of Black Futures and the Fourth Industrial Revolution, reimagining Black agency in the age of artificial intelligence.',
+      cover: '/assets/press/covers/black-futures-fourth-industrial-revolution-fr.webp',
+      pdf: '/assets/press/publications/black-futures-fourth-industrial-revolution-fr.pdf',
     },
     {
-      title: 'African Philosophy',
-      category: 'African Knowledge Systems',
-      date: 'April 2026',
+      title: 'Hannah: Courage in the Heart of the City',
+      category: 'Fiction and Formation',
+      date: 'July 2026',
       summary:
-        'Cosmology, epistemology, personhood, ethics, law, justice, indigenous economics, and modern African thought.',
-      cover: '/assets/press/covers/african-philosophy.webp',
-      pdf: '/assets/press/publications/african-philosophy.pdf',
+        'A long-form novel by Emmanuel Mihiingo Kaija centered on courage, character, and the moral pressures of city life.',
+      cover: '/assets/press/covers/hannah-courage-heart-city.webp',
+      pdf: '/assets/press/publications/hannah-courage-heart-city.pdf',
     },
     {
-      title: 'Beneath the Quiet Skin',
-      category: 'Scholarly Monograph',
-      date: '2025',
+      title: 'Indigenous Governance and Political Thought',
+      category: 'Traditional Leadership',
+      date: 'July 2026',
       summary:
-        'A long-form educational and scholarly work by Emmanuel Mihiingo Kaija, published in Uganda and catalogued for the press shelf.',
-      cover: '/assets/press/covers/beneath-the-quiet-skin.webp',
-      pdf: '/assets/press/publications/beneath-the-quiet-skin.pdf',
+        'A concise paper on traditional leadership, indigenous governance, and African political thought.',
+      cover: '/assets/press/covers/indigenous-governance-political-thought.webp',
+      pdf: '/assets/press/publications/indigenous-governance-political-thought.pdf',
     },
     {
-      title: 'Industrial Hemp in Uganda',
-      category: 'Agro-Ecology and Markets',
-      date: '06 April 2026',
+      title: 'Reengineering Global Governance',
+      category: 'United Nations Reform',
+      date: 'July 2026',
       summary:
-        'Botany, agro-ecology, propagation, market potential, sustainability, pilot projects, and future research needs.',
-      cover: '/assets/press/covers/industrial-hemp-in-uganda.webp',
-      pdf: '/assets/press/publications/industrial-hemp-in-uganda.pdf',
-    },
-    {
-      title: 'Strategic Defense Mobilization in Africa',
-      category: 'Security and Governance',
-      date: '07 April 2026',
-      summary:
-        'National security, strategic mobilization, training, technology, regional stability, logistics, and policy recommendations.',
-      cover: '/assets/press/covers/strategic-defense-mobilization-africa.webp',
-      pdf: '/assets/press/publications/strategic-defense-mobilization-africa.pdf',
-    },
-    {
-      title: 'Anatomy and Physiology',
-      category: 'Health Sciences',
-      date: '06 April 2026',
-      summary:
-        'A full health sciences teaching text covering cells, tissues, organs, body systems, development, genetics, and references.',
-      cover: '/assets/press/covers/anatomy-and-physiology.webp',
-      pdf: '/assets/press/publications/anatomy-and-physiology.pdf',
-    },
-    {
-      title: 'Curiosity Unlocks Potential',
-      category: 'Children and Youth Formation',
-      date: '08 April 2026',
-      summary:
-        'A learner-centered title on discovery, feelings, friendship, helpfulness, and steady growth for young readers.',
-      cover: '/assets/press/covers/curiosity-unlocks-potential.webp',
-      pdf: '/assets/press/publications/curiosity-unlocks-potential.pdf',
+        'A data-driven reform framework for addressing legitimacy, representation, and decision-making bottlenecks in the United Nations system.',
+      cover: '/assets/press/covers/reengineering-global-governance.webp',
+      pdf: '/assets/press/publications/reengineering-global-governance.pdf',
     },
   ];
 
