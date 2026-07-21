@@ -1,0 +1,144 @@
+<div class="kh-shell">
+  <main>
+    <section class="kh-hero">
+      <div class="kh-container kh-hero__grid">
+        <div class="kh-hero__copy">
+          <span class="kh-eyebrow"
+            ><span class="dot" aria-hidden="true"></span>Kahigiriza Memorial Museum &mdash;
+            Nkore</span
+          >
+          <h1>Memory, kept in Nkore.</h1>
+          <p>
+            The university&rsquo;s flagship cultural institution honors James Kahigiriza and the
+            Enganzi era &mdash; a museum built, staffed, and told by SAU students. Every ticket
+            says: <i>I funded a Nkore museum, not Oxford.</i>
+          </p>
+          <div class="kh-hero__actions">
+            <a routerLink="/store" fragment="flagship" class="kh-pill kh-pill--gold"
+              ><i class="fa-solid fa-ticket" aria-hidden="true"></i>Museum Pass &mdash; $18</a
+            >
+            <a href="#tours" class="kh-pill kh-pill--line">Virtual tours</a>
+          </div>
+          <div class="kh-hero__stats">
+            <span><strong>History students</strong><span>Guide the tours</span></span>
+            <span><strong>ICT students</strong><span>Build the VR</span></span>
+            <span><strong>Arts students</strong><span>Make the merchandise</span></span>
+          </div>
+        </div>
+        <div class="kh-hero__art">
+          <img
+            src="assets/store/museum-pass-poster.jpg"
+            alt="Sankofa Museum Pass — Kahigiriza Memorial and virtual tours"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="kh-collection">
+      <div class="kh-container">
+        <div class="kh-split">
+          <div class="kh-head">
+            <span class="kh-label">The Kahigiriza Collection</span>
+            <h2>On display &mdash; and on the shelf.</h2>
+            <p>
+              Repatriation Editions stand in the memorial galleries beside their provenance records.
+              Every replica sold funds the return of an original.
+            </p>
+          </div>
+          <a routerLink="/store" fragment="repatriation" class="kh-shop-link"
+            >Shop the editions<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+          ></a>
+        </div>
+        <div class="kh-gallery">
+          @for (p of pieces; track p.t) {
+            <figure>
+              <div class="media">
+                <div
+                  role="img"
+                  [attr.aria-label]="p.t"
+                  [style.background-image]="'url(' + p.img + ')'"
+                  [style.background-position]="p.pos"
+                ></div>
+              </div>
+              <figcaption>
+                <strong>{{ p.t }}</strong
+                ><span>{{ p.m }}</span>
+              </figcaption>
+            </figure>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="tours" class="kh-tours">
+      <div class="kh-container">
+        <div class="kh-head kh-head--pad">
+          <span class="kh-label">One pass &middot; three experiences</span>
+          <h2>Walk Nkore. Then walk the continent.</h2>
+        </div>
+        <div class="kh-tours__grid">
+          @for (t of tours; track t.t) {
+            <article class="kh-tour" [attr.data-tone]="t.tone">
+              <div class="top">
+                <span class="icon"><i class="fa-solid {{ t.icon }}" aria-hidden="true"></i></span>
+                <span class="kind">{{ t.kind }}</span>
+              </div>
+              <div class="body">
+                <strong>{{ t.t }}</strong>
+                <p>{{ t.d }}</p>
+              </div>
+              <div class="meta">
+                <span>{{ t.time }}</span><span>{{ t.access }}</span>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="kh-archive">
+      <div class="kh-container">
+        <div class="kh-archive__card">
+          <div class="copy">
+            <span class="kh-label kh-label--gold">Sankofa Oral Archive &mdash; Vol. 1</span>
+            <h2>Voices of Nkore Elders &mdash; the Enganzi era, spoken.</h2>
+            <p>
+              Recorded by History students with the elders of Nkore, annotated, and preserved
+              against epistemicide. $10 per volume &mdash; proceeds fund the next recording season.
+            </p>
+          </div>
+          <a routerLink="/store" fragment="flagship" class="kh-pill kh-pill--gold"
+            ><i class="fa-solid fa-feather" aria-hidden="true"></i>Download Vol. 1 &mdash; $10</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="kh-visit">
+      <div class="kh-container kh-visit__grid">
+        <div class="kh-visit__intro">
+          <span class="kh-label">Plan a visit</span>
+          <h2>Mbarara, Western Uganda.</h2>
+          <p>
+            On the SAU campus estate &mdash; twenty minutes from Mbarara town, signposted from the
+            Kabale road.
+          </p>
+          <a routerLink="/contact" class="kh-contact"
+            >Contact the museum desk<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+          ></a>
+        </div>
+        <div class="kh-visit__card">
+          @for (v of visit; track v.t; let i = $index) {
+            <div class="row" [class.first]="i === 0">
+              <span class="icon"><i class="fa-solid {{ v.icon }}" aria-hidden="true"></i></span>
+              <div>
+                <strong>{{ v.t }}</strong
+                ><span>{{ v.d }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

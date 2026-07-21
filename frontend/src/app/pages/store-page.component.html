@@ -1,0 +1,727 @@
+<div class="st-shell">
+  <div class="st-announce">
+    Drop 01 &mdash; Sankofa Regalia &middot; pre-orders open &middot; &ge;30% of supplier spend
+    African-owned
+  </div>
+
+  <div class="st-subnav">
+    <div class="st-container st-subnav__inner">
+      <nav aria-label="Store sections">
+        <a href="#drop">Drop 01</a>
+        <a href="#flagship">Flagship</a>
+        <a href="#books">Books</a>
+        <a href="#repatriation">Repatriation</a>
+        <a href="#frequency">The Album</a>
+        <a href="#essentials">Essentials</a>
+        <a href="#departments">Departments</a>
+      </nav>
+      <button type="button" (click)="cartOpen.set(!cartOpen())" aria-label="Open cart" class="st-cart-btn">
+        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>Cart
+        @if (cartCount() > 0) {
+          <span class="badge">{{ cartCountLabel }}</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <main>
+    <section class="st-hero">
+      <div class="st-hero__dots" aria-hidden="true"></div>
+      <div class="st-container st-hero__grid">
+        <div class="st-hero__copy">
+          <span class="st-eyebrow st-eyebrow--rust">The University Store &mdash; one platform, two doors</span>
+          <h1>The cultural economy of Alkebulan.</h1>
+          <p class="lead">
+            Regalia, repatriated heritage, languages, careers, and music &mdash; produced by
+            SAU&rsquo;s institutes and students. Every purchase moves margin into scholarships and
+            repatriation.
+          </p>
+          <div class="st-hero__actions">
+            <a href="#drop" class="st-pill st-pill--dark"
+              >Shop Drop 01<i class="fa-solid fa-arrow-down" aria-hidden="true"></i
+            ></a>
+            <a href="#repatriation" class="st-pill st-pill--gold-outline">Repatriation Editions</a>
+          </div>
+          <div class="st-hero__stats">
+            <div><strong>30%+</strong><span>African-owned supplier spend</span></div>
+            <div><strong>02</strong><span>Doors &mdash; store &amp; Kahigiriza</span></div>
+            <div><strong>100%</strong><span>Of margin funds scholarships</span></div>
+          </div>
+          <span class="st-hero__rails">African rails first &mdash; M-Pesa &middot; Flutterwave &middot; AfroPay &middot; Cards</span>
+        </div>
+        <div class="st-hero__art">
+          <img
+            src="assets/store/hero-columns.jpg"
+            alt="3D render of classical stone columns from repatriated heritage collection"
+          />
+          <div class="st-hero__chip">
+            <span>Every order</span>
+            <strong>Margin &rarr; scholarships</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="drop" class="st-section">
+      <div class="st-container">
+        <div class="st-split">
+          <div class="st-head">
+            <span class="st-eyebrow st-eyebrow--live"
+              ><span class="dot" aria-hidden="true"></span>Drop 01 &mdash; {{ dropStatus }}</span
+            >
+            <h2>Sankofa Regalia.</h2>
+            <p>
+              Adinkra symbols and the Alkebulan map &mdash; not Western gowns. Printed on demand and
+              shipped continent-wide; heritage worn with honor.
+            </p>
+          </div>
+          <span class="st-badge st-badge--rust">Goal &mdash; 500 units</span>
+        </div>
+        <div class="st-drop-grid">
+          @for (id of regaliaIds; track id) {
+            <article class="st-card" (click)="openDetail(id)">
+              <div class="st-card__media">
+                <div
+                  role="img"
+                  [attr.aria-label]="product(id).t"
+                  [style.background-image]="'url(' + product(id).img + ')'"
+                  [style.background-position]="product(id).pos"
+                ></div>
+              </div>
+              <div class="st-card__body">
+                <div class="row">
+                  <strong>{{ product(id).t }}</strong
+                  ><span class="price">{{ fmt(product(id).p) }}</span>
+                </div>
+                <span class="meta">{{ product(id).m }}</span>
+                <button type="button" (click)="addFromCard($event, id)">
+                  {{ dropCta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="flagship" class="st-section st-section--quiet">
+      <div class="st-container">
+        <div class="st-head st-head--wide">
+          <span class="st-eyebrow">Flagship &mdash; seven offers</span>
+          <h2>Products &amp; services only Sankofa Alkebulan can offer.</h2>
+          <p>High margin, high meaning &mdash; each one leverages the name and the pan-African mandate.</p>
+        </div>
+        <div class="st-list-card">
+          @for (f of flagship; track f.n; let i = $index) {
+            <div class="st-flag" [class.first]="i === 0">
+              @if (f.img) {
+                <div class="st-flag__thumb" aria-hidden="true" [style.background-image]="'url(' + f.img + ')'"></div>
+              } @else {
+                <div class="st-flag__icon"><i class="fa-solid {{ f.icon }}" aria-hidden="true"></i></div>
+              }
+              <div class="st-flag__body">
+                <div class="row">
+                  <strong>{{ f.n }} &middot; {{ f.t }}</strong
+                  ><span class="price">{{ f.price }}</span>
+                </div>
+                <p>{{ f.d }}</p>
+                <span class="meta">{{ f.meta }}</span>
+              </div>
+              @if (f.addId) {
+                <button type="button" class="st-flag__cta" (click)="add(f.addId)">
+                  {{ f.cta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+              } @else if (f.route) {
+                <a [routerLink]="f.route" class="st-flag__cta"
+                  >{{ f.cta }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+                ></a>
+              } @else {
+                <a [href]="f.href" class="st-flag__cta"
+                  >{{ f.cta }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+                ></a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="books" class="st-section">
+      <div class="st-container">
+        <div class="st-split">
+          <div class="st-head">
+            <span class="st-eyebrow">The Bookshop &mdash; African authors first</span>
+            <h2>Read Africa on its own terms.</h2>
+            <p>
+              SAU Press originals beside open-access classics &mdash; <i>Things Fall Apart</i> over
+              <i>Animal Farm</i>. The used-copy market opens with the Marketplace beta.
+            </p>
+          </div>
+          <span class="st-badge st-badge--blue">PDF + EPUB &middot; DRM-free</span>
+        </div>
+        <div class="st-book-grid">
+          @for (id of bookIds; track id) {
+            <article class="st-card" (click)="openDetail(id)">
+              <div class="st-book__cover" [style.background]="product(id).bg">
+                <span class="imprint">{{ product(id).imprint }}</span>
+                <strong>{{ product(id).t }}</strong>
+                <div class="foot">
+                  <span>{{ product(id).au }}</span
+                  ><span class="yr">{{ product(id).yr }}</span>
+                </div>
+              </div>
+              <div class="st-book__meta">
+                <span class="price">{{ priceLabel(id) }}</span>
+                <span
+                  class="tag"
+                  [style.color]="product(id).p === 0 ? '#1f7a4d' : '#b35c2a'"
+                  [style.border-color]="product(id).p === 0 ? '#d9ecdf' : '#ecd9c8'"
+                  >{{ product(id).p === 0 ? 'Open access' : 'SAU Press' }}</span
+                >
+              </div>
+            </article>
+          }
+        </div>
+        <p class="st-more-note">
+          More open-access volumes live in the
+          <a routerLink="/library-repository">University Library &rarr;</a>
+        </p>
+      </div>
+    </section>
+
+    <section id="repatriation" class="st-repat">
+      <div class="st-container">
+        <div class="st-split">
+          <div class="st-head">
+            <span class="st-eyebrow st-eyebrow--gold">Heritage returned</span>
+            <h2 class="light">Repatriation Editions.</h2>
+            <p class="light-p">
+              Museum-grade 3D-printed replicas of looted artifacts from Nkore, Benin, and Kemet
+              &mdash; each with a blockchain certificate of origin. Every sale funds repatriation
+              research and the Kahigiriza Memorial.
+            </p>
+          </div>
+          <span class="st-badge st-badge--gold-line">Physical + NFT cert</span>
+        </div>
+        <div class="st-artifact-grid">
+          @for (id of artifactIds; track id) {
+            <article class="st-artifact" (click)="openDetail(id)">
+              <div class="st-artifact__media">
+                <div
+                  role="img"
+                  [attr.aria-label]="product(id).t"
+                  [style.background-image]="'url(' + product(id).img + ')'"
+                  [style.background-position]="product(id).pos"
+                ></div>
+              </div>
+              <div class="st-artifact__body">
+                <strong>{{ product(id).t }}</strong>
+                <span class="m">{{ product(id).m }}</span>
+                <span class="cert"
+                  ><i class="fa-solid fa-certificate" aria-hidden="true"></i
+                  >{{ product(id).ed }} &middot; NFT</span
+                >
+                <div class="row">
+                  <span class="price">{{ fmt(product(id).p) }}</span>
+                  <button type="button" (click)="addFromCard($event, id)">
+                    Add<i class="fa-solid fa-plus" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+        <p class="st-repat__note">
+          Provenance verified on-chain &middot; editions retired as originals are returned home.
+        </p>
+      </div>
+    </section>
+
+    <section id="frequency" class="st-album">
+      <div class="st-container st-album__grid">
+        <div class="st-album__art">
+          <div class="frame">
+            <img
+              src="assets/store/album-front.jpg"
+              alt="Liberation Frequency album cover — Emmanuel Mihiingo Kaija"
+            />
+          </div>
+          <div class="badge"><span class="dot" aria-hidden="true"></span>Debut release</div>
+        </div>
+        <div class="st-album__body">
+          <span class="st-eyebrow st-eyebrow--amber">Liberation Publishing &times; Department of Arts</span>
+          <div class="title">
+            <h2>Liberation Frequency.</h2>
+            <span>Emmanuel Mihiingo Kaija &middot; Pan-African conscious hip-hop &middot; 11 tracks</span>
+          </div>
+          <p>
+            Africa&rsquo;s journey in four movements &mdash; Memory, Disruption, Awakening,
+            Renaissance: from ancestral remembrance through colonial rupture to sovereignty and a
+            rising, united continent. Royalties flow to the artist.
+          </p>
+          <div class="st-album__tracks">
+            @for (mv of movements; track mv.name) {
+              <div class="movement">
+                <span class="name">{{ mv.name }}</span>
+                @for (t of mv.tracks; track t[0]) {
+                  <button type="button" (click)="togglePlaying(t[0])" [class.is-on]="playing() === t[0]">
+                    <span class="n">{{ t[0] }}</span>
+                    <span class="t">{{ t[1] }}</span>
+                    @if (playing() === t[0]) {
+                      <span class="eq" aria-hidden="true"><span></span><span></span><span></span></span>
+                    }
+                    <span class="len">{{ t[2] }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <div class="st-album__actions">
+            <button type="button" class="buy" (click)="add('album-digital')">
+              <i class="fa-solid fa-play" aria-hidden="true"></i>Digital album &mdash; $12
+            </button>
+            <button type="button" class="vinyl" (click)="add('album-vinyl')">
+              <i class="fa-solid fa-record-vinyl" aria-hidden="true"></i>Limited vinyl &mdash; $45
+            </button>
+          </div>
+          <span class="tagline">The drum was never silenced. The frequency was never lost.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="essentials" class="st-section">
+      <div class="st-container st-ess__grid">
+        <div class="st-ess__intro">
+          <span class="st-eyebrow">Student life &mdash; pan-Africanized</span>
+          <h2>Same needs. Different sourcing.</h2>
+          <p>
+            Student vendors first, then African SMEs &mdash; the marketplace runs on the circular
+            Alkebulan economy.
+          </p>
+          <span class="st-badge st-badge--rust">Marketplace beta &mdash; .ac.ug emails</span>
+        </div>
+        <div class="st-list-card">
+          @for (e of essentials; track e.t; let i = $index) {
+            <div class="st-ess__row" [class.first]="i === 0">
+              <span class="icon"><i class="fa-solid {{ e.icon }}" aria-hidden="true"></i></span>
+              <div>
+                <div class="row">
+                  <strong>{{ e.t }}</strong
+                  ><span class="tag">{{ e.tag }}</span>
+                </div>
+                <p>{{ e.d }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="departments" class="st-section st-section--quiet">
+      <div class="st-container">
+        <div class="st-head st-head--wide">
+          <span class="st-eyebrow">Faculty &amp; department shops</span>
+          <h2>Every department, a liberation unit.</h2>
+          <p>
+            Signature products from the research institutes &mdash; scholarship you can hold, plant,
+            read, and run.
+          </p>
+        </div>
+        <div class="st-dept-grid">
+          @for (d of depts; track d.dept) {
+            <a routerLink="/research-innovation" class="st-dept">
+              <div class="top">
+                <span class="icon" [style.background]="d.tint" [style.color]="d.color"
+                  ><i class="fa-solid {{ d.icon }}" aria-hidden="true"></i
+                ></span>
+                <span class="dept" [style.color]="d.color">{{ d.dept }}</span>
+              </div>
+              <strong>{{ d.product }}</strong>
+              <p>{{ d.d }}</p>
+              <span class="value" [style.color]="d.color"
+                >{{ d.value }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+              ></span>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="st-section">
+      <div class="st-container">
+        <div class="st-rules">
+          <div class="head">
+            <span class="st-eyebrow st-eyebrow--gold">The Sankofa difference</span>
+            <h2>Three rules govern everything on this shelf.</h2>
+          </div>
+          <div class="grid">
+            <div class="rule rule--1">
+              <span class="n">01</span>
+              <strong>No cognitive dissonance</strong>
+              <p>
+                If it&rsquo;s on this site, it aligns with liberation &mdash;
+                <i>Bretton Woods to BRICS</i> before <i>Harvard Business Review</i>.
+              </p>
+            </div>
+            <div class="rule rule--2">
+              <span class="n">02</span>
+              <strong>Circular Alkebulan economy</strong>
+              <p>
+                At least 30% of supplier spend is African-owned &mdash; student vendors first, then
+                African SMEs, global last.
+              </p>
+            </div>
+            <div class="rule rule--3">
+              <span class="n">03</span>
+              <strong>Data sovereignty</strong>
+              <p>
+                Student data lives on African servers; payment rails favour M-Pesa, Flutterwave, and
+                AfroPay over Stripe.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-doors">
+      <div class="st-container">
+        <div class="st-doors__card">
+          <div class="copy">
+            <span class="st-eyebrow">One platform, two doors</span>
+            <h2>The Kahigiriza Museum is the flagship product.</h2>
+            <p>
+              Shared cart, shared values &mdash; the store and the Kahigiriza Memorial run as one
+              economy. History students guide the tours, ICT students build the VR, Arts students
+              make the merchandise.
+            </p>
+            <div class="actions">
+              <button type="button" class="st-pill st-pill--dark" (click)="add('museum-pass')">
+                <i class="fa-solid fa-ticket" aria-hidden="true"></i>Museum Pass &mdash; $18
+              </button>
+              <a routerLink="/kahigiriza" class="st-pill st-pill--outline">Visit the museum</a>
+            </div>
+            <span class="note">One pass &middot; Kahigiriza Memorial + virtual Great Zimbabwe + virtual Timbuktu</span>
+          </div>
+          <div class="art">
+            <img
+              src="assets/store/museum-pass-poster.jpg"
+              alt="Sankofa Museum Pass — Kahigiriza Memorial and virtual tours"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  @if (cartOpen()) {
+    <div class="st-cart-overlay" (click)="cartOpen.set(false)">
+      <div role="dialog" aria-label="Shopping cart" class="st-cart" (click)="stopEvent($event)">
+        <div class="st-cart__head">
+          <div>
+            <span class="brand">Sankofa Store</span>
+            <strong>Your cart &middot; {{ cartCountLabel }}</strong>
+          </div>
+          <button type="button" (click)="cartOpen.set(false)" aria-label="Close cart">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="st-cart__body">
+          @if (cartCount() === 0) {
+            <div class="st-cart__empty">
+              <span class="icon"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i></span>
+              <strong>Your cart is empty</strong>
+              <span>Start with Drop 01 &mdash; heritage worn with honor.</span>
+            </div>
+          }
+          @for (c of cartItems; track c.id) {
+            <div class="st-cart__row">
+              @if (c.hasImg) {
+                <div class="thumb" aria-hidden="true" [style.background-image]="'url(' + c.img + ')'"></div>
+              } @else {
+                <div class="thumb thumb--icon"><i class="fa-solid {{ c.icon }}" aria-hidden="true"></i></div>
+              }
+              <div class="body">
+                <strong>{{ c.t }}</strong>
+                <span class="m">{{ c.m }}</span>
+                <div class="qty">
+                  <button type="button" (click)="dec(c.id)" aria-label="Decrease quantity">
+                    <i class="fa-solid fa-minus" aria-hidden="true"></i>
+                  </button>
+                  <span>{{ c.qty }}</span>
+                  <button type="button" (click)="add(c.id, false)" aria-label="Increase quantity">
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+              <span class="line">{{ c.line }}</span>
+            </div>
+          }
+        </div>
+        <div class="st-cart__foot">
+          <div class="sub">
+            <span>Subtotal</span><strong>{{ fmt(cartSum()) }}</strong>
+          </div>
+          <button type="button" (click)="startCheckout()">
+            Checkout<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+          <span class="rails">African rails first &mdash; M-Pesa &middot; Flutterwave &middot; AfroPay &middot; Cards</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (detailProduct; as d) {
+    <div class="st-detail-overlay" (click)="closeDetail()">
+      <div role="dialog" aria-label="Product details" class="st-detail" (click)="stopEvent($event)">
+        @if (d.kind === 'book') {
+          <div class="st-detail__bookwrap">
+            <div class="st-detail__book" [style.background]="d.bg">
+              <span class="imprint">{{ d.imprint }}</span>
+              <strong>{{ d.t }}</strong>
+              <div class="foot">
+                <span>{{ d.au }}</span
+                ><span class="yr">{{ d.yr }}</span>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div
+            role="img"
+            [attr.aria-label]="d.t"
+            class="st-detail__media"
+            [style.background-image]="'url(' + d.img + ')'"
+            [style.background-position]="d.pos || '50% 50%'"
+          ></div>
+        }
+        <div class="st-detail__body">
+          <div class="top">
+            <span class="crumb">{{ detailCrumb }}</span>
+            <button type="button" (click)="closeDetail()" aria-label="Close details">
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="titles">
+            <h3>{{ d.t }}</h3>
+            <span class="price">{{ detailIsFree ? 'Free · open access' : fmt(d.p) }}</span>
+          </div>
+          <p class="desc">{{ d.desc }}</p>
+          <div class="specs">
+            @for (s of d.specs; track s[0]; let i = $index) {
+              <div [class.first]="i === 0">
+                <span class="k">{{ s[0] }}</span
+                ><span class="v">{{ s[1] }}</span>
+              </div>
+            }
+          </div>
+          @if (d.sizes) {
+            <div class="sizes">
+              <span class="label">Size</span>
+              <div class="opts">
+                @for (z of sizes; track z) {
+                  <button type="button" [class.is-on]="detailSize() === z" (click)="detailSize.set(z)">
+                    {{ z }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+          @if (detailIsFree) {
+            <a routerLink="/library-repository" class="free-cta"
+              >Read free in the Library<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+            ></a>
+          } @else {
+            <div class="buy-row">
+              <div class="qty">
+                <button type="button" (click)="detailDec()" aria-label="Decrease quantity">
+                  <i class="fa-solid fa-minus" aria-hidden="true"></i>
+                </button>
+                <span>{{ detailQty() }}</span>
+                <button type="button" (click)="detailInc()" aria-label="Increase quantity">
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+              </div>
+              <button type="button" class="add" (click)="detailAdd()">
+                Add to cart &mdash; {{ detailTotal }}
+              </button>
+            </div>
+          }
+          <span class="fund">{{ detailFund }}</span>
+          <div class="related">
+            <span class="label">You may also like</span>
+            <div class="items">
+              @for (rl of related; track rl.id) {
+                <button type="button" (click)="openDetail(rl.id)">
+                  @if (rl.hasImg) {
+                    <span class="dot-img" aria-hidden="true" [style.background-image]="'url(' + rl.img + ')'"></span>
+                  } @else {
+                    <span class="dot-img" [style.background]="rl.bg" aria-hidden="true"></span>
+                  }
+                  <span class="txt"
+                    ><span class="t">{{ rl.t }}</span
+                    ><span class="p">{{ rl.priceLabel }}</span></span
+                  >
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (coOpen()) {
+    <div class="st-co-overlay" (click)="coOpen.set(false)">
+      <div role="dialog" aria-label="Checkout" class="st-co" (click)="stopEvent($event)">
+        <div class="st-co__head">
+          <div class="top">
+            <div>
+              <span class="brand">Sankofa Store</span>
+              <strong>{{ coDone() ? 'Order confirmed' : 'Checkout' }}</strong>
+            </div>
+            <button type="button" (click)="coOpen.set(false)" aria-label="Close checkout">
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
+          @if (!coDone()) {
+            <div class="steps">
+              @for (label of stepLabels; track label; let i = $index) {
+                <div [class.is-on]="coStep() >= i">
+                  <span class="bar"></span><span class="lbl">{{ label }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <div class="st-co__body">
+          @if (!coDone() && coStep() === 0) {
+            <div class="fields">
+              <label
+                ><span>Full name</span
+                ><input type="text" [value]="coName()" (input)="bind('coName', $event)" placeholder="Your name"
+              /></label>
+              <label
+                ><span>Email</span
+                ><input
+                  type="email"
+                  [value]="coEmail()"
+                  (input)="bind('coEmail', $event)"
+                  placeholder="you@example.com"
+              /></label>
+              <label
+                ><span>City &amp; country</span
+                ><input
+                  type="text"
+                  [value]="coPlace()"
+                  (input)="bind('coPlace', $event)"
+                  placeholder="Mbarara, Uganda"
+              /></label>
+            </div>
+          }
+          @if (!coDone() && coStep() === 1) {
+            <div class="options">
+              @if (coAllDigital) {
+                <div class="digital-note">
+                  <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                  <span
+                    >Everything in your cart is digital &mdash; delivery is instant, to your email
+                    and SAU account.</span
+                  >
+                </div>
+              } @else {
+                @for (sh of shipOptions; track sh.id) {
+                  <button type="button" class="opt" [class.is-on]="coShip() === sh.id" (click)="coShip.set(sh.id)">
+                    <span class="radio"><span></span></span>
+                    <span class="txt"
+                      ><strong>{{ sh.label }}</strong
+                      ><span class="meta">{{ sh.meta }}</span></span
+                    >
+                    <span class="price">{{ sh.cost === 0 ? 'Free' : fmt(sh.cost) }}</span>
+                  </button>
+                }
+              }
+            </div>
+          }
+          @if (!coDone() && coStep() === 2) {
+            <div class="options">
+              @for (rr of rails; track rr.id) {
+                <button type="button" class="opt opt--rail" [class.is-on]="coRail() === rr.id" (click)="coRail.set(rr.id)">
+                  <span class="radio"><span></span></span>
+                  <i class="fa-solid {{ rr.icon }}" aria-hidden="true"></i>
+                  <strong>{{ rr.label }}</strong>
+                  <span class="meta">{{ rr.meta }}</span>
+                </button>
+              }
+              @if (activeRail.phone) {
+                <label class="pay-field"
+                  ><span>Mobile money number</span
+                  ><input
+                    type="tel"
+                    [value]="coPhone()"
+                    (input)="bind('coPhone', $event)"
+                    placeholder="+256 700 000 000"
+                /></label>
+              } @else {
+                <label class="pay-field"
+                  ><span>Card number</span
+                  ><input
+                    type="text"
+                    class="mono"
+                    [value]="coCard()"
+                    (input)="bind('coCard', $event)"
+                    placeholder="4242 4242 4242 4242"
+                /></label>
+              }
+            </div>
+          }
+          @if (!coDone() && coStep() === 3) {
+            <div class="review">
+              @for (c of cartItems; track c.id) {
+                <div class="line">
+                  <span class="t"
+                    >{{ c.t }} <span class="q">&times;{{ c.qty }}</span></span
+                  ><span class="v">{{ c.line }}</span>
+                </div>
+              }
+              <div class="sum">
+                <span>Subtotal</span><span class="v">{{ fmt(cartSum()) }}</span>
+              </div>
+              <div class="sum">
+                <span>Delivery &mdash; {{ activeShip.label }}</span
+                ><span class="v">{{ activeShip.cost === 0 ? 'Free' : fmt(activeShip.cost) }}</span>
+              </div>
+              <div class="total">
+                <span>Total &middot; {{ activeRail.label }}</span
+                ><strong>{{ fmt(coTotal) }}</strong>
+              </div>
+              <span class="note">&ge;30% of supplier spend African-owned &middot; margin funds scholarships</span>
+            </div>
+          }
+          @if (coDone()) {
+            <div class="done">
+              <span class="check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+              <strong>Webale &mdash; order placed.</strong>
+              <span class="no">{{ orderNo() }}</span>
+              <span class="msg"
+                >A receipt is on its way to {{ coEmail() || 'your inbox' }}. Digital items are
+                already in your SAU account; physical items follow
+                {{ coAllDigital ? 'instantly' : 'by ' + activeShip.label.toLowerCase() }}.</span
+              >
+              <span class="note">This order funded scholarship &amp; repatriation work.</span>
+            </div>
+          }
+        </div>
+        <div class="st-co__foot">
+          @if (!coDone() && coStep() > 0) {
+            <button type="button" class="back" (click)="coBack()">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Back
+            </button>
+          }
+          <button type="button" class="next" [style.opacity]="coDone() || coValid ? '1' : '0.45'" (click)="coNext()">
+            {{ coNextLabel }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

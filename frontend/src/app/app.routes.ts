@@ -195,6 +195,28 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/contact-page.component').then((m) => m.ContactPageComponent),
       },
+      {
+        path: 'store',
+        loadComponent: () =>
+          import('./pages/store-page.component').then((m) => m.StorePageComponent),
+      },
+      {
+        path: 'career-link',
+        loadComponent: () =>
+          import('./pages/career-link-page.component').then((m) => m.CareerLinkPageComponent),
+      },
+      {
+        path: 'knowledge-vault',
+        loadComponent: () =>
+          import('./pages/knowledge-vault-page.component').then(
+            (m) => m.KnowledgeVaultPageComponent,
+          ),
+      },
+      {
+        path: 'kahigiriza',
+        loadComponent: () =>
+          import('./pages/kahigiriza-page.component').then((m) => m.KahigirizaPageComponent),
+      },
       ...universitySectionRoutes,
       { path: 'articles', component: Articles },
       { path: 'articles/:slug', component: EssayDetailComponent },

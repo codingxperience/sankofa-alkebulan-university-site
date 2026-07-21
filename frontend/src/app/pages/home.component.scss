@@ -1,2 +1,132 @@
 /* Home — uses shared classes from src/styles.scss */
 :host { display: block; }
+
+/* ---- Store promo (from Home.dc.html "Store promo" section) ---- */
+.v2-store-promo {
+  padding: 88px 0;
+  background: linear-gradient(160deg, #0a3254 0%, #051b2c 100%);
+}
+
+.v2-store-promo__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+}
+
+.v2-store-promo__copy {
+  display: grid;
+  gap: 16px;
+
+  .eyebrow {
+    font-family: var(--sau-font-mono);
+    font-size: 10.5px;
+    color: #f1cf83;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--sau-font-display);
+    font-weight: 600;
+    font-size: clamp(30px, 3.4vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: #9db3c6;
+    max-width: 52ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .enter {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 26px;
+    border-radius: 999px;
+    background: #f1cf83;
+    color: #1a0d00;
+    font-size: 14.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 200ms ease;
+
+    i {
+      font-size: 11.5px;
+    }
+
+    &:hover {
+      background: #ffe1a1;
+      color: #1a0d00;
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+  }
+
+  .editions {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 26px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 200ms ease;
+
+    &:hover {
+      border-color: #f1cf83;
+      color: #f1cf83;
+      text-decoration: none;
+    }
+  }
+}
+
+.v2-store-promo__tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
+  a {
+    border-radius: 18px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1.05;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    transition: transform 220ms ease;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+@media (max-width: 1080px) {
+  .v2-store-promo__grid {
+    grid-template-columns: 1fr;
+  }
+}

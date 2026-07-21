@@ -50,7 +50,7 @@ type MobileGroup = 'about' | 'academics';
             </span>
             <span class="editorial-brand__name">
               <span>Sankofa Alkebulan</span>
-              <strong>University</strong>
+              <strong>{{ isStoreRoute() ? 'University Store' : 'University' }}</strong>
             </span>
             <span class="editorial-brand__short" aria-hidden="true">SAU</span>
           </a>
@@ -1112,6 +1112,7 @@ export class HeaderComponent implements OnInit {
     { label: 'Digital Campus', path: '/digital-learning' },
     { label: 'Student Life', path: '/student-life' },
     { label: 'Library', path: '/library-repository' },
+    { label: 'Store', path: '/store' },
     { label: 'Contact', path: '/contact' },
     { label: 'Press', path: '/university-press' },
   ];
@@ -1330,6 +1331,16 @@ export class HeaderComponent implements OnInit {
 
   isAboutRoute(): boolean {
     return this.router.url.startsWith('/about');
+  }
+
+  isStoreRoute(): boolean {
+    const url = this.router.url;
+    return (
+      url.startsWith('/store') ||
+      url.startsWith('/career-link') ||
+      url.startsWith('/knowledge-vault') ||
+      url.startsWith('/kahigiriza')
+    );
   }
 
   isAcademicsRoute(): boolean {

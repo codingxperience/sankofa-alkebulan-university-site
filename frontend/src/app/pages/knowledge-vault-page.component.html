@@ -1,0 +1,97 @@
+<div class="kv-shell">
+  <main>
+    <section class="kv-hero">
+      <div class="kv-hero__dots" aria-hidden="true"></div>
+      <div class="kv-container kv-hero__copy">
+        <span class="kv-eyebrow">Alkebulan Knowledge Vault</span>
+        <h1>Decolonized courses, certified.</h1>
+        <p>
+          Self-paced study written from African sources for African questions &mdash; start free
+          with Alkebulan 101, then certify for $20. Built for diaspora, NGOs, and partner
+          universities.
+        </p>
+        <div class="kv-hero__stats">
+          <span><strong>Self-paced</strong><span>Study anywhere</span></span>
+          <span><strong>$20</strong><span>Verified certificate</span></span>
+          <span><strong>African servers</strong><span>Your data stays home</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="kv-starter">
+      <div class="kv-container">
+        <div class="kv-starter__card">
+          <div class="copy">
+            <span class="kv-label kv-label--gold">Start here &mdash; free</span>
+            <strong>Alkebulan 101: the continent before the borders.</strong>
+            <p>
+              A free mini-course in five lessons &mdash; names, kingdoms, knowledge systems, and why
+              Sankofa. Certify your completion for $20 when you finish.
+            </p>
+          </div>
+          <button type="button" [class.is-on]="isOn('101')" (click)="toggle('101')">
+            <i class="fa-solid {{ isOn('101') ? 'fa-check' : 'fa-arrow-right' }}" aria-hidden="true"></i
+            >{{ isOn('101') ? 'Seat reserved — check your email' : 'Enroll free' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="kv-catalog">
+      <div class="kv-container">
+        <div class="kv-head">
+          <span class="kv-label">The catalogue</span>
+          <h2>Six vaults, open.</h2>
+        </div>
+        <div class="kv-grid">
+          @for (c of courses; track c.id) {
+            <article class="kv-course">
+              <div class="top">
+                <span class="icon" [style.background]="c.tint" [style.color]="c.color"
+                  ><i class="fa-solid {{ c.icon }}" aria-hidden="true"></i
+                ></span>
+                <span class="track" [style.color]="c.color">{{ c.track }}</span>
+              </div>
+              <div class="body">
+                <strong>{{ c.t }}</strong>
+                <p>{{ c.d }}</p>
+              </div>
+              <div class="meta">
+                <span>{{ c.weeks }}</span><span>{{ c.lessons }}</span><span>Cert included</span>
+              </div>
+              <div class="foot">
+                <span class="price">${{ c.p }}</span>
+                <button type="button" [class.is-on]="isOn(c.id)" (click)="toggle(c.id)">
+                  {{ isOn(c.id) ? 'Reserved' : 'Enroll'
+                  }}<i class="fa-solid {{ isOn(c.id) ? 'fa-check' : 'fa-arrow-right' }}" aria-hidden="true"></i>
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="kv-how">
+      <div class="kv-container">
+        <div class="kv-head">
+          <span class="kv-label">How it works</span>
+          <h2>Learn free. Certify when ready.</h2>
+        </div>
+        <div class="kv-steps">
+          @for (s of steps; track s.n) {
+            <div class="kv-step">
+              <span class="n">{{ s.n }}</span>
+              <strong>{{ s.t }}</strong>
+              <p>{{ s.d }}</p>
+            </div>
+          }
+        </div>
+        <p class="kv-note">
+          Certificates are also sold in the
+          <a routerLink="/store" fragment="flagship">University Store &rarr;</a>
+        </p>
+      </div>
+    </section>
+  </main>
+</div>
