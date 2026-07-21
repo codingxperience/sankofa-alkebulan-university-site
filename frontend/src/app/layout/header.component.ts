@@ -46,7 +46,7 @@ type MobileGroup = 'about' | 'academics';
             (click)="closeMenus()"
           >
             <span class="editorial-brand__badge" aria-hidden="true">
-              <img src="/assets/design/logo-mark.png" alt="" />
+              <img src="/assets/design/logo-crest.png" alt="" />
             </span>
             <span class="editorial-brand__name">
               <span>Sankofa Alkebulan</span>
@@ -362,7 +362,7 @@ type MobileGroup = 'about' | 'academics';
       }
 
       .editorial-brand {
-        --brand-mark-size: 50px;
+        --brand-mark-size: 46px;
         --brand-type-offset: 0.24rem;
         position: relative;
         display: inline-flex;
@@ -414,7 +414,7 @@ type MobileGroup = 'about' | 'academics';
       }
 
       .editorial-brand__name strong {
-        color: #08243a;
+        color: #0f4c81;
         font-size: 0.98rem;
         font-weight: 850;
         white-space: nowrap;
@@ -1154,7 +1154,7 @@ export class HeaderComponent implements OnInit {
     { label: 'Research', path: '/research-innovation' },
     { label: 'Digital Campus', path: '/digital-learning' },
     { label: 'Student Life', path: '/student-life' },
-    { label: 'Library', path: '/library-repository', disabled: true },
+    { label: 'Library', path: '/library-repository' },
     { label: 'Contact', path: '/contact' },
     { label: 'Press', path: '/university-press' },
   ];

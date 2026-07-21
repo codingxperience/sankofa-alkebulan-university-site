@@ -54,7 +54,7 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/contact">Contact</a>
             <a routerLink="/student-life">Student life</a>
             <a routerLink="/professional-societies">Professional societies</a>
-            <a routerLink="/admissions">Apply now</a>
+            <a routerLink="/library-repository">Library</a>
             <a href="mailto:SanAlkeU@outlook.com">SanAlkeU@outlook.com</a>
             <div class="footer-social" aria-label="Social links">
               <a href="https://www.facebook.com/share/18epzuCc9P/" target="_blank" rel="noopener">Facebook</a>

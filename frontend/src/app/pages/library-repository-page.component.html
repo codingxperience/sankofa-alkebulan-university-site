@@ -1,0 +1,256 @@
+<div class="lb-shell">
+  <div class="lb-crumbs">
+    <div class="lb-container lb-crumbs__inner">
+      <a routerLink="/home">Home</a><span aria-hidden="true">/</span
+      ><span class="here">Library &amp; Repository</span>
+    </div>
+  </div>
+
+  <section class="lb-hero">
+    <div class="lb-hero__dots" aria-hidden="true"></div>
+    <div class="lb-container lb-hero__wrap">
+      <div class="lb-hero__copy">
+        <span class="lb-kicker">Library &amp; Knowledge Repository</span>
+        <h1>The library that <em>remembers</em>.</h1>
+        <p class="lb-hero__lead">
+          An open, digital-first repository of African scholarship &mdash; wired into the
+          world&rsquo;s open catalogues so a single search reaches millions of books, theses, and
+          archives, free to read across the continent.
+        </p>
+        <div class="lb-hero__search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input
+            type="text"
+            [value]="query()"
+            (input)="onQuery($event)"
+            placeholder="Search millions of open books, theses &amp; archives…"
+          />
+          @if (loading()) {
+            <span class="spinner" aria-hidden="true"></span>
+          } @else {
+            <span class="found">{{ totalLabel }}</span>
+          }
+        </div>
+        <div class="lb-hero__tags">
+          @for (t of subjects; track t.key) {
+            <button type="button" [class.is-on]="subject() === t.key" (click)="selectSubject(t)">
+              {{ t.label }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lb-stats-band">
+    <div class="lb-container">
+      <div class="lb-stats" #countBand>
+        @for (s of stats; track s.label) {
+          <div class="lb-stat">
+            <span class="num">{{ s.display }}</span>
+            <span class="lbl">{{ s.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="browse" class="lb-browse">
+    <div class="lb-container">
+      <div class="lb-split">
+        <div class="lb-section-head">
+          <span class="lb-kicker">Live catalogue</span>
+          <h2>Search the world&rsquo;s open library.</h2>
+        </div>
+        <span class="lb-live">
+          <span class="dot" aria-hidden="true"></span>Live via
+          <a href="https://openlibrary.org" target="_blank" rel="noopener">Open Library</a>
+          &middot; Internet Archive
+        </span>
+      </div>
+
+      <div class="lb-filters">
+        <div class="lb-filter">
+          <span class="lb-filter__label">Sort by</span>
+          <div class="lb-seg">
+            @for (o of sorts; track o.key) {
+              <button type="button" [class.is-on]="sort() === o.key" (click)="selectSort(o.key)">
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="lb-filter">
+          <span class="lb-filter__label">Availability</span>
+          <div class="lb-seg">
+            @for (o of accessOptions; track o.key) {
+              <button type="button" [class.is-on]="access() === o.key" (click)="selectAccess(o.key)">
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="lb-filter">
+          <span class="lb-filter__label">Language</span>
+          <div class="lb-seg lb-seg--wrap">
+            @for (o of langOptions; track o.key) {
+              <button type="button" [class.is-on]="lang() === o.key" (click)="selectLang(o.key)">
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        </div>
+        <div class="lb-filter">
+          <span class="lb-filter__label">Published</span>
+          <div class="lb-years">
+            <input
+              type="number"
+              [value]="yearFrom()"
+              (input)="setYearFrom($event)"
+              placeholder="From"
+            />
+            <span aria-hidden="true">&ndash;</span>
+            <input type="number" [value]="yearTo()" (input)="setYearTo($event)" placeholder="To" />
+          </div>
+        </div>
+        @if (hasFilters) {
+          <button type="button" class="lb-clear" (click)="resetFilters()">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>Clear filters
+          </button>
+        }
+      </div>
+
+      <p class="lb-summary">{{ resultSummary }}</p>
+
+      @if (loading()) {
+        <div class="lb-results">
+          @for (sk of skeletons; track sk) {
+            <div class="lb-skeleton">
+              <span class="cover"></span>
+              <div>
+                <span class="line" style="width: 92%"></span>
+                <span class="line" style="width: 66%"></span>
+                <span class="line line--meta" style="width: 44%"></span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (hasResults) {
+        <div class="lb-results">
+          @for (b of results(); track b.href) {
+            <a [href]="b.href" target="_blank" rel="noopener" class="lb-book">
+              <span class="lb-book__cover">
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                @if (b.hasCover) {
+                  <img [src]="b.cover" alt="" loading="lazy" (error)="coverError($event)" />
+                }
+              </span>
+              <div class="lb-book__body">
+                <strong>{{ b.title }}</strong>
+                <span class="author">{{ b.author }}</span>
+                <div class="lb-book__meta">
+                  <span
+                    class="access"
+                    [style.background]="b.accessBg"
+                    [style.color]="b.accessColor"
+                    >{{ b.accessLabel }}</span
+                  >
+                  <span class="year">{{ b.year }}</span>
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      }
+
+      @if (isEmpty) {
+        <div class="lb-empty">
+          <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+          <strong>No open records match those filters.</strong>
+          <span
+            >Loosen a filter, widen the year range, or pick a subject above &mdash; the catalogue
+            reaches millions of titles worldwide.</span
+          >
+        </div>
+      }
+
+      @if (error()) {
+        <div class="lb-error">
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          <span>{{ error() }}</span>
+          <button type="button" (click)="retry()">Retry search</button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="lb-collections">
+    <div class="lb-container">
+      <div class="lb-section-head lb-section-head--pad">
+        <span class="lb-kicker">Collections</span>
+        <h2>Six ways into the SAU repository.</h2>
+      </div>
+      <div class="lb-collections__grid">
+        @for (c of collections; track c.title) {
+          <a href="#browse" class="lb-collection">
+            <div class="lb-collection__top">
+              <span class="icon"><i class="fa-solid {{ c.icon }}" aria-hidden="true"></i></span>
+              <span class="count">{{ c.count }}</span>
+            </div>
+            <strong>{{ c.title }}</strong>
+            <p>{{ c.body }}</p>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="lb-services">
+    <div class="lb-container">
+      <div class="lb-services__grid">
+        <div class="lb-services__copy">
+          <span class="lb-kicker">Access &amp; services</span>
+          <h2>Open by default. Supported by people.</h2>
+          <p>
+            The repository is free to read. Members and partners get deeper access, research
+            support, and archival services.
+          </p>
+          <a routerLink="/contact" class="lb-services__btn"
+            >Request research support <span aria-hidden="true">&rarr;</span></a
+          >
+        </div>
+        <div class="lb-services__cards">
+          @for (sv of services; track sv.title) {
+            <article class="lb-service">
+              <span class="icon"><i class="fa-solid {{ sv.icon }}" aria-hidden="true"></i></span>
+              <strong>{{ sv.title }}</strong>
+              <p>{{ sv.body }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lb-cta">
+    <div class="lb-cta__pattern" aria-hidden="true"></div>
+    <div class="lb-container lb-cta__grid">
+      <div class="lb-cta__copy">
+        <span class="lb-kicker lb-kicker--gold">Deposit your work</span>
+        <h2>Add to the record of African scholarship.</h2>
+        <p>
+          Faculty, students, and partners can deposit theses, datasets, and publications to the open
+          repository under our shared standards.
+        </p>
+      </div>
+      <div class="lb-cta__actions">
+        <a routerLink="/contact" class="lb-cta__btn"
+          >Deposit a work <span aria-hidden="true">&rarr;</span></a
+        >
+        <a href="mailto:SanAlkeU@outlook.com" class="lb-cta__mail">SanAlkeU&#64;outlook.com</a>
+      </div>
+    </div>
+  </section>
+</div>

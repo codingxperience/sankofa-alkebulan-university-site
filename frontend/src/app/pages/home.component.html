@@ -39,8 +39,14 @@
               <span>Updated — 13 May</span>
             </div>
             <ol>
-              @for (item of indexItems; track item.label) {
-                <li><b>{{ item.label }}</b><span>{{ item.meta }}</span></li>
+              @for (item of typedItems; track $index) {
+                <li [style.opacity]="item.opacity">
+                  <b
+                    >{{ item.label
+                    }}@if (item.caret) {<span class="caret" aria-hidden="true"></span>}</b
+                  >
+                  <span [style.opacity]="item.metaOpacity">{{ item.meta }}</span>
+                </li>
               }
             </ol>
           </aside>
@@ -135,7 +141,7 @@
         <div class="v2-depts" data-reveal>
           @for (d of departments; track d.t) {
             <a class="v2-dept" routerLink="/faculties-schools">
-              <div class="v2-dept__icon"><i class="fa-solid {{ d.icon }}"></i></div>
+              <div class="v2-dept__icon" data-draw><i class="fa-solid {{ d.icon }}"></i></div>
               <h4>{{ d.t }}</h4>
               <p>{{ d.d }}</p>
               <div class="v2-dept__meta">

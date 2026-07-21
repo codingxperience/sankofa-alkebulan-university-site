@@ -177,6 +177,24 @@ export const routes: Routes = [
       { path: 'diploma', redirectTo: '/home/diploma', pathMatch: 'full' },
       { path: 'certificate', redirectTo: '/home/certificate', pathMatch: 'full' },
       { path: 'faculties-schools/:slug', component: DepartmentPageComponent },
+      {
+        path: 'research-innovation',
+        loadComponent: () =>
+          import('./pages/research-page.component').then((m) => m.ResearchPageComponent),
+      },
+      { path: 'research', redirectTo: '/research-innovation', pathMatch: 'full' },
+      {
+        path: 'library-repository',
+        loadComponent: () =>
+          import('./pages/library-repository-page.component').then(
+            (m) => m.LibraryRepositoryPageComponent,
+          ),
+      },
+      {
+        path: 'contact',
+        loadComponent: () =>
+          import('./pages/contact-page.component').then((m) => m.ContactPageComponent),
+      },
       ...universitySectionRoutes,
       { path: 'articles', component: Articles },
       { path: 'articles/:slug', component: EssayDetailComponent },

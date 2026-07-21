@@ -1,0 +1,292 @@
+<div class="rs-shell">
+  <div class="rs-crumbs">
+    <div class="rs-container rs-crumbs__inner">
+      <nav aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a><span aria-hidden="true">/</span
+        ><span class="here">Research &amp; Innovation</span>
+      </nav>
+      <div class="actions">
+        <a routerLink="/contact" class="rs-crumbs__btn">Partner with us</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="rs-hero">
+    <div class="rs-hero__dots" aria-hidden="true"></div>
+    <div class="rs-container">
+      <div class="rs-hero__grid">
+        <div class="rs-hero__copy">
+          <span class="rs-kicker">Research, Innovation &amp; Public Scholarship</span>
+          <h1>Continental questions, answered with <em>rigour</em>.</h1>
+          <p class="rs-hero__lead">
+            Fifty-nine institutes carry the university&rsquo;s research mission &mdash; moving from
+            lab insight to field practice, patents, publication, and policy, framed always around
+            public usefulness for Africa.
+          </p>
+          <div class="rs-hero__chips">
+            @for (c of heroChips; track c.label) {
+              <span class="rs-hero__chip"
+                ><i class="fa-solid {{ c.icon }}" aria-hidden="true"></i>{{ c.label }}</span
+              >
+            }
+          </div>
+          <div class="rs-hero__actions">
+            <a href="#institutes" class="rs-btn rs-btn--primary"
+              >Explore the institutes <span aria-hidden="true">&rarr;</span></a
+            >
+            <a href="#funding" class="rs-btn rs-btn--ghost">Open funding calls</a>
+          </div>
+        </div>
+        <div class="rs-glance" #countBand>
+          <span class="rs-glance__label">Research at a glance</span>
+          @for (s of heroStats; track s.label) {
+            <div class="rs-glance__row">
+              <span class="num">{{ s.display }}</span>
+              <span class="lbl">{{ s.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rs-section rs-section--white">
+    <div class="rs-container">
+      <div class="rs-section-head">
+        <span class="rs-kicker">Flagship directions</span>
+        <h2>Three questions the university is built to carry.</h2>
+        <p>
+          Each direction gathers institutes, schools, and partner labs around a single continental
+          problem. Select one to see how the work connects.
+        </p>
+      </div>
+      <div class="rs-flagships">
+        @for (f of flagships; track f.title; let i = $index) {
+          <article
+            class="rs-flagship"
+            [class.is-on]="flag() === i"
+            (mouseenter)="flag.set(i)"
+            (click)="flag.set(i)"
+          >
+            <img [src]="f.img" [alt]="f.alt" loading="lazy" />
+            <span class="rs-flagship__scrim" aria-hidden="true"></span>
+            <span class="rs-flagship__eyebrow">{{ f.eyebrow }}</span>
+            <strong>{{ f.title }}</strong>
+            <p>{{ f.description }}</p>
+            <div class="rs-flagship__tags">
+              @for (ins of f.institutes; track ins) {
+                <span>{{ ins }}</span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="rs-section rs-section--pipeline">
+    <div class="rs-container">
+      <div class="rs-section-head rs-section-head--tight">
+        <span class="rs-kicker">Impact pipeline</span>
+        <h2>From a continental question to public value.</h2>
+      </div>
+      <div class="rs-pipeline" #pipeline>
+        <svg viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true" class="rs-pipeline__svg">
+          <line x1="60" y1="30" x2="1140" y2="30" stroke="#d4e2ee" stroke-width="2"></line>
+          <line
+            class="rs-pipeline__flow"
+            x1="60"
+            y1="30"
+            x2="1140"
+            y2="30"
+            stroke="#b35c2a"
+            stroke-width="2"
+            stroke-dasharray="1080"
+            stroke-dashoffset="1080"
+          ></line>
+        </svg>
+        <ol>
+          @for (step of steps; track step.label; let i = $index) {
+            <li>
+              <div class="rs-pipeline__badge-row">
+                <span class="rs-pipeline__badge"
+                  ><span class="rs-pipeline__pulse" [style.animation-delay.s]="i * 0.25"></span
+                  >{{ step.label }}</span
+                >
+                <i class="fa-solid {{ step.icon }}" aria-hidden="true"></i>
+              </div>
+              <strong>{{ step.title }}</strong>
+              <p>{{ step.description }}</p>
+            </li>
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="rs-section rs-section--white">
+    <div class="rs-container">
+      <div class="rs-split">
+        <div class="rs-section-head rs-section-head--bare">
+          <span class="rs-kicker">Publications &amp; records</span>
+          <h2>Browse the scholarly catalogue.</h2>
+        </div>
+        <div role="tablist" aria-label="Catalogue" class="rs-cat-tabs">
+          @for (tab of catalogs; track tab.label; let i = $index) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="catalog() === i"
+              [class.is-on]="catalog() === i"
+              (click)="catalog.set(i)"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+      </div>
+      <p class="rs-cat-summary">{{ activeCatalog.summary }}</p>
+      <div class="rs-records">
+        @for (rec of activeCatalog.records; track rec.title) {
+          <article class="rs-record">
+            <span class="year">{{ rec.year }}</span>
+            <div>
+              <strong>{{ rec.title }}</strong>
+              <div class="rs-record__tags">
+                <span class="nature">{{ rec.nature }}</span>
+                <span class="field">{{ rec.field }}</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="institutes" class="rs-directory">
+    <div class="rs-container">
+      <div class="rs-split">
+        <div class="rs-section-head rs-section-head--bare">
+          <span class="rs-kicker rs-kicker--gold">Institute directory</span>
+          <h2 class="light">Fifty-nine institutes, one explorable register.</h2>
+        </div>
+        <label class="rs-search">
+          <span class="rs-search__label">Search institutes</span>
+          <span class="rs-search__field">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+              type="text"
+              [value]="query()"
+              (input)="onQuery($event)"
+              placeholder="e.g. climate, AI, health, heritage"
+            />
+          </span>
+        </label>
+      </div>
+      <div role="tablist" aria-label="Institute clusters" class="rs-group-tabs">
+        @for (g of groups; track g.key) {
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="group() === g.key"
+            [class.is-on]="group() === g.key"
+            (click)="selectGroup(g.key)"
+          >
+            <span class="dot" aria-hidden="true" [style.background]="groupHue(g.key)"></span
+            >{{ g.label }}<span class="count">{{ groupCount(g.key) }}</span>
+          </button>
+        }
+      </div>
+      <p class="rs-directory__meta">{{ filtered.length }} of 59 institutes shown</p>
+      <div class="rs-institutes">
+        @for (inst of visibleInstitutes; track inst.num) {
+          <article class="rs-institute">
+            <span class="accent" aria-hidden="true" [style.background]="inst.hue"></span>
+            <span class="num" [style.color]="inst.hue">{{ inst.num }}</span>
+            <div>
+              <span class="name">{{ inst.name }}</span>
+              <span class="grp"
+                ><span class="dot" aria-hidden="true" [style.background]="inst.hue"></span
+                >{{ inst.group }}</span
+              >
+            </div>
+          </article>
+        }
+      </div>
+      @if (hasMore) {
+        <div class="rs-more">
+          <button type="button" (click)="showMore()">Show more institutes</button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="rs-quote">
+    <span class="rs-quote__watermark" aria-hidden="true">Sankofa</span>
+    <div class="rs-container rs-quote__grid">
+      <div class="rs-quote__portrait">
+        <img src="assets/portrait-prof-ruhinda.jpeg" alt="Prof. R. Ruhinda" />
+      </div>
+      <div class="rs-quote__body">
+        <p>
+          &ldquo;Restoration is not nostalgia. It is a research method &mdash; we recover what was
+          known, test it against the present, and build what the continent needs next.&rdquo;
+        </p>
+        <div class="rs-quote__attr">
+          <b>Prof. R. Ruhinda</b>
+          <span>Annual Lecture &mdash; Restoration as a research method</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="funding" class="rs-section rs-section--white">
+    <div class="rs-container">
+      <div class="rs-section-head rs-section-head--tight">
+        <span class="rs-kicker">Open now</span>
+        <h2>Funding calls &amp; doctoral seats.</h2>
+      </div>
+      <div class="rs-funding">
+        @for (fund of funding; track fund.title) {
+          <a routerLink="/contact" class="rs-fund" [attr.data-tone]="fund.tone">
+            <div class="rs-fund__top">
+              <span class="kind">{{ fund.kind }}</span>
+              <span class="status"><span class="dot"></span>{{ fund.status }}</span>
+            </div>
+            <strong>{{ fund.title }}</strong>
+            <p>{{ fund.body }}</p>
+            <div class="rs-fund__meta">
+              <span
+                ><b>{{ fund.metaA }}</b> {{ fund.metaALabel }}</span
+              >
+              <span
+                ><b>{{ fund.metaB }}</b> {{ fund.metaBLabel }}</span
+              >
+            </div>
+            <span class="cta">{{ fund.cta }}&nbsp;<span aria-hidden="true">&rarr;</span></span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="rs-cta">
+    <div class="rs-cta__pattern" aria-hidden="true"></div>
+    <div class="rs-container rs-cta__grid">
+      <div class="rs-cta__copy">
+        <span class="rs-kicker rs-kicker--gold">Partner with us</span>
+        <h2>Bring a question. We will build the team.</h2>
+        <p>
+          Funders, laboratories, universities, and public institutions collaborate through our
+          institutes on interdisciplinary, continent-scale research.
+        </p>
+      </div>
+      <div class="rs-cta__actions">
+        <a routerLink="/contact" class="rs-cta__btn"
+          >Start a partnership <span aria-hidden="true">&rarr;</span></a
+        >
+        <a href="mailto:SanAlkeU@outlook.com" class="rs-cta__mail">SanAlkeU&#64;outlook.com</a>
+      </div>
+    </div>
+  </section>
+</div>

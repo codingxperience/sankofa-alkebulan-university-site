@@ -1,0 +1,209 @@
+<div class="ct-shell">
+  <div class="ct-crumbs">
+    <div class="ct-container ct-crumbs__inner">
+      <a routerLink="/home">Home</a><span aria-hidden="true">/</span
+      ><span class="here">Contact</span>
+    </div>
+  </div>
+
+  <section class="ct-hero">
+    <div class="ct-hero__dots" aria-hidden="true"></div>
+    <div class="ct-container ct-hero__copy">
+      <span class="ct-kicker">Contact the university</span>
+      <h1>One message. <em>The right door.</em></h1>
+      <p class="ct-hero__lead">
+        Admissions, research collaboration, partnership letters, and media requests all begin here.
+        Choose who should receive it &mdash; and watch it route to the right office.
+      </p>
+    </div>
+  </section>
+
+  <section class="ct-main">
+    <div class="ct-container">
+      <div class="ct-main__grid">
+        <form class="ct-form" (submit)="onSubmit($event)">
+          <div class="ct-form__head">
+            <span class="ct-eyebrow">Write to the university</span>
+            <h2>Your message</h2>
+          </div>
+
+          <label class="ct-field">
+            <span class="ct-field__label">Direct to</span>
+            <span class="ct-select">
+              <select [value]="dept()" (change)="setDept($event)">
+                @for (d of departments; track d.key) {
+                  <option [value]="d.key">{{ d.label }}</option>
+                }
+              </select>
+              <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+            </span>
+          </label>
+
+          <div class="ct-form__row">
+            <label class="ct-field">
+              <span class="ct-field__label">Full name</span>
+              <input
+                type="text"
+                [value]="form().name"
+                (input)="setField('name', $event)"
+                placeholder="Your name"
+              />
+            </label>
+            <label class="ct-field">
+              <span class="ct-field__label">Email</span>
+              <input
+                type="email"
+                [value]="form().email"
+                (input)="setField('email', $event)"
+                placeholder="you@example.com"
+              />
+            </label>
+          </div>
+
+          <label class="ct-field">
+            <span class="ct-field__label"
+              >Country / institution <span class="opt">— optional</span></span
+            >
+            <input
+              type="text"
+              [value]="form().origin"
+              (input)="setField('origin', $event)"
+              placeholder="Where you're writing from"
+            />
+          </label>
+          <label class="ct-field">
+            <span class="ct-field__label">Message</span>
+            <textarea
+              rows="4"
+              [value]="form().message"
+              (input)="setField('message', $event)"
+              placeholder="Tell us what you need — admissions question, proposal, partnership, or press request."
+            ></textarea>
+          </label>
+
+          <div class="ct-form__actions">
+            <button type="submit">
+              Send message<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+            <span class="routes-to"
+              >Routes to <b>{{ routed.handler }}</b></span
+            >
+          </div>
+          @if (submitted()) {
+            <div class="ct-form__done">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <div>
+                <strong>Routed to {{ routed.title }}.</strong>
+                <span
+                  >We&rsquo;ve opened a pre-addressed email to {{ universityEmail }}. Send it and
+                  the {{ routed.handler }} will respond within {{ routed.response }}.</span
+                >
+              </div>
+            </div>
+          }
+        </form>
+
+        <aside class="ct-panel">
+          <div class="ct-panel__head">
+            <div>
+              <span class="ct-eyebrow">Where it lands</span>
+              <h2>Seven offices</h2>
+            </div>
+            <span class="live"><span class="dot"></span>Live</span>
+          </div>
+          <div class="ct-offices">
+            @for (o of offices; track o.key; let i = $index) {
+              <article class="ct-office" [class.is-on]="o.key === activeDepartment.office">
+                <span class="accent" aria-hidden="true"></span>
+                <span class="icon"><i class="fa-solid {{ o.icon }}" aria-hidden="true"></i></span>
+                <div>
+                  <strong>{{ o.title }}</strong>
+                  <span>{{ o.focus }}</span>
+                </div>
+                @if (o.key === activeDepartment.office) {
+                  <i class="fa-solid fa-paper-plane here" aria-hidden="true"></i>
+                }
+              </article>
+            }
+          </div>
+          <div class="ct-routing">
+            <span class="eyebrow">Routing detail</span>
+            <strong>{{ routed.handler }}</strong>
+            <p>{{ routed.detail }}</p>
+            <div class="meta">
+              <span><b>{{ routed.response }}</b> response</span><span><b>Email</b> of record</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="ct-channels">
+    <div class="ct-container">
+      <div class="ct-channels__grid">
+        @for (c of channels; track c.label) {
+          <a
+            [href]="c.href"
+            [attr.target]="c.target"
+            rel="noopener"
+            class="ct-channel"
+            [attr.data-tone]="c.tone"
+          >
+            <span class="icon"><i class="fa-{{ c.iconType }} {{ c.icon }}" aria-hidden="true"></i></span>
+            <span class="label">{{ c.label }}</span>
+            <strong>{{ c.value }}</strong>
+            <p>{{ c.description }}</p>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="ct-faq">
+    <div class="ct-container">
+      <div class="ct-faq__grid">
+        <div class="ct-faq__intro">
+          <span class="ct-eyebrow">Questions, answered</span>
+          <h2>Before you write.</h2>
+          <p>
+            The most common reasons people reach the contact desk &mdash; and the fastest route for
+            each.
+          </p>
+        </div>
+        <div class="ct-faq__list">
+          @for (f of faqs; track f.question; let i = $index) {
+            <div class="ct-faq__item" [class.is-open]="openFaq() === i">
+              <button
+                type="button"
+                (click)="toggleFaq(i)"
+                [attr.aria-expanded]="openFaq() === i"
+              >
+                <span>{{ f.question }}</span>
+                <span class="toggle" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
+              </button>
+              <div class="answer">
+                <p>{{ f.answer }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ct-locations">
+    <div class="ct-container">
+      <div class="ct-locations__grid">
+        @for (loc of locations; track loc.title) {
+          <article class="ct-location" [attr.data-tone]="loc.tone">
+            <span class="eyebrow">{{ loc.eyebrow }}</span>
+            <strong>{{ loc.title }}</strong>
+            <p>{{ loc.description }}</p>
+            <span class="meta">{{ loc.meta }}</span>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+</div>
