@@ -1,0 +1,100 @@
+<div class="cl-shell">
+  <main>
+    <section class="cl-hero">
+      <div class="cl-container cl-hero__grid">
+        <div class="cl-hero__copy">
+          <span class="cl-eyebrow"><span class="dot" aria-hidden="true"></span>Pan-African Career Link</span>
+          <h1>One sovereign hire at a time.</h1>
+          <p>
+            Roles at the African Union, AfDB, and the continent&rsquo;s startups &mdash; matched to
+            SAU graduates. Employers pay $200 a listing; graduates apply free, always.
+          </p>
+          <div class="cl-hero__actions">
+            <a href="#roles" class="cl-pill cl-pill--gold"
+              >Browse live roles<i class="fa-solid fa-arrow-down" aria-hidden="true"></i
+            ></a>
+            <a href="#employers" class="cl-pill cl-pill--line">For employers</a>
+          </div>
+          <div class="cl-hero__stats">
+            <span><strong>2,000+</strong><span>Graduate pool</span></span>
+            <span><strong>54 states</strong><span>+ diaspora reach</span></span>
+            <span><strong>Free</strong><span>For graduates</span></span>
+          </div>
+        </div>
+        <div class="cl-hero__art">
+          <img
+            src="assets/store/career-link-poster.jpg"
+            alt="Pan-African Career Link — empowering Africa's workforce"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section id="roles" class="cl-roles">
+      <div class="cl-container">
+        <div class="cl-head">
+          <span class="cl-label">Live roles &mdash; updated weekly</span>
+          <h2>The board.</h2>
+        </div>
+        <div class="cl-filters">
+          @for (f of filters; track f[0]) {
+            <button type="button" [class.is-on]="filter() === f[0]" (click)="filter.set(f[0])">
+              {{ f[1] }}
+            </button>
+          }
+        </div>
+        <div class="cl-board">
+          @for (r of roles(); track r.id; let i = $index) {
+            <div class="cl-role" [class.first]="i === 0">
+              <span class="abbr" [style.background]="r.tint" [style.color]="r.color">{{ r.abbr }}</span>
+              <div class="body">
+                <div class="row">
+                  <strong>{{ r.t }}</strong
+                  ><span class="cat" [style.color]="r.color">{{ r.catLabel }}</span>
+                </div>
+                <span class="org">{{ r.org }} &middot; {{ r.loc }}</span>
+                <span class="pay">{{ r.pay }} &middot; {{ r.posted }}</span>
+              </div>
+              <button type="button" [class.is-applied]="r.on" (click)="toggleApply(r.id)">
+                {{ r.on ? 'Applied' : 'Apply'
+                }}<i class="fa-solid {{ r.on ? 'fa-check' : 'fa-arrow-right' }}" aria-hidden="true"></i>
+              </button>
+            </div>
+          }
+        </div>
+        <p class="cl-note">
+          Applications route through your SAU graduate profile &middot; .ac.ug verified
+        </p>
+      </div>
+    </section>
+
+    <section id="employers" class="cl-employers">
+      <div class="cl-container cl-employers__grid">
+        <div class="cl-panel cl-panel--dark">
+          <span class="cl-label cl-label--gold">For employers</span>
+          <h2>Reach graduates trained for the continent.</h2>
+          <p>
+            $200 per listing &mdash; 30 days live, matched to graduate profiles across all 50
+            colleges, with a shortlist from the careers desk.
+          </p>
+          <div class="actions">
+            <a routerLink="/store" fragment="flagship" class="cl-pill cl-pill--gold">Post a role &mdash; $200</a>
+            <a routerLink="/contact" class="cl-pill cl-pill--line">Talk to the careers desk</a>
+          </div>
+        </div>
+        <div class="cl-panel cl-panel--light">
+          <span class="cl-label cl-label--rust">Virtual career fair &mdash; October</span>
+          <h2>The Pan-African Career Fair.</h2>
+          <p>
+            Two days, fully virtual &mdash; AU agencies, banks, and startups in open rooms. $5 for
+            students and graduates; $200 for recruiting teams.
+          </p>
+          <div class="actions">
+            <a routerLink="/store" class="cl-pill cl-pill--dark">Student ticket &mdash; $5</a>
+            <a routerLink="/contact" class="cl-pill cl-pill--outline">Recruiter access</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
