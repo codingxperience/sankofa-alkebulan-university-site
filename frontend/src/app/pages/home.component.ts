@@ -1,22 +1,117 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  inject,
+  signal,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../directives/reveal.directive';
+import { DrawDirective } from '../directives/draw.directive';
+
+const INDEX_ITEMS = [
+  { label: 'Undergraduate admissions — September 2026', meta: 'OPEN — 6 WEEKS' },
+  { label: 'Postgraduate — Pan-African Studies (full aid)', meta: 'OPEN' },
+  { label: 'Doctoral cohort — Indigenous Knowledge Systems', meta: '4 SEATS' },
+  { label: 'Annual Lecture — Prof. R. Ruhinda', meta: '14 MAR' },
+  { label: 'Faculty research call — continental impact', meta: 'UGX 220 M' },
+] as const;
+
+interface TypingState {
+  item: number;
+  len: number;
+  pause: number;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, RevealDirective],
+  imports: [RouterLink, RevealDirective, DrawDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
-  readonly indexItems = [
-    { label: 'Undergraduate admissions — September 2026', meta: 'OPEN — 6 WEEKS' },
-    { label: 'Postgraduate — Pan-African Studies (full aid)', meta: 'OPEN' },
-    { label: 'Doctoral cohort — Indigenous Knowledge Systems', meta: '4 SEATS' },
-    { label: 'Annual Lecture — Prof. R. Ruhinda', meta: '14 MAR' },
-    { label: 'Faculty research call — continental impact', meta: 'UGX 220 M' },
-  ];
+export class HomeComponent implements OnInit, OnDestroy {
+  private readonly platformId = inject(PLATFORM_ID);
+  private typingInterval: ReturnType<typeof setInterval> | null = null;
+
+  readonly typing = signal<TypingState>({ item: 0, len: 0, pause: 3 });
+
+  readonly indexItems = INDEX_ITEMS;
+
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.typing.set({ item: INDEX_ITEMS.length, len: 0, pause: 0 });
+      return;
+    }
+    const reduce =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      this.typing.set({ item: INDEX_ITEMS.length, len: 0, pause: 0 });
+      return;
+    }
+    this.typingInterval = setInterval(() => {
+      this.typing.update((s) => {
+        let { item, len, pause } = s;
+        if (item >= INDEX_ITEMS.length) {
+          // End-of-list hold, then loop continuously.
+          if (pause > 0) {
+            return { item, len, pause: pause - 1 };
+          }
+          return { item: 0, len: 0, pause: 4 };
+        }
+        const label = INDEX_ITEMS[item].label;
+        if (pause > 0) {
+          pause -= 1;
+        } else if (len < label.length) {
+          len += 1;
+        } else {
+          item += 1;
+          len = 0;
+          pause = item >= INDEX_ITEMS.length ? 92 : 7;
+        }
+        return { item, len, pause };
+      });
+    }, 34);
+  }
+
+  ngOnDestroy(): void {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
+  }
+
+  get typedItems() {
+    const t = this.typing();
+    const holding = t.item >= INDEX_ITEMS.length;
+    const lastIdx = INDEX_ITEMS.length - 1;
+    return INDEX_ITEMS.map((it, i) => {
+      let label = '';
+      let caret = false;
+      let opacity = '0';
+      let metaOpacity = '0';
+      if (holding) {
+        label = it.label;
+        opacity = '1';
+        metaOpacity = '1';
+        if (i === lastIdx) {
+          caret = true;
+        }
+      } else if (i < t.item) {
+        label = it.label;
+        opacity = '1';
+        metaOpacity = '1';
+      } else if (i === t.item) {
+        opacity = '1';
+        label = it.label.slice(0, t.len);
+        caret = true;
+        metaOpacity = t.len >= it.label.length ? '1' : '0';
+      }
+      return { label, meta: it.meta, caret, opacity, metaOpacity };
+    });
+  }
 
   readonly tiles = [
     {
@@ -37,7 +132,7 @@ export class HomeComponent {
       icon: 'fa-microscope',
       title: 'Research at SAU',
       body: 'Funded doctoral seats and continental institutes.',
-      route: null,
+      route: '/research-innovation',
       warm: false,
     },
   ];
@@ -147,7 +242,7 @@ export class HomeComponent {
       h: 'Faculty research grants for continental impact.',
       p: 'Up to UGX 220 M for cross-school projects on African knowledge systems, climate, and AI.',
       more: 'Read the brief',
-      route: null,
+      route: '/research-innovation',
     },
   ];
 }
