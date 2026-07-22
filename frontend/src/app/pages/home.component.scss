@@ -1,6 +1,26 @@
 /* Home — uses shared classes from src/styles.scss */
 :host { display: block; }
 
+/* ---- Convening announcement bar (from Home.dc.html) ---- */
+.v2-convening-bar {
+  display: block;
+  background: #051b2c;
+  color: #f1cf83;
+  text-align: center;
+  padding: 10px 20px;
+  font-family: var(--sau-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 140ms;
+
+  &:hover {
+    color: #f7dfa6;
+    text-decoration: none;
+  }
+}
+
 /* ---- Store promo (from Home.dc.html "Store promo" section) ---- */
 .v2-store-promo {
   padding: 88px 0;

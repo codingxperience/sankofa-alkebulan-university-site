@@ -162,14 +162,20 @@
         <div class="st-book-grid">
           @for (id of bookIds; track id) {
             <article class="st-card" (click)="openDetail(id)">
-              <div class="st-book__cover" [style.background]="product(id).bg">
-                <span class="imprint">{{ product(id).imprint }}</span>
-                <strong>{{ product(id).t }}</strong>
-                <div class="foot">
-                  <span>{{ product(id).au }}</span
-                  ><span class="yr">{{ product(id).yr }}</span>
+              @if (product(id).cover) {
+                <div class="st-book__img">
+                  <img [src]="product(id).cover" [alt]="product(id).t" loading="lazy" />
                 </div>
-              </div>
+              } @else {
+                <div class="st-book__cover" [style.background]="product(id).bg">
+                  <span class="imprint">{{ product(id).imprint }}</span>
+                  <strong>{{ product(id).t }}</strong>
+                  <div class="foot">
+                    <span>{{ product(id).au }}</span
+                    ><span class="yr">{{ product(id).yr }}</span>
+                  </div>
+                </div>
+              }
               <div class="st-book__meta">
                 <span class="price">{{ priceLabel(id) }}</span>
                 <span
@@ -474,7 +480,11 @@
   @if (detailProduct; as d) {
     <div class="st-detail-overlay" (click)="closeDetail()">
       <div role="dialog" aria-label="Product details" class="st-detail" (click)="stopEvent($event)">
-        @if (d.kind === 'book') {
+        @if (d.kind === 'book' && d.cover) {
+          <div class="st-detail__bookwrap">
+            <div class="st-detail__bookimg"><img [src]="d.cover" [alt]="d.t" /></div>
+          </div>
+        } @else if (d.kind === 'book') {
           <div class="st-detail__bookwrap">
             <div class="st-detail__book" [style.background]="d.bg">
               <span class="imprint">{{ d.imprint }}</span>
@@ -526,7 +536,16 @@
               </div>
             </div>
           }
-          @if (detailIsFree) {
+          @if (d.pdf) {
+            <div class="book-cta">
+              <a [href]="d.pdf" target="_blank" rel="noopener" class="free-cta"
+                >Read the PDF<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i
+              ></a>
+              <a routerLink="/library-repository" class="book-cta__lib"
+                >Also in the Library<span aria-hidden="true">&rarr;</span></a
+              >
+            </div>
+          } @else if (detailIsFree) {
             <a routerLink="/library-repository" class="free-cta"
               >Read free in the Library<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
             ></a>

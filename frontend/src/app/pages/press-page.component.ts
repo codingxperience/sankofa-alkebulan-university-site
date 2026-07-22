@@ -72,13 +72,13 @@ export class PressPageComponent {
     { label: 'Field dispatches', target: '#feature', count: '12' },
     { label: 'Picture gallery', target: '#gallery', count: '248' },
     { label: 'Films', target: '#films', count: '9' },
-    { label: 'Publications', target: '#publications', count: '5' },
+    { label: 'Publications', target: '#publications', count: '7' },
     { label: 'Source notes', target: '#sources', count: '-' },
   ];
 
   readonly stats: readonly PressStat[] = [
     { value: '54', label: 'releases and advisories this year' },
-    { value: '5', label: 'publication files indexed on the shelf' },
+    { value: '7', label: 'publication files indexed on the shelf' },
     { value: '2014', label: 'year the press desk was established' },
   ];
 
@@ -251,6 +251,24 @@ export class PressPageComponent {
   ];
 
   readonly publications: readonly PublicationItem[] = [
+    {
+      title: 'Black Futures and the Fourth Industrial Revolution',
+      category: 'AI and Black Futures',
+      date: 'July 2026',
+      summary:
+        'Reimagining Black agency in the age of artificial intelligence — the English edition of the Liberation Publishing essay on data sovereignty, algorithmic bias, and African-authored futures.',
+      cover: '/assets/press/covers/black-futures-fourth-industrial-revolution.png',
+      pdf: '/assets/press/publications/black-futures-fourth-industrial-revolution.pdf',
+    },
+    {
+      title: 'Black Futures and the Fourth Industrial Revolution — Greek edition',
+      category: 'AI and Black Futures',
+      date: 'July 2026',
+      summary:
+        'Μαύρα Μέλλοντα και η Τέταρτη Βιομηχανική Επανάσταση — the Greek translation of Black Futures and the Fourth Industrial Revolution, reimagining Black agency in the age of artificial intelligence.',
+      cover: '/assets/press/covers/black-futures-fourth-industrial-revolution-el.png',
+      pdf: '/assets/press/publications/black-futures-fourth-industrial-revolution-el.pdf',
+    },
     {
       title: "Africa's Next Century: A Grand Strategy for Prosperity, Peace, and Global Leadership",
       category: 'Continental Strategy',

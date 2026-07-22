@@ -1,0 +1,212 @@
+<div class="rg-shell">
+  <section class="rg-section">
+    <div class="rg-container">
+      <div class="rg-intro">
+        <a routerLink="/convening" class="rg-back"
+          ><span aria-hidden="true">&larr;</span>The Sankofa Convening 2026</a
+        >
+        <h1>Register. It takes two minutes.</h1>
+        <p>
+          Attendance is free, in person and online. Answer what applies to you and skip the rest
+          &mdash; only fields marked <span class="req">*</span> are required.
+        </p>
+        <div class="rg-intro__pills">
+          <span>Fri 14 &ndash; Sat 15 Aug &middot; 5:00 PM EAT · 10:00 AM EDT</span>
+          <span>Speke Resort, Munyonyo &middot; and Zoom</span>
+        </div>
+      </div>
+
+      @if (submitted()) {
+        <div class="rg-done">
+          <div class="rg-done__head">
+            <span class="eyebrow">One last tap</span>
+            <h2>{{ firstName() }}, your registration is written and ready.</h2>
+            <p>
+              Send it by WhatsApp or email &mdash; the message below goes with it. We confirm your
+              seat by reply.
+            </p>
+          </div>
+          <div class="rg-done__body">
+            <pre>{{ message() }}</pre>
+            <div class="rg-done__actions">
+              <a [href]="waHref()" target="_blank" rel="noopener" class="rg-btn rg-btn--wa"
+                ><i class="fa-brands fa-whatsapp" aria-hidden="true"></i>Send via WhatsApp</a
+              >
+              <a [href]="mailHref()" class="rg-btn rg-btn--dark"
+                ><i class="fa-regular fa-envelope" aria-hidden="true"></i>Send via email</a
+              >
+              <button type="button" class="rg-btn rg-btn--ghost" (click)="copyMessage()">
+                <i class="fa-regular fa-copy" aria-hidden="true"></i>{{ copyLabel() }}
+              </button>
+            </div>
+            <button type="button" class="rg-edit" (click)="editAgain()">
+              &larr; Edit my answers
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="rg-form">
+          <div class="rg-block">
+            <div class="rg-block__head"><span class="n">01</span><h3>About you</h3></div>
+            <div class="rg-grid">
+              <label
+                ><span class="lbl">Full name <span class="req">*</span></span
+                ><input
+                  [value]="form().name"
+                  (input)="onField('name', $event)"
+                  placeholder="e.g. Amina K. Ssebunya"
+              /></label>
+              <label
+                ><span class="lbl">Email <span class="req">*</span></span
+                ><input
+                  type="email"
+                  [value]="form().email"
+                  (input)="onField('email', $event)"
+                  placeholder="you@example.com"
+              /></label>
+              <label
+                ><span class="lbl">WhatsApp / phone</span
+                ><input
+                  [value]="form().phone"
+                  (input)="onField('phone', $event)"
+                  placeholder="+256 ..."
+              /></label>
+              <label
+                ><span class="lbl">Country &amp; city</span
+                ><input
+                  [value]="form().place"
+                  (input)="onField('place', $event)"
+                  placeholder="e.g. Uganda, Kampala"
+              /></label>
+            </div>
+          </div>
+
+          <div class="rg-block">
+            <div class="rg-block__head"><span class="n">02</span><h3>Your work</h3></div>
+            <div class="rg-grid">
+              <label
+                ><span class="lbl">Organisation / institution</span
+                ><input
+                  [value]="form().org"
+                  (input)="onField('org', $event)"
+                  placeholder="University, ministry, company, community..."
+              /></label>
+              <label
+                ><span class="lbl">Role / title</span
+                ><input
+                  [value]="form().role"
+                  (input)="onField('role', $event)"
+                  placeholder="e.g. Senior Lecturer"
+              /></label>
+            </div>
+            <div class="rg-choice">
+              <span class="lbl">I am attending as <span class="req">*</span></span>
+              <div class="chips">
+                @for (c of catOptions; track c) {
+                  <button type="button" [class.is-on]="form().cat === c" (click)="pickSingle('cat', c)">
+                    {{ c }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="rg-block">
+            <div class="rg-block__head"><span class="n">03</span><h3>Your attendance</h3></div>
+            <div class="rg-choice">
+              <span class="lbl">How will you join? <span class="req">*</span></span>
+              <div class="chips">
+                @for (c of modeOptions; track c) {
+                  <button type="button" [class.is-on]="form().mode === c" (click)="pickSingle('mode', c)">
+                    {{ c }}
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="rg-choice">
+              <span class="lbl">Which day(s)? <span class="req">*</span></span>
+              <div class="chips">
+                @for (c of dayOptions; track c) {
+                  <button type="button" [class.is-on]="form().days === c" (click)="pickSingle('days', c)">
+                    {{ c }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="rg-block">
+            <div class="rg-block__head">
+              <span class="n">04</span>
+              <div>
+                <h3>At the mini-conference</h3>
+                <p class="hint">Optional &mdash; helps us shape the sessions.</p>
+              </div>
+            </div>
+            <div class="rg-choice">
+              <span class="lbl">Themes you care about most</span>
+              <div class="chips">
+                @for (c of interestOptions; track c) {
+                  <button
+                    type="button"
+                    class="chip--warm"
+                    [class.is-on]="isInterest(c)"
+                    (click)="toggleInterest(c)"
+                  >
+                    {{ c }}
+                  </button>
+                }
+              </div>
+            </div>
+            <label
+              ><span class="lbl">A question for the Chancellor, or a topic you want raised</span
+              ><textarea
+                rows="3"
+                [value]="form().question"
+                (input)="onField('question', $event)"
+                placeholder="Write freely — the strongest questions reach the floor."
+              ></textarea
+            ></label>
+          </div>
+
+          <div class="rg-block">
+            <div class="rg-block__head"><span class="n">05</span><h3>Practical needs</h3></div>
+            <label
+              ><span class="lbl">Access or dietary needs we should plan for</span
+              ><input
+                [value]="form().needs"
+                (input)="onField('needs', $event)"
+                placeholder="e.g. wheelchair access, vegetarian"
+            /></label>
+            <button type="button" class="rg-consent" (click)="toggleConsent()">
+              <span class="box" [class.is-on]="form().consent">
+                @if (form().consent) {
+                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                }
+              </span>
+              <span class="txt"
+                >Keep me informed about the Convening and future SAU public programmes, by email or
+                WhatsApp. No noise &mdash; a handful of messages a year.</span
+              >
+            </button>
+          </div>
+
+          <div class="rg-submit">
+            @if (error()) {
+              <div class="rg-error">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <span>{{ error() }}</span>
+              </div>
+            }
+            <div class="rg-submit__row">
+              <button type="button" class="rg-btn rg-btn--dark rg-btn--lg" (click)="submit()">
+                Complete registration<span aria-hidden="true">&rarr;</span>
+              </button>
+              <span class="note">Free &middot; Your answers stay on this device until you send them</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>
