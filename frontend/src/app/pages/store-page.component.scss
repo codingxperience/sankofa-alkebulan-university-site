@@ -1025,6 +1025,22 @@
   }
 }
 
+.st-album__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: #a89684;
+
+  i {
+    color: #f6c453;
+    font-size: 11px;
+  }
+}
+
 .st-album__tracks {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1062,6 +1078,30 @@
 
     &:hover {
       background: rgba(255, 255, 255, 0.06);
+    }
+
+    &:hover .play {
+      border-color: #f6c453;
+      color: #f6c453;
+    }
+
+    .play {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(246, 196, 83, 0.4);
+      color: #b89968;
+      font-size: 8.5px;
+      transition: all 160ms ease;
+    }
+
+    &.is-on .play {
+      border-color: #f6c453;
+      background: #f6c453;
+      color: #1a0d00;
     }
 
     .n {

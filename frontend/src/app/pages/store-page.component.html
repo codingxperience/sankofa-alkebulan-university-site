@@ -266,22 +266,34 @@
             rising, united continent. Royalties flow to the artist.
           </p>
           <div class="st-album__tracks">
-            @for (mv of movements; track mv.name) {
+            @for (mv of albumMovements; track mv.name) {
               <div class="movement">
                 <span class="name">{{ mv.name }}</span>
-                @for (t of mv.tracks; track t[0]) {
-                  <button type="button" (click)="togglePlaying(t[0])" [class.is-on]="playing() === t[0]">
-                    <span class="n">{{ t[0] }}</span>
-                    <span class="t">{{ t[1] }}</span>
-                    @if (playing() === t[0]) {
+                @for (t of mv.tracks; track t.num) {
+                  <button
+                    type="button"
+                    (click)="playTrack(t.num, t.src)"
+                    [class.is-on]="playing() === t.num"
+                    [attr.aria-label]="(playing() === t.num ? 'Pause ' : 'Play sample of ') + t.title"
+                  >
+                    <span class="play" aria-hidden="true">
+                      <i class="fa-solid" [class.fa-play]="playing() !== t.num" [class.fa-pause]="playing() === t.num"></i>
+                    </span>
+                    <span class="n">{{ t.num }}</span>
+                    <span class="t">{{ t.title }}</span>
+                    @if (playing() === t.num) {
                       <span class="eq" aria-hidden="true"><span></span><span></span><span></span></span>
                     }
-                    <span class="len">{{ t[2] }}</span>
+                    <span class="len">{{ t.len }}</span>
                   </button>
                 }
               </div>
             }
           </div>
+          <span class="st-album__hint"
+            ><i class="fa-solid fa-headphones" aria-hidden="true"></i>Tap any track to play a
+            sample</span
+          >
           <div class="st-album__actions">
             <button type="button" class="buy" (click)="add('album-digital')">
               <i class="fa-solid fa-play" aria-hidden="true"></i>Digital album &mdash; $12
