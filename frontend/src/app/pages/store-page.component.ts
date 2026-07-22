@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  PLATFORM_ID,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 interface ProductDef {
@@ -130,43 +139,51 @@ const PRODUCTS: Record<string, ProductDef> = {
     desc: 'Youth power and the future of continental unity — a 355-page strategy for Pan-African mobilization in a fragmented global order, spanning history, theory, governance, and future pathways.',
     specs: [['Format', 'Free PDF · open access'], ['Extent', '355 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-curriculum': {
-    t: 'Curriculum Development for Cultural Relevance', au: 'SAU Faculty of Education', yr: 'SAU Press · 2026', p: 22, kind: 'book', bg: '#0f4c81', imprint: 'SAU Press',
-    desc: 'The Liberation Publishing flagship — a working framework for educators decolonizing syllabi, from reading lists to assessment, with case studies from four African universities.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '214 pages · worksheets included'], ['Imprint', 'SAU Press · Liberation Publishing'], ['License', 'Personal + classroom use']],
+  'bk-next-century': {
+    t: "Africa's Next Century: A Grand Strategy", au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 22, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/africas-next-century-grand-strategy.webp',
+    desc: 'A grand strategy for prosperity, peace, and global leadership — a framework for Africa’s political, economic, scientific, security, cultural, and institutional transformation across the twenty-first century.',
+    specs: [['Format', 'Print + PDF edition'], ['Field', 'Continental strategy'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-brics': {
-    t: 'Bretton Woods to BRICS: African Trade', au: 'SAU Institute of Political Economy', yr: 'SAU Press · 2026', p: 16, kind: 'book', bg: '#b35c2a', imprint: 'SAU Press',
-    desc: 'Africa’s trade position re-read from the inside — from the Bretton Woods order to BRICS realignment, AfCFTA, and the routes to sovereign commerce.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '188 pages · data appendix'], ['Imprint', 'SAU Press · Liberation Publishing'], ['License', 'Personal + classroom use']],
+  'bk-god-ai': {
+    t: 'The God of AI: African Digital Futures', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 18, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/god-of-ai-african-digital-futures.webp',
+    desc: 'Faith, power, and machine intelligence read from the continent — a reckoning with artificial intelligence, sovereignty, and African digital futures.',
+    specs: [['Format', 'Print + PDF edition'], ['Field', 'AI & digital futures'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-astro': {
-    t: 'Astrophysics for the Mind', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2025', p: 9, kind: 'book', bg: '#051b2c', imprint: 'SAU Press',
-    desc: 'The universe’s greatest mysteries read through telescope and proverb — Dogon star knowledge, black holes, and dark matter beside African philosophies of the unseen.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '96 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+  'bk-governance': {
+    t: 'Reengineering Global Governance', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 16, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/reengineering-global-governance.webp',
+    desc: 'A data-driven reform framework for legitimacy, representation, and decision-making bottlenecks in the United Nations system — reengineering global governance for a multipolar world.',
+    specs: [['Format', 'Print + PDF edition'], ['Field', 'United Nations reform'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-maths': {
-    t: 'Pre-Colonial Mathematical Equations', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2025', p: 9, kind: 'book', bg: '#1f7a4d', imprint: 'SAU Press',
-    desc: 'Africa’s forgotten mathematical legacy — number systems, geometry, and astronomy from the Ishango bone to Timbuktu manuscripts.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '84 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+  'bk-strategic-defense': {
+    t: 'Strategic Defense Mobilization in Africa', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 15, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/strategic-defense-mobilization-africa.webp',
+    desc: 'Continental security on African terms — doctrine, deterrence, and the mobilization of a self-reliant strategic defense across the African Union.',
+    specs: [['Format', 'Print + PDF edition'], ['Field', 'Security & strategy'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-ngugi': {
-    t: 'Decolonising the Mind', au: 'Ngũgĩ wa Thiong’o', yr: '1986 · Library edition', p: 0, kind: 'book', bg: '#7d4a9e', imprint: 'University Library',
+    t: 'Decolonising the Mind', au: 'Ngũgĩ wa Thiong’o', yr: '1986 · Library edition', p: 0, kind: 'book', imprint: 'University Library',
+    cover: 'assets/press/covers/decolonising-the-mind.png',
     desc: 'The classic on language and cultural liberation — required reading across SAU. Held in the University Library as a free, open-access PDF.',
     specs: [['Format', 'Free PDF · University Library'], ['Access', 'Open to all readers'], ['Shelf', 'Language & liberation'], ['Status', 'Required reading · Year One']],
   },
   'bk-iliffe': {
-    t: 'Africans: The History of a Continent', au: 'John Iliffe', yr: 'Library edition', p: 0, kind: 'book', bg: '#a03a52', imprint: 'University Library',
+    t: 'Africans: The History of a Continent', au: 'John Iliffe', yr: 'Library edition', p: 0, kind: 'book', imprint: 'University Library',
+    cover: 'assets/press/covers/africans-history-continent.png',
     desc: 'A single-volume history of the continent, from human origins to the present — held free in the University Library collection.',
     specs: [['Format', 'Free PDF · University Library'], ['Access', 'Open to all readers'], ['Shelf', 'Continental history'], ['Status', 'Core survey text']],
   },
   'bk-aehn': {
-    t: 'The History of African Development', au: 'African Economic History Network', yr: 'Open textbook · 2023', p: 0, kind: 'book', bg: '#086b83', imprint: 'University Library',
+    t: 'The History of African Development', au: 'African Economic History Network', yr: 'Open textbook · 2023', p: 0, kind: 'book', imprint: 'University Library',
+    cover: 'assets/press/covers/history-african-development.png',
     desc: 'The AEHN open textbook — African economic history written for African classrooms, updated 2023. Free in the University Library.',
     specs: [['Format', 'Free PDF · open textbook'], ['Access', 'Open to all readers'], ['Shelf', 'Economic history'], ['Edition', 'March 2023']],
   },
   'bk-fondad': {
-    t: 'Africa in the World Economy', au: 'Fondad · The Hague', yr: 'Library edition', p: 0, kind: 'book', bg: '#7a5a1c', imprint: 'University Library',
+    t: 'Africa in the World Economy', au: 'Fondad · The Hague', yr: 'Library edition', p: 0, kind: 'book', imprint: 'University Library',
+    cover: 'assets/press/covers/africa-in-world-economy.png',
     desc: 'Africa’s position in global finance and trade — policy essays held free in the University Library collection.',
     specs: [['Format', 'Free PDF · University Library'], ['Access', 'Open to all readers'], ['Shelf', 'Political economy'], ['Status', 'Policy reference']],
   },
@@ -190,6 +207,24 @@ const DIGITAL_IDS = ['album-digital', 'museum-pass', 'language-pack', 'vault-cer
 
 const fmt = (n: number) => '$' + n.toLocaleString('en-US');
 
+/** Slugify a track title into its audio filename stem. */
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+/** Album movements with a resolved audio source per track (assets/audio/NN-title.mp3). */
+const ALBUM_MOVEMENTS = TRACKS.map((mv) => ({
+  name: mv.name,
+  tracks: mv.tracks.map(([num, title, len]) => ({
+    num,
+    title,
+    len,
+    src: 'assets/audio/' + num + '-' + slug(title) + '.mp3',
+  })),
+}));
+
 @Component({
   selector: 'app-store-page',
   standalone: true,
@@ -198,10 +233,14 @@ const fmt = (n: number) => '$' + n.toLocaleString('en-US');
   styleUrl: './store-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StorePageComponent {
+export class StorePageComponent implements OnDestroy {
+  private readonly platformId = inject(PLATFORM_ID);
+  private audioEl?: HTMLAudioElement;
+
   readonly products = PRODUCTS;
   readonly sizes = SIZES;
   readonly preorderMode = true;
+  readonly albumMovements = ALBUM_MOVEMENTS;
 
   readonly cart = signal<Record<string, number>>({});
   readonly cartOpen = signal(false);
@@ -223,7 +262,7 @@ export class StorePageComponent {
   readonly orderNo = signal('');
 
   readonly regaliaIds = ['tee-navy', 'tee-colors', 'hoodie', 'scarf', 'tunic', 'gown', 'suit', 'robe'];
-  readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-quiet-skin', 'bk-pan-african', 'bk-curriculum', 'bk-brics', 'bk-astro', 'bk-maths', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
+  readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-quiet-skin', 'bk-pan-african', 'bk-next-century', 'bk-god-ai', 'bk-governance', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
   readonly artifactIds = ['cross', 'benin', 'ashanti', 'kongo', 'nok'];
   readonly movements = TRACKS;
 
@@ -330,8 +369,38 @@ export class StorePageComponent {
     });
   }
 
-  togglePlaying(n: string): void {
-    this.playing.update((p) => (p === n ? '' : n));
+  /** Play a 45-second sample of a track (or pause it if already playing). */
+  playTrack(num: string, src: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    if (this.playing() === num) {
+      this.audioEl?.pause();
+      this.playing.set('');
+      return;
+    }
+    if (!this.audioEl) {
+      this.audioEl = new Audio();
+      this.audioEl.preload = 'none';
+      this.audioEl.addEventListener('ended', () => this.playing.set(''));
+      this.audioEl.addEventListener('error', () => this.playing.set(''));
+      // Keep it to a sample: stop after ~45 seconds.
+      this.audioEl.addEventListener('timeupdate', () => {
+        if (this.audioEl && this.audioEl.currentTime >= 45) {
+          this.audioEl.pause();
+          this.playing.set('');
+        }
+      });
+    }
+    this.audioEl.src = src;
+    this.audioEl.currentTime = 0;
+    this.playing.set(num);
+    this.audioEl.play().catch(() => this.playing.set(''));
+  }
+
+  ngOnDestroy(): void {
+    this.audioEl?.pause();
+    this.audioEl = undefined;
   }
 
   /* ---- Product detail ---- */
