@@ -17,6 +17,8 @@ interface ProductDef {
   readonly icon?: string;
   readonly desc?: string;
   readonly specs?: readonly (readonly [string, string])[];
+  readonly cover?: string;
+  readonly pdf?: string;
 }
 
 const SIZES = ['S', 'M', 'L', 'XL', '2XL'] as const;
@@ -100,45 +102,61 @@ const PRODUCTS: Record<string, ProductDef> = {
     desc: 'One of the oldest sculptural traditions on earth — Nok, c. 500 BC — printed in ceramic composite. The certificate includes a 360° digital scan of the original.',
     specs: [['Original', 'Nok terracotta · Nigeria, c. 500 BC'], ['Material', 'Ceramic composite · museum finish'], ['Edition', '36 numbered casts'], ['Certificate', 'ERC-721 · includes 360° scan'], ['Funds', 'Repatriation research + Kahigiriza Memorial']],
   },
-  'bk-curriculum': {
-    t: 'Curriculum Development for Cultural Relevance', au: 'SAU Faculty of Education', yr: 'SAU Press · 2026', p: 22, kind: 'book', bg: '#0f4c81', imprint: 'SAU Press',
-    desc: 'The Liberation Publishing flagship — a working framework for educators decolonizing syllabi, from reading lists to assessment, with case studies from four African universities.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '214 pages · worksheets included'], ['Imprint', 'SAU Press · Liberation Publishing'], ['License', 'Personal + classroom use']],
+  'bk-black-futures': {
+    t: 'Black Futures and the Fourth Industrial Revolution', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/black-futures-fourth-industrial-revolution.png',
+    pdf: 'assets/press/publications/black-futures-fourth-industrial-revolution.pdf',
+    desc: 'The Liberation Publishing flagship essay — reimagining Black agency in the age of artificial intelligence, from data sovereignty and algorithmic bias to African-authored futures for the Fourth Industrial Revolution.',
+    specs: [['Format', 'Free PDF · open access'], ['Edition', 'English · 2026'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-brics': {
-    t: 'Bretton Woods to BRICS: African Trade', au: 'SAU Institute of Political Economy', yr: 'SAU Press · 2026', p: 16, kind: 'book', bg: '#b35c2a', imprint: 'SAU Press',
-    desc: 'Africa’s trade position re-read from the inside — from the Bretton Woods order to BRICS realignment, AfCFTA, and the routes to sovereign commerce.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '188 pages · data appendix'], ['Imprint', 'SAU Press · Liberation Publishing'], ['License', 'Personal + classroom use']],
+  'bk-black-futures-el': {
+    t: 'Black Futures and the Fourth Industrial Revolution — Greek edition', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/black-futures-fourth-industrial-revolution-el.png',
+    pdf: 'assets/press/publications/black-futures-fourth-industrial-revolution-el.pdf',
+    desc: 'Μαύρα Μέλλοντα και η Τέταρτη Βιομηχανική Επανάσταση — the Greek translation of the Black Agency essay, carrying the argument on African data sovereignty and AI futures to a wider readership.',
+    specs: [['Format', 'Free PDF · open access'], ['Edition', 'Greek translation · 2026'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-astro': {
-    t: 'Astrophysics for the Mind', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2025', p: 9, kind: 'book', bg: '#051b2c', imprint: 'SAU Press',
-    desc: 'The universe’s greatest mysteries read through telescope and proverb — Dogon star knowledge, black holes, and dark matter beside African philosophies of the unseen.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '96 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+  'bk-quiet-skin': {
+    t: 'Beneath the Quiet Skin', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/beneath-the-quiet-skin.webp',
+    pdf: 'assets/press/publications/beneath-the-quiet-skin.pdf',
+    desc: 'Understanding Mental Health in African Contexts — an exploration of mind, spirit, and society in Africa, holding indigenous healing traditions and clinical psychology in one frame.',
+    specs: [['Format', 'Free PDF · open access'], ['Field', 'Mental health · African contexts'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-maths': {
-    t: 'Pre-Colonial Mathematical Equations', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2025', p: 9, kind: 'book', bg: '#1f7a4d', imprint: 'SAU Press',
-    desc: 'Africa’s forgotten mathematical legacy — number systems, geometry, and astronomy from the Ishango bone to Timbuktu manuscripts.',
-    specs: [['Format', 'PDF + EPUB · DRM-free'], ['Extent', '84 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+  'bk-pan-african': {
+    t: 'Pan-African Strategic Mobilization in the 21st Century', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/pan-african-mobilization.webp',
+    pdf: 'assets/press/publications/pan-african-mobilization.pdf',
+    desc: 'Youth power and the future of continental unity — a 355-page strategy for Pan-African mobilization in a fragmented global order, spanning history, theory, governance, and future pathways.',
+    specs: [['Format', 'Free PDF · open access'], ['Extent', '355 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-ngugi': {
-    t: 'Decolonising the Mind', au: 'Ngũgĩ wa Thiong’o', yr: '1986 · Library edition', p: 0, kind: 'book', bg: '#7d4a9e', imprint: 'University Library',
-    desc: 'The classic on language and cultural liberation — required reading across SAU. Held in the University Library as a free, open-access PDF.',
-    specs: [['Format', 'Free PDF · University Library'], ['Access', 'Open to all readers'], ['Shelf', 'Language & liberation'], ['Status', 'Required reading · Year One']],
+  'bk-next-century': {
+    t: "Africa's Next Century: A Grand Strategy", au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/africas-next-century-grand-strategy.webp',
+    pdf: 'assets/press/publications/africas-next-century-grand-strategy.pdf',
+    desc: 'A grand strategy for prosperity, peace, and global leadership — a framework for Africa’s political, economic, scientific, security, cultural, and institutional transformation across the twenty-first century.',
+    specs: [['Format', 'Free PDF · open access'], ['Field', 'Continental strategy'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-iliffe': {
-    t: 'Africans: The History of a Continent', au: 'John Iliffe', yr: 'Library edition', p: 0, kind: 'book', bg: '#a03a52', imprint: 'University Library',
-    desc: 'A single-volume history of the continent, from human origins to the present — held free in the University Library collection.',
-    specs: [['Format', 'Free PDF · University Library'], ['Access', 'Open to all readers'], ['Shelf', 'Continental history'], ['Status', 'Core survey text']],
+  'bk-governance': {
+    t: 'Reengineering Global Governance', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/reengineering-global-governance.webp',
+    pdf: 'assets/press/publications/reengineering-global-governance.pdf',
+    desc: 'A data-driven reform framework for legitimacy, representation, and decision-making bottlenecks in the United Nations system — reengineering global governance for a multipolar world.',
+    specs: [['Format', 'Free PDF · open access'], ['Field', 'United Nations reform'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-aehn': {
-    t: 'The History of African Development', au: 'African Economic History Network', yr: 'Open textbook · 2023', p: 0, kind: 'book', bg: '#086b83', imprint: 'University Library',
-    desc: 'The AEHN open textbook — African economic history written for African classrooms, updated 2023. Free in the University Library.',
-    specs: [['Format', 'Free PDF · open textbook'], ['Access', 'Open to all readers'], ['Shelf', 'Economic history'], ['Edition', 'March 2023']],
+  'bk-indigenous': {
+    t: 'Indigenous Governance and Political Thought', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/indigenous-governance-political-thought.webp',
+    pdf: 'assets/press/publications/indigenous-governance-political-thought.pdf',
+    desc: 'Traditional leadership, indigenous governance, and African political thought — recovering statecraft that predates the colonial map and reading it against the present.',
+    specs: [['Format', 'Free PDF · open access'], ['Field', 'Traditional leadership'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
-  'bk-fondad': {
-    t: 'Africa in the World Economy', au: 'Fondad · The Hague', yr: 'Library edition', p: 0, kind: 'book', bg: '#7a5a1c', imprint: 'University Library',
-    desc: 'Africa’s position in global finance and trade — policy essays held free in the University Library collection.',
-    specs: [['Format', 'Free PDF · University Library'], ['Access', 'Open to all readers'], ['Shelf', 'Political economy'], ['Status', 'Policy reference']],
+  'bk-hannah': {
+    t: 'Hannah: Courage in the Heart of the City', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    cover: 'assets/press/covers/hannah-courage-heart-city.webp',
+    pdf: 'assets/press/publications/hannah-courage-heart-city.pdf',
+    desc: 'A long-form novel centred on courage, character, and the moral pressures of city life — SAU Press fiction from the Liberation Publishing list.',
+    specs: [['Format', 'Free PDF · open access'], ['Genre', 'Fiction & formation'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'album-digital': { t: 'Liberation Frequency — Digital', m: '11 tracks · lossless + lyric book', p: 12, img: 'assets/store/album-front.jpg' },
   'album-vinyl': { t: 'Liberation Frequency — Vinyl', m: 'Limited gatefold pressing', p: 45, img: 'assets/store/album-back.jpg' },
@@ -193,7 +211,7 @@ export class StorePageComponent {
   readonly orderNo = signal('');
 
   readonly regaliaIds = ['tee-navy', 'tee-colors', 'hoodie', 'scarf', 'tunic', 'gown', 'suit', 'robe'];
-  readonly bookIds = ['bk-curriculum', 'bk-brics', 'bk-astro', 'bk-maths', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
+  readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-quiet-skin', 'bk-pan-african', 'bk-next-century', 'bk-governance', 'bk-indigenous', 'bk-hannah'];
   readonly artifactIds = ['cross', 'benin', 'ashanti', 'kongo', 'nok'];
   readonly movements = TRACKS;
 

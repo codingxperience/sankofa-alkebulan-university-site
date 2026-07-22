@@ -1,6 +1,20 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../directives/reveal.directive';
+
+interface CalendarEvent {
+  readonly day: string;
+  readonly mon: string;
+  readonly h: string;
+  readonly p: string;
+  readonly meta: string;
+  readonly action: string;
+  /** 'register' → convening RSVP · 'ics' → calendar download · 'details' → convening page */
+  readonly type: 'register' | 'ics' | 'details';
+  /** ISO date used for the .ics export */
+  readonly start: string;
+}
 
 @Component({
   selector: 'app-student-life-page',
@@ -10,6 +24,7 @@ import { RevealDirective } from '../directives/reveal.directive';
   styleUrl: './student-life-page.component.scss',
 })
 export class StudentLifePageComponent {
+  private readonly platformId = inject(PLATFORM_ID);
   readonly portraits = [
     { cls: 'sl-portrait--1', img: 'assets/student-life-hero-friendship.jpg', name: 'Peer network', programme: 'Friendship, belonging, and leadership' },
     { cls: 'sl-portrait--2', img: 'assets/student-life-modern-01.jpg', name: 'Study', programme: 'Seminars and peer learning' },
@@ -87,7 +102,7 @@ export class StudentLifePageComponent {
     },
   ];
 
-  readonly calendar = [
+  readonly calendar: readonly CalendarEvent[] = [
     {
       day: '14',
       mon: 'MAR',
@@ -95,6 +110,8 @@ export class StudentLifePageComponent {
       p: 'Prof. R. Ruhinda, public talk in the John K. Sentongo Hall. Free, livestreamed, recorded.',
       meta: '18:30 - 90 min',
       action: 'RSVP',
+      type: 'register',
+      start: '2026-03-14T18:30:00',
     },
     {
       day: '17',
@@ -103,6 +120,8 @@ export class StudentLifePageComponent {
       p: "Open seminar on Ngugi wa Thiong'o's Decolonising the Mind. Hosted by the Society of African Letters.",
       meta: '17:00 - Senior Common Room',
       action: 'Add to calendar',
+      type: 'ics',
+      start: '2026-03-17T17:00:00',
     },
     {
       day: '22',
@@ -110,7 +129,9 @@ export class StudentLifePageComponent {
       h: 'Health and wellbeing fair',
       p: 'Drop-in clinics, mental-health screenings, peer-support sign-ups, and a free strength class.',
       meta: '10:00 - 16:00 - Quad',
-      action: 'Details',
+      action: 'Add to calendar',
+      type: 'ics',
+      start: '2026-03-22T10:00:00',
     },
     {
       day: '29',
@@ -118,7 +139,9 @@ export class StudentLifePageComponent {
       h: 'Inter-college debate finals',
       p: 'Motion: This house believes restoration is a stronger frame than reform. Adjudicated by the Senate.',
       meta: '19:00 - Senate Hall',
-      action: 'Tickets',
+      action: 'RSVP',
+      type: 'register',
+      start: '2026-03-29T19:00:00',
     },
     {
       day: '02',
@@ -126,7 +149,45 @@ export class StudentLifePageComponent {
       h: "Founders' Day - Service of restoration",
       p: 'A public service of music, prayer, and reading. Interfaith chaplaincy, all students and families welcome.',
       meta: '11:00 - Chapel of the Three Rivers',
-      action: 'Details',
+      action: 'Add to calendar',
+      type: 'ics',
+      start: '2026-04-02T11:00:00',
     },
   ];
+
+  /** Build and download a minimal .ics file for a calendar event. */
+  addToCalendar(event: CalendarEvent): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const dt = (iso: string) => iso.replace(/[-:]/g, '').replace(/\.\d+/, '');
+    const start = dt(event.start);
+    const endDate = new Date(new Date(event.start).getTime() + 90 * 60 * 1000);
+    const end = dt(endDate.toISOString().slice(0, 19));
+    const uid = 'sau-' + start + '@sankofa-alkebulan.university';
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Sankofa Alkebulan University//Student Life//EN',
+      'BEGIN:VEVENT',
+      'UID:' + uid,
+      'DTSTAMP:' + start,
+      'DTSTART:' + start,
+      'DTEND:' + end,
+      'SUMMARY:' + event.h,
+      'DESCRIPTION:' + event.p.replace(/,/g, '\\,'),
+      'LOCATION:' + event.meta,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = event.h.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }

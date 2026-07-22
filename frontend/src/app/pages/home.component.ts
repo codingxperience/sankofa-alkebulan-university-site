@@ -230,11 +230,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     },
     {
       tone: 'warm',
-      date: '14 March — Annual Lecture',
-      h: 'Prof. R. Ruhinda — Restoration as a research method.',
-      p: 'Free, public, and recorded. Held in the John K. Sentongo Hall and streamed live.',
-      more: 'Reserve a seat',
-      route: null,
+      date: '14–15 Aug — The Sankofa Convening 2026',
+      h: 'Two flagship programmes launch — in Kampala and online.',
+      p: "The Chancellor's founding keynote, then a mini-conference on cultural identity, indigenous knowledge, and intellectual cooperation. Free and open to all.",
+      more: 'Register free',
+      route: '/convening',
     },
     {
       tone: 'default',

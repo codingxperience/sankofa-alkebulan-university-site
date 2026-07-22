@@ -158,6 +158,19 @@ export const routes: Routes = [
       { path: 'cultural-societies', component: StudentOrganizationsPageComponent, data: { system: 'cultural' } },
       { path: 'press', component: PressPageComponent },
       { path: 'university-press', component: PressPageComponent },
+      {
+        path: 'convening/register',
+        loadComponent: () =>
+          import('./pages/convening-register-page.component').then(
+            (m) => m.ConveningRegisterPageComponent,
+          ),
+      },
+      {
+        path: 'convening',
+        loadComponent: () =>
+          import('./pages/convening-page.component').then((m) => m.ConveningPageComponent),
+      },
+      { path: 'events/convening', redirectTo: '/convening', pathMatch: 'full' },
       ...departmentShortcutRoutes,
       { path: 'home/:level/:programSlug', component: ProgramDetailComponent },
       { path: 'home/:level', component: ProgrammesLevelComponent },

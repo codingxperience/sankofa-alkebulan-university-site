@@ -103,6 +103,19 @@
         </div>
         <p class="right">A small selection; the full term calendar lives in the student portal.</p>
       </div>
+      <a routerLink="/convening" class="sl-featured" data-reveal>
+        <div class="sl-featured__date"><b>14&ndash;15</b><span>AUG</span></div>
+        <div class="sl-featured__body">
+          <span class="sl-featured__tag">Flagship &middot; public launch</span>
+          <h4>The Sankofa Convening 2026</h4>
+          <p>
+            Two flagship programmes launch &mdash; the Chancellor's founding keynote, then a
+            mini-conference on cultural identity, indigenous knowledge, and intellectual cooperation.
+            Free and open to all, in Kampala and online.
+          </p>
+        </div>
+        <span class="sl-featured__cta">Register free <span aria-hidden="true">&rarr;</span></span>
+      </a>
       <ul class="sl-cal" data-reveal>
         @for (event of calendar; track event.h) {
           <li>
@@ -112,7 +125,15 @@
               <p>{{ event.p }}</p>
               <span class="meta"><i class="fa-regular fa-clock"></i> {{ event.meta }}</span>
             </div>
-            <a class="v2-btn v2-btn--ghost">{{ event.action }}</a>
+            @if (event.type === 'register') {
+              <a routerLink="/convening/register" class="v2-btn v2-btn--ghost">{{ event.action }}</a>
+            } @else if (event.type === 'ics') {
+              <button type="button" class="v2-btn v2-btn--ghost" (click)="addToCalendar(event)">
+                {{ event.action }}
+              </button>
+            } @else {
+              <a routerLink="/convening" class="v2-btn v2-btn--ghost">{{ event.action }}</a>
+            }
           </li>
         }
       </ul>
