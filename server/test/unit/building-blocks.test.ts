@@ -6,6 +6,7 @@ import { hashPassword, needsRehash, verifyPassword } from '../../src/common/cryp
 import { randomCode, reference } from '../../src/common/crypto/references';
 import { hashToken, hmac, safeEqual } from '../../src/common/crypto/tokens';
 import { toCsv } from '../../src/common/http/csv';
+import { cleanEnvValue, loadConfig } from '../../src/config/env';
 import { registrationState } from '../../src/events/event-options';
 import { cleanArticleHtml, normaliseAssetPath, plainText, readingMinutes } from '../../src/journal/article-html';
 import { permissionsFor } from '../../src/staff/permissions';
@@ -143,5 +144,25 @@ describe('article text', () => {
   it('estimates reading time at about 220 words a minute, never less than one', () => {
     assert.equal(readingMinutes('<p>Short.</p>'), 1);
     assert.equal(readingMinutes(`<p>${'word '.repeat(660)}</p>`), 3);
+  });
+});
+
+describe('settings pasted into a hosting dashboard', () => {
+  it('drops surrounding quotes and spaces, and nothing else', () => {
+    assert.equal(cleanEnvValue('"postgresql://u:p@h:6543/db?pgbouncer=true"'), 'postgresql://u:p@h:6543/db?pgbouncer=true');
+    assert.equal(cleanEnvValue("  'value'  "), 'value');
+    assert.equal(cleanEnvValue('  plain '), 'plain');
+    assert.equal(cleanEnvValue('"unbalanced'), '"unbalanced');
+    assert.equal(cleanEnvValue('a"b"c'), 'a"b"c');
+  });
+
+  it('accepts a quoted database address and secret', () => {
+    const config = loadConfig({
+      DATABASE_URL: '"postgresql://u:p@db.example.org:6543/postgres?pgbouncer=true"',
+      APP_SECRET: ' "0123456789abcdef0123456789abcdef" ',
+      NODE_ENV: 'test',
+    });
+    assert.equal(config.database.url, 'postgresql://u:p@db.example.org:6543/postgres?pgbouncer=true');
+    assert.equal(config.secret, '0123456789abcdef0123456789abcdef');
   });
 });

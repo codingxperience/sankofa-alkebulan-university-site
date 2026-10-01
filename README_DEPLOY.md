@@ -49,6 +49,17 @@ Set these under **Project → Settings → Environment Variables**. Names match
 | `FLUTTERWAVE_SECRET_KEY`, `FLUTTERWAVE_WEBHOOK_HASH` | optional | card checkout; set both or neither |
 | `DATABASE_CA_CERT` | optional | Supabase CA certificate (PEM) to verify the database's TLS certificate |
 
+**Where the two database addresses come from:** in Supabase, open the
+project, press **Connect** at the top, and choose **ORMs → Prisma** (or the
+*Connection string* tab). Copy the **Transaction pooler** string (port
+`6543`) into `DATABASE_URL` and the **Session pooler** string (port `5432`)
+into `DIRECT_URL`, replacing `[YOUR-PASSWORD]` with the database password.
+
+In Vercel, paste only the value — `postgresql://…` — into the *Value* box,
+and the name into *Key*; or use *Import .env* to paste whole `NAME=value`
+lines. Tick **Production** (and Preview only if previews have their own
+database). Quotes copied by accident are ignored.
+
 Generate secrets with:
 
 ```sh
@@ -63,13 +74,15 @@ variables. Never point previews at production with a different schema.
 
 `scripts/vercel-build.mjs`:
 
-1. builds the API (`prisma generate`, TypeScript) into `server/dist`;
-2. **production only:** applies pending migrations (`prisma migrate deploy`
+1. **production only:** checks `DATABASE_URL`, `DIRECT_URL` and
+   `APP_SECRET`, and stops with a list of anything missing or malformed;
+2. builds the API (`prisma generate`, TypeScript) into `server/dist`;
+3. **production only:** applies pending migrations (`prisma migrate deploy`
    over `DIRECT_URL`), then adds reference data that is missing — the seven
    offices, the store catalogue, the Convening event and the journal archive.
    Existing records are never overwritten, so prices and stock edited in the
    console survive every deploy;
-3. builds the Angular site into `frontend/browser`.
+4. builds the Angular site into `frontend/browser`.
 
 Migrations can also be applied by hand from the **Database migrations**
 GitHub workflow (needs a `DIRECT_URL` repository secret), or locally:
@@ -77,6 +90,25 @@ GitHub workflow (needs a `DIRECT_URL` repository secret), or locally:
 ```sh
 cd server && npm ci && npx prisma migrate deploy
 ```
+
+### If a production build fails
+
+Open the deployment in Vercel and scroll to the **end** of the build log;
+the reason is in the last lines. Before building anything, the build checks
+its settings and lists every problem at once, for example:
+
+```
+✖ This production build cannot reach the database yet.
+   • DATABASE_URL is missing — Supabase's "Transaction pooler" connection string (port 6543).
+   • APP_SECRET is missing — any random text of at least 32 characters.
+```
+
+Add or correct those variables, then **Redeploy** (the variables only reach
+deployments started after they were saved). A failed build never replaces
+the live site: the last successful deployment keeps serving visitors.
+
+If migrations fail with `P1000` the password is wrong; with `P1001` the
+address or port is wrong.
 
 ## 4. First sign-in
 

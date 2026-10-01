@@ -139,8 +139,22 @@ function resolveSiteUrl(env: Env): string {
   return raw.replace(/\/+$/, '');
 }
 
+/**
+ * Values copied from a .env file into a hosting dashboard often keep their
+ * quotes (`"postgresql://…"`) or pick up stray spaces. Both are removed, so a
+ * correctly copied value works whichever way it was pasted.
+ */
+export function cleanEnvValue(value: string): string {
+  const trimmed = value.trim();
+  const quoted = /^(["'])([\s\S]*)\1$/.exec(trimmed);
+  return quoted ? quoted[2].trim() : trimmed;
+}
+
 export function loadConfig(source: NodeJS.ProcessEnv = process.env): AppConfig {
-  const parsed = EnvSchema.safeParse(source);
+  const cleaned = Object.fromEntries(
+    Object.entries(source).map(([name, value]) => [name, value === undefined ? undefined : cleanEnvValue(value)]),
+  );
+  const parsed = EnvSchema.safeParse(cleaned);
   if (!parsed.success) {
     throw new ConfigurationError(
       parsed.error.issues.map((issue) => `${issue.path.join('.') || 'env'}: ${issue.message}`),
