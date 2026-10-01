@@ -119,7 +119,7 @@ const ENTITIES: ReadonlyArray<{ value: string; label: string }> = [
       border-radius: 8px;
 
       &:hover {
-        background: #fbf9f4;
+        background: rgba(255, 255, 255, 0.04);
       }
     }
 

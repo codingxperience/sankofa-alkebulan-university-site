@@ -1,4 +1,4 @@
-import { NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -6,6 +6,8 @@ import { ConsoleState } from '../core/console-state';
 import { InitialsPipe } from '../core/format';
 import { StaffSession } from '../core/staff-session';
 import type { Permission } from '../core/types';
+import { PopAnchor } from '../ui/ui';
+import { TopSlot } from './top-slot';
 
 interface NavLink {
   readonly path: string;
@@ -19,7 +21,7 @@ interface NavLink {
 const NAVIGATION: ReadonlyArray<{ label: string; links: readonly NavLink[] }> = [
   {
     label: 'Today',
-    links: [{ path: '/admin', label: 'Daybook', icon: 'pi-sun', permission: 'overview.read', exact: true }],
+    links: [{ path: '/admin', label: 'Workspace', icon: 'pi-th-large', permission: 'overview.read', exact: true }],
   },
   {
     label: 'The work',
@@ -42,17 +44,25 @@ const NAVIGATION: ReadonlyArray<{ label: string; links: readonly NavLink[] }> = 
   },
 ];
 
+/** What the bell lists: each kind of work that is waiting on someone here. */
+const NOTICES = [
+  { badge: 'inbox', path: '/admin/inbox', icon: 'pi-inbox', one: 'New message', many: 'New messages', permission: 'inquiries.read' },
+  { badge: 'admissions', path: '/admin/admissions', icon: 'pi-graduation-cap', one: 'Application to decide', many: 'Applications to decide', permission: 'applications.read' },
+  { badge: 'store', path: '/admin/store/orders', icon: 'pi-shopping-bag', one: 'Order to act on', many: 'Orders to act on', permission: 'store.read' },
+] as const;
+
 const REFRESH_EVERY_MS = 90_000;
 
 @Component({
   selector: 'sc-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage, InitialsPipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage, NgTemplateOutlet, InitialsPipe, PopAnchor],
   templateUrl: './shell.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Shell {
   protected readonly session = inject(StaffSession);
   protected readonly state = inject(ConsoleState);
+  protected readonly slot = inject(TopSlot);
   private readonly router = inject(Router);
   private readonly main = viewChild.required<ElementRef<HTMLElement>>('main');
 
@@ -65,6 +75,17 @@ export class Shell {
       links: group.links.filter((link) => this.session.can(link.permission)),
     })).filter((group) => group.links.length > 0);
   });
+
+  protected readonly notices = computed(() => {
+    this.session.me();
+    const badges = this.state.badges();
+    return NOTICES.filter((notice) => this.session.can(notice.permission)).map((notice) => {
+      const count = badges[notice.badge];
+      return { path: notice.path, icon: notice.icon, count, label: count === 1 ? notice.one : notice.many };
+    });
+  });
+
+  protected readonly waiting = computed(() => this.notices().reduce((sum, notice) => sum + notice.count, 0));
 
   protected readonly roleLine = computed(() => {
     const me = this.session.me();
@@ -100,6 +121,10 @@ export class Shell {
   protected skip(event: Event): void {
     event.preventDefault();
     this.main().nativeElement.focus();
+  }
+
+  protected closeNotices(): void {
+    document.getElementById('sc-notices')?.hidePopover();
   }
 
   protected badge(link: NavLink): number {

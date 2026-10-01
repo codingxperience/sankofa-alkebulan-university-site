@@ -6,10 +6,9 @@
   margin-bottom: 18px;
   overflow: hidden;
   overflow-x: auto;
-  border: 1px solid var(--sc-line);
+  border: 1px solid var(--sc-line-2);
   border-radius: var(--sc-radius);
-  background: #fff;
-  box-shadow: var(--sc-shadow);
+  background: var(--sc-card);
 }
 
 .ap-stage {
@@ -31,7 +30,7 @@
   }
 
   &:hover {
-    background: #fcfbf8;
+    background: rgba(255, 255, 255, 0.04);
   }
 
   &::after {
@@ -45,16 +44,19 @@
     transition: background 140ms ease;
   }
 
+  /* The chosen stage wears the workspace's gold. */
   &[aria-pressed='true'] {
-    background: #fffcf4;
+    background: linear-gradient(165deg, #f2cf72, #e1b03e);
 
-    &::after {
-      background: var(--sc-gold);
+    .ap-stage__label,
+    .ap-stage__count,
+    .ap-stage__count.is-zero {
+      color: var(--sc-on-gold);
     }
   }
 
   &--all {
-    background: #fcfbf8;
+    background: rgba(255, 255, 255, 0.03);
   }
 }
 
@@ -66,14 +68,14 @@
 }
 
 .ap-stage__count {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 300;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--sc-ink);
 
   &.is-zero {
-    color: #a4afba;
+    color: #6c7d8f;
   }
 }
 

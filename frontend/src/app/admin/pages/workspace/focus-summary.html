@@ -1,0 +1,94 @@
+<header class="fs-head">
+  <span class="fs-mark" aria-hidden="true"><img src="/assets/design/crest-112.png" width="26" height="26" alt="" /></span>
+  <h2 class="fs-title" id="fs-title">Summary</h2>
+  @if (summary(); as s) {
+    <a class="fs-round" [routerLink]="s.link" [attr.aria-label]="s.open" [title]="s.open">
+      <i class="pi pi-arrow-up-right" aria-hidden="true"></i>
+    </a>
+  }
+</header>
+
+@if (summary(); as s) {
+  <div class="fs-person">
+    <sc-face [name]="s.name" />
+    <div class="fs-person__text">
+      <p class="fs-person__name">{{ s.name }}</p>
+      <p class="fs-person__sub">{{ s.subtitle }}</p>
+    </div>
+  </div>
+  <div class="fs-state">
+    <sc-pill [label]="s.status.label" [tone]="s.status.tone" />
+    <span class="fs-ref">{{ s.reference }}</span>
+  </div>
+
+  <ol class="fs-trail">
+    @for (stop of s.stops; track stop.title) {
+      <li class="fs-stop" [class.has-time]="!!stop.at">
+        <span class="fs-stop__time">
+          @if (stop.at) {
+            <time [attr.datetime]="stop.at" [title]="stop.at | ago">{{ stamp(stop.at) }}</time>
+          }
+        </span>
+        <section class="fs-card" [attr.aria-label]="stop.title">
+          <h3 class="fs-card__title">{{ stop.title }}</h3>
+
+          @if (stop.papers) {
+            @if (stop.papers.length) {
+              <ul class="fs-papers">
+                @for (paper of stop.papers; track paper.label) {
+                  <li class="fs-paper">
+                    <div class="fs-paper__page" aria-hidden="true">
+                      <strong>{{ paper.heading }}</strong>
+                      <span>{{ paper.text }}</span>
+                    </div>
+                    <span class="fs-paper__label">{{ paper.label }}<small>{{ paper.meta }}</small></span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="fs-card__text">{{ stop.empty }}</p>
+            }
+          }
+
+          @if (stop.parts) {
+            <p class="fs-card__text">@for (part of stop.parts; track $index) {<span [class.fs-strong]="part.strong">{{ part.text }}</span>}</p>
+          }
+
+          @if (stop.body) {
+            <p class="fs-card__body">{{ stop.body }}</p>
+          }
+
+          @if (stop.facts) {
+            <dl class="fs-facts">
+              @for (fact of stop.facts; track fact.label) {
+                <div>
+                  <dt>{{ fact.label }}</dt>
+                  <dd>{{ fact.value }}</dd>
+                </div>
+              }
+            </dl>
+          }
+
+          @if (stop.foot) {
+            <p class="fs-card__foot">{{ stop.foot }}</p>
+          }
+        </section>
+      </li>
+    }
+  </ol>
+
+  <div class="fs-actions">
+    <a class="fs-btn" [routerLink]="s.link">{{ s.open }}</a>
+    @if (s.email) {
+      <a class="fs-round" [href]="'mailto:' + s.email" [attr.aria-label]="'Email ' + s.name" [title]="s.email">
+        <i class="pi pi-envelope" aria-hidden="true"></i>
+      </a>
+    }
+  </div>
+} @else if (loading()) {
+  <sc-skeleton [lines]="6" />
+} @else if (failed()) {
+  <p class="fs-quiet" role="alert">{{ failed() }}</p>
+} @else if (!showing()) {
+  <p class="fs-quiet">Choose an applicant or a message to see it summarised here.</p>
+}

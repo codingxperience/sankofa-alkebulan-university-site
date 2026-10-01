@@ -87,8 +87,8 @@ import { Empty, Pill, Skeleton } from '../../ui/ui';
         transform 160ms ease;
 
       &:hover {
-        border-color: #d8cfbd;
-        box-shadow: var(--sc-shadow-lift);
+        border-color: var(--sc-line);
+        background: var(--sc-card-2);
         transform: translateY(-1px);
       }
     }

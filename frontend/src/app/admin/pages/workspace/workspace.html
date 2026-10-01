@@ -1,0 +1,313 @@
+<ng-template #strip>
+  <sc-day-strip [entries]="todayEntries()" [events]="todayEvents()" (open)="toDaybook()" />
+</ng-template>
+
+<header class="ws-head">
+  <div class="ws-head__name">
+    <p class="ws-hello">{{ greeting }}, {{ firstName() }} <span aria-hidden="true">·</span> {{ today }}</p>
+    <div class="ws-head__row">
+      <h1 class="ws-word">
+        <span aria-hidden="true">Sank<span class="ws-word__o"></span>fa</span>
+        <span class="visually-hidden">Sankofa workspace</span>
+      </h1>
+      @if (creates().length) {
+        <button #createButton type="button" class="ws-new" popovertarget="ws-create">
+          <span class="ws-new__plus" aria-hidden="true"><i class="pi pi-plus"></i></span>
+          New
+        </button>
+        <div id="ws-create" class="sc-pop" popover [scPopAnchor]="createButton" role="dialog" aria-label="Create something new">
+          <p class="sc-pop__title">Create</p>
+          @for (option of creates(); track option.link) {
+            <a class="sc-pop__item" [routerLink]="option.link" (click)="closeCreate()">
+              <i [class]="'pi ' + option.icon" aria-hidden="true"></i>
+              <span>{{ option.label }}<small>{{ option.note }}</small></span>
+            </a>
+          }
+        </div>
+      }
+    </div>
+    @if (headline()) {
+      <p class="ws-lede">{{ headline() }}</p>
+    }
+  </div>
+
+  @if (figures().length) {
+    <ul class="ws-figures" aria-label="Waiting on the team">
+      @for (figure of figures(); track figure.link) {
+        <li>
+          <a class="ws-figure" [routerLink]="figure.link">
+            <span class="ws-figure__n">{{ figure.value }}</span>
+            <span class="ws-figure__side">
+              @if (figure.today) {
+                <span class="ws-figure__today">+{{ figure.today }}<span class="visually-hidden"> today,</span></span>
+              }
+              <span class="ws-figure__label">{{ figure.label }}</span>
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</header>
+
+<div class="ws-grid">
+  <div class="ws-rows">
+    @if (canApplicants()) {
+      <section class="ws-section" aria-labelledby="ws-applicants-title">
+        <div class="ws-section__head">
+          <h2 class="ws-section__title" id="ws-applicants-title">Applicants</h2>
+          <a class="ws-count" routerLink="/admin/admissions">{{ overview()?.applications?.awaitingDecision ?? 0 }} to decide</a>
+          <div class="ws-section__tools">
+            <a class="sc-round sc-round--small" routerLink="/admin/admissions" aria-label="Search all applications" title="Search all applications">
+              <i class="pi pi-search" aria-hidden="true"></i>
+            </a>
+            <div class="ws-chips" role="group" aria-label="Show applicants">
+              @for (view of applicantViews; track view.value) {
+                <button type="button" class="ws-chip" [attr.aria-pressed]="applicantView() === view.value" (click)="chooseApplicants(view.value)">
+                  @if (view.hot) {
+                    <span class="ws-chip__hot" aria-hidden="true"></span>
+                  }
+                  {{ view.label }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (applicantsLoading() && !applicants().length) {
+          <ul class="ws-cards" aria-busy="true" aria-label="Loading applicants">
+            @for (n of [1, 2, 3, 4]; track n) {
+              <li class="ws-card ws-card--ghost"></li>
+            }
+          </ul>
+        } @else if (!applicants().length) {
+          <p class="ws-none">No applicants in this view. <a routerLink="/admin/admissions">Open admissions</a></p>
+        } @else {
+          <ul class="ws-cards" [class.is-busy]="applicantsLoading()">
+            @for (item of applicants(); track item.id) {
+              <li class="ws-card" [class.is-focus]="isFocus('application', item.id)">
+                <div class="ws-card__surface" aria-hidden="true"></div>
+                <sc-face [name]="applicantName(item)" />
+                <a class="ws-notch" [routerLink]="['/admin/admissions', item.id]" [attr.aria-label]="'Open the application from ' + applicantName(item)">
+                  <i class="pi pi-arrow-up-right" aria-hidden="true"></i>
+                </a>
+                <button type="button" class="ws-card__main" [attr.aria-pressed]="isFocus('application', item.id)" (click)="focusOn('application', item.id)">
+                  <span class="ws-card__name">{{ applicantName(item) }}</span>
+                  <span class="ws-card__role">{{ applicantRole(item) }}</span>
+                </button>
+                <div class="ws-card__foot">
+                  <div class="ws-card__col">
+                    <span class="ws-cap">Intake</span>
+                    <span class="ws-tags">
+                      <span class="ws-tag">{{ item.intake }}</span>
+                      @if (item.residence) {
+                        <span class="ws-tag">{{ item.residence }}</span>
+                      }
+                    </span>
+                  </div>
+                  <div class="ws-card__col ws-card__col--end">
+                    <span class="ws-cap">{{ applicationStatus(item).label }}</span>
+                    <span class="ws-dots" role="img" [attr.aria-label]="item.completedSteps + ' of 6 steps complete'">
+                      @for (step of steps; track step) {
+                        <span [class.is-on]="step < item.completedSteps"></span>
+                      }
+                    </span>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    @if (canMessages()) {
+      <section class="ws-section" aria-labelledby="ws-messages-title">
+        <div class="ws-section__head">
+          <h2 class="ws-section__title" id="ws-messages-title">Messages to answer</h2>
+          <a class="ws-count" routerLink="/admin/inbox">{{ overview()?.inquiries?.active ?? 0 }} open</a>
+          <div class="ws-section__tools">
+            <a class="sc-round sc-round--small" routerLink="/admin/inbox" aria-label="Search the inbox" title="Search the inbox">
+              <i class="pi pi-search" aria-hidden="true"></i>
+            </a>
+            <div class="ws-chips" role="group" aria-label="Show messages">
+              @for (view of messageViews; track view.value) {
+                <button type="button" class="ws-chip" [attr.aria-pressed]="messageView() === view.value" (click)="chooseMessages(view.value)">
+                  @if (view.hot) {
+                    <span class="ws-chip__hot" aria-hidden="true"></span>
+                  }
+                  {{ view.label }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (messagesLoading() && !messages().length) {
+          <ul class="ws-cards ws-cards--wide" aria-busy="true" aria-label="Loading messages">
+            @for (n of [1, 2, 3]; track n) {
+              <li class="ws-card ws-card--task ws-card--ghost"></li>
+            }
+          </ul>
+        } @else if (!messages().length) {
+          <p class="ws-none">Nothing in this view. Every message here has been dealt with.</p>
+        } @else {
+          <ul class="ws-cards ws-cards--wide" [class.is-busy]="messagesLoading()">
+            @for (item of messages(); track item.id) {
+              <li class="ws-card ws-card--task" [class.is-focus]="isFocus('inquiry', item.id)">
+                <div class="ws-card__surface" aria-hidden="true"></div>
+                <div class="ws-card__who">
+                  <sc-face [name]="item.name" />
+                  <span>
+                    <strong>{{ item.name }}</strong>
+                    <small>{{ state.officeName(item.office) }}</small>
+                  </span>
+                </div>
+                <a class="ws-notch" [routerLink]="['/admin/inbox', item.id]" [attr.aria-label]="'Open the conversation with ' + item.name">
+                  <i class="pi pi-arrow-up-right" aria-hidden="true"></i>
+                </a>
+                <button type="button" class="ws-card__main" [attr.aria-pressed]="isFocus('inquiry', item.id)" (click)="focusOn('inquiry', item.id)">
+                  <span class="ws-card__icon" aria-hidden="true"><i class="pi pi-envelope"></i></span>
+                  <span class="ws-card__title">{{ item.subject || 'No subject' }}</span>
+                  <span class="ws-card__when">
+                    <time [attr.datetime]="item.createdAt">{{ item.createdAt | when: 'short' }}</time> · {{ item.createdAt | ago }}
+                  </span>
+                </button>
+                <div class="ws-card__foot">
+                  <div class="ws-card__col">
+                    @if (canAnswer()) {
+                      <label class="ws-cap" [for]="'ws-status-' + item.id">Status</label>
+                      <select class="ws-status" [id]="'ws-status-' + item.id" [disabled]="saving() === item.id" (change)="setStatus(item, $event)">
+                        @for (status of messageStatuses; track status) {
+                          <option [value]="status" [selected]="status === item.status">{{ inquiryStatus[status].label }}</option>
+                        }
+                        @if (!messageStatuses.includes(item.status)) {
+                          <option [value]="item.status" selected>{{ inquiryStatus[item.status].label }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <span class="ws-cap">Status</span>
+                      <sc-pill [label]="inquiryStatus[item.status].label" [tone]="inquiryStatus[item.status].tone" />
+                    }
+                  </div>
+                  <a class="ws-mail" [href]="'mailto:' + item.email" [attr.aria-label]="'Email ' + item.name" [title]="item.email">
+                    <i class="pi pi-envelope" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    @if (overview(); as o) {
+      <div class="ws-lower">
+        @if (o.activity.days.length) {
+          <section class="sc-card ws-chart" aria-labelledby="ws-chart-title">
+            <div class="sc-card__head">
+              <h2 class="sc-section-title" id="ws-chart-title">The last thirty days</h2>
+              <span class="sc-hint">Arrivals per day, Kampala time</span>
+            </div>
+            <div class="sc-card__body">
+              <sc-activity-chart [days]="o.activity.days" [series]="o.activity.series" />
+            </div>
+          </section>
+        }
+
+        @if (o.events; as e) {
+          <section class="sc-card ws-events" aria-labelledby="ws-events-title">
+            <div class="sc-card__head">
+              <h2 class="sc-section-title" id="ws-events-title">Coming up</h2>
+              <a class="sc-btn sc-btn--small" routerLink="/admin/events">Events</a>
+            </div>
+            @if (e.upcoming.length) {
+              <ul class="ws-events__list">
+                @for (event of e.upcoming; track event.id) {
+                  <li>
+                    <a [routerLink]="['/admin/events', event.id]">
+                      <span class="ws-events__title">{{ event.title }}</span>
+                      <span class="ws-events__when">{{ eventStart(event) }}</span>
+                      @if (event.capacity) {
+                        <span class="sc-bar__track" aria-hidden="true">
+                          <span [style.width.%]="fill(event)"></span>
+                        </span>
+                        <span class="ws-events__count">{{ event.confirmed }} of {{ event.capacity }} places taken</span>
+                      } @else {
+                        <span class="ws-events__count">{{ event.confirmed }} registered · no limit</span>
+                      }
+                    </a>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="sc-card__body sc-muted">No published events ahead.</p>
+            }
+          </section>
+        }
+      </div>
+    }
+
+    @if (!canApplicants() && !canMessages()) {
+      <p class="ws-none">Your role does not include applicants or messages. Everything you can see is in the menu on the left.</p>
+    }
+  </div>
+
+  @if (canApplicants() || canMessages()) {
+    <aside class="ws-side" #summaryPanel aria-labelledby="fs-title">
+      <sc-focus-summary [target]="focus()" [revision]="revision()" />
+    </aside>
+  }
+</div>
+
+<section class="sc-card ws-daybook" aria-labelledby="ws-daybook-title">
+  <div class="sc-card__head ws-daybook__head">
+    <h2 class="sc-section-title" id="ws-daybook-title" #daybookTitle tabindex="-1">Daybook</h2>
+    @if (kinds().length > 1) {
+      <div class="sc-segments" role="group" aria-label="Show">
+        <button type="button" class="sc-segment" [attr.aria-pressed]="filter() === null" (click)="choose(null)">Everything</button>
+        @for (kind of kinds(); track kind) {
+          <button type="button" class="sc-segment" [attr.aria-pressed]="filter() === kind" (click)="choose(kind)">
+            {{ kindLabel[kind].plural }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <sc-skeleton [lines]="8" />
+  } @else if (days().length === 0) {
+    <sc-empty title="The daybook is empty" icon="pi-book">
+      <p>When someone writes in, applies, registers or orders, it appears here the moment it arrives.</p>
+    </sc-empty>
+  } @else {
+    <div class="ws-days">
+      @for (day of days(); track day.heading) {
+        <section class="ws-day" [attr.aria-label]="day.heading">
+          <h3 class="ws-day__heading">{{ day.heading }}</h3>
+          <ol class="ws-lines">
+            @for (line of day.lines; track line.entry.kind + line.entry.id) {
+              <li>
+                <a class="ws-line" [routerLink]="line.link">
+                  <time class="ws-line__time" [attr.datetime]="line.entry.at" [title]="line.entry.at | when: 'full'">{{ line.time }}</time>
+                  <span [class]="'ws-line__kind ws-line__kind--' + line.entry.kind">{{ kindLabel[line.entry.kind].label }}</span>
+                  <span class="ws-line__text">
+                    <span class="ws-line__headline">{{ line.headline }}</span>
+                    <span class="ws-line__context">{{ line.context }}</span>
+                  </span>
+                  <sc-pill [label]="status(line.entry).label" [tone]="status(line.entry).tone" />
+                </a>
+              </li>
+            }
+          </ol>
+        </section>
+      }
+    </div>
+    @if (cursor()) {
+      <div class="sc-more">
+        <button type="button" class="sc-btn" [class.is-busy]="loadingMore()" (click)="more()">Earlier entries</button>
+      </div>
+    }
+  }
+</section>

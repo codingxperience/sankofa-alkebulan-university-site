@@ -3,7 +3,7 @@
 <div class="sc-frame">
   <header class="sc-topbar">
     <a class="sc-brand" routerLink="/admin">
-      <img ngSrc="/assets/design/crest-112.png" width="30" height="30" alt="" />
+      <img ngSrc="/assets/design/crest-112.png" width="32" height="32" alt="" />
       <div>
         <strong>Sankofa Alkebulan</strong>
         <span>Console</span>
@@ -24,8 +24,8 @@
   <div class="sc-scrim" [class.is-open]="menuOpen()" (click)="menuOpen.set(false)" aria-hidden="true"></div>
 
   <aside id="sc-rail" class="sc-rail" [class.is-open]="menuOpen()" aria-label="Console">
-    <a class="sc-brand" routerLink="/admin">
-      <img ngSrc="/assets/design/crest-112.png" width="38" height="38" alt="" priority />
+    <a class="sc-brand" routerLink="/admin" aria-label="Sankofa Alkebulan console, workspace">
+      <img ngSrc="/assets/design/crest-112.png" width="40" height="40" alt="" priority />
       <div>
         <strong>Sankofa Alkebulan</strong>
         <span>Console</span>
@@ -34,8 +34,8 @@
 
     <nav class="sc-nav" aria-label="Console sections">
       @for (group of groups(); track group.label) {
-        <div class="sc-nav__group">
-          <p class="sc-nav__label">{{ group.label }}</p>
+        <div class="sc-nav__group" role="group" [attr.aria-label]="group.label">
+          <p class="sc-nav__label" aria-hidden="true">{{ group.label }}</p>
           @for (link of group.links; track link.path) {
             <a
               class="sc-nav__link"
@@ -45,7 +45,7 @@
               ariaCurrentWhenActive="page"
             >
               <i [class]="'pi ' + link.icon" aria-hidden="true"></i>
-              {{ link.label }}
+              <span class="sc-nav__text">{{ link.label }}</span>
               @if (badge(link); as count) {
                 <span class="sc-nav__count"><span class="visually-hidden">, </span>{{ count }}<span class="visually-hidden"> waiting</span></span>
               }
@@ -55,13 +55,8 @@
       }
     </nav>
 
-    @if (session.me(); as me) {
+    @if (session.me()) {
       <div class="sc-me">
-        <span class="sc-avatar" aria-hidden="true">{{ me.name | initials }}</span>
-        <div>
-          <a class="sc-me__name" routerLink="/admin/account">{{ me.name }}</a>
-          <span class="sc-me__role">{{ roleLine() }}</span>
-        </div>
         <button type="button" class="sc-me__out" (click)="signOut()" aria-label="Sign out" title="Sign out">
           <i class="pi pi-sign-out" aria-hidden="true"></i>
         </button>
@@ -71,6 +66,53 @@
 
   <main id="sc-main" #main class="sc-main" tabindex="-1">
     <div class="sc-page">
+      <div class="sc-strip">
+        <div class="sc-strip__slot">
+          @if (slot.template(); as template) {
+            <ng-container [ngTemplateOutlet]="template" />
+          }
+        </div>
+
+        <div class="sc-strip__end">
+          @if (notices().length) {
+            <button
+              #bell
+              type="button"
+              class="sc-round"
+              popovertarget="sc-notices"
+              [attr.aria-label]="waiting() ? waiting() + ' things waiting on the team' : 'Nothing waiting'"
+            >
+              <i class="pi pi-bell" aria-hidden="true"></i>
+              @if (waiting()) {
+                <span class="sc-round__dot" aria-hidden="true"></span>
+              }
+            </button>
+            <div id="sc-notices" class="sc-pop" popover [scPopAnchor]="bell" align="end" role="dialog" aria-label="Waiting on the team">
+              <p class="sc-pop__title">Waiting on the team</p>
+              @if (waiting()) {
+                @for (notice of notices(); track notice.path) {
+                  @if (notice.count) {
+                    <a class="sc-pop__item" [routerLink]="notice.path" (click)="closeNotices()">
+                      <i [class]="'pi ' + notice.icon" aria-hidden="true"></i>
+                      <span>{{ notice.label }}</span>
+                      <strong>{{ notice.count }}</strong>
+                    </a>
+                  }
+                }
+              } @else {
+                <p class="sc-pop__empty">Nothing is waiting. New messages, applications and orders appear here.</p>
+              }
+            </div>
+          }
+
+          @if (session.me(); as me) {
+            <a class="sc-me-link" routerLink="/admin/account" [attr.aria-label]="'Your account: ' + me.name + (roleLine() ? ', ' + roleLine() : '')" [title]="me.name">
+              <span class="sc-avatar" aria-hidden="true">{{ me.name | initials }}</span>
+            </a>
+          }
+        </div>
+      </div>
+
       <router-outlet />
     </div>
   </main>

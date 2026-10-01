@@ -1,0 +1,51 @@
+<div class="ds" role="group" aria-label="Your day">
+  <div class="ds__lead">
+    <span class="ds__title">Your day</span>
+    <span class="ds__date"><i class="pi pi-calendar" aria-hidden="true"></i>{{ date() }}</span>
+  </div>
+
+  <div class="ds__track">
+    <div class="ds__past" [style.width.%]="nowPct()"></div>
+
+    @for (tick of ticks(); track tick.label) {
+      <span class="ds__tick" [style.left.%]="tick.pct" aria-hidden="true">{{ tick.label }}</span>
+    }
+
+    <span class="ds__now" [style.left.%]="nowPct()">
+      <span class="ds__now-label"><span class="visually-hidden">Now </span>{{ nowLabel() }}</span>
+    </span>
+
+    @for (slot of slots(); track slot.key) {
+      <span class="ds__slot" [style.left.%]="slot.pct">
+        @for (person of slot.people; track person.key) {
+          <a class="ds__person" [routerLink]="person.link" [attr.aria-label]="person.label" [title]="person.label">
+            <sc-face [name]="person.name" />
+          </a>
+        }
+        @if (slot.extra) {
+          <span class="ds__more">+{{ slot.extra }}<span class="visually-hidden"> more in that hour</span></span>
+        }
+      </span>
+    }
+
+    @for (mark of marks(); track mark.id) {
+      <a
+        class="ds__event"
+        [style.left.%]="mark.pct"
+        [routerLink]="['/admin/events', mark.id]"
+        [attr.aria-label]="'Event at ' + mark.time + ': ' + mark.title"
+        [title]="mark.time + ' · ' + mark.title"
+      >
+        <i class="pi pi-calendar" aria-hidden="true"></i>
+      </a>
+    }
+
+    @if (!slots().length && !marks().length) {
+      <span class="ds__quiet">Nothing has arrived yet today</span>
+    }
+  </div>
+
+  <button type="button" class="ds__go" (click)="open.emit()" aria-label="Go to the daybook" title="The daybook">
+    <i class="pi pi-arrow-up-right" aria-hidden="true"></i>
+  </button>
+</div>

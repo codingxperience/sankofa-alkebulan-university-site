@@ -15,11 +15,12 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 10px;
-  min-height: 82px;
-  padding: 12px 12px 10px;
-  border: 1px solid var(--sc-line);
-  border-radius: 12px;
-  background: #fff;
+  min-height: 88px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--sc-line-2);
+  border-radius: 20px;
+  background: var(--sc-card);
+  color: var(--sc-ink);
   text-align: left;
   cursor: pointer;
   transition:
@@ -27,30 +28,21 @@
     box-shadow 160ms ease,
     transform 160ms ease;
 
-  &::before {
-    content: '';
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    top: -1px;
-    height: 2px;
-    border-radius: 0 0 2px 2px;
-    background: transparent;
-    transition: background 160ms ease;
-  }
-
   &:hover {
-    border-color: #d8cfbd;
-    box-shadow: var(--sc-shadow);
+    border-color: var(--sc-line);
+    background: var(--sc-card-2);
   }
 
+  /* The chosen office wears the workspace's gold. */
   &[aria-pressed='true'] {
-    border-color: #cdb984;
-    background: #fffcf4;
-    box-shadow: var(--sc-shadow);
+    border-color: transparent;
+    background: linear-gradient(165deg, #f2cf72, #e1b03e);
+    color: var(--sc-on-gold);
 
-    &::before {
-      background: var(--sc-gold);
+    .ib-door__name,
+    .ib-door__count,
+    .ib-door__count.is-zero {
+      color: var(--sc-on-gold);
     }
   }
 }
@@ -63,14 +55,14 @@
 }
 
 .ib-door__count {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 300;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--sc-ink);
 
   &.is-zero {
-    color: #a4afba;
+    color: #6c7d8f;
   }
 }
 
@@ -124,19 +116,19 @@
   position: relative;
   display: grid;
   gap: 3px;
-  padding: 12px 12px 11px;
-  border-radius: 10px;
+  padding: 13px 14px 12px;
+  border-radius: 18px;
   color: inherit;
   text-decoration: none;
   transition: background 140ms ease;
 
   &:hover {
-    background: #fbf9f4;
+    background: rgba(255, 255, 255, 0.04);
   }
 
   &.is-open {
-    background: #f6f1e5;
-    box-shadow: inset 3px 0 0 var(--sc-gold);
+    background: rgba(212, 162, 47, 0.13);
+    box-shadow: inset 3px 0 0 var(--sc-gold-bright);
   }
 }
 

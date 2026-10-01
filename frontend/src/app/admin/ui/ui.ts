@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  Directive,
   ElementRef,
   computed,
   effect,
@@ -10,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { AgoPipe, WhenPipe } from '../core/format';
+import { AgoPipe, WhenPipe, initials } from '../core/format';
 import { Confirmations, Toasts } from '../core/feedback';
 import type { Activity, Note } from '../core/types';
 import type { Tone } from '../core/vocabulary';
@@ -25,6 +26,29 @@ import type { Tone } from '../core/vocabulary';
 export class Pill {
   readonly label = input.required<string>();
   readonly tone = input<Tone>('muted');
+}
+
+/**
+ * A person shown by their initials, on one of six warm tones picked from
+ * their name, so the same person always wears the same colour. Decorative:
+ * the name itself is always written beside it.
+ */
+@Component({
+  selector: 'sc-face',
+  template: '{{ letters() }}',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'sc-face', 'aria-hidden': 'true', '[attr.data-tone]': 'tone()' },
+})
+export class Face {
+  readonly name = input<string | null | undefined>('');
+  protected readonly letters = computed(() => initials(this.name()));
+  protected readonly tone = computed(() => {
+    let hash = 0;
+    for (const char of (this.name() ?? '').toLowerCase()) {
+      hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+    }
+    return (hash % 6) + 1;
+  });
 }
 
 /** What a list shows when there is nothing in it — said plainly, with what to do next. */
@@ -269,5 +293,43 @@ export class Modal {
         dialog.close();
       }
     });
+  }
+}
+
+/**
+ * Places a native popover just below the control that opens it, lined up
+ * with its start or end edge, and closes it if the page scrolls away. The
+ * popover API itself brings Escape, outside clicks and focus return.
+ */
+@Directive({
+  selector: '[scPopAnchor]',
+  host: { '(beforetoggle)': 'place($event)', '(window:scroll)': 'hide()', '(window:resize)': 'hide()' },
+})
+export class PopAnchor {
+  readonly scPopAnchor = input.required<HTMLElement>();
+  readonly align = input<'start' | 'end'>('start');
+  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected place(event: Event): void {
+    if ((event as ToggleEvent).newState !== 'open') {
+      return;
+    }
+    const anchor = this.scPopAnchor().getBoundingClientRect();
+    const style = this.element.nativeElement.style;
+    style.top = `${Math.round(anchor.bottom + 10)}px`;
+    if (this.align() === 'end') {
+      style.left = 'auto';
+      style.right = `${Math.max(12, Math.round(window.innerWidth - anchor.right))}px`;
+    } else {
+      style.right = 'auto';
+      style.left = `${Math.max(12, Math.round(anchor.left))}px`;
+    }
+  }
+
+  protected hide(): void {
+    const popover = this.element.nativeElement;
+    if (popover.matches(':popover-open')) {
+      popover.hidePopover();
+    }
   }
 }

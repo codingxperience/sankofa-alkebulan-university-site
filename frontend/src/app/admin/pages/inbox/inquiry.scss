@@ -20,8 +20,8 @@
 }
 
 .iq-subject {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.018em;
   overflow-wrap: anywhere;
@@ -57,7 +57,7 @@
   gap: 12px;
   padding: 14px 24px;
   border-bottom: 1px solid var(--sc-line-2);
-  background: #fcfbf8;
+  background: rgba(255, 255, 255, 0.025);
   transition: opacity 160ms ease;
 
   .sc-field {
@@ -92,8 +92,8 @@
 
 .iq-details {
   margin-top: 20px;
-  padding: 14px 16px;
-  border-radius: 10px;
+  padding: 16px 18px;
+  border-radius: 18px;
   background: var(--sc-paper);
 }
 
@@ -102,9 +102,9 @@
   gap: 12px;
   margin: 0 24px 8px;
   padding: 14px;
-  border: 1px solid var(--sc-line);
-  border-radius: 12px;
-  background: #fcfbf8;
+  border: 1px solid var(--sc-line-2);
+  border-radius: 22px;
+  background: var(--sc-paper);
 }
 
 .iq-composer__tabs {
@@ -115,9 +115,9 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    padding: 6px 12px;
+    padding: 7px 14px;
     border: 0;
-    border-radius: 8px;
+    border-radius: 999px;
     background: transparent;
     color: var(--sc-ink-3);
     font-size: 13px;
@@ -133,9 +133,8 @@
     }
 
     &[aria-pressed='true'] {
-      background: #fff;
-      color: var(--sc-ink);
-      box-shadow: 0 0 0 1px var(--sc-line);
+      background: var(--sc-white);
+      color: var(--sc-on-white);
     }
   }
 }
@@ -174,11 +173,11 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 10px;
-    border-radius: 8px;
+    padding: 9px 12px;
+    border-radius: 14px;
 
     &:hover {
-      background: #fbf9f4;
+      background: rgba(255, 255, 255, 0.04);
     }
   }
 
