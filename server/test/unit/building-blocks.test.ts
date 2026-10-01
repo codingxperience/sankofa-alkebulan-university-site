@@ -6,6 +6,7 @@ import { hashPassword, needsRehash, verifyPassword } from '../../src/common/cryp
 import { randomCode, reference } from '../../src/common/crypto/references';
 import { hashToken, hmac, safeEqual } from '../../src/common/crypto/tokens';
 import { toCsv } from '../../src/common/http/csv';
+import { describeFailure } from '../../src/common/failure';
 import { cleanEnvValue, loadConfig } from '../../src/config/env';
 import { registrationState } from '../../src/events/event-options';
 import { cleanArticleHtml, normaliseAssetPath, plainText, readingMinutes } from '../../src/journal/article-html';
@@ -164,5 +165,24 @@ describe('settings pasted into a hosting dashboard', () => {
     });
     assert.equal(config.database.url, 'postgresql://u:p@db.example.org:6543/postgres?pgbouncer=true');
     assert.equal(config.secret, '0123456789abcdef0123456789abcdef');
+  });
+});
+
+describe('failure summaries shown when the API cannot start', () => {
+  it('keeps what went wrong and hides addresses that carry credentials', () => {
+    const summary = describeFailure(new Error('connect failed for postgresql://postgres.abc:s3cret@aws-0-eu-west-1.pooler.supabase.com:6543/postgres'));
+    assert.equal(summary.name, 'Error');
+    assert.equal(summary.message, 'connect failed for [address hidden]');
+    assert.ok(!JSON.stringify(summary).includes('s3cret'));
+  });
+
+  it('keeps the missing module and drops the chain of files that required it', () => {
+    const error = Object.assign(new Error("Cannot find module 'left-pad'\nRequire stack:\n- /var/task/server/dist/a.js"), { code: 'MODULE_NOT_FOUND' });
+    assert.deepEqual(describeFailure(error), { name: 'Error', message: "Cannot find module 'left-pad'", code: 'MODULE_NOT_FOUND' });
+  });
+
+  it('describes things thrown that are not errors', () => {
+    assert.equal(describeFailure('plain text').message, 'plain text');
+    assert.equal(describeFailure(undefined).message, 'Unknown failure');
   });
 });
