@@ -46,7 +46,7 @@ export class StaffAuthController {
   /** What the sign-in screen needs to know before anyone is signed in. */
   @Get('state')
   async state() {
-    return { setupAvailable: await this.auth.setupAvailable() };
+    return this.auth.setupState();
   }
 
   @Post('setup')

@@ -32,7 +32,10 @@ const EnvSchema = z
     DATABASE_POOL_SIZE: z.coerce.number().int().min(1).max(20).default(3),
     DATABASE_CA_CERT: optionalString,
 
-    /** Signs and peppers everything the API derives: hashes, unsubscribe links. */
+    /**
+     * Key for the one-way hashes of visitors' IP addresses (rate limits, spotting
+     * repeat submissions), so raw addresses are never stored.
+     */
     APP_SECRET: z.string().min(32, 'APP_SECRET must be at least 32 characters'),
 
     /** Public origin of the site, e.g. https://sankofa.university. */

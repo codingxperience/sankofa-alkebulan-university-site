@@ -30,6 +30,10 @@ export class SignIn {
 
   protected readonly mode = signal<Mode>('sign-in');
   protected readonly setupAvailable = signal(false);
+  /** No account exists yet and the server has no ADMIN_SETUP_KEY to create one with. */
+  protected readonly awaitingSetupKey = signal(false);
+  /** The console's server could not be reached, so signing in cannot work either. */
+  protected readonly unreachable = signal('');
   protected readonly busy = signal(false);
   protected readonly error = signal('');
   protected readonly fields = signal<Record<string, string>>({});
@@ -54,14 +58,20 @@ export class SignIn {
 
   constructor() {
     this.api
-      .get<{ setupAvailable: boolean }>('/admin/auth/state')
+      .get<{ setupAvailable: boolean; awaitingSetupKey: boolean }>('/admin/auth/state')
       .then((state) => {
         this.setupAvailable.set(state.setupAvailable);
+        this.awaitingSetupKey.set(state.awaitingSetupKey);
         if (state.setupAvailable) {
           this.switchTo('setup');
         }
       })
-      .catch(() => undefined);
+      .catch((error: unknown) => {
+        const failure = ApiError.from(error);
+        this.unreachable.set(
+          failure.status === 0 ? failure.message : 'The console’s server is not responding properly, so signing in will not work yet.',
+        );
+      });
   }
 
   protected switchTo(mode: Mode): void {

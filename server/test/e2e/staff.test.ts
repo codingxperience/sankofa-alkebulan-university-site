@@ -18,7 +18,7 @@ describe('staff accounts', () => {
 
   it('lets the first owner set up the console exactly once', async () => {
     const client = new Client(api.url);
-    assert.deepEqual((await client.get('/admin/auth/state')).data, { setupAvailable: true });
+    assert.deepEqual((await client.get('/admin/auth/state')).data, { setupAvailable: true, awaitingSetupKey: false });
 
     const wrongKey = await client.post('/admin/auth/setup', { setupKey: 'nope', name: 'First Owner', email: 'owner@example.org', password: STRONG_PASSWORD });
     assert.equal(wrongKey.status, 401);
@@ -41,7 +41,23 @@ describe('staff accounts', () => {
       password: STRONG_PASSWORD,
     });
     assert.equal(again.status, 410);
-    assert.deepEqual((await client.get('/admin/auth/state')).data, { setupAvailable: false });
+    assert.deepEqual((await client.get('/admin/auth/state')).data, { setupAvailable: false, awaitingSetupKey: false });
+  });
+
+  it('says when the first account is only waiting for a setup key', async () => {
+    const key = process.env.ADMIN_SETUP_KEY;
+    delete process.env.ADMIN_SETUP_KEY;
+    const keyless = await startApi();
+    try {
+      await resetDatabase(keyless.prisma);
+      const client = new Client(keyless.url);
+      assert.deepEqual((await client.get('/admin/auth/state')).data, { setupAvailable: false, awaitingSetupKey: true });
+      await signedInStaff(keyless.prisma, keyless.url, 'owner@example.org', ['OWNER']);
+      assert.deepEqual((await client.get('/admin/auth/state')).data, { setupAvailable: false, awaitingSetupKey: false }, 'silent once anyone has an account');
+    } finally {
+      process.env.ADMIN_SETUP_KEY = key;
+      await keyless.close();
+    }
   });
 
   it('locks an account after repeated wrong passwords', async () => {

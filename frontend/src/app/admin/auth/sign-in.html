@@ -8,6 +8,24 @@
         <p>For university staff. Use the email address your invitation was sent to.</p>
 
         <form class="sc-form" [formGroup]="signInForm" (ngSubmit)="signIn()" novalidate>
+          @if (unreachable()) {
+            <div class="sc-alert" role="alert">
+              <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+              <span>
+                {{ unreachable() }} If you look after this site, open <a href="/api/health">/api/health</a> to see what the server
+                reports, and check the latest deployment in Vercel.
+              </span>
+            </div>
+          }
+          @if (awaitingSetupKey()) {
+            <div class="sc-alert sc-alert--gold" role="status">
+              <i class="pi pi-key" aria-hidden="true"></i>
+              <span>
+                No one has an account yet. To create the first one, add <code>ADMIN_SETUP_KEY</code> in Vercel
+                (Settings → Environment Variables, for Production), redeploy, then reload this page.
+              </span>
+            </div>
+          }
           @if (ended && !error()) {
             <div class="sc-alert sc-alert--info" role="status">
               <i class="pi pi-clock" aria-hidden="true"></i>
