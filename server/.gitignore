@@ -6,3 +6,6 @@ src/generated/
 .env.*
 !.env.example
 *.log
+
+# Built by scripts/bundle-vendor.mjs
+vendor/*.cjs

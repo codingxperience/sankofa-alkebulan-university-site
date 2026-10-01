@@ -1,4 +1,6 @@
-import sanitizeHtml from 'sanitize-html';
+// The bundled copy (scripts/bundle-vendor.mjs): the published package cannot be
+// loaded on Vercel, because its HTML parser is an ES module.
+import sanitizeHtml from '#sanitize-html';
 
 /**
  * Article bodies are HTML written in the console or imported from the old

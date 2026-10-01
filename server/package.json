@@ -7,16 +7,23 @@
   "engines": {
     "node": ">=22"
   },
+  "imports": {
+    "#sanitize-html": {
+      "types": "./vendor/sanitize-html.d.cts",
+      "default": "./vendor/sanitize-html.cjs"
+    }
+  },
   "scripts": {
-    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "vendor": "node scripts/bundle-vendor.mjs",
+    "build": "prisma generate && npm run vendor && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "dev": "tsc -p tsconfig.build.json && node --env-file-if-exists=.env --enable-source-maps dist/main.js",
+    "dev": "npm run vendor && tsc -p tsconfig.build.json && node --env-file-if-exists=.env --enable-source-maps dist/main.js",
     "start": "node --enable-source-maps dist/main.js",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "node --env-file-if-exists=.env --enable-source-maps dist/cli/seed.js",
     "staff:create-owner": "node --env-file-if-exists=.env --enable-source-maps dist/cli/create-owner.js",
-    "test": "tsc -p tsconfig.json && node --env-file-if-exists=.env.test --enable-source-maps --test --test-concurrency=1 \"dist-test/test/**/*.test.js\""
+    "test": "npm run vendor && tsc -p tsconfig.json && node --env-file-if-exists=.env.test --enable-source-maps --test --test-concurrency=1 \"dist-test/test/**/*.test.js\""
   },
   "dependencies": {
     "@nestjs/common": "11.2.7",
@@ -38,6 +45,7 @@
     "@types/node": "22.20.4",
     "@types/pg": "8.23.1",
     "@types/sanitize-html": "2.16.2",
+    "esbuild": "0.28.2",
     "prisma": "7.10.0",
     "typescript": "5.9.3"
   },
