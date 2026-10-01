@@ -1,0 +1,53 @@
+.pr-table {
+  /* Fixed columns, so every product group lines up with the one above it. */
+  table-layout: fixed;
+  min-width: 860px;
+
+  .pr-col-product {
+    width: auto;
+  }
+
+  .pr-col-status {
+    width: 190px;
+  }
+
+  .pr-col-number {
+    width: 140px;
+  }
+
+  .pr-col-sold {
+    width: 96px;
+  }
+
+  .pr-col-actions {
+    width: 160px;
+  }
+
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .sc-select {
+    width: 100%;
+  }
+
+  tr.is-changed td {
+    background: #fffcf4;
+  }
+}
+
+.pr-input {
+  width: 110px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.pr-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  min-width: 132px;
+}

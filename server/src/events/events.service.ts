@@ -47,8 +47,8 @@ export interface RegistrationInput {
 export interface EventInput {
   slug: string;
   title: string;
-  summary?: string;
-  venue?: string;
+  summary?: string | null;
+  venue?: string | null;
   timezone: string;
   startsAt: Date;
   endsAt?: Date | null;

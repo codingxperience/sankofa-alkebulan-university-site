@@ -1,0 +1,171 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow"><a routerLink="/admin/journal">Journal</a></p>
+    <h1 class="sc-title">{{ article()?.title || 'New article' }}</h1>
+    @if (article(); as a) {
+      <p class="sc-lede">
+        Last saved {{ a.updatedAt | ago }}{{ a.updatedBy ? ' by ' + a.updatedBy.name : '' }} · {{ a.readingMinutes }} min read
+      </p>
+    }
+  </div>
+  <div class="sc-head__actions">
+    @if (article(); as a) {
+      @if (scheduled()) {
+        <sc-pill [label]="statusTerms.SCHEDULED.label" [tone]="statusTerms.SCHEDULED.tone" />
+      } @else {
+        <sc-pill [label]="statusTerms[a.status].label" [tone]="statusTerms[a.status].tone" />
+      }
+      @if (live()) {
+        <a class="sc-btn sc-btn--small" [href]="'/articles/' + a.slug" target="_blank" rel="noopener">
+          View on the site <i class="pi pi-external-link" aria-hidden="true"></i>
+        </a>
+      }
+    }
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="sc-card"><sc-skeleton [lines]="12" /></div>
+} @else {
+  @if (stale()) {
+    <div class="sc-alert sc-alert--gold ae-stale" role="alert">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <span>
+        {{ error() }}
+        <button type="button" class="sc-btn sc-btn--small" (click)="reloadLatest()">Load the latest version</button>
+        <span class="sc-hint">Copy anything you want to keep first — loading replaces what is on screen.</span>
+      </span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="sc-split">
+      <div class="sc-stack">
+        <section class="sc-card sc-card__body sc-form" aria-label="Article">
+          <div class="sc-field">
+            <label class="sc-label" for="ae-title">Title</label>
+            <input id="ae-title" class="sc-input ae-title" formControlName="title" [attr.aria-invalid]="!!fields()['title']" />
+            @if (fields()['title']; as message) {
+              <span class="sc-error">{{ message }}</span>
+            }
+          </div>
+          <div class="sc-row">
+            <div class="sc-field">
+              <label class="sc-label" for="ae-slug">Web address</label>
+              <div class="ae-slug">
+                <span class="sc-mono" aria-hidden="true">/articles/</span>
+                <input id="ae-slug" class="sc-input sc-mono" formControlName="slug" (input)="slugTyped()" spellcheck="false"
+                  [attr.aria-invalid]="!!fields()['slug'] || (form.controls.slug.touched && form.controls.slug.invalid)" />
+              </div>
+              @if (fields()['slug']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              } @else if (form.controls.slug.touched && form.controls.slug.invalid) {
+                <span class="sc-error">Use lowercase letters, numbers and single hyphens.</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ae-author">Author</label>
+              <input id="ae-author" class="sc-input" formControlName="authorName" [attr.aria-invalid]="!!fields()['authorName']" />
+            </div>
+          </div>
+          <div class="sc-field">
+            <label class="sc-label" for="ae-excerpt">Excerpt <small>leave empty to use the opening of the article</small></label>
+            <textarea id="ae-excerpt" class="sc-textarea" rows="3" formControlName="excerpt"></textarea>
+          </div>
+
+          <div class="sc-field">
+            <div class="ae-body-head">
+              <label class="sc-label" for="ae-body">Body <small>HTML: paragraphs, headings, lists, links, quotes and images</small></label>
+              <div class="sc-segments" role="group" aria-label="Body view">
+                <button type="button" class="sc-segment" [attr.aria-pressed]="!preview()" (click)="preview.set(false)">Write</button>
+                <button type="button" class="sc-segment" [attr.aria-pressed]="preview()" (click)="preview.set(true)">Preview</button>
+              </div>
+            </div>
+            @if (preview()) {
+              <div class="sc-prose" [innerHTML]="form.controls.bodyHtml.value"></div>
+              <span class="sc-hint">Scripts, styles and unknown tags are removed when the article is saved.</span>
+            } @else {
+              <textarea id="ae-body" class="sc-textarea sc-textarea--code" formControlName="bodyHtml" spellcheck="true"
+                [attr.aria-invalid]="!!fields()['bodyHtml']"></textarea>
+            }
+            @if (fields()['bodyHtml']; as message) {
+              <span class="sc-error">{{ message }}</span>
+            }
+          </div>
+        </section>
+      </div>
+
+      <aside class="sc-stack">
+        <section class="sc-card" aria-labelledby="ae-publishing">
+          <div class="sc-card__head"><h2 class="sc-section-title" id="ae-publishing">Publishing</h2></div>
+          <div class="sc-card__body sc-form">
+            <div class="sc-field">
+              <label class="sc-label" for="ae-status">Status</label>
+              <select id="ae-status" class="sc-select" formControlName="status">
+                <option value="DRAFT">Draft — not on the website</option>
+                <option value="PUBLISHED">Published</option>
+                <option value="ARCHIVED">Archived — taken down, link kept on record</option>
+              </select>
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ae-date">Publication time <small>{{ zoneName }}</small></label>
+              <input id="ae-date" class="sc-input" type="datetime-local" formControlName="publishedAt" />
+              <span class="sc-hint">Empty means the moment you publish. A future time schedules it.</span>
+            </div>
+          </div>
+          @if (canManage()) {
+            <div class="sc-card__foot ae-foot">
+              @if (error() && !stale()) {
+                <p class="sc-error ae-error" role="alert">{{ error() }}</p>
+              }
+              @if (deletable()) {
+                <button type="button" class="sc-btn sc-btn--danger sc-btn--small" (click)="remove()">Delete draft</button>
+              }
+              <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="saving()" [disabled]="saving()">
+                {{ article() ? 'Save' : 'Create' }}
+              </button>
+            </div>
+          }
+        </section>
+
+        <section class="sc-card" aria-labelledby="ae-topics">
+          <div class="sc-card__head"><h2 class="sc-section-title" id="ae-topics">Topics and image</h2></div>
+          <div class="sc-card__body sc-form">
+            <div class="sc-field">
+              <label class="sc-label" for="ae-categories">Categories <small>comma-separated</small></label>
+              <input id="ae-categories" class="sc-input" formControlName="categories" placeholder="Research, Heritage" />
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ae-tags">Tags <small>comma-separated</small></label>
+              <input id="ae-tags" class="sc-input" formControlName="tags" placeholder="ubuntu, archives" />
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ae-cover">Cover image <small>site path or https:// address</small></label>
+              <input id="ae-cover" class="sc-input sc-mono" formControlName="coverImageUrl" spellcheck="false"
+                placeholder="/assets/journal/cover.jpg" [attr.aria-invalid]="!!fields()['coverImageUrl']" />
+              @if (fields()['coverImageUrl']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              }
+              @if (article()?.coverImageUrl; as cover) {
+                <img class="ae-cover" [src]="cover" alt="Current cover image" loading="lazy" />
+              }
+            </div>
+          </div>
+        </section>
+
+        @if (article(); as a) {
+          <section class="sc-card sc-card__body">
+            <dl class="sc-facts">
+              <dt>Created</dt>
+              <dd>{{ a.createdAt | when: 'date' }}{{ a.createdBy ? ' by ' + a.createdBy.name : '' }}</dd>
+              @if (a.publishedAt) {
+                <dt>{{ scheduled() ? 'Goes live' : 'Published' }}</dt>
+                <dd>{{ a.publishedAt | when: 'full' }}</dd>
+              }
+            </dl>
+          </section>
+        }
+      </aside>
+    </div>
+  </form>
+}

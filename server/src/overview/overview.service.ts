@@ -15,7 +15,11 @@ interface DaybookRow {
   title: string | null;
   detail: string | null;
   status: string;
+  /** The record this one belongs to — for a registration, its event. */
+  parent: string | null;
 }
+
+const KAMPALA_DATE = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Kampala', year: 'numeric', month: '2-digit', day: '2-digit' });
 
 const KIND_PERMISSION: Record<DaybookKind, string> = {
   inquiry: 'inquiries.read',
@@ -66,13 +70,21 @@ export class OverviewService {
               where: { status: 'PUBLISHED', startsAt: { gte: now } },
               orderBy: { startsAt: 'asc' },
               take: 3,
-              select: { id: true, title: true, startsAt: true, capacity: true, _count: { select: { registrations: { where: { status: 'CONFIRMED' } } } } },
+              select: {
+                id: true,
+                title: true,
+                startsAt: true,
+                timezone: true,
+                capacity: true,
+                _count: { select: { registrations: { where: { status: 'CONFIRMED' } } } },
+              },
             })
             .then((events) => ({
               upcoming: events.map((event) => ({
                 id: event.id,
                 title: event.title,
                 startsAt: event.startsAt,
+                timezone: event.timezone,
                 capacity: event.capacity,
                 confirmed: event._count.registrations,
               })),
@@ -106,32 +118,32 @@ export class OverviewService {
     if (kinds.length === 0) {
       return { days: [], series: {} };
     }
+    // Every branch names its columns: any one of them may be the first in the union.
     const sources: Record<DaybookKind, Prisma.Sql> = {
       inquiry: Prisma.sql`SELECT 'inquiry' AS kind, "created_at" AS at FROM ${table('inquiries')} WHERE "created_at" >= now() - make_interval(days => ${days})`,
-      application: Prisma.sql`SELECT 'application', "submitted_at" FROM ${table('applications')} WHERE "submitted_at" >= now() - make_interval(days => ${days})`,
-      registration: Prisma.sql`SELECT 'registration', "created_at" FROM ${table('event_registrations')} WHERE "created_at" >= now() - make_interval(days => ${days})`,
-      order: Prisma.sql`SELECT 'order', "created_at" FROM ${table('orders')} WHERE "created_at" >= now() - make_interval(days => ${days})`,
+      application: Prisma.sql`SELECT 'application' AS kind, "submitted_at" AS at FROM ${table('applications')} WHERE "submitted_at" >= now() - make_interval(days => ${days})`,
+      registration: Prisma.sql`SELECT 'registration' AS kind, "created_at" AS at FROM ${table('event_registrations')} WHERE "created_at" >= now() - make_interval(days => ${days})`,
+      order: Prisma.sql`SELECT 'order' AS kind, "created_at" AS at FROM ${table('orders')} WHERE "created_at" >= now() - make_interval(days => ${days})`,
     };
     const union = Prisma.join(kinds.map((kind) => sources[kind]), ' UNION ALL ');
-    const rows = await this.prisma.$queryRaw<Array<{ day: Date; kind: DaybookKind; count: bigint }>>`
-      SELECT date_trunc('day', at AT TIME ZONE 'Africa/Kampala') AS day, kind, count(*) AS count
+    // The day is returned as text so no driver or server time zone can shift it.
+    const rows = await this.prisma.$queryRaw<Array<{ day: string; kind: DaybookKind; count: bigint }>>`
+      SELECT to_char(at AT TIME ZONE 'Africa/Kampala', 'YYYY-MM-DD') AS day, kind, count(*) AS count
       FROM (${union}) AS arrivals
       GROUP BY 1, 2
     `;
     const labels: string[] = [];
-    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Kampala' }));
+    // Today's date in Kampala ("en-CA" writes YYYY-MM-DD), then whole days back from it in UTC arithmetic.
+    const [year, month, day] = KAMPALA_DATE.format(new Date()).split('-').map(Number);
     for (let i = days - 1; i >= 0; i -= 1) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      labels.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+      labels.push(new Date(Date.UTC(year, month - 1, day - i)).toISOString().slice(0, 10));
     }
     const series: Partial<Record<DaybookKind, number[]>> = {};
     for (const kind of kinds) {
       series[kind] = labels.map(() => 0);
     }
     for (const row of rows) {
-      const label = row.day.toISOString().slice(0, 10);
-      const index = labels.indexOf(label);
+      const index = labels.indexOf(row.day);
       if (index >= 0 && series[row.kind]) {
         series[row.kind]![index] = Number(row.count);
       }
@@ -157,20 +169,24 @@ export class OverviewService {
       }
       after = Prisma.sql`WHERE (at, id) < (${at}::timestamptz, ${id}::uuid)`;
     }
+    // Every branch names its columns: whichever kinds this person may read, any one of them may come first.
     const sources: Record<DaybookKind, Prisma.Sql> = {
       inquiry: Prisma.sql`
-        SELECT 'inquiry' AS kind, "id", "created_at" AS at, "reference" AS ref, "name" AS who,
-               "subject" AS title, "office"::text AS detail, "status"::text AS status
+        SELECT 'inquiry' AS kind, "id" AS id, "created_at" AS at, "reference" AS ref, "name" AS who,
+               "subject" AS title, "office"::text AS detail, "status"::text AS status, NULL::uuid AS parent
         FROM ${table('inquiries')} WHERE "status" <> 'SPAM'`,
       application: Prisma.sql`
-        SELECT 'application', "id", "submitted_at", "reference", concat_ws(' ', "given_name", "family_name"),
-               "first_choice", "pathway"::text, "status"::text
+        SELECT 'application' AS kind, "id" AS id, "submitted_at" AS at, "reference" AS ref,
+               concat_ws(' ', "given_name", "family_name") AS who, "first_choice" AS title, "pathway"::text AS detail,
+               "status"::text AS status, NULL::uuid AS parent
         FROM ${table('applications')} WHERE "submitted_at" IS NOT NULL`,
       registration: Prisma.sql`
-        SELECT 'registration', r."id", r."created_at", r."code", r."name", e."title", r."attendance_mode", r."status"::text
+        SELECT 'registration' AS kind, r."id" AS id, r."created_at" AS at, r."code" AS ref, r."name" AS who,
+               e."title" AS title, r."attendance_mode" AS detail, r."status"::text AS status, e."id" AS parent
         FROM ${table('event_registrations')} r JOIN ${table('events')} e ON e."id" = r."event_id"`,
       order: Prisma.sql`
-        SELECT 'order', "id", "created_at", "number", "customer_name", NULL, "total_cents"::text, "status"::text
+        SELECT 'order' AS kind, "id" AS id, "created_at" AS at, "number" AS ref, "customer_name" AS who,
+               NULL::text AS title, "total_cents"::text AS detail, "status"::text AS status, NULL::uuid AS parent
         FROM ${table('orders')}`,
     };
     const union = Prisma.join(allowed.map((kind) => sources[kind]), ' UNION ALL ');

@@ -1,0 +1,40 @@
+.ac-devices {
+  padding: 6px 8px 10px;
+
+  li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+
+    & + li {
+      border-top: 1px solid var(--sc-line-2);
+    }
+  }
+
+  i {
+    color: var(--sc-ink-3);
+  }
+
+  strong {
+    font-weight: 500;
+  }
+}
+
+.ac-current {
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--sc-done-bg);
+  color: var(--sc-done-fg);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.ac-note {
+  justify-content: flex-start;
+  font-size: 12.5px;
+  color: var(--sc-ink-3);
+}

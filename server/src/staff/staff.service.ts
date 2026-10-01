@@ -130,7 +130,7 @@ export class StaffService {
       const added = input.roles.filter((role) => !member.roles.includes(role));
       this.assertMayGrant(actor, [...added, ...removed]);
     }
-    if (member.roles.some((role) => PRIVILEGED_ROLES.includes(role)) && !actor.roles.includes('OWNER')) {
+    if (!self && member.roles.some((role) => PRIVILEGED_ROLES.includes(role)) && !actor.roles.includes('OWNER')) {
       throw forbidden('Only an owner can change an administrator or owner account.', 'owner_required');
     }
 
@@ -175,6 +175,26 @@ export class StaffService {
       entityType: 'staff',
       entityId: id,
       summary: `${actor.name} updated ${member.name}: ${changes.join('; ') || 'no changes'}.`,
+    });
+    return present(updated);
+  }
+
+  /** Anyone may correct how their own name and title appear; roles and offices stay with administrators. */
+  async updateProfile(actor: StaffPrincipal, input: { name?: string; title?: string | null }) {
+    const member = await this.prisma.staffMember.findUniqueOrThrow({ where: { id: actor.id } });
+    const changes: string[] = [];
+    if (input.name !== undefined && input.name !== member.name) changes.push(`name → ${input.name}`);
+    if (input.title !== undefined && input.title !== member.title) changes.push(`title → ${input.title ?? 'none'}`);
+    if (changes.length === 0) {
+      return present(member);
+    }
+    const updated = await this.prisma.staffMember.update({ where: { id: actor.id }, data: { name: input.name, title: input.title } });
+    await this.audit.record({
+      actor: actorOf(actor),
+      action: 'staff.profile_updated',
+      entityType: 'staff',
+      entityId: actor.id,
+      summary: `${member.name} updated their profile: ${changes.join('; ')}.`,
     });
     return present(updated);
   }

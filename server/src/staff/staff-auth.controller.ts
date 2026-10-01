@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Patch, Post, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { notFound } from '../common/http/errors';
@@ -9,6 +9,8 @@ import { ROLE_LABELS } from './permissions';
 import { SessionsService, type StaffPrincipal } from './sessions.service';
 import { StaffAuthService } from './staff-auth.service';
 import { CurrentStaff, StaffOnly } from './staff.guard';
+import { ProfileBody } from './staff.schemas';
+import { StaffService } from './staff.service';
 
 const password = z.string().min(1, 'Password is required.').max(256, 'That password is too long.');
 const token = z.string().min(20).max(100);
@@ -38,6 +40,7 @@ export class StaffAuthController {
   constructor(
     private readonly auth: StaffAuthService,
     private readonly sessions: SessionsService,
+    private readonly staff: StaffService,
   ) {}
 
   /** What the sign-in screen needs to know before anyone is signed in. */
@@ -85,6 +88,14 @@ export class StaffAuthController {
   @StaffOnly()
   me(@CurrentStaff() staff: StaffPrincipal) {
     return describeStaff(staff);
+  }
+
+  @Patch('me')
+  @StaffOnly()
+  @RateLimit({ bucket: 'staff.profile', limit: 20, windowSeconds: 600 })
+  async updateProfile(@CurrentStaff() staff: StaffPrincipal, @Body(validate(ProfileBody)) body: z.infer<typeof ProfileBody>) {
+    await this.staff.updateProfile(staff, body);
+    return describeStaff({ ...staff, ...(body.name ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title } : {}) });
   }
 
   @Post('password')

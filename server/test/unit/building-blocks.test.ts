@@ -7,7 +7,7 @@ import { randomCode, reference } from '../../src/common/crypto/references';
 import { hashToken, hmac, safeEqual } from '../../src/common/crypto/tokens';
 import { toCsv } from '../../src/common/http/csv';
 import { registrationState } from '../../src/events/event-options';
-import { cleanArticleHtml, normaliseAssetPath } from '../../src/journal/article-html';
+import { cleanArticleHtml, normaliseAssetPath, plainText, readingMinutes } from '../../src/journal/article-html';
 import { permissionsFor } from '../../src/staff/permissions';
 import { assertStrongPassword } from '../../src/staff/password-policy';
 
@@ -131,5 +131,17 @@ describe('roles', () => {
     assert.ok(!viewer.has('store.manage'));
     assert.ok(!viewer.has('audience.export'));
     assert.ok(permissionsFor(['EVENTS', 'COMMERCE']).has('store.manage'));
+  });
+});
+
+describe('article text', () => {
+  it('keeps words apart where paragraphs, headings and line breaks meet', () => {
+    assert.equal(plainText('<h2>Memory</h2><p>Ends here.</p><p>Begins<br>again</p>'), 'Memory Ends here. Begins again');
+    assert.equal(plainText('<p>An <em>emphasised</em> word</p>'), 'An emphasised word');
+  });
+
+  it('estimates reading time at about 220 words a minute, never less than one', () => {
+    assert.equal(readingMinutes('<p>Short.</p>'), 1);
+    assert.equal(readingMinutes(`<p>${'word '.repeat(660)}</p>`), 3);
   });
 });

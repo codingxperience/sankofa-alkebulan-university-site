@@ -1,0 +1,240 @@
+@if (application(); as app) {
+  <header class="sc-head">
+    <div class="sc-head__text">
+      <p class="sc-eyebrow"><a routerLink="/admin/admissions">Applications</a> &nbsp;/&nbsp; {{ app.reference }}</p>
+      <h1 class="sc-title">{{ name() }}</h1>
+      <p class="sc-lede">
+        {{ pathwayLabel[app.pathway] }} · {{ app.intake }}
+        @if (answers().pathway?.studyMode; as mode) {
+          · {{ mode }}
+        }
+      </p>
+    </div>
+    <div class="sc-head__actions">
+      <sc-pill [label]="statusTerms[app.status].label" [tone]="statusTerms[app.status].tone" />
+    </div>
+  </header>
+
+  <div class="sc-split">
+    <div class="sc-stack">
+      <section class="sc-card" aria-labelledby="ap-programme">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ap-programme">Programme</h2></div>
+        <dl class="sc-facts sc-card__body">
+          <dt>First choice</dt>
+          <dd><strong>{{ answers().academic?.firstChoice || '—' }}</strong></dd>
+          <dt>Second choice</dt>
+          <dd>{{ answers().academic?.secondChoice || '—' }}</dd>
+          <dt>Pathway</dt>
+          <dd>{{ pathwayLabel[app.pathway] }}</dd>
+          <dt>Intake</dt>
+          <dd>{{ app.intake }}</dd>
+          <dt>Study mode</dt>
+          <dd>{{ answers().pathway?.studyMode || '—' }}</dd>
+        </dl>
+      </section>
+
+      <section class="sc-card" aria-labelledby="ap-person">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ap-person">About the applicant</h2></div>
+        @if (answers().personal; as p) {
+          <dl class="sc-facts sc-card__body">
+            <dt>Name</dt>
+            <dd>{{ p.givenName }} {{ p.familyName }}</dd>
+            <dt>Date of birth</dt>
+            <dd>
+              {{ p.dateOfBirth || '—' }}
+              @if (age() !== null) {
+                <span class="sc-muted">({{ age() }} when applying)</span>
+              }
+            </dd>
+            <dt>Gender</dt>
+            <dd>{{ p.gender === 'Self-describe' ? p.genderSelfDescribed || 'Self-described' : p.gender || '—' }}</dd>
+            <dt>Citizenship</dt>
+            <dd>{{ p.citizenship || '—' }}</dd>
+            <dt>Lives in</dt>
+            <dd>{{ p.residence || '—' }}</dd>
+            <dt>Email</dt>
+            <dd>
+              @if (p.email) {
+                <a [href]="'mailto:' + p.email">{{ p.email }}</a>
+              } @else {
+                —
+              }
+            </dd>
+            <dt>Phone</dt>
+            <dd>
+              @if (p.phone) {
+                <a [href]="'tel:' + p.phone">{{ p.phone }}</a>
+              } @else {
+                —
+              }
+            </dd>
+            <dt>Address</dt>
+            <dd class="ap-pre">{{ p.address || '—' }}</dd>
+          </dl>
+        } @else {
+          <p class="sc-card__body sc-muted">Not filled in yet.</p>
+        }
+      </section>
+
+      <section class="sc-card" aria-labelledby="ap-education">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ap-education">Education</h2></div>
+        @if (answers().academic?.qualifications?.length) {
+          <div class="sc-table-wrap">
+            <table class="sc-table">
+              <thead>
+                <tr>
+                  <th scope="col">Institution</th>
+                  <th scope="col">Qualification</th>
+                  <th scope="col">Years</th>
+                  <th scope="col">Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (q of answers().academic?.qualifications ?? []; track $index) {
+                  <tr>
+                    <td>
+                      <span class="sc-cell-main">{{ q.institution || '—' }}</span>
+                      <span class="sc-cell-sub">{{ q.country }}</span>
+                    </td>
+                    <td>{{ q.qualification || '—' }}</td>
+                    <td class="sc-num">{{ q.startYear }}{{ q.endYear ? '–' + q.endYear : '' }}</td>
+                    <td>{{ q.result || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="sc-card__body sc-muted">No qualifications listed yet.</p>
+        }
+      </section>
+
+      <section class="sc-card" aria-labelledby="ap-statement">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" id="ap-statement">Personal statement</h2>
+          <span class="sc-hint">{{ statementWords() }} words</span>
+        </div>
+        <div class="sc-card__body ap-statement">
+          @for (paragraph of statementParagraphs(); track $index) {
+            <p>{{ paragraph }}</p>
+          } @empty {
+            <p class="sc-muted">Not written yet.</p>
+          }
+        </div>
+      </section>
+
+      <section class="sc-card" aria-labelledby="ap-referees">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ap-referees">Referees</h2></div>
+        <div class="sc-card__body ap-referees">
+          @for (referee of answers().statement?.referees ?? []; track $index) {
+            <div class="ap-referee">
+              <strong>{{ referee.name || 'Name not given' }}</strong>
+              <span>{{ referee.relationship }}@if (referee.institution) { · {{ referee.institution }} }</span>
+              @if (referee.email) {
+                <a [href]="'mailto:' + referee.email">{{ referee.email }}</a>
+              }
+            </div>
+          } @empty {
+            <p class="sc-muted">No referees given yet.</p>
+          }
+        </div>
+      </section>
+
+      <section class="sc-card" aria-labelledby="ap-funding">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ap-funding">Funding and declaration</h2></div>
+        <dl class="sc-facts sc-card__body">
+          <dt>Funding</dt>
+          <dd>{{ answers().funding?.source || '—' }}</dd>
+          <dt>Scholarship</dt>
+          <dd>
+            @switch (answers().funding?.scholarshipInterest) {
+              @case (true) { Would like to be considered }
+              @case (false) { Not seeking a scholarship }
+              @default { — }
+            }
+          </dd>
+          @if (answers().funding?.notes) {
+            <dt>Notes</dt>
+            <dd class="ap-pre">{{ answers().funding?.notes }}</dd>
+          }
+          <dt>Declaration</dt>
+          <dd>{{ answers().declaration?.accurate ? 'Confirmed accurate and complete' : 'Not confirmed' }}</dd>
+          <dt>Signed</dt>
+          <dd>{{ answers().declaration?.signature || '—' }}</dd>
+          <dt>Submitted</dt>
+          <dd>{{ app.submittedAt ? (app.submittedAt | when: 'full') : 'Not yet' }}</dd>
+        </dl>
+      </section>
+    </div>
+
+    <aside class="sc-stack ap-side" aria-label="Review">
+      @if (canManage() && app.status !== 'DRAFT') {
+        <section class="sc-card" aria-labelledby="ap-decision">
+          <div class="sc-card__head"><h2 class="sc-section-title" id="ap-decision">Stage and decision</h2></div>
+          <div class="sc-card__body sc-form">
+            <div class="sc-field">
+              <label class="sc-label" for="ap-status">Move to</label>
+              <select id="ap-status" class="sc-select" [disabled]="saving()" (change)="nextStatus.set($any($event.target).value)">
+                <option value="" [selected]="nextStatus() === ''">Choose a stage…</option>
+                @for (status of reviewStatuses; track status) {
+                  @if (status !== app.status) {
+                    <option [value]="status">{{ statusTerms[status].label }}</option>
+                  }
+                }
+              </select>
+            </div>
+            <button type="button" class="sc-btn sc-btn--primary" [class.is-busy]="saving()" [disabled]="!nextStatus() || saving()" (click)="applyStatus()">
+              Update
+            </button>
+            @if (app.decidedAt) {
+              <p class="sc-hint">Decision recorded {{ app.decidedAt | when: 'full' }}.</p>
+            }
+          </div>
+          <div class="sc-card__foot ap-reviewer">
+            <label class="sc-label" for="ap-reviewer">Reviewer</label>
+            <select id="ap-reviewer" class="sc-select sc-select--small" [disabled]="saving()" (change)="setReviewer($any($event.target).value)">
+              <option value="" [selected]="!app.assignee">Nobody yet</option>
+              @for (person of state.directory(); track person.id) {
+                <option [value]="person.id" [selected]="person.id === app.assignee?.id">{{ person.name }}</option>
+              }
+            </select>
+            @if (!mine()) {
+              <button type="button" class="sc-btn sc-btn--small" [disabled]="saving()" (click)="takeIt()">Take it</button>
+            }
+          </div>
+        </section>
+      } @else if (app.status === 'DRAFT') {
+        <div class="sc-alert sc-alert--info">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+          <span>The applicant is still writing this application ({{ app.completedSteps.length }} of 6 steps complete). It can be reviewed once they submit it.</span>
+        </div>
+      } @else {
+        <section class="sc-card sc-card__body">
+          <dl class="sc-facts">
+            <dt>Reviewer</dt>
+            <dd>{{ app.assignee?.name ?? 'Nobody yet' }}</dd>
+          </dl>
+        </section>
+      }
+
+      <section class="sc-card" aria-labelledby="ap-notes">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ap-notes">Notes and history</h2></div>
+        <div class="sc-card__body sc-form">
+          @if (canManage()) {
+            <form class="sc-form" [formGroup]="noteForm" (ngSubmit)="addNote()">
+              <label class="visually-hidden" for="ap-note">Note</label>
+              <textarea id="ap-note" class="sc-textarea" rows="4" formControlName="body"
+                placeholder="Assessment, follow-ups, documents still needed. Only the team sees notes."></textarea>
+              <button type="submit" class="sc-btn" [class.is-busy]="noting()" [disabled]="noting()">Add note</button>
+            </form>
+          }
+          <sc-timeline [notes]="app.notes" [activity]="app.activity" />
+        </div>
+      </section>
+    </aside>
+  </div>
+} @else if (failed()) {
+  <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ failed() }}</span></div>
+} @else {
+  <div class="sc-card"><sc-skeleton [lines]="12" /></div>
+}

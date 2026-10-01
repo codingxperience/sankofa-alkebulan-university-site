@@ -60,6 +60,27 @@ export function optionalParagraph(label: string, max: number) {
     .transform((value) => value ?? undefined);
 }
 
+/**
+ * For editing records: a field left out is unchanged, while a field sent
+ * empty (or null) is cleared. Used where the console lets staff remove a value.
+ */
+export function clearableLine(label: string, max: number) {
+  return z
+    .string()
+    .transform((value) => clean(value).replace(/\s+/g, ' ').trim())
+    .pipe(z.string().max(max, `${label} must be at most ${max} characters.`))
+    .nullable()
+    .optional()
+    .transform((value) => (value === undefined ? undefined : value || null));
+}
+
+export function clearableParagraph(label: string, max: number) {
+  return paragraph(label, max, 0)
+    .nullable()
+    .optional()
+    .transform((value) => (value === undefined ? undefined : value || null));
+}
+
 export const email = z
   .string({ error: 'Email is required.' })
   .transform((value) => clean(value).trim().toLowerCase())

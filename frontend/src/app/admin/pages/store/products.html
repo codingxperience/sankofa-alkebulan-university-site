@@ -1,0 +1,93 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow">Sankofa Store</p>
+    <h1 class="sc-title">Products</h1>
+    <p class="sc-lede">
+      Prices are charged exactly as set here. Limited editions count down as orders are placed and come back if an order is
+      cancelled; leave stock empty for anything that is not counted.
+    </p>
+  </div>
+</header>
+
+<sc-store-tabs />
+
+@if (loading()) {
+  <div class="sc-card"><sc-skeleton [lines]="10" /></div>
+} @else {
+  <div class="sc-stack">
+    @for (group of groups(); track group.kind) {
+      <section class="sc-card" [attr.aria-labelledby]="'pr-' + group.kind">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" [id]="'pr-' + group.kind">{{ kindLabel[group.kind] }}</h2>
+          <span class="sc-hint">{{ group.items.length }} {{ group.items.length === 1 ? 'product' : 'products' }}</span>
+        </div>
+        <div class="sc-table-wrap">
+          <table class="sc-table pr-table">
+            <thead>
+              <tr>
+                <th scope="col" class="pr-col-product">Product</th>
+                <th scope="col" class="pr-col-status">Availability</th>
+                <th scope="col" class="pr-col-number">Price (USD)</th>
+                <th scope="col" class="pr-col-number">In stock</th>
+                <th scope="col" class="pr-col-sold is-right">Ordered</th>
+                @if (canManage()) {
+                  <th scope="col" class="pr-col-actions"><span class="visually-hidden">Save</span></th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of group.items; track product.id) {
+                <tr [class.is-changed]="changed(product)">
+                  <td>
+                    <span class="sc-cell-main">{{ product.name }}</span>
+                    <span class="sc-cell-sub">
+                      <span class="sc-ref">{{ product.sku }}</span>
+                      @if (product.hasSizes) { · Sized }
+                      @if (product.isDigital) { · Digital }
+                    </span>
+                  </td>
+                  @if (canManage()) {
+                    <td>
+                      <label class="visually-hidden" [for]="'st-' + product.id">Availability of {{ product.name }}</label>
+                      <select class="sc-select sc-select--small" [id]="'st-' + product.id" (change)="edit(product, 'status', $any($event.target).value)">
+                        @for (status of statuses; track status) {
+                          <option [value]="status" [selected]="draft(product).status === status">{{ statusTerms[status].label }}</option>
+                        }
+                      </select>
+                    </td>
+                    <td>
+                      <label class="visually-hidden" [for]="'pp-' + product.id">Price of {{ product.name }} in US dollars</label>
+                      <input class="sc-input pr-input sc-num" [id]="'pp-' + product.id" inputmode="decimal" [value]="draft(product).price"
+                        (input)="edit(product, 'price', $any($event.target).value)" />
+                    </td>
+                    <td>
+                      <label class="visually-hidden" [for]="'sk-' + product.id">Stock of {{ product.name }}</label>
+                      <input class="sc-input pr-input sc-num" [id]="'sk-' + product.id" inputmode="numeric" placeholder="Not counted"
+                        [value]="draft(product).stock" (input)="edit(product, 'stock', $any($event.target).value)" />
+                    </td>
+                  } @else {
+                    <td><sc-pill [label]="statusTerms[product.status].label" [tone]="statusTerms[product.status].tone" /></td>
+                    <td class="sc-num">{{ product.priceCents | money: product.currency }}</td>
+                    <td class="sc-num">{{ product.stockRemaining ?? 'Not counted' }}</td>
+                  }
+                  <td class="is-right sc-num">{{ product.sold }}</td>
+                  @if (canManage()) {
+                    <td class="is-tight">
+                      @if (changed(product)) {
+                        <div class="pr-actions">
+                          <button type="button" class="sc-btn sc-btn--quiet sc-btn--small" (click)="reset(product)">Undo</button>
+                          <button type="button" class="sc-btn sc-btn--primary sc-btn--small" [class.is-busy]="saving() === product.id"
+                            [disabled]="saving() === product.id" (click)="save(product)">Save</button>
+                        </div>
+                      }
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </div>
+}

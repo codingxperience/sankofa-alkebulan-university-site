@@ -46,8 +46,13 @@ export function normaliseAssetPath(src: string): string {
   return `/${trimmed.replace(/^\.\//, '')}`;
 }
 
+/** Where one block of text ends and the next begins; removing these tags must leave a space behind. */
+const BLOCK_BOUNDARY = /<(?:br\s*\/?|\/(?:p|h[1-6]|li|blockquote|figcaption|div|td|th|tr|pre))>/gi;
+
 export function plainText(html: string): string {
-  return sanitizeHtml(html, { allowedTags: [], allowedAttributes: {} }).replace(/\s+/g, ' ').trim();
+  return sanitizeHtml(html.replace(BLOCK_BOUNDARY, '$& '), { allowedTags: [], allowedAttributes: {} })
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 export function readingMinutes(html: string): number {

@@ -1,0 +1,132 @@
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ApiClient, ApiError } from '../../core/api/api-client';
+import { ConsoleState } from '../core/console-state';
+import { StaffSession } from '../core/staff-session';
+import { AuthPanel } from './auth-panel';
+
+type Mode = 'sign-in' | 'setup' | 'forgot' | 'forgot-sent';
+
+/** Only places inside the console are valid destinations after signing in. */
+function safeNext(value: string | null): string {
+  return value && value.startsWith('/admin') && !value.startsWith('//') ? value : '/admin';
+}
+
+@Component({
+  selector: 'sc-sign-in',
+  imports: [ReactiveFormsModule, AuthPanel],
+  templateUrl: './sign-in.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'sc-auth' },
+})
+export class SignIn {
+  private readonly api = inject(ApiClient);
+  private readonly session = inject(StaffSession);
+  private readonly state = inject(ConsoleState);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly fb = inject(FormBuilder).nonNullable;
+
+  protected readonly mode = signal<Mode>('sign-in');
+  protected readonly setupAvailable = signal(false);
+  protected readonly busy = signal(false);
+  protected readonly error = signal('');
+  protected readonly fields = signal<Record<string, string>>({});
+  protected readonly showPassword = signal(false);
+  protected readonly ended = this.route.snapshot.queryParamMap.has('ended');
+
+  protected readonly signInForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
+
+  protected readonly setupForm = this.fb.group({
+    setupKey: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(12)]],
+  });
+
+  protected readonly forgotForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+  });
+
+  constructor() {
+    this.api
+      .get<{ setupAvailable: boolean }>('/admin/auth/state')
+      .then((state) => {
+        this.setupAvailable.set(state.setupAvailable);
+        if (state.setupAvailable) {
+          this.switchTo('setup');
+        }
+      })
+      .catch(() => undefined);
+  }
+
+  protected switchTo(mode: Mode): void {
+    this.mode.set(mode);
+    this.error.set('');
+    this.fields.set({});
+    if (mode === 'forgot' && this.signInForm.controls.email.value) {
+      this.forgotForm.controls.email.setValue(this.signInForm.controls.email.value);
+    }
+  }
+
+  protected async signIn(): Promise<void> {
+    if (this.signInForm.invalid) {
+      this.signInForm.markAllAsTouched();
+      this.error.set('Enter your email address and password.');
+      return;
+    }
+    const { email, password } = this.signInForm.getRawValue();
+    await this.run(async () => {
+      await this.session.signIn(email.trim(), password);
+      this.state.reset();
+      await this.router.navigateByUrl(safeNext(this.route.snapshot.queryParamMap.get('next')));
+    });
+    this.signInForm.controls.password.reset();
+  }
+
+  protected async setUp(): Promise<void> {
+    if (this.setupForm.invalid) {
+      this.setupForm.markAllAsTouched();
+      this.error.set('Fill in every field. The password needs at least 12 characters.');
+      return;
+    }
+    const body = this.setupForm.getRawValue();
+    await this.run(async () => {
+      await this.api.post('/admin/auth/setup', { ...body, email: body.email.trim() });
+      await this.session.refresh();
+      this.state.reset();
+      await this.router.navigateByUrl('/admin');
+    });
+  }
+
+  protected async requestReset(): Promise<void> {
+    if (this.forgotForm.invalid) {
+      this.forgotForm.markAllAsTouched();
+      this.error.set('Enter the email address you sign in with.');
+      return;
+    }
+    await this.run(async () => {
+      await this.api.post('/admin/auth/password-reset/request', { email: this.forgotForm.getRawValue().email.trim() });
+      this.mode.set('forgot-sent');
+    });
+  }
+
+  private async run(action: () => Promise<void>): Promise<void> {
+    this.busy.set(true);
+    this.error.set('');
+    this.fields.set({});
+    try {
+      await action();
+    } catch (error) {
+      const failure = ApiError.from(error);
+      this.error.set(failure.message);
+      this.fields.set(failure.fields);
+    } finally {
+      this.busy.set(false);
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { Office, StaffRole } from '../generated/prisma/client';
 import type { StaffPrincipal } from './sessions.service';
 import { CurrentStaff, StaffOnly } from './staff.guard';
 import { StaffService } from './staff.service';
+import { staffTitle } from './staff.schemas';
 
 const roles = z
   .array(z.enum(StaffRole))
@@ -24,13 +25,7 @@ const InviteBody = z.object({
 const UpdateBody = z
   .object({
     name: line('Name', 120, 2).optional(),
-    // undefined leaves the title alone; null or an empty string clears it.
-    title: z
-      .string()
-      .max(120, 'Title must be at most 120 characters.')
-      .nullable()
-      .optional()
-      .transform((value) => (value === undefined ? undefined : value?.replace(/\s+/g, ' ').trim() || null)),
+    title: staffTitle,
     roles: roles.optional(),
     offices: offices.optional(),
     status: z.enum(['ACTIVE', 'SUSPENDED']).optional(),

@@ -1,0 +1,150 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow">The institution</p>
+    <h1 class="sc-title">Settings</h1>
+    <p class="sc-lede">Where each office’s mail goes and what it promises the public, and which of the console’s connections are switched on.</p>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="sc-card"><sc-skeleton [lines]="8" /></div>
+} @else {
+  <section class="sc-card st-offices" aria-labelledby="st-offices-title">
+    <div class="sc-card__head">
+      <h2 class="sc-section-title" id="st-offices-title">The seven offices</h2>
+      <span class="sc-hint">The contact page shows these names and reply times</span>
+    </div>
+    <div class="sc-table-wrap">
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th scope="col">Office</th>
+            <th scope="col">Promised reply</th>
+            <th scope="col">New messages are emailed to</th>
+            @if (canManage()) {
+              <th scope="col" class="is-tight"><span class="visually-hidden">Edit</span></th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (route of state.offices(); track route.office) {
+            <tr>
+              <td><span class="sc-cell-main">{{ route.label }}</span></td>
+              <td>Within {{ route.responseTarget }}</td>
+              <td>
+                @for (address of route.notifyEmails; track address) {
+                  <span class="st-address">{{ address }}</span>
+                } @empty {
+                  <span class="st-warning">No one — set an address so messages are not missed</span>
+                }
+              </td>
+              @if (canManage()) {
+                <td class="is-tight"><button type="button" class="sc-btn sc-btn--small" (click)="edit(route)">Edit</button></td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (state.system(); as system) {
+    <div class="st-system">
+      <section class="sc-card" aria-labelledby="st-email">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" id="st-email">Email</h2>
+          <sc-pill [label]="system.email.configured ? 'Sending' : 'Not set up'" [tone]="system.email.configured ? 'done' : 'attention'" />
+        </div>
+        <div class="sc-card__body">
+          @if (system.email.configured) {
+            <dl class="sc-facts">
+              <dt>Sent as</dt>
+              <dd>{{ system.email.from }}</dd>
+              <dt>Replies go to</dt>
+              <dd>{{ system.email.replyTo }}</dd>
+              <dt>Sent, last 24 h</dt>
+              <dd class="sc-num">{{ system.email.sentLast24h }}</dd>
+              <dt>Waiting to send</dt>
+              <dd class="sc-num">{{ system.email.pending }}</dd>
+              <dt>Failed, last 24 h</dt>
+              <dd class="sc-num" [class.st-warning]="system.email.failed > 0">{{ system.email.failed }}</dd>
+            </dl>
+          } @else {
+            <p class="st-text">
+              Acknowledgements, staff alerts, receipts, invitations and replies are written and kept, but none can be sent until a
+              Resend API key and sender address are added to the server’s settings (<code>RESEND_API_KEY</code>, <code>EMAIL_FROM</code>).
+              Messages waiting now: {{ system.email.pending }}.
+            </p>
+          }
+        </div>
+      </section>
+
+      <section class="sc-card" aria-labelledby="st-payments">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" id="st-payments">Card payments</h2>
+          <sc-pill [label]="system.payments.flutterwave ? 'Connected' : 'Off'" [tone]="system.payments.flutterwave ? 'done' : 'muted'" />
+        </div>
+        <p class="sc-card__body st-text">
+          @if (system.payments.flutterwave) {
+            Card orders get a secure Flutterwave payment page, and the store marks them paid when Flutterwave confirms. Mobile money
+            is still confirmed by a person.
+          } @else {
+            Card orders are accepted and the customer is told the bursary desk will email a secure payment link. Connect Flutterwave
+            (<code>FLUTTERWAVE_SECRET_KEY</code>, <code>FLUTTERWAVE_WEBHOOK_HASH</code>) to take card payments automatically.
+          }
+        </p>
+      </section>
+
+      <section class="sc-card" aria-labelledby="st-housekeeping">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" id="st-housekeeping">Daily housekeeping</h2>
+          <sc-pill [label]="system.maintenance.scheduled ? 'Scheduled' : 'Not scheduled'" [tone]="system.maintenance.scheduled ? 'done' : 'attention'" />
+        </div>
+        <p class="sc-card__body st-text">
+          Once a day the server retries email that could not be sent at the time, and clears out expired sign-in sessions, used
+          invitation and reset links, and old rate-limit records.
+          @if (!system.maintenance.scheduled) {
+            Set <code>CRON_SECRET</code> so the scheduled job can run.
+          }
+        </p>
+      </section>
+
+      <section class="sc-card" aria-labelledby="st-site">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="st-site">Site address</h2></div>
+        <p class="sc-card__body st-text">
+          Links in emails and invitations point to <strong>{{ system.siteUrl }}</strong>.
+        </p>
+      </section>
+    </div>
+  }
+}
+
+<sc-modal [open]="!!editing()" labelledBy="st-edit-title" (closed)="editing.set(null)">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="sc-dialog__head">
+      <h2 id="st-edit-title">{{ editing()?.label }}</h2>
+      <p>Changes apply to the contact page and to the next message that arrives.</p>
+    </div>
+    <div class="sc-dialog__body sc-form">
+      @if (error()) {
+        <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
+      }
+      <div class="sc-field">
+        <label class="sc-label" for="st-label">Name shown to the public</label>
+        <input id="st-label" class="sc-input" formControlName="label" />
+      </div>
+      <div class="sc-field">
+        <label class="sc-label" for="st-target">Reply time <small>shown as “within …”</small></label>
+        <input id="st-target" class="sc-input" formControlName="responseTarget" placeholder="3–5 days" />
+      </div>
+      <div class="sc-field">
+        <label class="sc-label" for="st-emails">Email new messages to <small>one address per line, up to ten</small></label>
+        <textarea id="st-emails" class="sc-textarea" rows="4" formControlName="notifyEmails" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="sc-dialog__foot">
+      <button type="button" class="sc-btn sc-btn--quiet" (click)="editing.set(null)">Cancel</button>
+      <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="saving()" [disabled]="saving()">Save</button>
+    </div>
+  </form>
+</sc-modal>

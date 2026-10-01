@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { sendCsv, toCsv } from '../common/http/csv';
 import { pageQuery } from '../common/http/pagination';
 import { validate } from '../common/http/zod.pipe';
-import { clientRequestId, email, honeypot, line, optionalLine, optionalParagraph, phone } from '../common/validation/fields';
+import { clearableLine, clearableParagraph, clientRequestId, email, honeypot, line, optionalLine, optionalParagraph, phone } from '../common/validation/fields';
 import { EventStatus, RegistrationStatus } from '../generated/prisma/client';
 import { RateLimit } from '../security/rate-limit.guard';
 import type { StaffPrincipal } from '../staff/sessions.service';
@@ -58,8 +58,8 @@ const isoDate = z.coerce.date({ error: 'Use a valid date and time.' });
 const EventBody = z.object({
   slug: slugParam,
   title: line('Title', 160, 3),
-  summary: optionalParagraph('Summary', 2000),
-  venue: optionalLine('Venue', 200),
+  summary: clearableParagraph('Summary', 2000),
+  venue: clearableLine('Venue', 200),
   timezone: z.string().refine((zone) => Intl.supportedValuesOf('timeZone').includes(zone), 'Choose a valid time zone.').default('Africa/Kampala'),
   startsAt: isoDate,
   endsAt: isoDate.nullable().optional(),

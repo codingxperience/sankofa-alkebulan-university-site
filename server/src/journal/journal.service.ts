@@ -11,7 +11,8 @@ import { cleanArticleHtml, normaliseAssetPath, plainText, readingMinutes } from 
 export interface ArticleInput {
   slug: string;
   title: string;
-  excerpt?: string;
+  /** Left empty, an excerpt is written from the opening of the article. */
+  excerpt?: string | null;
   bodyHtml: string;
   coverImageUrl?: string | null;
   authorName: string;
@@ -222,7 +223,7 @@ export class JournalService {
     const merged = this.prepare({
       slug: changes.slug ?? current.slug,
       title: changes.title ?? current.title,
-      excerpt: changes.excerpt ?? current.excerpt,
+      excerpt: changes.excerpt === undefined ? current.excerpt : changes.excerpt,
       bodyHtml: changes.bodyHtml ?? current.bodyHtml,
       coverImageUrl: changes.coverImageUrl === undefined ? current.coverImageUrl : changes.coverImageUrl,
       authorName: changes.authorName ?? current.authorName,

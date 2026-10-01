@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Header, Param, ParseUUIDPipe, Patch, Pos
 import { z } from 'zod';
 import { pageQuery } from '../common/http/pagination';
 import { validate } from '../common/http/zod.pipe';
-import { line, optionalParagraph } from '../common/validation/fields';
+import { clearableParagraph, line } from '../common/validation/fields';
 import { ArticleStatus } from '../generated/prisma/client';
 import type { StaffPrincipal } from '../staff/sessions.service';
 import { CurrentStaff, StaffOnly } from '../staff/staff.guard';
@@ -56,7 +56,7 @@ const topics = (max: number) => z.array(z.string().trim().min(1).max(80)).max(ma
 const ArticleBody = z.object({
   slug,
   title: line('Title', 200, 3),
-  excerpt: optionalParagraph('Excerpt', 600),
+  excerpt: clearableParagraph('Excerpt', 600),
   bodyHtml: z.string().max(400_000, 'The article is too long.'),
   coverImageUrl: z
     .string()

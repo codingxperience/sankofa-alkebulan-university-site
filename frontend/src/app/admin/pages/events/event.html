@@ -1,0 +1,215 @@
+@if (event(); as e) {
+  <header class="sc-head">
+    <div class="sc-head__text">
+      <p class="sc-eyebrow"><a routerLink="/admin/events">Events</a> &nbsp;/&nbsp; {{ e.slug }}</p>
+      <h1 class="sc-title">{{ e.title }}</h1>
+      <p class="sc-lede">
+        {{ schedule()?.starts }}
+        @if (e.venue) {
+          · {{ e.venue }}
+        }
+      </p>
+    </div>
+    <div class="sc-head__actions">
+      <a class="sc-btn" [href]="exportUrl()" download><i class="pi pi-download" aria-hidden="true"></i> Export registrations</a>
+      @if (canManage()) {
+        @if (e.status === 'DRAFT') {
+          <button type="button" class="sc-btn sc-btn--primary" (click)="setEventStatus('PUBLISHED')">Publish</button>
+        }
+        @if (e.status === 'PUBLISHED') {
+          <button type="button" class="sc-btn sc-btn--danger" (click)="setEventStatus('CANCELLED')">Cancel event</button>
+        }
+        @if (e.status === 'CANCELLED') {
+          <button type="button" class="sc-btn" (click)="setEventStatus('DRAFT')">Back to draft</button>
+        }
+        <a class="sc-btn" [routerLink]="['/admin/events', e.id, 'edit']"><i class="pi pi-pencil" aria-hidden="true"></i> Edit</a>
+      }
+    </div>
+  </header>
+
+  <section class="sc-stats ev-stats" aria-label="Numbers">
+    <div class="sc-stat">
+      <span class="sc-stat__label">Confirmed</span>
+      <span class="sc-stat__value">{{ count('CONFIRMED') }}@if (e.capacity) {<small> / {{ e.capacity }}</small>}</span>
+      <span class="sc-stat__note">{{ e.capacity ? (e.capacity - count('CONFIRMED') > 0 ? e.capacity - count('CONFIRMED') + ' places left' : 'Every place taken') : 'No capacity limit' }}</span>
+    </div>
+    <div class="sc-stat">
+      <span class="sc-stat__label">Waiting list</span>
+      <span class="sc-stat__value">{{ count('WAITLISTED') }}</span>
+      <span class="sc-stat__note">Offered a place only by a person</span>
+    </div>
+    <div class="sc-stat">
+      <span class="sc-stat__label">Checked in</span>
+      <span class="sc-stat__value">{{ e.breakdown.checkedIn }}</span>
+      <span class="sc-stat__note">At the door or online</span>
+    </div>
+    <div class="sc-stat">
+      <span class="sc-stat__label">Registration</span>
+      <span class="sc-stat__value ev-stats__state"><sc-pill [label]="statusTerms[e.status].label" [tone]="statusTerms[e.status].tone" /></span>
+      <span class="sc-stat__note">{{ registrationLine() }} · closes {{ schedule()?.closes }}</span>
+    </div>
+  </section>
+
+  @if (breakdowns().length) {
+    <div class="ev-breakdowns">
+      @for (group of breakdowns(); track group.title) {
+        <section class="sc-card" [attr.aria-label]="group.title">
+          <div class="sc-card__head"><h2 class="sc-section-title">{{ group.title }}</h2></div>
+          <div class="sc-card__body sc-bars">
+            @for (row of group.rows; track row.value) {
+              <div class="sc-bar">
+                <span>{{ row.value }}</span>
+                <span class="sc-num sc-muted">{{ row.count }}</span>
+                <span class="sc-bar__track" aria-hidden="true"><span [style.width.%]="share(group.rows, row)"></span></span>
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+
+  <section class="sc-card" aria-labelledby="ev-people">
+    <div class="sc-card__head ev-people-head">
+      <h2 class="sc-section-title" id="ev-people">Registrations</h2>
+      <div class="ev-people-tools">
+        <div class="sc-segments" role="group" aria-label="Show">
+          <button type="button" class="sc-segment" [attr.aria-pressed]="filter() === ''" (click)="choose('')">Everyone</button>
+          <button type="button" class="sc-segment" [attr.aria-pressed]="filter() === 'CONFIRMED'" (click)="choose('CONFIRMED')">
+            Confirmed <span class="sc-segment__count">{{ count('CONFIRMED') }}</span>
+          </button>
+          <button type="button" class="sc-segment" [attr.aria-pressed]="filter() === 'WAITLISTED'" (click)="choose('WAITLISTED')">
+            Waiting <span class="sc-segment__count">{{ count('WAITLISTED') }}</span>
+          </button>
+          <button type="button" class="sc-segment" [attr.aria-pressed]="filter() === 'CANCELLED'" (click)="choose('CANCELLED')">
+            Cancelled <span class="sc-segment__count">{{ count('CANCELLED') }}</span>
+          </button>
+        </div>
+        <div class="sc-search">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <input class="sc-input" type="search" placeholder="Name, email, organisation or code" aria-label="Search registrations"
+            [value]="query()" (input)="search($any($event.target).value)" />
+        </div>
+      </div>
+    </div>
+
+    @if (loadingList()) {
+      <sc-skeleton [lines]="6" />
+    } @else if (registrations().length === 0) {
+      <sc-empty title="No registrations here" icon="pi-ticket">
+        <p>{{ query() ? 'No one matches that search.' : 'When people register, they appear here with their answers.' }}</p>
+      </sc-empty>
+    } @else {
+      <div class="sc-table-wrap">
+        <table class="sc-table ev-table">
+          <thead>
+            <tr>
+              <th scope="col">Person</th>
+              <th scope="col">Joining</th>
+              <th scope="col">Registered</th>
+              <th scope="col">Status</th>
+              <th scope="col" class="is-right">Check-in</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of registrations(); track r.id) {
+              <tr [class.is-busy]="busy() === r.id">
+                <td>
+                  <button type="button" class="ev-person" (click)="toggle(r.id)" [attr.aria-expanded]="expanded() === r.id" [attr.aria-controls]="'ev-more-' + r.id">
+                    <span class="sc-cell-main">{{ r.name }}</span>
+                    <span class="sc-cell-sub">
+                      <span class="sc-ref">{{ r.code }}</span>
+                      @if (r.organisation) { · {{ r.organisation }} }
+                    </span>
+                  </button>
+                </td>
+                <td>
+                  {{ r.attendanceMode || '—' }}
+                  @if (r.days) {
+                    <span class="sc-cell-sub">{{ r.days }}</span>
+                  }
+                </td>
+                <td><span [title]="r.createdAt | when: 'full'">{{ r.createdAt | when: 'date' }}</span></td>
+                <td>
+                  <div class="ev-status">
+                    <sc-pill [label]="registrationTerms[r.status].label" [tone]="registrationTerms[r.status].tone" />
+                    @if (canManage()) {
+                      @if (r.status === 'WAITLISTED') {
+                        <button type="button" class="sc-btn sc-btn--small" [disabled]="busy() === r.id" (click)="setRegistrationStatus(r, 'CONFIRMED')">Give a place</button>
+                      }
+                      @if (r.status === 'CANCELLED') {
+                        <button type="button" class="sc-btn sc-btn--quiet sc-btn--small" [disabled]="busy() === r.id" (click)="setRegistrationStatus(r, 'CONFIRMED')">Restore</button>
+                      }
+                    }
+                  </div>
+                </td>
+                <td class="is-right">
+                  @if (r.status === 'CONFIRMED') {
+                    @if (canManage()) {
+                      <button type="button" class="sc-btn sc-btn--small ev-check" [class.is-in]="r.checkedInAt" [disabled]="busy() === r.id"
+                        (click)="checkIn(r)" [attr.aria-pressed]="!!r.checkedInAt">
+                        <i class="pi" [class.pi-check]="r.checkedInAt" [class.pi-sign-in]="!r.checkedInAt" aria-hidden="true"></i>
+                        {{ r.checkedInAt ? 'Checked in' : 'Check in' }}
+                      </button>
+                    } @else {
+                      {{ r.checkedInAt ? 'Checked in' : '—' }}
+                    }
+                  }
+                </td>
+              </tr>
+              @if (expanded() === r.id) {
+                <tr class="ev-more" [id]="'ev-more-' + r.id">
+                  <td colspan="5">
+                    <dl class="sc-facts">
+                      <dt>Email</dt>
+                      <dd><a [href]="'mailto:' + r.email">{{ r.email }}</a></dd>
+                      <dt>Phone</dt>
+                      <dd>{{ r.phone || '—' }}</dd>
+                      <dt>From</dt>
+                      <dd>{{ r.place || '—' }}</dd>
+                      <dt>Role</dt>
+                      <dd>{{ r.role || '—' }}</dd>
+                      <dt>Attending as</dt>
+                      <dd>{{ r.attendeeCategory || '—' }}</dd>
+                      @if (r.interests.length) {
+                        <dt>Themes</dt>
+                        <dd>{{ r.interests.join(', ') }}</dd>
+                      }
+                      @if (r.question) {
+                        <dt>Question</dt>
+                        <dd class="ev-pre">{{ r.question }}</dd>
+                      }
+                      @if (r.accessNeeds) {
+                        <dt>Access or dietary needs</dt>
+                        <dd>{{ r.accessNeeds }}</dd>
+                      }
+                      <dt>Updates</dt>
+                      <dd>{{ r.wantsUpdates ? 'Asked to hear about future events' : 'No' }}</dd>
+                    </dl>
+                    @if (canManage() && r.status !== 'CANCELLED') {
+                      <div class="ev-more__actions">
+                        @if (r.status === 'CONFIRMED') {
+                          <button type="button" class="sc-btn sc-btn--small" (click)="setRegistrationStatus(r, 'WAITLISTED')">Move to waiting list</button>
+                        }
+                        <button type="button" class="sc-btn sc-btn--danger sc-btn--small" (click)="setRegistrationStatus(r, 'CANCELLED')">Cancel registration</button>
+                      </div>
+                    }
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (cursor()) {
+        <div class="sc-more">
+          <button type="button" class="sc-btn sc-btn--small" [class.is-busy]="loadingMore()" (click)="more()">Show more</button>
+        </div>
+      }
+    }
+  </section>
+} @else if (failed()) {
+  <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ failed() }}</span></div>
+} @else {
+  <div class="sc-card"><sc-skeleton [lines]="10" /></div>
+}
