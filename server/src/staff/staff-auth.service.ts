@@ -36,11 +36,15 @@ export class StaffAuthService {
   ) {}
 
   /** Whether the sign-in screen should offer first-time setup. */
-  async setupAvailable(): Promise<boolean> {
-    if (!this.config.adminSetupKey) {
-      return false;
-    }
-    return (await this.prisma.staffMember.count()) === 0;
+  /**
+   * Whether the first owner can be created from the sign-in screen. While no
+   * account exists, the screen also says when it is only waiting for
+   * ADMIN_SETUP_KEY — there is nothing else to protect at that point.
+   */
+  async setupState(): Promise<{ setupAvailable: boolean; awaitingSetupKey: boolean }> {
+    const empty = (await this.prisma.staffMember.count()) === 0;
+    const keyConfigured = Boolean(this.config.adminSetupKey);
+    return { setupAvailable: empty && keyConfigured, awaitingSetupKey: empty && !keyConfigured };
   }
 
   /** Creates the very first owner account. Disabled for good once any staff account exists. */
