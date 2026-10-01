@@ -1,0 +1,136 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow"><a routerLink="/admin/events">Events</a></p>
+    <h1 class="sc-title">{{ heading() }}</h1>
+    <p class="sc-lede">Times are entered in the event’s own time zone. The registration form offers exactly the choices listed below.</p>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="sc-card"><sc-skeleton [lines]="10" /></div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="sc-split">
+      <div class="sc-stack">
+        <section class="sc-card" aria-labelledby="ee-about">
+          <div class="sc-card__head"><h2 class="sc-section-title" id="ee-about">About the event</h2></div>
+          <div class="sc-card__body sc-form">
+            <div class="sc-field">
+              <label class="sc-label" for="ee-title">Title</label>
+              <input id="ee-title" class="sc-input" formControlName="title" [attr.aria-invalid]="!!fields()['title']" />
+              @if (fields()['title']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-slug">Web address <small>lowercase letters, numbers and hyphens</small></label>
+              <input id="ee-slug" class="sc-input sc-mono" formControlName="slug" (input)="slugTyped()" spellcheck="false"
+                [attr.aria-invalid]="!!fields()['slug'] || (form.controls.slug.touched && form.controls.slug.invalid)" />
+              @if (fields()['slug']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              } @else if (form.controls.slug.touched && form.controls.slug.invalid) {
+                <span class="sc-error">Use lowercase letters, numbers and single hyphens.</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-summary">Summary <small>optional</small></label>
+              <textarea id="ee-summary" class="sc-textarea" rows="4" formControlName="summary"></textarea>
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-venue">Venue <small>optional</small></label>
+              <input id="ee-venue" class="sc-input" formControlName="venue" placeholder="Speke Resort, Munyonyo · and Zoom" />
+            </div>
+          </div>
+        </section>
+
+        <section class="sc-card" aria-labelledby="ee-form">
+          <div class="sc-card__head">
+            <h2 class="sc-section-title" id="ee-form">Registration form choices</h2>
+            <span class="sc-hint">One per line. Leave a list empty to leave that question out.</span>
+          </div>
+          <div class="sc-card__body sc-row">
+            <div class="sc-field">
+              <label class="sc-label" for="ee-categories">Attending as</label>
+              <textarea id="ee-categories" class="sc-textarea" rows="6" formControlName="attendeeCategories" placeholder="Student&#10;Researcher&#10;Member of the public"></textarea>
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-modes">Ways to join</label>
+              <textarea id="ee-modes" class="sc-textarea" rows="6" formControlName="attendanceModes" placeholder="In person&#10;Online"></textarea>
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-days">Days</label>
+              <textarea id="ee-days" class="sc-textarea" rows="6" formControlName="days" placeholder="Both days&#10;Day one only"></textarea>
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-interests">Themes of interest</label>
+              <textarea id="ee-interests" class="sc-textarea" rows="6" formControlName="interests"></textarea>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="sc-stack">
+        <section class="sc-card" aria-labelledby="ee-when">
+          <div class="sc-card__head"><h2 class="sc-section-title" id="ee-when">When and how many</h2></div>
+          <div class="sc-card__body sc-form">
+            <div class="sc-field">
+              <label class="sc-label" for="ee-zone">Time zone</label>
+              <input id="ee-zone" class="sc-input" formControlName="timezone" list="ee-zones" spellcheck="false"
+                [attr.aria-invalid]="!!fields()['timezone']" />
+              <datalist id="ee-zones">
+                @for (zone of zones; track zone) {
+                  <option [value]="zone"></option>
+                }
+              </datalist>
+              @if (fields()['timezone']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-starts">Starts</label>
+              <input id="ee-starts" class="sc-input" type="datetime-local" formControlName="startsAt" [attr.aria-invalid]="!!fields()['startsAt']" />
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-ends">Ends <small>optional</small></label>
+              <input id="ee-ends" class="sc-input" type="datetime-local" formControlName="endsAt" [attr.aria-invalid]="!!fields()['endsAt']" />
+              @if (fields()['endsAt']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-closes">Registration closes <small>defaults to the start</small></label>
+              <input id="ee-closes" class="sc-input" type="datetime-local" formControlName="registrationClosesAt" />
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-capacity">Places <small>empty for no limit</small></label>
+              <input id="ee-capacity" class="sc-input" type="text" inputmode="numeric" pattern="[0-9]*" formControlName="capacity"
+                [attr.aria-invalid]="!!fields()['capacity']" />
+              @if (fields()['capacity']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              } @else {
+                <span class="sc-hint">Once full, new registrations join a waiting list.</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ee-status">Visibility</label>
+              <select id="ee-status" class="sc-select" formControlName="status">
+                <option value="DRAFT">Draft — not on the website</option>
+                <option value="PUBLISHED">Published — registration open</option>
+                <option value="CANCELLED">Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div class="sc-card__foot">
+            @if (error()) {
+              <p class="sc-error ee-error" role="alert">{{ error() }}</p>
+            }
+            <a class="sc-btn sc-btn--quiet" [routerLink]="id ? ['/admin/events', id] : '/admin/events'">Cancel</a>
+            <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="saving()" [disabled]="saving()">
+              {{ id ? 'Save changes' : 'Create event' }}
+            </button>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </form>
+}

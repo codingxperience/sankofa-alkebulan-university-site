@@ -2827,3 +2827,82 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ---- Live catalogue and checkout states ---- */
+.st-artifact__body .stock {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #b35c2a;
+
+  &.is-out {
+    color: #8aa0b3;
+  }
+}
+
+.st-card__body button[disabled],
+.st-artifact__body button[disabled],
+.st-detail .add[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.st-co__foot .next[disabled] {
+  cursor: not-allowed;
+}
+
+.st-co .pay-note {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #4a647d;
+}
+
+.st-co .done {
+  .pay-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 26px;
+    border-radius: 999px;
+    background: #0a3254;
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .order-link {
+    color: #0f4c81;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+.st-co__error {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fdf3f2;
+  border: 1px solid #f4d4d0;
+  color: #7a271a;
+  font-size: 14px;
+  line-height: 1.5;
+
+  i {
+    margin-top: 3px;
+    color: #b42318;
+  }
+}
+
+.st-co__trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -91,12 +91,16 @@
               <div class="st-card__body">
                 <div class="row">
                   <strong>{{ product(id).t }}</strong
-                  ><span class="price">{{ fmt(product(id).p) }}</span>
+                  ><span class="price">{{ priceLabel(id) }}</span>
                 </div>
                 <span class="meta">{{ product(id).m }}</span>
-                <button type="button" (click)="addFromCard($event, id)">
-                  {{ dropCta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
-                </button>
+                @if (isSoldOut(id)) {
+                  <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
+                } @else {
+                  <button type="button" (click)="addFromCard($event, id)">
+                    {{ dropCta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
+                  </button>
+                }
               </div>
             </article>
           }
@@ -227,11 +231,18 @@
                   ><i class="fa-solid fa-certificate" aria-hidden="true"></i
                   >{{ product(id).ed }} &middot; NFT</span
                 >
+                @if (stockNote(id); as note) {
+                  <span class="stock" [class.is-out]="isSoldOut(id)">{{ note }}</span>
+                }
                 <div class="row">
-                  <span class="price">{{ fmt(product(id).p) }}</span>
-                  <button type="button" (click)="addFromCard($event, id)">
-                    Add<i class="fa-solid fa-plus" aria-hidden="true"></i>
-                  </button>
+                  <span class="price">{{ priceLabel(id) }}</span>
+                  @if (isSoldOut(id)) {
+                    <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
+                  } @else {
+                    <button type="button" (click)="addFromCard($event, id)">
+                      Add<i class="fa-solid fa-plus" aria-hidden="true"></i>
+                    </button>
+                  }
                 </div>
               </div>
             </article>
@@ -452,7 +463,7 @@
               <span>Start with Drop 01 &mdash; heritage worn with honor.</span>
             </div>
           }
-          @for (c of cartItems; track c.id) {
+          @for (c of cartItems; track c.key) {
             <div class="st-cart__row">
               @if (c.hasImg) {
                 <div class="thumb" aria-hidden="true" [style.background-image]="'url(' + c.img + ')'"></div>
@@ -463,11 +474,11 @@
                 <strong>{{ c.t }}</strong>
                 <span class="m">{{ c.m }}</span>
                 <div class="qty">
-                  <button type="button" (click)="dec(c.id)" aria-label="Decrease quantity">
+                  <button type="button" (click)="dec(c.key)" aria-label="Decrease quantity">
                     <i class="fa-solid fa-minus" aria-hidden="true"></i>
                   </button>
                   <span>{{ c.qty }}</span>
-                  <button type="button" (click)="add(c.id, false)" aria-label="Increase quantity">
+                  <button type="button" (click)="add(c.key, false)" aria-label="Increase quantity">
                     <i class="fa-solid fa-plus" aria-hidden="true"></i>
                   </button>
                 </div>
@@ -483,7 +494,7 @@
           <button type="button" (click)="startCheckout()">
             Checkout<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </button>
-          <span class="rails">African rails first &mdash; M-Pesa &middot; Flutterwave &middot; AfroPay &middot; Cards</span>
+          <span class="rails">Pay by mobile money &mdash; M-Pesa &middot; MTN &middot; Airtel &mdash; or card</span>
         </div>
       </div>
     </div>
@@ -525,7 +536,7 @@
           </div>
           <div class="titles">
             <h3>{{ d.t }}</h3>
-            <span class="price">{{ detailIsFree ? 'Free · open access' : fmt(d.p) }}</span>
+            <span class="price">{{ detailIsFree ? 'Free · open access' : fmt(price(detail())) }}</span>
           </div>
           <p class="desc">{{ d.desc }}</p>
           <div class="specs">
@@ -572,9 +583,13 @@
                   <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 </button>
               </div>
-              <button type="button" class="add" (click)="detailAdd()">
-                Add to cart &mdash; {{ detailTotal }}
-              </button>
+              @if (isSoldOut(detail())) {
+                <button type="button" class="add" disabled>Sold out</button>
+              } @else {
+                <button type="button" class="add" (click)="detailAdd()">
+                  Add to cart &mdash; {{ detailTotal }}
+                </button>
+              }
             </div>
           }
           <span class="fund">{{ detailFund }}</span>
@@ -603,18 +618,18 @@
 
   @if (coOpen()) {
     <div class="st-co-overlay" (click)="coOpen.set(false)">
-      <div role="dialog" aria-label="Checkout" class="st-co" (click)="stopEvent($event)">
+      <div role="dialog" aria-modal="true" aria-labelledby="st-co-title" class="st-co" (click)="stopEvent($event)">
         <div class="st-co__head">
           <div class="top">
             <div>
               <span class="brand">Sankofa Store</span>
-              <strong>{{ coDone() ? 'Order confirmed' : 'Checkout' }}</strong>
+              <strong id="st-co-title">{{ coResult() ? 'Order placed' : 'Checkout' }}</strong>
             </div>
             <button type="button" (click)="coOpen.set(false)" aria-label="Close checkout">
               <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
           </div>
-          @if (!coDone()) {
+          @if (!coResult()) {
             <div class="steps">
               @for (label of stepLabels; track label; let i = $index) {
                 <div [class.is-on]="coStep() >= i">
@@ -625,43 +640,31 @@
           }
         </div>
         <div class="st-co__body">
-          @if (!coDone() && coStep() === 0) {
+          @if (!coResult() && coStep() === 0) {
             <div class="fields">
               <label
                 ><span>Full name</span
-                ><input type="text" [value]="coName()" (input)="bind('coName', $event)" placeholder="Your name"
+                ><input type="text" autocomplete="name" [value]="coName()" (input)="bind('coName', $event)" placeholder="Your name"
               /></label>
               <label
                 ><span>Email</span
-                ><input
-                  type="email"
-                  [value]="coEmail()"
-                  (input)="bind('coEmail', $event)"
-                  placeholder="you@example.com"
+                ><input type="email" autocomplete="email" [value]="coEmail()" (input)="bind('coEmail', $event)" placeholder="you@example.com"
               /></label>
-              <label
-                ><span>City &amp; country</span
-                ><input
-                  type="text"
-                  [value]="coPlace()"
-                  (input)="bind('coPlace', $event)"
-                  placeholder="Mbarara, Uganda"
-              /></label>
+              <div class="st-co__trap" aria-hidden="true">
+                <label>Leave this field empty<input type="text" tabindex="-1" autocomplete="off" [value]="coWebsite()" (input)="bind('coWebsite', $event)" /></label>
+              </div>
             </div>
           }
-          @if (!coDone() && coStep() === 1) {
+          @if (!coResult() && coStep() === 1) {
             <div class="options">
               @if (coAllDigital) {
                 <div class="digital-note">
                   <i class="fa-solid fa-bolt" aria-hidden="true"></i>
-                  <span
-                    >Everything in your cart is digital &mdash; delivery is instant, to your email
-                    and SAU account.</span
-                  >
+                  <span>Everything in your bag is digital &mdash; it is delivered by email once payment is confirmed.</span>
                 </div>
               } @else {
                 @for (sh of shipOptions; track sh.id) {
-                  <button type="button" class="opt" [class.is-on]="coShip() === sh.id" (click)="coShip.set(sh.id)">
+                  <button type="button" class="opt" [class.is-on]="coShip() === sh.id" [attr.aria-pressed]="coShip() === sh.id" (click)="coShip.set(sh.id)">
                     <span class="radio"><span></span></span>
                     <span class="txt"
                       ><strong>{{ sh.label }}</strong
@@ -670,47 +673,46 @@
                     <span class="price">{{ sh.cost === 0 ? 'Free' : fmt(sh.cost) }}</span>
                   </button>
                 }
+                @if (needsAddress) {
+                  <label class="pay-field"
+                    ><span>Delivery address</span
+                    ><input type="text" autocomplete="street-address" [value]="coAddress()" (input)="bind('coAddress', $event)" placeholder="Street, city, country"
+                  /></label>
+                }
               }
             </div>
           }
-          @if (!coDone() && coStep() === 2) {
+          @if (!coResult() && coStep() === 2) {
             <div class="options">
-              @for (rr of rails; track rr.id) {
-                <button type="button" class="opt opt--rail" [class.is-on]="coRail() === rr.id" (click)="coRail.set(rr.id)">
+              @for (rr of rails(); track rr.id) {
+                <button type="button" class="opt opt--rail" [class.is-on]="coRail() === rr.id" [attr.aria-pressed]="coRail() === rr.id" (click)="coRail.set(rr.id)">
                   <span class="radio"><span></span></span>
                   <i class="fa-solid {{ rr.icon }}" aria-hidden="true"></i>
                   <strong>{{ rr.label }}</strong>
                   <span class="meta">{{ rr.meta }}</span>
                 </button>
               }
-              @if (activeRail.phone) {
-                <label class="pay-field"
-                  ><span>Mobile money number</span
-                  ><input
-                    type="tel"
-                    [value]="coPhone()"
-                    (input)="bind('coPhone', $event)"
-                    placeholder="+256 700 000 000"
-                /></label>
-              } @else {
-                <label class="pay-field"
-                  ><span>Card number</span
-                  ><input
-                    type="text"
-                    class="mono"
-                    [value]="coCard()"
-                    (input)="bind('coCard', $event)"
-                    placeholder="4242 4242 4242 4242"
-                /></label>
-              }
+              <label class="pay-field"
+                ><span>{{ activeRail.phone ? 'Mobile money number' : 'Phone (optional)' }}</span
+                ><input type="tel" autocomplete="tel" [value]="coPhone()" (input)="bind('coPhone', $event)" placeholder="+256 700 000 000"
+              /></label>
+              <p class="pay-note">
+                @if (activeRail.phone) {
+                  Our bursary desk sends mobile money payment instructions to this number. No money moves until you approve it on your phone.
+                } @else if (cardCheckout()) {
+                  You will pay on Flutterwave&rsquo;s secure page. Card details never pass through this site.
+                } @else {
+                  Our bursary desk will email you a secure card payment link. Card details never pass through this site.
+                }
+              </p>
             </div>
           }
-          @if (!coDone() && coStep() === 3) {
+          @if (!coResult() && coStep() === 3) {
             <div class="review">
-              @for (c of cartItems; track c.id) {
+              @for (c of cartItems; track c.key) {
                 <div class="line">
                   <span class="t"
-                    >{{ c.t }} <span class="q">&times;{{ c.qty }}</span></span
+                    >{{ c.t }}@if (c.size) { <span class="q">Size {{ c.size }}</span> } <span class="q">&times;{{ c.qty }}</span></span
                   ><span class="v">{{ c.line }}</span>
                 </div>
               }
@@ -725,30 +727,46 @@
                 <span>Total &middot; {{ activeRail.label }}</span
                 ><strong>{{ fmt(coTotal) }}</strong>
               </div>
-              <span class="note">&ge;30% of supplier spend African-owned &middot; margin funds scholarships</span>
             </div>
           }
-          @if (coDone()) {
-            <div class="done">
+          @if (coResult(); as r) {
+            <div class="done" role="status" aria-live="polite">
               <span class="check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
               <strong>Webale &mdash; order placed.</strong>
-              <span class="no">{{ orderNo() }}</span>
-              <span class="msg"
-                >A receipt is on its way to {{ coEmail() || 'your inbox' }}. Digital items are
-                already in your SAU account; physical items follow
-                {{ coAllDigital ? 'instantly' : 'by ' + activeShip.label.toLowerCase() }}.</span
-              >
-              <span class="note">This order funded scholarship &amp; repatriation work.</span>
+              <span class="no">{{ r.order.number }}</span>
+              @if (r.payment.mode === 'hosted') {
+                <span class="msg">One step left: complete your card payment on Flutterwave&rsquo;s secure page.</span>
+                <a class="pay-link" [href]="r.payment.url">Pay securely &mdash; {{ fmt(r.order.totalCents / 100) }}</a>
+              } @else {
+                <span class="msg">{{ r.payment.message }}</span>
+              }
+              @if (r.confirmationEmailed) {
+                <span class="note">A confirmation is on its way to {{ coEmail() }}.</span>
+              }
+              <a class="order-link" [routerLink]="['/store/orders', r.order.number]">Follow this order &rarr;</a>
+            </div>
+          }
+          @if (coError(); as e) {
+            <div class="st-co__error" role="alert">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span>{{ e.message }}</span>
             </div>
           }
         </div>
         <div class="st-co__foot">
-          @if (!coDone() && coStep() > 0) {
+          @if (!coResult() && coStep() > 0) {
             <button type="button" class="back" (click)="coBack()">
               <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Back
             </button>
           }
-          <button type="button" class="next" [style.opacity]="coDone() || coValid ? '1' : '0.45'" (click)="coNext()">
+          <button
+            type="button"
+            class="next"
+            [disabled]="coSending() || (!coResult() && !coValid)"
+            [attr.aria-busy]="coSending()"
+            [style.opacity]="coResult() || (coValid && !coSending()) ? '1' : '0.45'"
+            (click)="coNext()"
+          >
             {{ coNextLabel }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </button>
         </div>

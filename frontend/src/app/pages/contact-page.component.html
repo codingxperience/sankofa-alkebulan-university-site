@@ -21,84 +21,137 @@
   <section class="ct-main">
     <div class="ct-container">
       <div class="ct-main__grid">
-        <form class="ct-form" (submit)="onSubmit($event)">
+        <form class="ct-form" (submit)="onSubmit($event)" novalidate aria-labelledby="ct-form-title">
           <div class="ct-form__head">
             <span class="ct-eyebrow">Write to the university</span>
-            <h2>Your message</h2>
+            <h2 id="ct-form-title">Your message</h2>
           </div>
 
-          <label class="ct-field">
-            <span class="ct-field__label">Direct to</span>
-            <span class="ct-select">
-              <select [value]="dept()" (change)="setDept($event)">
-                @for (d of departments; track d.key) {
-                  <option [value]="d.key">{{ d.label }}</option>
-                }
-              </select>
-              <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-            </span>
-          </label>
-
-          <div class="ct-form__row">
-            <label class="ct-field">
-              <span class="ct-field__label">Full name</span>
-              <input
-                type="text"
-                [value]="form().name"
-                (input)="setField('name', $event)"
-                placeholder="Your name"
-              />
-            </label>
-            <label class="ct-field">
-              <span class="ct-field__label">Email</span>
-              <input
-                type="email"
-                [value]="form().email"
-                (input)="setField('email', $event)"
-                placeholder="you@example.com"
-              />
-            </label>
-          </div>
-
-          <label class="ct-field">
-            <span class="ct-field__label"
-              >Country / institution <span class="opt">— optional</span></span
-            >
-            <input
-              type="text"
-              [value]="form().origin"
-              (input)="setField('origin', $event)"
-              placeholder="Where you're writing from"
-            />
-          </label>
-          <label class="ct-field">
-            <span class="ct-field__label">Message</span>
-            <textarea
-              rows="4"
-              [value]="form().message"
-              (input)="setField('message', $event)"
-              placeholder="Tell us what you need — admissions question, proposal, partnership, or press request."
-            ></textarea>
-          </label>
-
-          <div class="ct-form__actions">
-            <button type="submit">
-              Send message<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-            </button>
-            <span class="routes-to"
-              >Routes to <b>{{ routed.handler }}</b></span
-            >
-          </div>
-          @if (submitted()) {
-            <div class="ct-form__done">
+          @if (receipt(); as r) {
+            <div class="ct-form__done" role="status" aria-live="polite">
               <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
               <div>
-                <strong>Routed to {{ routed.title }}.</strong>
-                <span
-                  >We&rsquo;ve opened a pre-addressed email to {{ universityEmail }}. Send it and
-                  the {{ routed.handler }} will respond within {{ routed.response }}.</span
-                >
+                <strong>Received by {{ r.office.label }}.</strong>
+                <span>
+                  Your reference is <b class="ref">{{ r.reference }}</b>. Expect a reply within
+                  {{ r.office.responseTarget }}{{ r.acknowledgementEmailed ? ' — a copy of your message is on its way to your inbox' : '' }}.
+                </span>
+                <button type="button" class="ct-link" (click)="writeAnother()">Write another message</button>
               </div>
+            </div>
+          } @else {
+            <label class="ct-field" for="ct-office">
+              <span class="ct-field__label">Direct to</span>
+              <span class="ct-select">
+                <select id="ct-office" [value]="dept()" (change)="setDept($event)">
+                  @for (d of departments; track d.key) {
+                    <option [value]="d.key">{{ d.label }}</option>
+                  }
+                </select>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+              </span>
+            </label>
+
+            <div class="ct-form__row">
+              <label class="ct-field" for="ct-name" [class.has-error]="fieldErrors()['name']">
+                <span class="ct-field__label">Full name</span>
+                <input
+                  id="ct-name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  maxlength="120"
+                  [value]="form().name"
+                  (input)="setField('name', $event)"
+                  [attr.aria-invalid]="fieldErrors()['name'] ? true : null"
+                  [attr.aria-describedby]="fieldErrors()['name'] ? 'ct-name-error' : null"
+                  placeholder="Your name"
+                />
+                @if (fieldErrors()['name']; as message) {
+                  <span class="ct-field__error" id="ct-name-error">{{ message }}</span>
+                }
+              </label>
+              <label class="ct-field" for="ct-email" [class.has-error]="fieldErrors()['email']">
+                <span class="ct-field__label">Email</span>
+                <input
+                  id="ct-email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  maxlength="254"
+                  [value]="form().email"
+                  (input)="setField('email', $event)"
+                  [attr.aria-invalid]="fieldErrors()['email'] ? true : null"
+                  [attr.aria-describedby]="fieldErrors()['email'] ? 'ct-email-error' : null"
+                  placeholder="you@example.com"
+                />
+                @if (fieldErrors()['email']; as message) {
+                  <span class="ct-field__error" id="ct-email-error">{{ message }}</span>
+                }
+              </label>
+            </div>
+
+            <label class="ct-field" for="ct-origin" [class.has-error]="fieldErrors()['origin']">
+              <span class="ct-field__label">Country / institution <span class="opt">— optional</span></span>
+              <input
+                id="ct-origin"
+                type="text"
+                autocomplete="organization"
+                maxlength="160"
+                [value]="form().origin"
+                (input)="setField('origin', $event)"
+                placeholder="Where you're writing from"
+              />
+              @if (fieldErrors()['origin']; as message) {
+                <span class="ct-field__error">{{ message }}</span>
+              }
+            </label>
+            <label class="ct-field" for="ct-message" [class.has-error]="fieldErrors()['message']">
+              <span class="ct-field__label">Message</span>
+              <textarea
+                id="ct-message"
+                rows="4"
+                required
+                maxlength="5000"
+                [value]="form().message"
+                (input)="setField('message', $event)"
+                [attr.aria-invalid]="fieldErrors()['message'] ? true : null"
+                [attr.aria-describedby]="fieldErrors()['message'] ? 'ct-message-error' : null"
+                placeholder="Tell us what you need — admissions question, proposal, partnership, or press request."
+              ></textarea>
+              @if (fieldErrors()['message']; as message) {
+                <span class="ct-field__error" id="ct-message-error">{{ message }}</span>
+              }
+            </label>
+
+            <!-- Left empty by people; filled in by bots. Hidden from sight and from assistive technology. -->
+            <div class="ct-trap" aria-hidden="true">
+              <label>Leave this field empty
+                <input type="text" name="website" tabindex="-1" autocomplete="off" [value]="form().website" (input)="setField('website', $event)" />
+              </label>
+            </div>
+
+            @if (bannerError(); as e) {
+              <div class="ct-form__error" role="alert">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <div>
+                  <span>{{ e.message }}</span>
+                  @if (e.code === 'network') {
+                    <a [href]="mailtoFallback">Send it by email instead</a>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="ct-form__actions">
+              <button type="submit" [disabled]="sending()" [attr.aria-busy]="sending()">
+                @if (sending()) {
+                  Sending<span class="ct-dots" aria-hidden="true"></span>
+                } @else {
+                  Send message<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                }
+              </button>
+              <span class="routes-to">Routes to <b>{{ routed.handler }}</b></span>
             </div>
           }
         </form>

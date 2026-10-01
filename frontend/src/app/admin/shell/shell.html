@@ -1,0 +1,77 @@
+<a class="sc-skip" href="#sc-main" (click)="skip($event)">Skip to content</a>
+
+<div class="sc-frame">
+  <header class="sc-topbar">
+    <a class="sc-brand" routerLink="/admin">
+      <img ngSrc="/assets/design/crest-112.png" width="30" height="30" alt="" />
+      <div>
+        <strong>Sankofa Alkebulan</strong>
+        <span>Console</span>
+      </div>
+    </a>
+    <button
+      type="button"
+      class="sc-topbar__menu"
+      (click)="menuOpen.set(!menuOpen())"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="sc-rail"
+      aria-label="Menu"
+    >
+      <i class="pi" [class.pi-bars]="!menuOpen()" [class.pi-times]="menuOpen()" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <div class="sc-scrim" [class.is-open]="menuOpen()" (click)="menuOpen.set(false)" aria-hidden="true"></div>
+
+  <aside id="sc-rail" class="sc-rail" [class.is-open]="menuOpen()" aria-label="Console">
+    <a class="sc-brand" routerLink="/admin">
+      <img ngSrc="/assets/design/crest-112.png" width="38" height="38" alt="" priority />
+      <div>
+        <strong>Sankofa Alkebulan</strong>
+        <span>Console</span>
+      </div>
+    </a>
+
+    <nav class="sc-nav" aria-label="Console sections">
+      @for (group of groups(); track group.label) {
+        <div class="sc-nav__group">
+          <p class="sc-nav__label">{{ group.label }}</p>
+          @for (link of group.links; track link.path) {
+            <a
+              class="sc-nav__link"
+              [routerLink]="link.path"
+              routerLinkActive="is-active"
+              [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
+              ariaCurrentWhenActive="page"
+            >
+              <i [class]="'pi ' + link.icon" aria-hidden="true"></i>
+              {{ link.label }}
+              @if (badge(link); as count) {
+                <span class="sc-nav__count"><span class="visually-hidden">, </span>{{ count }}<span class="visually-hidden"> waiting</span></span>
+              }
+            </a>
+          }
+        </div>
+      }
+    </nav>
+
+    @if (session.me(); as me) {
+      <div class="sc-me">
+        <span class="sc-avatar" aria-hidden="true">{{ me.name | initials }}</span>
+        <div>
+          <a class="sc-me__name" routerLink="/admin/account">{{ me.name }}</a>
+          <span class="sc-me__role">{{ roleLine() }}</span>
+        </div>
+        <button type="button" class="sc-me__out" (click)="signOut()" aria-label="Sign out" title="Sign out">
+          <i class="pi pi-sign-out" aria-hidden="true"></i>
+        </button>
+      </div>
+    }
+  </aside>
+
+  <main id="sc-main" #main class="sc-main" tabindex="-1">
+    <div class="sc-page">
+      <router-outlet />
+    </div>
+  </main>
+</div>

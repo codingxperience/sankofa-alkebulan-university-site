@@ -1,27 +1,26 @@
-name: Prisma Migrate
+name: Database migrations
 
+# Production deployments on Vercel apply migrations during the build
+# (scripts/vercel-build.mjs). This workflow is the manual alternative: it
+# applies pending migrations to the database named by the DIRECT_URL secret.
 on:
   workflow_dispatch:
-  push:
-    branches: [main, master]
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "18"
-      - name: Install deps
-        run: |
-          cd sankofa-modern/backend
-          npm ci
-      - name: Run prisma migrate
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - name: Apply pending migrations
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          cd sankofa-modern/backend
-          npx prisma generate
-          npx prisma migrate deploy
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: npx prisma migrate deploy

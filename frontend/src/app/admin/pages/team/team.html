@@ -1,0 +1,232 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow">The institution</p>
+    <h1 class="sc-title">Team</h1>
+    <p class="sc-lede">Everyone who can sign in to the console. Roles decide what each person can see and change; offices decide whose door a message knocks on.</p>
+  </div>
+  @if (canManage()) {
+    <div class="sc-head__actions">
+      <button type="button" class="sc-btn sc-btn--primary" (click)="startInvite()"><i class="pi pi-user-plus" aria-hidden="true"></i> Invite someone</button>
+    </div>
+  }
+</header>
+
+<section class="sc-card">
+  @if (loading()) {
+    <sc-skeleton [lines]="6" />
+  } @else {
+    <div class="sc-table-wrap">
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th scope="col">Person</th>
+            <th scope="col">Roles</th>
+            <th scope="col">Offices</th>
+            <th scope="col">Last signed in</th>
+            <th scope="col" class="is-tight">Status</th>
+            @if (canManage()) {
+              <th scope="col" class="is-tight"><span class="visually-hidden">Actions</span></th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of members(); track member.id) {
+            <tr>
+              <td>
+                <div class="tm-person">
+                  <span class="sc-avatar sc-avatar--small" aria-hidden="true">{{ member.name | initials }}</span>
+                  <div>
+                    <span class="sc-cell-main">
+                      {{ member.name }}
+                      @if (member.id === session.me()?.id) {
+                        <span class="sc-muted">(you)</span>
+                      }
+                    </span>
+                    <span class="sc-cell-sub">{{ member.title ? member.title + ' · ' : '' }}{{ member.email }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="tm-tags">
+                  @for (label of member.roleLabels; track label) {
+                    <span class="sc-tag">{{ label }}</span>
+                  }
+                </div>
+              </td>
+              <td>
+                @if (member.offices.length) {
+                  <span class="tm-offices">{{ member.offices.length === 7 ? 'All seven' : member.offices.length + ' of 7' }}</span>
+                  <span class="sc-cell-sub">
+                    @for (office of member.offices; track office; let last = $last) {
+                      {{ state.officeName(office) }}{{ last ? '' : ', ' }}
+                    }
+                  </span>
+                } @else {
+                  <span class="sc-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (member.lastSignInAt) {
+                  <span [title]="member.lastSignInAt | when: 'full'">{{ member.lastSignInAt | ago }}</span>
+                } @else {
+                  <span class="sc-muted">Never</span>
+                }
+                @if (member.lockedUntil) {
+                  <span class="sc-cell-sub tm-locked">Locked after failed attempts until {{ member.lockedUntil | when: 'time' }}</span>
+                }
+              </td>
+              <td class="is-tight"><sc-pill [label]="statusTerms[member.status].label" [tone]="statusTerms[member.status].tone" /></td>
+              @if (canManage()) {
+                <td class="is-tight">
+                  <button type="button" class="sc-btn sc-btn--small" (click)="startEdit(member)">Manage</button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<section class="sc-card tm-roles" aria-labelledby="tm-roles-title">
+  <div class="sc-card__head"><h2 class="sc-section-title" id="tm-roles-title">What each role can do</h2></div>
+  <dl class="sc-facts sc-card__body">
+    @for (role of roles; track role.role) {
+      <dt>{{ role.label }}</dt>
+      <dd>{{ role.description }}</dd>
+    }
+  </dl>
+</section>
+
+<!-- Invite or manage -->
+<sc-modal [open]="inviting() || !!editing()" [wide]="true" labelledBy="tm-form-title" (closed)="closeForm()">
+  <form (ngSubmit)="submit()" [formGroup]="form" novalidate>
+    <div class="sc-dialog__head">
+      <h2 id="tm-form-title">{{ editing() ? 'Manage ' + editing()?.name : 'Invite someone to the console' }}</h2>
+      <p>
+        @if (editing()) {
+          {{ editing()?.email }}
+        } @else {
+          They receive an email with a link to choose their password. You can also copy the link and send it yourself.
+        }
+      </p>
+    </div>
+    <div class="sc-dialog__body sc-form">
+      @if (protectedMember()) {
+        <div class="sc-alert sc-alert--gold">
+          <i class="pi pi-lock" aria-hidden="true"></i>
+          <span>Only an owner can change an administrator’s or owner’s account.</span>
+        </div>
+      }
+      @if (error()) {
+        <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
+      }
+      <div class="sc-row">
+        <div class="sc-field">
+          <label class="sc-label" for="tm-name">Full name</label>
+          <input id="tm-name" class="sc-input" formControlName="name" [attr.aria-invalid]="!!fields()['name']" />
+        </div>
+        <div class="sc-field">
+          <label class="sc-label" for="tm-email">Email address</label>
+          <input id="tm-email" class="sc-input" type="email" formControlName="email" spellcheck="false" [attr.aria-invalid]="!!fields()['email']" />
+          @if (fields()['email']; as message) {
+            <span class="sc-error">{{ message }}</span>
+          }
+        </div>
+      </div>
+      <div class="sc-field">
+        <label class="sc-label" for="tm-title">Title <small>optional, e.g. Admissions Officer</small></label>
+        <input id="tm-title" class="sc-input" formControlName="title" />
+      </div>
+
+      <fieldset class="tm-fieldset">
+        <legend class="sc-label">Roles</legend>
+        @if (editingSelf()) {
+          <p class="sc-hint">You cannot change your own roles. Ask another administrator.</p>
+        }
+        <div class="sc-choices">
+          @for (role of roles; track role.role) {
+            <label class="sc-choice">
+              <input type="checkbox" [checked]="chosenRoles().has(role.role)" [disabled]="roleLocked(role.role)" (change)="toggleRole(role.role)" />
+              <span>
+                <strong>{{ role.label }}</strong>
+                <small>{{ role.description }}</small>
+              </span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="tm-fieldset">
+        <legend class="sc-label">Offices <small>whose messages they answer</small></legend>
+        <div class="sc-choices">
+          @for (office of offices; track office) {
+            <label class="sc-choice">
+              <input type="checkbox" [checked]="chosenOffices().has(office)" (change)="toggleOffice(office)" />
+              <span><strong>{{ state.officeName(office) }}</strong></span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      @if (editing(); as member) {
+        @if (!editingSelf() && !protectedMember()) {
+          <div class="tm-danger">
+            <div>
+              <strong>Access</strong>
+              <p class="sc-hint">
+                @if (member.status === 'SUSPENDED') {
+                  Suspended. They cannot sign in until reactivated.
+                } @else if (member.status === 'INVITED') {
+                  Invited, not yet joined. Send a fresh invitation if the first was lost.
+                } @else {
+                  Send a link to set a new password, or suspend the account to block it at once.
+                }
+              </p>
+            </div>
+            <div class="tm-danger__actions">
+              @if (member.status !== 'SUSPENDED') {
+                <button type="button" class="sc-btn sc-btn--small" [disabled]="busy()" (click)="sendLink(member)">
+                  {{ member.status === 'INVITED' ? 'Resend invitation' : 'Send sign-in link' }}
+                </button>
+                <button type="button" class="sc-btn sc-btn--danger sc-btn--small" [disabled]="busy()" (click)="setStatus(member, 'SUSPENDED')">Suspend</button>
+              } @else {
+                <button type="button" class="sc-btn sc-btn--small" [disabled]="busy()" (click)="setStatus(member, 'ACTIVE')">Reactivate</button>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+    <div class="sc-dialog__foot">
+      <button type="button" class="sc-btn sc-btn--quiet" (click)="closeForm()">Cancel</button>
+      <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="busy()" [disabled]="busy() || protectedMember()">
+        {{ editing() ? 'Save changes' : 'Send invitation' }}
+      </button>
+    </div>
+  </form>
+</sc-modal>
+
+<!-- The link that was just issued -->
+<sc-modal [open]="!!result()" labelledBy="tm-link-title" (closed)="result.set(null)">
+  @if (result(); as r) {
+    <div class="sc-dialog__head">
+      <h2 id="tm-link-title">{{ r.kind === 'invitation' ? 'Invitation ready for ' + r.name : 'Sign-in link ready for ' + r.name }}</h2>
+      <p>
+        @if (r.emailQueued) {
+          It is on its way by email. If it does not arrive, send them this link yourself.
+        } @else {
+          Email sending is not switched on yet, so send this link to them yourself — by a channel only they can read.
+        }
+      </p>
+    </div>
+    <div class="sc-dialog__body sc-form">
+      <sc-copy-link [url]="r.link.url" [label]="r.kind === 'invitation' ? 'Invitation link' : 'Sign-in link'" />
+      <p class="sc-hint">Works once, until {{ r.link.expiresAt | when: 'full' }}. Anyone holding it can set the password, so treat it like one.</p>
+    </div>
+    <div class="sc-dialog__foot">
+      <button type="button" class="sc-btn sc-btn--primary" (click)="result.set(null)">Done</button>
+    </div>
+  }
+</sc-modal>

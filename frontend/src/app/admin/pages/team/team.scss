@@ -1,0 +1,58 @@
+.tm-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tm-offices {
+  font-size: 13px;
+}
+
+.tm-locked {
+  color: var(--sc-red);
+}
+
+.tm-roles {
+  margin-top: 20px;
+}
+
+.tm-fieldset {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  legend {
+    margin-bottom: 8px;
+    padding: 0;
+  }
+}
+
+.tm-danger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border: 1px solid var(--sc-line);
+  border-radius: 10px;
+  background: var(--sc-paper);
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.tm-danger__actions {
+  display: flex;
+  gap: 8px;
+}

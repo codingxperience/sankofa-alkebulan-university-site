@@ -1,0 +1,109 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow">Sankofa Store</p>
+    <h1 class="sc-title">Orders</h1>
+    <p class="sc-lede">Prices and stock are checked on the server when an order is placed. Mobile money is confirmed here, by a person, once the payment arrives.</p>
+  </div>
+  <div class="sc-head__actions">
+    <a class="sc-btn" [href]="exportUrl()" download><i class="pi pi-download" aria-hidden="true"></i> Export this view</a>
+  </div>
+</header>
+
+<sc-store-tabs />
+
+@if (stats(); as s) {
+  <section class="sc-stats or-stats" aria-label="Takings">
+    <div class="sc-stat">
+      <span class="sc-stat__label">Paid in the last 30 days</span>
+      <span class="sc-stat__value">{{ s.revenue30dCents | money }}</span>
+    </div>
+    <div class="sc-stat">
+      <span class="sc-stat__label">Paid since opening</span>
+      <span class="sc-stat__value">{{ s.revenueCents | money }}</span>
+    </div>
+    <div class="sc-stat">
+      <span class="sc-stat__label">Open orders</span>
+      <span class="sc-stat__value">{{ openCount() }}</span>
+      <span class="sc-stat__note">{{ s.status.AWAITING_PAYMENT ?? 0 }} awaiting payment</span>
+    </div>
+    <div class="sc-stat">
+      <span class="sc-stat__label">Most ordered</span>
+      @if (s.topProducts[0]; as top) {
+        <span class="sc-stat__value or-top">{{ top.name }}</span>
+        <span class="sc-stat__note">{{ top.quantity }} ordered · {{ top.revenueCents | money }}</span>
+      } @else {
+        <span class="sc-stat__note">No orders yet</span>
+      }
+    </div>
+  </section>
+}
+
+<div class="sc-toolbar">
+  <div class="sc-segments" role="group" aria-label="Status">
+    @for (option of views; track option.value) {
+      <button type="button" class="sc-segment" [attr.aria-pressed]="view() === option.value" (click)="choose(option.value)">
+        {{ option.label }}
+        @if (count(option.value); as n) {
+          <span class="sc-segment__count">{{ n }}</span>
+        }
+      </button>
+    }
+  </div>
+  <span class="sc-toolbar__spacer"></span>
+  <div class="sc-search">
+    <i class="pi pi-search" aria-hidden="true"></i>
+    <input class="sc-input" type="search" placeholder="Order, name, email or payment reference" aria-label="Search orders"
+      [value]="query()" (input)="search($any($event.target).value)" />
+  </div>
+</div>
+
+<section class="sc-card">
+  @if (loading()) {
+    <sc-skeleton [lines]="8" />
+  } @else if (orders().length === 0) {
+    <sc-empty title="No orders in this view" icon="pi-shopping-bag">
+      <p>Orders placed on the store appear here at once, with their items reserved.</p>
+    </sc-empty>
+  } @else {
+    <div class="sc-table-wrap">
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th scope="col">Order</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Delivery</th>
+            <th scope="col">Payment</th>
+            <th scope="col" class="is-right">Total</th>
+            <th scope="col" class="is-tight">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr class="is-link" (click)="open(order)">
+              <td>
+                <a class="sc-cell-main sc-ref" [routerLink]="['/admin/store/orders', order.id]" (click)="$event.stopPropagation()">{{ order.number }}</a>
+                <span class="sc-cell-sub">{{ order.createdAt | when }} · {{ order.lines }} {{ order.lines === 1 ? 'item' : 'items' }}</span>
+              </td>
+              <td>
+                {{ order.customerName }}
+                <span class="sc-cell-sub">{{ order.customerEmail }}</span>
+              </td>
+              <td>{{ delivery[order.fulfilment] }}</td>
+              <td>
+                <sc-pill [label]="paymentTerms[order.paymentStatus].label" [tone]="paymentTerms[order.paymentStatus].tone" />
+                <span class="sc-cell-sub">{{ order.paymentRail === 'CARD' ? 'Card' : 'Mobile money' }}</span>
+              </td>
+              <td class="is-right sc-num"><strong>{{ order.totalCents | money: order.currency }}</strong></td>
+              <td class="is-tight"><sc-pill [label]="statusTerms[order.status].label" [tone]="statusTerms[order.status].tone" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    @if (cursor()) {
+      <div class="sc-more">
+        <button type="button" class="sc-btn sc-btn--small" [class.is-busy]="loadingMore()" (click)="more()">Show more</button>
+      </div>
+    }
+  }
+</section>

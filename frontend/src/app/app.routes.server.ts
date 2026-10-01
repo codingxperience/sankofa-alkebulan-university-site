@@ -1,6 +1,9 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
+  // Personal pages: rendered only in the visitor's browser, never on a server or at build time.
+  { path: 'admin/**', renderMode: RenderMode.Client },
+  { path: 'store/orders/:number', renderMode: RenderMode.Client },
   {
     path: 'articles',
     renderMode: RenderMode.Server

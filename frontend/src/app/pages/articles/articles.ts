@@ -1,8 +1,9 @@
-import { Component, OnInit, TrackByFunction } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ApiError } from '../../core/api/api-client';
 import { PostsService, Post } from '../../core/posts.service';
 
 @Component({
@@ -49,80 +50,68 @@ export class Articles implements OnInit {
   archivedPosts: Post[] = [];
   showArchive: boolean = false;
 
-  categories = [
-    { name: 'African Philosophy', count: 12 },
-    { name: 'Cultural Studies', count: 8 },
-    { name: 'Literature', count: 15 },
-    { name: 'Politics', count: 6 },
-    { name: 'Economics', count: 9 },
-    { name: 'Education', count: 7 }
-  ];
+  /** Real counts from the journal, filled in once loaded. */
+  categories: Array<{ name: string; count: number }> = [];
+  tags: string[] = [];
+  /** The three most recent articles, shown in the sidebar. */
+  recentPosts: Post[] = [];
+  loading = true;
+  loadError = '';
 
-  popularPosts = [
-    { id: 1, title: 'The Future of African Scholarship', date: 'Dec 15, 2025' },
-    { id: 2, title: 'Cultural Preservation in Digital Age', date: 'Dec 12, 2025' },
-    { id: 3, title: 'African Voices in Global Discourse', date: 'Dec 10, 2025' }
-  ];
+  newsletterEmail = '';
+  newsletterTrap = '';
+  newsletterConsent = '';
+  newsletterState: 'idle' | 'sending' | 'done' = 'idle';
+  newsletterError = '';
 
-  tags = ['Africa', 'Culture', 'Scholarship', 'Philosophy', 'Literature', 'Politics', 'Education', 'Heritage', 'Transformation'];
-
-  constructor(private postsService: PostsService) {}
+  private readonly postsService = inject(PostsService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   ngOnInit() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     this.postsService.getPosts().subscribe({
       next: (posts) => {
-        this.posts = posts || this.getMockPosts();
-        this.featuredPost = this.posts.length ? this.posts[0] : null;
+        this.posts = posts;
+        this.featuredPost = posts[0] ?? null;
+        this.recentPosts = posts.slice(0, 3);
+        this.loading = false;
         this.updateFilteredPosts();
         this.updateArchivedPosts();
       },
-      error: () => {
-        // Fallback to mock data if backend is not available
-        this.posts = this.getMockPosts();
-        this.featuredPost = this.posts[0];
-        this.updateFilteredPosts();
-        this.updateArchivedPosts();
-      }
+      error: (error: unknown) => {
+        this.loading = false;
+        this.loadError = ApiError.from(error).message;
+      },
     });
+    this.postsService
+      .getFacets()
+      .then((facets) => {
+        this.categories = facets.categories.map((c) => ({ name: c.value, count: c.count }));
+        this.tags = facets.tags.slice(0, 16).map((t) => t.value);
+      })
+      .catch(() => undefined);
+    this.postsService
+      .getNewsletterConsent()
+      .then((result) => (this.newsletterConsent = result.consentText))
+      .catch(() => undefined);
   }
 
-  private getMockPosts(): Post[] {
-    return [
-      {
-        title: 'Sustainable Environmental Management: A Simple Take',
-        published_at: '2025-11-12T00:00:00Z',
-        excerpt: 'Environment, Sustainability, Uganda Development, Climate & Ecology daily actions—like sorting waste, recycling plastics, and planting trees when we cut them—shape the future of Uganda\'s environment.',
-        featured_image: '/wp-content/uploads/2025/10/sustainable_environmental_management.jpg',
-        categories: ['Environment', 'Sustainability', 'Climate & Ecology'],
-        tags: ['Uganda', 'Development', 'Climate'],
-        author: 'Sankofa Alkebulan University',
-        slug: 'sustainable-environmental-management-simple-take',
-        content: 'Full content here...'
-      },
-      {
-        title: 'Uganda\'s Maritime Ambition: A Comprehensive Investigation',
-        published_at: '2025-11-04T00:00:00Z',
-        excerpt: 'Politics, Economics, International Relations, Infrastructure, East Africa, Geopolitics, Trade & Transport Despite being landlocked, Uganda under President Yoweri Museveni has asserted a right to access the Indian Ocean.',
-        featured_image: '/wp-content/uploads/2025/10/ugandas_maritime_ambition.jpg',
-        categories: ['Politics', 'Economics', 'International Relations'],
-        tags: ['East Africa', 'Geopolitics', 'Trade'],
-        author: 'Sankofa Alkebulan University',
-        slug: 'ugandas-maritime-ambition-comprehensive-investigation',
-        content: 'Full content here...'
-      },
-      {
-        title: 'UBUNTUCRACY face à la crise: Tanzanie, Cameroun et l\'appel mondial',
-        published_at: '2025-11-03T00:00:00Z',
-        excerpt: 'Editor\'s Pick, Politique et gouvernance Philosophie africaine Éthique et société Réflexions contemporaines Ubuntu Review | Numéro 1, Vol. 1 (Janvier 2026)',
-        featured_image: '/wp-content/uploads/2025/10/ubuntucracy_crisis.jpg',
-        categories: ['Politics', 'African Philosophy', 'Ethics'],
-        tags: ['Tanzania', 'Cameroon', 'Governance'],
-        author: 'Sankofa Alkebulan University',
-        slug: 'ubuntucracy-face-crise-tanzanie-cameroun-appel-mondial',
-        content: 'Full content here...'
-      }
-      // Add more articles from the list...
-    ];
+  async subscribe(event: Event) {
+    event.preventDefault();
+    if (this.newsletterState === 'sending') {
+      return;
+    }
+    this.newsletterState = 'sending';
+    this.newsletterError = '';
+    try {
+      await this.postsService.subscribe(this.newsletterEmail, this.newsletterTrap);
+      this.newsletterState = 'done';
+    } catch (error) {
+      this.newsletterState = 'idle';
+      this.newsletterError = ApiError.from(error).message;
+    }
   }
 
   setViewMode(mode: 'timeline' | 'academic' | 'blog') {
@@ -136,7 +125,8 @@ export class Articles implements OnInit {
     this.updateFilteredPosts();
   }
 
-  setFilter(filter: string) {
+  setFilter(filter: string, event?: Event) {
+    event?.preventDefault();
     this.activeFilter = filter;
     this.updateFilteredPosts();
   }
@@ -183,33 +173,14 @@ export class Articles implements OnInit {
     this.filteredPosts = filtered;
   }
 
-  getRandomViews() {
-    return Math.floor(Math.random() * 1000) + 100;
+  /** The article's own cover image, or the journal's emblem when it has none. */
+  imageFor(post: Post): string {
+    return post.featured_image || '/assets/logo-crest.png';
   }
 
-  getRandomComments() {
-    return Math.floor(Math.random() * 50) + 1;
-  }
-
-  getPostImage(index: number) {
-    const images = [
-      '/wp-content/uploads/2025/10/10006258593e3a.png',
-      '/wp-content/uploads/2025/10/1000629597-1.jpg',
-      '/wp-content/uploads/2025/10/1000629598-1.jpg',
-      '/wp-content/uploads/2025/10/1000629599.jpg',
-      '/wp-content/uploads/2025/10/1000629600.jpg',
-      '/wp-content/uploads/2025/10/1000629601-1.jpg'
-    ];
-    return images[index % images.length];
-  }
-
-  getPopularPostImage(index: number) {
-    const images = [
-      '/wp-content/uploads/2025/10/1000636183-1.jpg',
-      '/wp-content/uploads/2025/10/1000636214-1.jpg',
-      '/wp-content/uploads/2025/10/1000636221-1.jpg'
-    ];
-    return images[index % images.length];
+  /** Years that actually have articles, newest first. */
+  get archiveYears(): string[] {
+    return [...new Set(this.posts.map((post) => post.published_at.slice(0, 4)))].sort().reverse();
   }
 
   // Archive methods

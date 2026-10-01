@@ -1,153 +1,544 @@
 <div class="v2-shell ap-shell">
-  <!-- Compact header for the applicant context -->
-  <header class="ap-topbar" role="banner">
+  <header class="ap-topbar">
     <div class="v2-container">
       <a routerLink="/home" class="ap-brand" aria-label="Back to homepage">
-        <img src="assets/logo-primary.png" alt="">
+        <img src="assets/logo-primary.png" alt="" />
         <b>Sankofa Alkebulan University</b>
       </a>
-      <div class="ap-progress-wrap">
-        <span class="ap-progress-label">Step 2 of 6 — Personal details</span>
-        <div class="ap-progress" aria-hidden="true"><div></div></div>
-      </div>
-      <div class="ap-account">
-        <span class="ap-status">
-          <span class="dot" aria-hidden="true"></span>
-          Auto-saved 12 sec ago
-        </span>
-        <a href="#" class="ap-account__name">a.owusu&#64;example.org</a>
-      </div>
+      @if (phase() === 'form') {
+        <div class="ap-progress-wrap">
+          <span class="ap-progress-label">Step {{ stepIndex() + 1 }} of {{ steps.length }} &mdash; {{ step().label }}</span>
+          <div class="ap-progress" role="progressbar" aria-label="Application completeness" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progress()">
+            <div [style.width.%]="progress()"></div>
+          </div>
+        </div>
+        <div class="ap-account">
+          <span class="ap-status" [class.is-offline]="saveState() === 'offline'" aria-live="polite">
+            <span class="dot" aria-hidden="true"></span>{{ savedLabel() }}
+          </span>
+          <span class="ap-account__name">{{ app()?.reference }}</span>
+        </div>
+      }
     </div>
   </header>
 
   <main class="ap-layout">
     <div class="v2-container">
-      <div class="ap-grid">
-        <!-- Step rail -->
-        <aside class="ap-rail" aria-label="Application steps">
-          <div class="ap-rail__head">
-            <span class="v2-kicker">Application — 2026 intake</span>
-            <h2>One application. Three pathways. Saved at every step.</h2>
-          </div>
-          <ol class="ap-steps">
-            @for (step of steps; track step.label) {
-              <li [class.done]="step.state === 'done'" [class.active]="step.state === 'active'">
-                <span class="n">
-                  @if (step.marker === 'check') {
-                    <i class="fa-solid fa-check"></i>
-                  } @else {
-                    {{ step.marker }}
-                  }
-                </span>
-                <div><b>{{ step.label }}</b><span>{{ step.sub }}</span></div>
-              </li>
-            }
-          </ol>
-          <div class="ap-rail__help">
-            <h4>Need help?</h4>
-            <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-message"></i> Live chat with admissions</a>
-            <a href="#" class="v2-btn v2-btn--link">Read the application guide</a>
-          </div>
-        </aside>
+      @switch (phase()) {
+        @case ('loading') {
+          <div class="ap-card ap-card--quiet" aria-busy="true"><p>Opening the application&hellip;</p></div>
+        }
 
-        <!-- Form -->
-        <section class="ap-form" aria-label="Personal details form">
-          <header class="ap-form__head">
-            <h1>Personal details</h1>
-            <p>Tell us a little about yourself. We use this to set up your applicant account and to match you to a regional admissions officer.</p>
-          </header>
+        @case ('error') {
+          <div class="ap-card ap-card--quiet" role="alert">
+            <h1>The application could not open</h1>
+            <p>{{ error() }}</p>
+            <a routerLink="/contact" class="v2-btn v2-btn--ghost">Contact the Admissions Office</a>
+          </div>
+        }
 
-          <!-- Pathway recap -->
-          <fieldset class="ap-group">
-            <legend>Pathway</legend>
-            <div class="ap-pathway">
-              @for (p of pathways; track p.id) {
-                <label class="ap-pw" [class.is-selected]="selectedPathway === p.id">
-                  <input type="radio" name="pathway" [value]="p.id" [(ngModel)]="selectedPathway">
-                  <span class="title">{{ p.title }}</span>
-                  <span class="sub">{{ p.sub }}</span>
-                </label>
+        @case ('welcome') {
+          <div class="ap-welcome">
+            <section class="ap-card ap-begin" aria-labelledby="ap-begin-title">
+              <span class="v2-kicker">Application &mdash; {{ options()?.intakes?.[0] }} and later</span>
+              <h1 id="ap-begin-title">One application. Three pathways.</h1>
+              <p class="lead">
+                Six short steps, saved as you type. No account to create &mdash; this device remembers your application,
+                and you can open it anywhere with a private link.
+              </p>
+
+              @if (notice()) {
+                <p class="ap-notice" role="status">{{ notice() }}</p>
               }
-            </div>
-          </fieldset>
 
-          <!-- About you -->
-          <fieldset class="ap-group">
-            <legend>About you</legend>
-            <div class="ap-row">
-              <div class="ap-field">
-                <label for="fn">Given name</label>
-                <input id="fn" type="text" name="givenName" [(ngModel)]="model.givenName">
-              </div>
-              <div class="ap-field">
-                <label for="ln">Family name</label>
-                <input id="ln" type="text" name="familyName" [(ngModel)]="model.familyName">
-              </div>
-            </div>
-            <div class="ap-row">
-              <div class="ap-field">
-                <label for="dob">Date of birth</label>
-                <input id="dob" type="date" name="dob" [(ngModel)]="model.dob">
-              </div>
-              <div class="ap-field">
-                <label for="gender">Gender (optional)</label>
-                <select id="gender" name="gender" [(ngModel)]="model.gender">
-                  @for (g of genders; track g) {
-                    <option [value]="g">{{ g }}</option>
+              <fieldset class="ap-group">
+                <legend>Pathway</legend>
+                <div class="ap-pathway">
+                  @for (p of options()?.pathways ?? []; track p.value) {
+                    <label class="ap-pw" [class.is-selected]="startPathway() === p.value">
+                      <input type="radio" name="start-pathway" [value]="p.value" [checked]="startPathway() === p.value" (change)="startPathway.set(p.value)" />
+                      <span class="title">{{ p.label }}</span>
+                      <span class="sub">
+                        @switch (p.value) {
+                          @case ('UNDERGRADUATE') { Bachelor&rsquo;s degrees, diplomas and certificates }
+                          @case ('POSTGRADUATE') { Master&rsquo;s degrees and postgraduate diplomas }
+                          @case ('DOCTORAL') { PhD programmes across the institutes and schools }
+                        }
+                      </span>
+                    </label>
                   }
-                </select>
-              </div>
-            </div>
-            <div class="ap-row">
-              <div class="ap-field">
-                <label for="cit">Country of citizenship</label>
-                <select id="cit" name="citizenship" [(ngModel)]="model.citizenship">
-                  @for (c of citizenship; track c) {
-                    <option [value]="c">{{ c }}</option>
-                  }
-                </select>
-              </div>
-              <div class="ap-field">
-                <label for="res">Country of residence</label>
-                <select id="res" name="residence" [(ngModel)]="model.residence">
-                  @for (r of residence; track r) {
-                    <option [value]="r">{{ r }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-          </fieldset>
+                </div>
+              </fieldset>
 
-          <!-- Contact -->
-          <fieldset class="ap-group">
-            <legend>Contact</legend>
-            <div class="ap-row">
-              <div class="ap-field">
-                <label for="em">Email</label>
-                <input id="em" type="email" name="email" [(ngModel)]="model.email">
-                <span class="hint">We'll send applicant-portal links and decisions here. Use a personal address you'll have access to after secondary school.</span>
+              <div class="ap-row">
+                <div class="ap-field">
+                  <label for="start-intake">Intake</label>
+                  <select id="start-intake" [value]="startIntake()" (change)="startIntake.set($any($event.target).value)">
+                    @for (intake of options()?.intakes ?? []; track intake) {
+                      <option [value]="intake">{{ intake }}</option>
+                    }
+                  </select>
+                </div>
               </div>
-              <div class="ap-field">
-                <label for="ph">Phone</label>
-                <input id="ph" type="tel" name="phone" placeholder="+233 ..." [(ngModel)]="model.phone">
-              </div>
-            </div>
-            <div class="ap-field">
-              <label for="addr">Mailing address</label>
-              <input id="addr" type="text" name="address" placeholder="Street, city, postal code" [(ngModel)]="model.address">
-            </div>
-          </fieldset>
 
-          <!-- Actions -->
-          <footer class="ap-form__actions">
-            <a href="#" class="v2-btn v2-btn--ghost"><i class="fa-regular fa-floppy-disk"></i> Save &amp; exit</a>
-            <div class="ap-form__nav">
-              <a href="#" class="v2-btn v2-btn--ghost">← Pathway</a>
-              <a href="#" class="v2-btn v2-btn--primary v2-btn--lg">Continue · Academic history <span aria-hidden="true">→</span></a>
-            </div>
-          </footer>
-        </section>
-      </div>
+              @if (error()) {
+                <p class="ap-error" role="alert">{{ error() }}</p>
+              }
+              <div class="ap-form__actions ap-form__actions--start">
+                <button type="button" class="v2-btn v2-btn--primary v2-btn--lg" [disabled]="!startPathway() || starting()" (click)="start()">
+                  {{ starting() ? 'Opening your application…' : 'Begin my application' }} <span aria-hidden="true">&rarr;</span>
+                </button>
+              </div>
+            </section>
+
+            <aside class="ap-card ap-resume" aria-labelledby="ap-resume-title">
+              <h2 id="ap-resume-title">Already started?</h2>
+              @if (options()?.emailDelivery) {
+                @if (resumeState() === 'sent') {
+                  <p role="status">
+                    If there is an unfinished application for <b>{{ resumeEmail() }}</b>, a private link to it is on its way.
+                    Check your inbox &mdash; and the spam folder, just in case.
+                  </p>
+                } @else {
+                  <p>Enter the email you gave in your application and we will send you a fresh private link.</p>
+                  <form (submit)="emailMyLink($event)" class="ap-resume__form">
+                    <label class="visually-hidden" for="resume-email">Email</label>
+                    <input id="resume-email" type="email" autocomplete="email" required [value]="resumeEmail()" (input)="resumeEmail.set($any($event.target).value)" placeholder="you@example.com" />
+                    <button type="submit" class="v2-btn v2-btn--ghost" [disabled]="resumeState() === 'sending'">
+                      {{ resumeState() === 'sending' ? 'Sending…' : 'Email me a link' }}
+                    </button>
+                  </form>
+                }
+              } @else {
+                <p>Open the private link you saved when you started. If you have lost it, the Admissions Office can help.</p>
+                <a routerLink="/contact" class="v2-btn v2-btn--ghost">Contact the Admissions Office</a>
+              }
+            </aside>
+          </div>
+        }
+
+        @case ('submitted') {
+          <section class="ap-card ap-submitted" role="status">
+            <span class="ap-submitted__mark" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+            <span class="v2-kicker">Application submitted</span>
+            <h1>Your application is with the Admissions Office.</h1>
+            <p class="lead">
+              An admissions officer will review it and write to you, including about any documents they would like to see.
+            </p>
+            <dl class="ap-facts">
+              <div><dt>Application</dt><dd class="mono">{{ app()?.reference }}</dd></div>
+              <div><dt>Pathway</dt><dd>{{ pathwayLabel() || app()?.pathway }}</dd></div>
+              <div><dt>Intake</dt><dd>{{ app()?.intake }}</dd></div>
+              @if (drafts().academic.firstChoice) {
+                <div><dt>First choice</dt><dd>{{ drafts().academic.firstChoice }}</dd></div>
+              }
+            </dl>
+            <p class="ap-small">Quote your application reference in any correspondence about it.</p>
+            <a routerLink="/home" class="v2-btn v2-btn--ghost">Back to the university</a>
+          </section>
+        }
+
+        @case ('form') {
+          <div class="ap-grid">
+            <aside class="ap-rail" aria-label="Application steps">
+              <div class="ap-rail__head">
+                <span class="v2-kicker">{{ pathwayLabel() }} &middot; {{ drafts().pathway.intake || app()?.intake }}</span>
+                <h2>Saved at every keystroke.</h2>
+              </div>
+              <ol class="ap-steps">
+                @for (s of steps; track s.key; let i = $index) {
+                  <li [class.done]="stepState(s.key) === 'done'" [class.active]="stepState(s.key) === 'active'" [class.issue]="stepState(s.key) === 'issue'">
+                    <button type="button" (click)="goTo(i)" [attr.aria-current]="i === stepIndex() ? 'step' : null">
+                      <span class="n" aria-hidden="true">
+                        @if (stepState(s.key) === 'done') { <i class="fa-solid fa-check"></i> } @else { {{ i + 1 }} }
+                      </span>
+                      <div>
+                        <b>{{ s.label }}</b>
+                        <span>{{ stepState(s.key) === 'issue' ? 'Needs attention' : s.sub }}</span>
+                      </div>
+                    </button>
+                  </li>
+                }
+              </ol>
+              <div class="ap-rail__help">
+                <h4>Leaving for now?</h4>
+                <p class="ap-small">Everything is saved. To continue on another device, keep a private link.</p>
+                @if (privateLink()) {
+                  <div class="ap-link">
+                    <input type="text" readonly [value]="privateLink()" aria-label="Your private link" (focus)="$any($event.target).select()" />
+                    <button type="button" class="v2-btn v2-btn--ghost" (click)="copyLink()">{{ linkCopied() ? 'Copied' : 'Copy' }}</button>
+                  </div>
+                  <p class="ap-small">Anyone with this link can open your application. Creating a new link switches off older ones.</p>
+                } @else {
+                  <button type="button" class="v2-btn v2-btn--ghost" (click)="createPrivateLink()">
+                    <i class="fa-regular fa-bookmark" aria-hidden="true"></i> Get my private link
+                  </button>
+                }
+                <a routerLink="/contact" class="v2-btn v2-btn--link">Ask the Admissions Office</a>
+              </div>
+            </aside>
+
+            <section class="ap-form" [attr.aria-labelledby]="'ap-step-' + step().key">
+              <header class="ap-form__head">
+                <h1 [id]="'ap-step-' + step().key">{{ step().title }}</h1>
+                <p>{{ step().lead }}</p>
+              </header>
+
+              @if (notice()) {
+                <p class="ap-notice" role="status">{{ notice() }}</p>
+              }
+
+              @switch (step().key) {
+                @case ('pathway') {
+                  <fieldset class="ap-group">
+                    <legend>Pathway</legend>
+                    <div class="ap-pathway">
+                      @for (p of options()?.pathways ?? []; track p.value) {
+                        <label class="ap-pw" [class.is-selected]="drafts().pathway.pathway === p.value">
+                          <input type="radio" name="pathway" [value]="p.value" [checked]="drafts().pathway.pathway === p.value" (change)="setPathway(p.value)" />
+                          <span class="title">{{ p.label }}</span>
+                        </label>
+                      }
+                    </div>
+                    @if (issue('pathway')) { <span class="ap-issue">{{ issue('pathway') }}</span> }
+                  </fieldset>
+                  <fieldset class="ap-group">
+                    <legend>When and how</legend>
+                    <div class="ap-row">
+                      <div class="ap-field">
+                        <label for="intake">Intake</label>
+                        <select id="intake" name="intake" [(ngModel)]="drafts().pathway.intake" (ngModelChange)="touch('pathway')">
+                          @for (intake of options()?.intakes ?? []; track intake) {
+                            <option [value]="intake">{{ intake }}</option>
+                          }
+                        </select>
+                        @if (issue('intake')) { <span class="ap-issue">{{ issue('intake') }}</span> }
+                      </div>
+                      <div class="ap-field">
+                        <label for="mode">Mode of study</label>
+                        <select id="mode" name="studyMode" [(ngModel)]="drafts().pathway.studyMode" (ngModelChange)="touch('pathway')">
+                          <option value="">Choose&hellip;</option>
+                          @for (mode of options()?.studyModes ?? []; track mode) {
+                            <option [value]="mode">{{ mode }}</option>
+                          }
+                        </select>
+                        @if (issue('studyMode')) { <span class="ap-issue">{{ issue('studyMode') }}</span> }
+                      </div>
+                    </div>
+                  </fieldset>
+                }
+
+                @case ('personal') {
+                  <fieldset class="ap-group">
+                    <legend>About you</legend>
+                    <div class="ap-row">
+                      <div class="ap-field">
+                        <label for="gn">Given name</label>
+                        <input id="gn" name="givenName" autocomplete="given-name" maxlength="80" [(ngModel)]="drafts().personal.givenName" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('givenName') ? true : null" />
+                        @if (issue('givenName')) { <span class="ap-issue">{{ issue('givenName') }}</span> }
+                      </div>
+                      <div class="ap-field">
+                        <label for="fn">Family name</label>
+                        <input id="fn" name="familyName" autocomplete="family-name" maxlength="80" [(ngModel)]="drafts().personal.familyName" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('familyName') ? true : null" />
+                        @if (issue('familyName')) { <span class="ap-issue">{{ issue('familyName') }}</span> }
+                      </div>
+                    </div>
+                    <div class="ap-row">
+                      <div class="ap-field">
+                        <label for="dob">Date of birth</label>
+                        <input id="dob" type="date" name="dateOfBirth" autocomplete="bday" [(ngModel)]="drafts().personal.dateOfBirth" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('dateOfBirth') ? true : null" />
+                        @if (issue('dateOfBirth')) { <span class="ap-issue">{{ issue('dateOfBirth') }}</span> }
+                      </div>
+                      <div class="ap-field">
+                        <label for="gender">Gender <span class="opt">(optional)</span></label>
+                        <select id="gender" name="gender" [(ngModel)]="drafts().personal.gender" (ngModelChange)="touch('personal')">
+                          <option value="">Prefer not to answer</option>
+                          @for (g of options()?.genders ?? []; track g) {
+                            <option [value]="g">{{ g }}</option>
+                          }
+                        </select>
+                        @if (drafts().personal.gender === 'Self-describe') {
+                          <input aria-label="Describe your gender" name="genderSelfDescribed" maxlength="80" [(ngModel)]="drafts().personal.genderSelfDescribed" (ngModelChange)="touch('personal')" />
+                        }
+                      </div>
+                    </div>
+                    <div class="ap-row">
+                      <div class="ap-field">
+                        <label for="cit">Country of citizenship</label>
+                        <input id="cit" name="citizenship" list="ap-countries" autocomplete="country-name" maxlength="80" [(ngModel)]="drafts().personal.citizenship" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('citizenship') ? true : null" />
+                        @if (issue('citizenship')) { <span class="ap-issue">{{ issue('citizenship') }}</span> }
+                      </div>
+                      <div class="ap-field">
+                        <label for="res">Country of residence</label>
+                        <input id="res" name="residence" list="ap-countries" maxlength="80" [(ngModel)]="drafts().personal.residence" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('residence') ? true : null" />
+                        @if (issue('residence')) { <span class="ap-issue">{{ issue('residence') }}</span> }
+                      </div>
+                    </div>
+                  </fieldset>
+                  <fieldset class="ap-group">
+                    <legend>Contact</legend>
+                    <div class="ap-row">
+                      <div class="ap-field">
+                        <label for="em">Email</label>
+                        <input id="em" type="email" name="email" autocomplete="email" maxlength="254" [(ngModel)]="drafts().personal.email" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('email') ? true : null" />
+                        <span class="hint">Decisions and your private link come here. Use an address you will keep.</span>
+                        @if (issue('email')) { <span class="ap-issue">{{ issue('email') }}</span> }
+                      </div>
+                      <div class="ap-field">
+                        <label for="ph">Phone</label>
+                        <input id="ph" type="tel" name="phone" autocomplete="tel" maxlength="32" placeholder="+256 …" [(ngModel)]="drafts().personal.phone" (ngModelChange)="touch('personal')" [attr.aria-invalid]="issue('phone') ? true : null" />
+                        @if (issue('phone')) { <span class="ap-issue">{{ issue('phone') }}</span> }
+                      </div>
+                    </div>
+                    <div class="ap-field">
+                      <label for="addr">Mailing address <span class="opt">(optional)</span></label>
+                      <input id="addr" name="address" autocomplete="street-address" maxlength="300" placeholder="Street, city, postal code" [(ngModel)]="drafts().personal.address" (ngModelChange)="touch('personal')" />
+                    </div>
+                  </fieldset>
+                }
+
+                @case ('academic') {
+                  <fieldset class="ap-group">
+                    <legend>Programme</legend>
+                    <div class="ap-row">
+                      <div class="ap-field">
+                        <label for="first">First choice</label>
+                        <input id="first" name="firstChoice" list="ap-programmes" maxlength="200" placeholder="Start typing a programme" [(ngModel)]="drafts().academic.firstChoice" (ngModelChange)="touch('academic')" [attr.aria-invalid]="issue('firstChoice') ? true : null" />
+                        @if (issue('firstChoice')) { <span class="ap-issue">{{ issue('firstChoice') }}</span> }
+                      </div>
+                      <div class="ap-field">
+                        <label for="second">Second choice <span class="opt">(optional)</span></label>
+                        <input id="second" name="secondChoice" list="ap-programmes" maxlength="200" [(ngModel)]="drafts().academic.secondChoice" (ngModelChange)="touch('academic')" />
+                      </div>
+                    </div>
+                    <span class="hint">{{ programmes().length }} programmes are open on this pathway. Not listed? Type its name.</span>
+                  </fieldset>
+
+                  <fieldset class="ap-group">
+                    <legend>Qualifications</legend>
+                    @if (issue('qualifications')) { <span class="ap-issue">{{ issue('qualifications') }}</span> }
+                    @for (q of drafts().academic.qualifications; track $index; let i = $index) {
+                      <div class="ap-repeat">
+                        <div class="ap-repeat__head">
+                          <b>Qualification {{ i + 1 }}</b>
+                          @if (drafts().academic.qualifications.length > 1) {
+                            <button type="button" class="v2-btn v2-btn--link" (click)="removeQualification(i)">Remove</button>
+                          }
+                        </div>
+                        <div class="ap-row">
+                          <div class="ap-field">
+                            <label [for]="'q-inst-' + i">School or institution</label>
+                            <input [id]="'q-inst-' + i" [name]="'q-inst-' + i" maxlength="160" [(ngModel)]="q.institution" (ngModelChange)="touch('academic')" />
+                            @if (issue('qualifications.' + i + '.institution')) { <span class="ap-issue">{{ issue('qualifications.' + i + '.institution') }}</span> }
+                          </div>
+                          <div class="ap-field">
+                            <label [for]="'q-name-' + i">Qualification</label>
+                            <input [id]="'q-name-' + i" [name]="'q-name-' + i" maxlength="160" placeholder="e.g. UACE, WASSCE, BSc Nursing" [(ngModel)]="q.qualification" (ngModelChange)="touch('academic')" />
+                            @if (issue('qualifications.' + i + '.qualification')) { <span class="ap-issue">{{ issue('qualifications.' + i + '.qualification') }}</span> }
+                          </div>
+                        </div>
+                        <div class="ap-row ap-row--4">
+                          <div class="ap-field">
+                            <label [for]="'q-country-' + i">Country</label>
+                            <input [id]="'q-country-' + i" [name]="'q-country-' + i" list="ap-countries" maxlength="80" [(ngModel)]="q.country" (ngModelChange)="touch('academic')" />
+                            @if (issue('qualifications.' + i + '.country')) { <span class="ap-issue">{{ issue('qualifications.' + i + '.country') }}</span> }
+                          </div>
+                          <div class="ap-field">
+                            <label [for]="'q-from-' + i">From (year)</label>
+                            <input [id]="'q-from-' + i" [name]="'q-from-' + i" inputmode="numeric" maxlength="4" [(ngModel)]="q.startYear" (ngModelChange)="touch('academic')" />
+                            @if (issue('qualifications.' + i + '.startYear')) { <span class="ap-issue">{{ issue('qualifications.' + i + '.startYear') }}</span> }
+                          </div>
+                          <div class="ap-field">
+                            <label [for]="'q-to-' + i">To <span class="opt">(or expected)</span></label>
+                            <input [id]="'q-to-' + i" [name]="'q-to-' + i" inputmode="numeric" maxlength="4" [(ngModel)]="q.endYear" (ngModelChange)="touch('academic')" />
+                            @if (issue('qualifications.' + i + '.endYear')) { <span class="ap-issue">{{ issue('qualifications.' + i + '.endYear') }}</span> }
+                          </div>
+                          <div class="ap-field">
+                            <label [for]="'q-result-' + i">Result <span class="opt">(optional)</span></label>
+                            <input [id]="'q-result-' + i" [name]="'q-result-' + i" maxlength="120" placeholder="Grade, class, points" [(ngModel)]="q.result" (ngModelChange)="touch('academic')" />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    @if (drafts().academic.qualifications.length < 6) {
+                      <button type="button" class="v2-btn v2-btn--ghost ap-add" (click)="addQualification()">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Add another qualification
+                      </button>
+                    }
+                  </fieldset>
+                }
+
+                @case ('statement') {
+                  <fieldset class="ap-group">
+                    <legend>Personal statement</legend>
+                    <div class="ap-field">
+                      <label for="stmt">Your statement</label>
+                      <textarea id="stmt" name="statement" rows="14" maxlength="6000" [(ngModel)]="drafts().statement.statement" (ngModelChange)="touch('statement')" [attr.aria-invalid]="issue('statement') ? true : null" aria-describedby="stmt-count"></textarea>
+                      <span id="stmt-count" class="hint" [class.is-over]="statementWords() > (options()?.statementWords?.max ?? 500)">
+                        {{ statementWords() }} words &middot; between {{ options()?.statementWords?.min }} and {{ options()?.statementWords?.max }}
+                      </span>
+                      @if (issue('statement')) { <span class="ap-issue">{{ issue('statement') }}</span> }
+                    </div>
+                  </fieldset>
+                  <fieldset class="ap-group">
+                    <legend>Two referees</legend>
+                    @if (issue('referees')) { <span class="ap-issue">{{ issue('referees') }}</span> }
+                    @for (r of drafts().statement.referees; track $index; let i = $index) {
+                      <div class="ap-repeat">
+                        <div class="ap-repeat__head"><b>Referee {{ i + 1 }}</b></div>
+                        <div class="ap-row">
+                          <div class="ap-field">
+                            <label [for]="'r-name-' + i">Full name</label>
+                            <input [id]="'r-name-' + i" [name]="'r-name-' + i" maxlength="120" [(ngModel)]="r.name" (ngModelChange)="touch('statement')" />
+                            @if (issue('referees.' + i + '.name')) { <span class="ap-issue">{{ issue('referees.' + i + '.name') }}</span> }
+                          </div>
+                          <div class="ap-field">
+                            <label [for]="'r-email-' + i">Email</label>
+                            <input [id]="'r-email-' + i" [name]="'r-email-' + i" type="email" maxlength="254" [(ngModel)]="r.email" (ngModelChange)="touch('statement')" />
+                            @if (issue('referees.' + i + '.email')) { <span class="ap-issue">{{ issue('referees.' + i + '.email') }}</span> }
+                          </div>
+                        </div>
+                        <div class="ap-row">
+                          <div class="ap-field">
+                            <label [for]="'r-rel-' + i">How they know you</label>
+                            <input [id]="'r-rel-' + i" [name]="'r-rel-' + i" maxlength="120" placeholder="e.g. Dissertation supervisor" [(ngModel)]="r.relationship" (ngModelChange)="touch('statement')" />
+                            @if (issue('referees.' + i + '.relationship')) { <span class="ap-issue">{{ issue('referees.' + i + '.relationship') }}</span> }
+                          </div>
+                          <div class="ap-field">
+                            <label [for]="'r-inst-' + i">Institution <span class="opt">(optional)</span></label>
+                            <input [id]="'r-inst-' + i" [name]="'r-inst-' + i" maxlength="160" [(ngModel)]="r.institution" (ngModelChange)="touch('statement')" />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </fieldset>
+                }
+
+                @case ('funding') {
+                  <fieldset class="ap-group">
+                    <legend>Funding</legend>
+                    <div class="ap-field">
+                      <label for="source">How will you fund your studies?</label>
+                      <select id="source" name="source" [(ngModel)]="drafts().funding.source" (ngModelChange)="touch('funding')" [attr.aria-invalid]="issue('source') ? true : null">
+                        <option value="">Choose&hellip;</option>
+                        @for (f of options()?.fundingSources ?? []; track f) {
+                          <option [value]="f">{{ f }}</option>
+                        }
+                      </select>
+                      @if (issue('source')) { <span class="ap-issue">{{ issue('source') }}</span> }
+                    </div>
+                    <div class="ap-field">
+                      <span class="ap-label" id="schol-label">Would you like to be considered for a scholarship?</span>
+                      <div class="ap-choice" role="radiogroup" aria-labelledby="schol-label">
+                        <button type="button" role="radio" [attr.aria-checked]="drafts().funding.scholarshipInterest === true" [class.is-on]="drafts().funding.scholarshipInterest === true" (click)="setScholarship(true)">Yes, please</button>
+                        <button type="button" role="radio" [attr.aria-checked]="drafts().funding.scholarshipInterest === false" [class.is-on]="drafts().funding.scholarshipInterest === false" (click)="setScholarship(false)">Not this time</button>
+                      </div>
+                      @if (issue('scholarshipInterest')) { <span class="ap-issue">{{ issue('scholarshipInterest') }}</span> }
+                    </div>
+                    <div class="ap-field">
+                      <label for="fnotes">Anything we should know about your circumstances? <span class="opt">(optional)</span></label>
+                      <textarea id="fnotes" name="notes" rows="4" maxlength="1500" [(ngModel)]="drafts().funding.notes" (ngModelChange)="touch('funding')"></textarea>
+                    </div>
+                  </fieldset>
+                }
+
+                @case ('declaration') {
+                  <div class="ap-review">
+                    @for (s of steps.slice(0, 5); track s.key; let i = $index) {
+                      <section class="ap-review__block" [class.is-incomplete]="!completed().has(s.key)">
+                        <header>
+                          <h3>{{ s.label }}</h3>
+                          <button type="button" class="v2-btn v2-btn--link" (click)="goTo(i)"
+                            [attr.aria-label]="(completed().has(s.key) ? 'Edit ' : 'Finish ') + s.label">
+                            {{ completed().has(s.key) ? 'Edit' : 'Finish this step' }}
+                          </button>
+                        </header>
+                        @switch (s.key) {
+                          @case ('pathway') {
+                            <p>{{ pathwayLabel() || '—' }} &middot; {{ drafts().pathway.intake || '—' }} &middot; {{ drafts().pathway.studyMode || 'mode not chosen' }}</p>
+                          }
+                          @case ('personal') {
+                            <p>{{ drafts().personal.givenName }} {{ drafts().personal.familyName }} &middot; {{ drafts().personal.email || 'no email yet' }} &middot; {{ drafts().personal.residence }}</p>
+                          }
+                          @case ('academic') {
+                            <p>{{ drafts().academic.firstChoice || 'No programme chosen' }} &middot; {{ qualificationSummary() }}</p>
+                          }
+                          @case ('statement') {
+                            <p>{{ statementWords() }}-word statement &middot; referees: {{ drafts().statement.referees[0].name || '—' }}, {{ drafts().statement.referees[1].name || '—' }}</p>
+                          }
+                          @case ('funding') {
+                            <p>{{ drafts().funding.source || 'Funding not chosen' }}{{ drafts().funding.scholarshipInterest ? ' · scholarship requested' : '' }}</p>
+                          }
+                        }
+                      </section>
+                    }
+                  </div>
+
+                  <fieldset class="ap-group">
+                    <legend>Declaration</legend>
+                    <label class="ap-check">
+                      <input type="checkbox" name="accurate" [(ngModel)]="drafts().declaration.accurate" (ngModelChange)="touch('declaration')" />
+                      <span>
+                        I confirm that the information in this application is true and complete, and I understand that
+                        an offer may be withdrawn if it is not.
+                      </span>
+                    </label>
+                    @if (issue('accurate')) { <span class="ap-issue">{{ issue('accurate') }}</span> }
+                    <div class="ap-field">
+                      <label for="sig">Sign with your full name</label>
+                      <input id="sig" name="signature" class="ap-signature" maxlength="160" autocomplete="name" [placeholder]="(drafts().personal.givenName + ' ' + drafts().personal.familyName).trim() || 'Your full name'" [(ngModel)]="drafts().declaration.signature" (ngModelChange)="touch('declaration')" />
+                      @if (issue('signature')) { <span class="ap-issue">{{ issue('signature') }}</span> }
+                    </div>
+                  </fieldset>
+
+                  @if (submitIssues().length) {
+                    <div class="ap-missing" role="alert">
+                      <b>A few answers still need attention:</b>
+                      <ul>
+                        @for (item of submitIssues(); track item.label + item.message) {
+                          <li>
+                            <button type="button" class="ap-jump" (click)="goTo(stepIndexOf(item.step))">{{ item.label }}</button>:
+                            {{ item.message }}
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                }
+              }
+
+              <footer class="ap-form__actions">
+                <span class="ap-small">{{ savedLabel() }}</span>
+                <div class="ap-form__nav">
+                  @if (stepIndex() > 0) {
+                    <button type="button" class="v2-btn v2-btn--ghost" (click)="back()">&larr; {{ steps[stepIndex() - 1].label }}</button>
+                  }
+                  @if (stepIndex() < steps.length - 1) {
+                    <button type="button" class="v2-btn v2-btn--primary v2-btn--lg" (click)="next()">
+                      Continue &middot; {{ steps[stepIndex() + 1].label }} <span aria-hidden="true">&rarr;</span>
+                    </button>
+                  } @else {
+                    <button type="button" class="v2-btn v2-btn--primary v2-btn--lg" [disabled]="submitting()" (click)="submit()">
+                      {{ submitting() ? 'Submitting…' : 'Submit my application' }} <span aria-hidden="true">&rarr;</span>
+                    </button>
+                  }
+                </div>
+              </footer>
+            </section>
+          </div>
+
+          <datalist id="ap-countries">
+            @for (c of countries; track c) {
+              <option [value]="c"></option>
+            }
+          </datalist>
+          <datalist id="ap-programmes">
+            @for (p of programmes(); track p) {
+              <option [value]="p"></option>
+            }
+          </datalist>
+        }
+      }
     </div>
   </main>
 </div>

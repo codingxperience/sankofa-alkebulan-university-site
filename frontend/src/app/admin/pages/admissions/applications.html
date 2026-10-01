@@ -1,0 +1,133 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow">Admissions</p>
+    <h1 class="sc-title">Applications</h1>
+    <p class="sc-lede">
+      Every application that has been submitted, from first reading to decision.
+      @if (count('DRAFT'); as drafts) {
+        {{ drafts }} more {{ drafts === 1 ? 'is' : 'are' }} still being written by applicants.
+      }
+    </p>
+  </div>
+  <div class="sc-head__actions">
+    <a class="sc-btn" [href]="exportUrl()" download>
+      <i class="pi pi-download" aria-hidden="true"></i> Export this view
+    </a>
+  </div>
+</header>
+
+<nav class="ap-pipeline" aria-label="Stages">
+  <button type="button" class="ap-stage ap-stage--all" [attr.aria-pressed]="view() === 'PIPELINE'" (click)="choose('PIPELINE')">
+    <span class="ap-stage__label">Everything submitted</span>
+    <span class="ap-stage__count">{{ pipelineTotal() }}</span>
+  </button>
+  @for (stage of stages; track stage.value) {
+    <button type="button" class="ap-stage" [attr.aria-pressed]="view() === stage.value" (click)="choose(stage.value)">
+      <span class="ap-stage__label">{{ stage.label }}</span>
+      <span class="ap-stage__count" [class.is-zero]="count(stage.value) === 0">{{ count(stage.value) }}</span>
+      <span class="ap-stage__note">{{ stage.note }}</span>
+    </button>
+  }
+</nav>
+
+<div class="sc-toolbar">
+  <label class="visually-hidden" for="ap-pathway">Pathway</label>
+  <select id="ap-pathway" class="sc-select sc-select--small ap-filter" (change)="setPathway($any($event.target).value)">
+    <option value="">All pathways</option>
+    @for (each of pathways; track each) {
+      <option [value]="each">{{ pathwayLabel[each] }} ({{ stats()?.pathway?.[each] ?? 0 }})</option>
+    }
+  </select>
+  <label class="visually-hidden" for="ap-intake">Intake</label>
+  <select id="ap-intake" class="sc-select sc-select--small ap-filter" (change)="setIntake($any($event.target).value)">
+    <option value="">All intakes</option>
+    @for (each of stats()?.intakes ?? []; track each.intake) {
+      <option [value]="each.intake">{{ each.intake }} ({{ each.count }})</option>
+    }
+  </select>
+  <label class="visually-hidden" for="ap-assignee">Reviewer</label>
+  <select id="ap-assignee" class="sc-select sc-select--small ap-filter" (change)="setAssignee($any($event.target).value)">
+    <option value="">Any reviewer</option>
+    <option value="me">Assigned to me</option>
+    <option value="unassigned">No reviewer yet</option>
+    @for (person of state.directory(); track person.id) {
+      <option [value]="person.id">{{ person.name }}</option>
+    }
+  </select>
+  <span class="sc-toolbar__spacer"></span>
+  <button type="button" class="sc-btn sc-btn--quiet sc-btn--small" [attr.aria-pressed]="view() === 'WITHDRAWN'" (click)="choose('WITHDRAWN')">
+    Withdrawn ({{ count('WITHDRAWN') }})
+  </button>
+  <button type="button" class="sc-btn sc-btn--quiet sc-btn--small" [attr.aria-pressed]="view() === 'DRAFT'" (click)="choose('DRAFT')">
+    Being written ({{ count('DRAFT') }})
+  </button>
+  <div class="sc-search">
+    <i class="pi pi-search" aria-hidden="true"></i>
+    <input class="sc-input" type="search" placeholder="Name, email, programme or reference" aria-label="Search applications"
+      [value]="query()" (input)="search($any($event.target).value)" />
+  </div>
+</div>
+
+@if (view() === 'DRAFT') {
+  <div class="sc-alert sc-alert--info ap-note">
+    <i class="pi pi-info-circle" aria-hidden="true"></i>
+    <span>These applications have not been submitted. They are shown so you can see interest building; they cannot be reviewed until the applicant submits.</span>
+  </div>
+}
+
+<section class="sc-card">
+  @if (loading()) {
+    <sc-skeleton [lines]="8" />
+  } @else if (items().length === 0) {
+    <sc-empty title="No applications in this view" icon="pi-graduation-cap">
+      <p>When an applicant submits, their application appears here straight away.</p>
+    </sc-empty>
+  } @else {
+    <div class="sc-table-wrap">
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th scope="col">Applicant</th>
+            <th scope="col">Programme</th>
+            <th scope="col">Pathway</th>
+            <th scope="col">{{ view() === 'DRAFT' ? 'Last saved' : 'Submitted' }}</th>
+            <th scope="col">Reviewer</th>
+            <th scope="col" class="is-tight">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            <tr class="is-link" (click)="open(item)">
+              <td>
+                <a class="sc-cell-main" [routerLink]="['/admin/admissions', item.id]" (click)="$event.stopPropagation()">{{ item.name || 'Name not given yet' }}</a>
+                <span class="sc-cell-sub"><span class="sc-ref">{{ item.reference }}</span>@if (item.residence) { · {{ item.residence }} }</span>
+              </td>
+              <td>
+                <span class="ap-programme">{{ item.firstChoice || '—' }}</span>
+              </td>
+              <td>
+                {{ pathwayLabel[item.pathway] }}
+                <span class="sc-cell-sub">{{ item.intake }}</span>
+              </td>
+              <td>
+                @if (item.submittedAt) {
+                  <span [title]="item.submittedAt | when: 'full'">{{ item.submittedAt | when: 'date' }}</span>
+                } @else {
+                  <span [title]="item.updatedAt | when: 'full'">{{ item.updatedAt | ago }}</span>
+                  <span class="sc-cell-sub">{{ item.completedSteps }} of 6 steps</span>
+                }
+              </td>
+              <td>{{ item.assignee?.name ?? '—' }}</td>
+              <td class="is-tight"><sc-pill [label]="statusTerms[item.status].label" [tone]="statusTerms[item.status].tone" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    @if (cursor()) {
+      <div class="sc-more">
+        <button type="button" class="sc-btn sc-btn--small" [class.is-busy]="loadingMore()" (click)="more()">Show more</button>
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,78 @@
+.ev-stats {
+  margin-bottom: 20px;
+
+  small {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--sc-ink-3);
+  }
+}
+
+.ev-stats__state {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+}
+
+.ev-breakdowns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ev-people-head {
+  flex-wrap: wrap;
+}
+
+.ev-people-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.ev-person {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover .sc-cell-main {
+    text-decoration: underline;
+  }
+}
+
+.ev-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ev-check.is-in {
+  border-color: #bfe0cc;
+  background: var(--sc-done-bg);
+  color: var(--sc-done-fg);
+}
+
+.ev-table tr.is-busy {
+  opacity: 0.6;
+}
+
+.ev-more td {
+  background: #fcfbf8;
+  padding: 16px 20px 18px;
+}
+
+.ev-more__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ev-pre {
+  white-space: pre-wrap;
+}

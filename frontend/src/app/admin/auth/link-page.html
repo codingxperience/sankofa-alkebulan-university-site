@@ -1,0 +1,77 @@
+@if (purpose === 'invitation') {
+  <sc-auth-panel heading="You have been invited to the console." />
+} @else {
+  <sc-auth-panel />
+}
+
+<main class="sc-auth__form">
+  <div class="sc-auth__card">
+    @switch (phase()) {
+      @case ('checking') {
+        <h1>{{ copy.heading }}</h1>
+        <p>Checking your link…</p>
+        <sc-skeleton [lines]="3" />
+      }
+
+      @case ('invalid') {
+        <h1>This link cannot be used</h1>
+        <div class="sc-form">
+          <div class="sc-alert sc-alert--gold" role="alert">
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
+            <span>{{ problem() }}</span>
+          </div>
+          <p class="sc-hint">
+            Invitations last seven days and reset links one hour, and each works once. Ask an administrator for a new link
+            from the Team page, or request a reset from the sign-in screen.
+          </p>
+        </div>
+        <div class="sc-auth__links">
+          <a routerLink="/admin/sign-in">Go to sign in</a>
+        </div>
+      }
+
+      @case ('ready') {
+        <h1>
+          @if (purpose === 'invitation') {
+            Welcome, {{ firstName() }}
+          } @else {
+            {{ copy.heading }}
+          }
+        </h1>
+        <p>
+          @if (purpose === 'invitation') {
+            Choose a password for <strong>{{ person()?.email }}</strong>. You will use it with this address to sign in.
+          } @else {
+            For <strong>{{ person()?.email }}</strong>. Every other signed-in device will be signed out.
+          }
+        </p>
+
+        <form class="sc-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          @if (error()) {
+            <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
+          }
+          <div class="sc-field">
+            <label class="sc-label" for="lp-password">New password</label>
+            <div class="sc-copy">
+              <input id="lp-password" class="sc-input" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                autocomplete="new-password" aria-describedby="lp-hint" />
+              <button type="button" class="sc-btn sc-btn--icon" (click)="showPassword.set(!showPassword())"
+                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword()">
+                <i class="pi" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()" aria-hidden="true"></i>
+              </button>
+            </div>
+            <span id="lp-hint" class="sc-hint">At least 12 characters. Avoid the university's name and anything others could guess.</span>
+          </div>
+          <div class="sc-field">
+            <label class="sc-label" for="lp-confirm">Type it again</label>
+            <input id="lp-confirm" class="sc-input" [type]="showPassword() ? 'text' : 'password'" formControlName="confirm"
+              autocomplete="new-password" />
+          </div>
+          <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="busy()" [disabled]="busy()">
+            {{ purpose === 'invitation' ? 'Create my account' : 'Save the new password' }}
+          </button>
+        </form>
+      }
+    }
+  </div>
+</main>

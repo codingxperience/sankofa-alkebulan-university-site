@@ -16,32 +16,61 @@
         </div>
       </div>
 
-      @if (submitted()) {
+      @if (result(); as r) {
+        <div class="rg-done" role="status" aria-live="polite">
+          <div class="rg-done__head">
+            <span class="eyebrow">
+              {{ r.alreadyRegistered ? 'Already registered' : r.status === 'WAITLISTED' ? 'Waiting list' : 'Registration confirmed' }}
+            </span>
+            @if (r.alreadyRegistered) {
+              <h2>{{ firstName() }}, you are already on the list.</h2>
+              <p>
+                This email address is already registered.
+                {{ r.confirmationEmailed ? 'We have sent your confirmation and registration code to it again.' : 'Write to us if you need your registration code.' }}
+              </p>
+            } @else if (r.status === 'WAITLISTED') {
+              <h2>{{ firstName() }}, you are on the waiting list.</h2>
+              <p>Every seat is taken for now. We will write the moment one opens.</p>
+            } @else {
+              <h2>{{ firstName() }}, your seat is confirmed.</h2>
+              <p>
+                {{ r.confirmationEmailed ? 'Your confirmation is on its way to your inbox.' : 'Keep your registration code below — it is how we find you at the door and in the online room.' }}
+              </p>
+            }
+          </div>
+          @if (r.code) {
+            <div class="rg-done__body">
+              <div class="rg-code">
+                <span class="lbl">Registration code</span>
+                <strong>{{ r.code }}</strong>
+              </div>
+              <div class="rg-done__actions">
+                <a routerLink="/convening" class="rg-btn rg-btn--dark">Back to the Convening</a>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (loadError()) {
+        <div class="rg-state" role="alert">
+          <p>{{ loadError() }}</p>
+          <button type="button" class="rg-btn rg-btn--ghost" (click)="loadEvent()">Try again</button>
+        </div>
+      } @else if (!event()) {
+        <div class="rg-state" aria-busy="true">
+          <p>Checking registration&hellip;</p>
+        </div>
+      } @else if (closedMessage()) {
         <div class="rg-done">
           <div class="rg-done__head">
-            <span class="eyebrow">One last tap</span>
-            <h2>{{ firstName() }}, your registration is written and ready.</h2>
-            <p>
-              Send it by WhatsApp or email &mdash; the message below goes with it. We confirm your
-              seat by reply.
-            </p>
+            <span class="eyebrow">Registration closed</span>
+            <h2>{{ closedMessage() }}</h2>
+            <p>Future public programmes are announced on the Convening page and through the university&rsquo;s channels.</p>
           </div>
           <div class="rg-done__body">
-            <pre>{{ message() }}</pre>
             <div class="rg-done__actions">
-              <a [href]="waHref()" target="_blank" rel="noopener" class="rg-btn rg-btn--wa"
-                ><i class="fa-brands fa-whatsapp" aria-hidden="true"></i>Send via WhatsApp</a
-              >
-              <a [href]="mailHref()" class="rg-btn rg-btn--dark"
-                ><i class="fa-regular fa-envelope" aria-hidden="true"></i>Send via email</a
-              >
-              <button type="button" class="rg-btn rg-btn--ghost" (click)="copyMessage()">
-                <i class="fa-regular fa-copy" aria-hidden="true"></i>{{ copyLabel() }}
-              </button>
+              <a routerLink="/convening" class="rg-btn rg-btn--dark">About the Convening</a>
+              <a routerLink="/contact" class="rg-btn rg-btn--ghost">Contact the university</a>
             </div>
-            <button type="button" class="rg-edit" (click)="editAgain()">
-              &larr; Edit my answers
-            </button>
           </div>
         </div>
       } @else {
@@ -55,7 +84,7 @@
                   [value]="form().name"
                   (input)="onField('name', $event)"
                   placeholder="e.g. Amina K. Ssebunya"
-              /></label>
+              />@if (fieldErrors()['name']; as m) {<span class="rg-field-error">{{ m }}</span>}</label>
               <label
                 ><span class="lbl">Email <span class="req">*</span></span
                 ><input
@@ -63,14 +92,14 @@
                   [value]="form().email"
                   (input)="onField('email', $event)"
                   placeholder="you@example.com"
-              /></label>
+              />@if (fieldErrors()['email']; as m) {<span class="rg-field-error">{{ m }}</span>}</label>
               <label
                 ><span class="lbl">WhatsApp / phone</span
                 ><input
                   [value]="form().phone"
                   (input)="onField('phone', $event)"
                   placeholder="+256 ..."
-              /></label>
+              />@if (fieldErrors()['phone']; as m) {<span class="rg-field-error">{{ m }}</span>}</label>
               <label
                 ><span class="lbl">Country &amp; city</span
                 ><input
@@ -102,8 +131,8 @@
             <div class="rg-choice">
               <span class="lbl">I am attending as <span class="req">*</span></span>
               <div class="chips">
-                @for (c of catOptions; track c) {
-                  <button type="button" [class.is-on]="form().cat === c" (click)="pickSingle('cat', c)">
+                @for (c of options().attendeeCategories; track c) {
+                  <button type="button" [class.is-on]="form().cat === c" [attr.aria-pressed]="form().cat === c" (click)="pickSingle('cat', c)">
                     {{ c }}
                   </button>
                 }
@@ -116,8 +145,8 @@
             <div class="rg-choice">
               <span class="lbl">How will you join? <span class="req">*</span></span>
               <div class="chips">
-                @for (c of modeOptions; track c) {
-                  <button type="button" [class.is-on]="form().mode === c" (click)="pickSingle('mode', c)">
+                @for (c of options().attendanceModes; track c) {
+                  <button type="button" [class.is-on]="form().mode === c" [attr.aria-pressed]="form().mode === c" (click)="pickSingle('mode', c)">
                     {{ c }}
                   </button>
                 }
@@ -126,8 +155,8 @@
             <div class="rg-choice">
               <span class="lbl">Which day(s)? <span class="req">*</span></span>
               <div class="chips">
-                @for (c of dayOptions; track c) {
-                  <button type="button" [class.is-on]="form().days === c" (click)="pickSingle('days', c)">
+                @for (c of options().days; track c) {
+                  <button type="button" [class.is-on]="form().days === c" [attr.aria-pressed]="form().days === c" (click)="pickSingle('days', c)">
                     {{ c }}
                   </button>
                 }
@@ -146,11 +175,12 @@
             <div class="rg-choice">
               <span class="lbl">Themes you care about most</span>
               <div class="chips">
-                @for (c of interestOptions; track c) {
+                @for (c of options().interests; track c) {
                   <button
                     type="button"
                     class="chip--warm"
                     [class.is-on]="isInterest(c)"
+                    [attr.aria-pressed]="isInterest(c)"
                     (click)="toggleInterest(c)"
                   >
                     {{ c }}
@@ -184,25 +214,36 @@
                   <i class="fa-solid fa-check" aria-hidden="true"></i>
                 }
               </span>
-              <span class="txt"
-                >Keep me informed about the Convening and future SAU public programmes, by email or
-                WhatsApp. No noise &mdash; a handful of messages a year.</span
-              >
+              <span class="txt">{{ event()?.consentText }}</span>
             </button>
           </div>
 
+          <!-- Left empty by people; filled in by bots. -->
+          <div class="rg-trap" aria-hidden="true">
+            <label>Leave this field empty
+              <input type="text" tabindex="-1" autocomplete="off" [value]="form().website" (input)="onField('website', $event)" />
+            </label>
+          </div>
+
           <div class="rg-submit">
-            @if (error()) {
-              <div class="rg-error">
+            @if (error(); as e) {
+              <div class="rg-error" role="alert">
                 <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                <span>{{ error() }}</span>
+                <span>{{ e.message }}</span>
               </div>
             }
+            @if (waitlistOnly()) {
+              <p class="rg-waitlist">Every seat is currently taken. Registering now places you on the waiting list.</p>
+            }
             <div class="rg-submit__row">
-              <button type="button" class="rg-btn rg-btn--dark rg-btn--lg" (click)="submit()">
-                Complete registration<span aria-hidden="true">&rarr;</span>
+              <button type="button" class="rg-btn rg-btn--dark rg-btn--lg" (click)="submit()" [disabled]="sending()" [attr.aria-busy]="sending()">
+                @if (sending()) {
+                  Registering&hellip;
+                } @else {
+                  {{ waitlistOnly() ? 'Join the waiting list' : 'Complete registration' }}<span aria-hidden="true">&rarr;</span>
+                }
               </button>
-              <span class="note">Free &middot; Your answers stay on this device until you send them</span>
+              <span class="note">Free &middot; Your answers stay on this device until you register</span>
             </div>
           </div>
         </div>

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Meta, Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PostsService, Post } from '../core/posts.service';
@@ -33,11 +35,21 @@ import { PostsService, Post } from '../core/posts.service';
 
             <div class="essay-article__content" [innerHTML]="post.content"></div>
           </article>
+
+          <aside class="essay-related" *ngIf="related.length">
+            <h2 class="essay-related__title">Keep reading</h2>
+            <ul>
+              <li *ngFor="let item of related">
+                <a [routerLink]="['/articles', item.slug]">{{ item.title }}</a>
+                <time>{{ item.published_at | date : 'mediumDate' }}</time>
+              </li>
+            </ul>
+          </aside>
         </div>
       </div>
     </div>
 
-    <div class="essay-detail" *ngIf="!post">
+    <div class="essay-detail" *ngIf="!post && !loading">
       <div class="container">
         <div class="section">
           <div class="text-center">
@@ -168,17 +180,76 @@ import { PostsService, Post } from '../core/posts.service';
         gap: var(--spacing-sm);
       }
     }
+
+    .essay-related {
+      max-width: 800px;
+      margin: var(--spacing-3xl, 48px) auto 0;
+      padding-top: var(--spacing-xl, 24px);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .essay-related__title {
+      font-size: var(--font-size-xl, 1.25rem);
+      margin-bottom: var(--spacing-md, 16px);
+      color: var(--primary-color);
+    }
+
+    .essay-related ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .essay-related li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+    }
+
+    .essay-related time {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm, 0.875rem);
+      white-space: nowrap;
+    }
   `]
 })
 export class EssayDetailComponent implements OnInit {
-  post: Post | null = null;
+  private readonly route = inject(ActivatedRoute);
+  private readonly postsService = inject(PostsService);
+  private readonly title = inject(Title);
+  private readonly meta = inject(Meta);
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private route: ActivatedRoute, private postsService: PostsService) {}
+  post: Post | null = null;
+  related: Post[] = [];
+  loading = true;
 
   ngOnInit() {
-    const slug = this.route.snapshot.paramMap.get('slug');
-    if (slug) {
-      this.postsService.getPost(slug).subscribe(post => this.post = post);
-    }
+    // Re-runs when following a "keep reading" link from one essay to another.
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const slug = params.get('slug');
+      if (!slug) {
+        this.loading = false;
+        return;
+      }
+      this.loading = true;
+      this.postsService.getPost(slug).subscribe({
+        next: ({ related, ...post }) => {
+          this.post = post;
+          this.related = related;
+          this.loading = false;
+          this.title.setTitle(`${post.title} | Sankofa Alkebulan University`);
+          this.meta.updateTag({ name: 'description', content: post.excerpt });
+        },
+        error: () => {
+          this.post = null;
+          this.related = [];
+          this.loading = false;
+        },
+      });
+    });
   }
 }

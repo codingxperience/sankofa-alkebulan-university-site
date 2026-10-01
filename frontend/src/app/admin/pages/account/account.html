@@ -1,0 +1,125 @@
+@if (session.me(); as me) {
+  <header class="sc-head">
+    <div class="sc-head__text">
+      <p class="sc-eyebrow">Your account</p>
+      <h1 class="sc-title">{{ me.name }}</h1>
+      <p class="sc-lede">{{ me.email }} · {{ me.roleLabels.join(', ') }}</p>
+    </div>
+  </header>
+
+  <div class="sc-split">
+    <div class="sc-stack">
+      <section class="sc-card" aria-labelledby="ac-profile">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ac-profile">How your name appears</h2></div>
+        <form class="sc-card__body sc-form" [formGroup]="profile" (ngSubmit)="saveProfile()" novalidate>
+          <div class="sc-row">
+            <div class="sc-field">
+              <label class="sc-label" for="ac-name">Full name</label>
+              <input id="ac-name" class="sc-input" formControlName="name" autocomplete="name" />
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ac-title">Title <small>optional</small></label>
+              <input id="ac-title" class="sc-input" formControlName="title" autocomplete="organization-title" />
+            </div>
+          </div>
+          <p class="sc-hint">Shown beside notes you write and changes you make. Replies you send by email are signed with this name.</p>
+          <div>
+            <button type="submit" class="sc-btn" [class.is-busy]="savingProfile()" [disabled]="savingProfile() || profile.pristine">Save profile</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="sc-card" aria-labelledby="ac-password">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ac-password">Change your password</h2></div>
+        <form class="sc-card__body sc-form" [formGroup]="password" (ngSubmit)="changePassword()" novalidate>
+          @if (passwordError()) {
+            <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ passwordError() }}</span></div>
+          }
+          <input type="text" class="visually-hidden" autocomplete="username" [value]="me.email" tabindex="-1" aria-hidden="true" readonly />
+          <div class="sc-field">
+            <label class="sc-label" for="ac-current">Current password</label>
+            <input id="ac-current" class="sc-input" type="password" formControlName="currentPassword" autocomplete="current-password"
+              [attr.aria-invalid]="!!passwordFields()['currentPassword']" />
+            @if (passwordFields()['currentPassword']; as message) {
+              <span class="sc-error">{{ message }}</span>
+            }
+          </div>
+          <div class="sc-row">
+            <div class="sc-field">
+              <label class="sc-label" for="ac-new">New password</label>
+              <input id="ac-new" class="sc-input" type="password" formControlName="newPassword" autocomplete="new-password"
+                [attr.aria-invalid]="!!passwordFields()['newPassword']" aria-describedby="ac-new-hint" />
+              @if (passwordFields()['newPassword']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              } @else {
+                <span id="ac-new-hint" class="sc-hint">At least 12 characters. A short phrase works well.</span>
+              }
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="ac-confirm">New password again</label>
+              <input id="ac-confirm" class="sc-input" type="password" formControlName="confirm" autocomplete="new-password"
+                [attr.aria-invalid]="!!passwordFields()['confirm']" />
+              @if (passwordFields()['confirm']; as message) {
+                <span class="sc-error">{{ message }}</span>
+              }
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="savingPassword()" [disabled]="savingPassword()">Change password</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="sc-card" aria-labelledby="ac-devices">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" id="ac-devices">Signed-in devices</h2>
+          <span class="sc-hint">Sessions end after 2 hours idle or 12 hours in all</span>
+        </div>
+        @if (loadingSessions()) {
+          <sc-skeleton [lines]="3" />
+        } @else {
+          <ul class="ac-devices">
+            @for (record of sessions(); track record.id) {
+              <li>
+                <i class="pi pi-desktop" aria-hidden="true"></i>
+                <div>
+                  <strong>{{ device(record) }}</strong>
+                  @if (record.current) {
+                    <span class="ac-current">This device</span>
+                  }
+                  <span class="sc-cell-sub">
+                    Signed in {{ record.createdAt | when }}{{ record.ipAddress ? ' from ' + record.ipAddress : '' }} · active {{ record.lastSeenAt | ago }}
+                  </span>
+                </div>
+                @if (!record.current) {
+                  <button type="button" class="sc-btn sc-btn--small" (click)="signOutDevice(record)">Sign out</button>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+
+    <aside class="sc-stack">
+      <section class="sc-card" aria-labelledby="ac-access">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="ac-access">Your access</h2></div>
+        <dl class="sc-facts sc-card__body">
+          <dt>Roles</dt>
+          <dd>{{ me.roleLabels.join(', ') }}</dd>
+          <dt>Offices</dt>
+          <dd>
+            @for (office of me.offices; track office; let last = $last) {
+              {{ state.officeName(office) }}{{ last ? '' : ', ' }}
+            } @empty {
+              None assigned
+            }
+          </dd>
+          <dt>Permissions</dt>
+          <dd>{{ permissionCount() }} of 17</dd>
+        </dl>
+        <p class="sc-card__foot ac-note">Roles and offices are set by an administrator on the Team page.</p>
+      </section>
+    </aside>
+  </div>
+}

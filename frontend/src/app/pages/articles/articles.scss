@@ -1760,3 +1760,31 @@
     flex-direction: column;
   }
 }
+.newsletter-consent,
+.newsletter-error,
+.newsletter-done {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.newsletter-consent {
+  opacity: 0.8;
+}
+
+.newsletter-error {
+  color: #b42318;
+}
+
+.newsletter-done {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.newsletter-trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

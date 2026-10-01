@@ -1,0 +1,180 @@
+@if (order(); as o) {
+  <header class="sc-head">
+    <div class="sc-head__text">
+      <p class="sc-eyebrow"><a routerLink="/admin/store/orders">Orders</a></p>
+      <h1 class="sc-title sc-mono">{{ o.number }}</h1>
+      <p class="sc-lede">Placed {{ o.createdAt | when: 'full' }} by {{ o.customerName }}</p>
+    </div>
+    <div class="sc-head__actions">
+      <sc-pill [label]="statusTerms[o.status].label" [tone]="statusTerms[o.status].tone" />
+    </div>
+  </header>
+
+  <div class="sc-split">
+    <div class="sc-stack">
+      <section class="sc-card" aria-labelledby="or-items">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="or-items">Items</h2></div>
+        <div class="sc-table-wrap">
+          <table class="sc-table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col" class="is-right">Price</th>
+                <th scope="col" class="is-right">Qty</th>
+                <th scope="col" class="is-right">Line total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of o.items; track item.id) {
+                <tr>
+                  <td>
+                    <span class="sc-cell-main">{{ item.name }}</span>
+                    <span class="sc-cell-sub"><span class="sc-ref">{{ item.sku }}</span>@if (item.size) { · Size {{ item.size }} }</span>
+                  </td>
+                  <td class="is-right sc-num">{{ item.unitPriceCents | money: o.currency }}</td>
+                  <td class="is-right sc-num">{{ item.quantity }}</td>
+                  <td class="is-right sc-num">{{ item.lineTotalCents | money: o.currency }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <dl class="or-totals">
+          <dt>Subtotal</dt>
+          <dd class="sc-num">{{ o.subtotalCents | money: o.currency }}</dd>
+          <dt>{{ o.fulfilmentLabel }}</dt>
+          <dd class="sc-num">{{ o.deliveryCents ? (o.deliveryCents | money: o.currency) : 'Free' }}</dd>
+          <dt class="or-totals__total">Total</dt>
+          <dd class="or-totals__total sc-num">{{ o.totalCents | money: o.currency }}</dd>
+        </dl>
+      </section>
+
+      <section class="sc-card" aria-labelledby="or-customer">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="or-customer">Customer and delivery</h2></div>
+        <dl class="sc-facts sc-card__body">
+          <dt>Name</dt>
+          <dd>{{ o.customerName }}</dd>
+          <dt>Email</dt>
+          <dd><a [href]="'mailto:' + o.customerEmail">{{ o.customerEmail }}</a></dd>
+          <dt>Phone</dt>
+          <dd>
+            @if (o.customerPhone) {
+              <a [href]="'tel:' + o.customerPhone">{{ o.customerPhone }}</a>
+            } @else {
+              —
+            }
+          </dd>
+          <dt>Delivery</dt>
+          <dd>{{ o.fulfilmentLabel }}</dd>
+          @if (o.deliveryAddress) {
+            <dt>Address</dt>
+            <dd class="or-pre">{{ o.deliveryAddress }}</dd>
+          }
+        </dl>
+      </section>
+
+      <section class="sc-card" aria-labelledby="or-history">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="or-history">History</h2></div>
+        <div class="sc-card__body">
+          <sc-timeline [activity]="o.activity" />
+          @if (o.paymentEvents.length) {
+            <h3 class="or-subhead">Messages from the payment provider</h3>
+            <ul class="or-events">
+              @for (event of o.paymentEvents; track event.id) {
+                <li>
+                  <span class="sc-mono">{{ event.receivedAt | when }}</span>
+                  <span>{{ event.provider }} · {{ event.kind }}</span>
+                  <span class="sc-muted">{{ event.outcome }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </section>
+    </div>
+
+    <aside class="sc-stack">
+      <section class="sc-card" aria-labelledby="or-payment">
+        <div class="sc-card__head">
+          <h2 class="sc-section-title" id="or-payment">Payment</h2>
+          <sc-pill [label]="paymentTerms[o.paymentStatus].label" [tone]="paymentTerms[o.paymentStatus].tone" />
+        </div>
+        <dl class="sc-facts sc-card__body">
+          <dt>Pays by</dt>
+          <dd>{{ o.railLabel }}</dd>
+          @if (o.paymentProvider) {
+            <dt>Recorded as</dt>
+            <dd>{{ providerLabel(o.paymentProvider) }}</dd>
+          }
+          @if (o.paymentReference) {
+            <dt>Reference</dt>
+            <dd class="sc-mono">{{ o.paymentReference }}</dd>
+          }
+          @if (o.paidAt) {
+            <dt>Paid</dt>
+            <dd>{{ o.paidAt | when: 'full' }}</dd>
+          }
+        </dl>
+
+        @if (canRecordPayment()) {
+          <form class="sc-card__body or-pay sc-form" [formGroup]="payment" (ngSubmit)="recordPayment()" novalidate>
+            <p class="sc-hint">
+              When the money has arrived — on the mobile money statement, the bank account or in hand — record it here with its
+              transaction reference. The order then moves to Paid.
+            </p>
+            <div class="sc-field">
+              <label class="sc-label" for="or-method">Received by</label>
+              <select id="or-method" class="sc-select" formControlName="method">
+                @for (method of methods; track method.value) {
+                  <option [value]="method.value">{{ method.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="sc-field">
+              <label class="sc-label" for="or-reference">Transaction reference</label>
+              <input id="or-reference" class="sc-input sc-mono" formControlName="reference" spellcheck="false" autocomplete="off"
+                [attr.aria-invalid]="!!paymentError()" />
+              @if (paymentError()) {
+                <span class="sc-error" role="alert">{{ paymentError() }}</span>
+              }
+            </div>
+            <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="busy()" [disabled]="busy()">Record payment</button>
+          </form>
+        }
+      </section>
+
+      @if (canManage() && o.nextStatuses.length) {
+        <section class="sc-card" aria-labelledby="or-next">
+          <div class="sc-card__head"><h2 class="sc-section-title" id="or-next">Next step</h2></div>
+          <div class="sc-card__body or-next">
+            @for (status of o.nextStatuses; track status) {
+              @if (status === 'CANCELLED' || status === 'REFUNDED') {
+                <button type="button" class="sc-btn sc-btn--danger" [disabled]="busy()" (click)="move(status)">{{ actions[status] }}</button>
+              } @else {
+                <button type="button" class="sc-btn" [disabled]="busy()" (click)="move(status)">{{ actions[status] }}</button>
+              }
+            }
+          </div>
+        </section>
+      }
+
+      <section class="sc-card" aria-labelledby="or-note">
+        <div class="sc-card__head"><h2 class="sc-section-title" id="or-note">Team note</h2></div>
+        @if (canManage()) {
+          <form class="sc-card__body sc-form" [formGroup]="note" (ngSubmit)="saveNote()">
+            <label class="visually-hidden" for="or-note-text">Team note</label>
+            <textarea id="or-note-text" class="sc-textarea" rows="4" formControlName="staffNote"
+              placeholder="Courier tracking number, a call with the customer, anything the next person should know."></textarea>
+            <button type="submit" class="sc-btn" [disabled]="busy() || !note.dirty">Save note</button>
+          </form>
+        } @else {
+          <p class="sc-card__body or-pre">{{ o.staffNote || 'No note.' }}</p>
+        }
+      </section>
+    </aside>
+  </div>
+} @else if (failed()) {
+  <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ failed() }}</span></div>
+} @else {
+  <div class="sc-card"><sc-skeleton [lines]="10" /></div>
+}

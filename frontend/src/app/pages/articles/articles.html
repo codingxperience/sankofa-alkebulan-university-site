@@ -117,10 +117,9 @@
         <div class="archive-header">
           <h3 class="archive-title">Publication Archive</h3>
           <div class="archive-filters">
-            <select [(ngModel)]="archiveYear" (change)="filterByYear()" class="filter-select">
-              <option value="all">All Years</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
+            <select [(ngModel)]="archiveYear" (change)="filterByYear()" class="filter-select" aria-label="Year">
+              <option value="all">All years</option>
+              <option *ngFor="let year of archiveYears" [value]="year">{{ year }}</option>
             </select>
             <select [(ngModel)]="archiveMonth" (change)="filterByMonth()" class="filter-select">
               <option value="all">All Months</option>
@@ -311,14 +310,13 @@
                   <a [routerLink]="['/articles', featuredPost.slug]" class="btn-primary"
                     >Read Full Article</a
                   >
-                  <div class="article-stats">
-                    <span class="stat">{{ getRandomViews() }} views</span>
-                    <span class="stat">{{ getRandomComments() }} comments</span>
+                  <div class="article-stats" *ngIf="featuredPost.readingMinutes">
+                    <span class="stat">{{ featuredPost.readingMinutes }} min read</span>
                   </div>
                 </div>
               </div>
               <div class="featured-image">
-                <img [src]="getPostImage(0)" alt="Featured article" class="img-fluid" />
+                <img [src]="imageFor(featuredPost)" [alt]="featuredPost.title" class="img-fluid" />
               </div>
             </div>
           </div>
@@ -330,7 +328,7 @@
               *ngFor="let post of filteredPosts; let i = index; trackBy: trackBySlug"
             >
               <div class="card-image">
-                <img [src]="getPostImage(i)" [alt]="post.title" class="img-fluid" />
+                <img [src]="imageFor(post)" [alt]="post.title" class="img-fluid" loading="lazy" />
                 <div class="card-overlay"></div>
               </div>
               <div class="card-content">
@@ -346,9 +344,8 @@
                 <p class="card-excerpt">{{ post.excerpt }}</p>
                 <div class="card-footer">
                   <a [routerLink]="['/articles', post.slug]" class="read-link">Continue Reading</a>
-                  <div class="card-stats">
-                    <span>{{ getRandomViews() }}</span>
-                    <span>{{ getRandomComments() }}</span>
+                  <div class="card-stats" *ngIf="post.readingMinutes">
+                    <span>{{ post.readingMinutes }} min read</span>
                   </div>
                 </div>
               </div>
@@ -363,7 +360,7 @@
           <h3 class="sidebar-title">Categories</h3>
           <ul class="category-list">
             <li *ngFor="let category of categories">
-              <a href="#" class="category-link"
+              <a href="#" class="category-link" (click)="setFilter(category.name, $event)"
                 >{{ category.name }} <span class="count">({{ category.count }})</span></a
               >
             </li>
@@ -371,15 +368,15 @@
         </div>
 
         <div class="sidebar-section">
-          <h3 class="sidebar-title">Popular Articles</h3>
+          <h3 class="sidebar-title">Recent Articles</h3>
           <div class="popular-articles">
-            <div class="popular-item" *ngFor="let post of popularPosts; let i = index">
-              <img [src]="getPopularPostImage(i)" [alt]="post.title" class="popular-image" />
+            <div class="popular-item" *ngFor="let post of recentPosts">
+              <img [src]="imageFor(post)" [alt]="post.title" class="popular-image" loading="lazy" />
               <div class="popular-content">
                 <h4>
-                  <a href="#" class="popular-link">{{ post.title }}</a>
+                  <a [routerLink]="['/articles', post.slug]" class="popular-link">{{ post.title }}</a>
                 </h4>
-                <time class="popular-date">{{ post.date }}</time>
+                <time class="popular-date">{{ post.published_at | date : 'mediumDate' }}</time>
               </div>
             </div>
           </div>
@@ -402,10 +399,28 @@
           <p>
             Receive the latest scholarly publications and research insights directly in your inbox.
           </p>
-          <div class="newsletter-form">
-            <input type="email" placeholder="Enter your email address" class="newsletter-input" />
-            <button class="newsletter-btn">Subscribe</button>
-          </div>
+          <p class="newsletter-done" *ngIf="newsletterState === 'done'" role="status">
+            Thank you — you are on the list.
+          </p>
+          <form class="newsletter-form" *ngIf="newsletterState !== 'done'" (submit)="subscribe($event)">
+            <label class="visually-hidden" for="newsletter-email">Email address</label>
+            <input
+              id="newsletter-email"
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              placeholder="Enter your email address"
+              class="newsletter-input"
+              [(ngModel)]="newsletterEmail"
+            />
+            <input class="newsletter-trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" [(ngModel)]="newsletterTrap" />
+            <button class="newsletter-btn" type="submit" [disabled]="newsletterState === 'sending'">
+              {{ newsletterState === 'sending' ? 'Subscribing…' : 'Subscribe' }}
+            </button>
+          </form>
+          <p class="newsletter-consent" *ngIf="newsletterConsent && newsletterState !== 'done'">{{ newsletterConsent }}</p>
+          <p class="newsletter-error" *ngIf="newsletterError" role="alert">{{ newsletterError }}</p>
         </div>
       </div>
     </section>

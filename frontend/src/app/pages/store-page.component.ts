@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
+  OnInit,
   PLATFORM_ID,
   computed,
   inject,
@@ -9,6 +10,8 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ApiClient, ApiError, newRequestId } from '../core/api/api-client';
+import { LAST_ORDER_KEY } from '../core/store-session';
 
 interface ProductDef {
   readonly t: string;
@@ -205,6 +208,33 @@ const TRACKS = [
 
 const DIGITAL_IDS = ['album-digital', 'museum-pass', 'language-pack', 'vault-cert', 'archive-vol1', 'career-post'];
 
+const BAG_KEY = 'sau_store_bag_v1';
+
+/** Price and availability as the store's database has them right now. */
+interface LiveProduct {
+  readonly sku: string;
+  readonly status: 'AVAILABLE' | 'PREORDER' | 'SOLD_OUT';
+  readonly priceCents: number;
+  readonly hasSizes: boolean;
+  readonly isDigital: boolean;
+  readonly stockRemaining: number | null;
+}
+
+interface Catalog {
+  readonly cardCheckout: boolean;
+  readonly products: LiveProduct[];
+}
+
+type Fulfilment = 'PICKUP' | 'COURIER' | 'EXPRESS';
+type Rail = 'MOBILE_MONEY' | 'CARD';
+
+interface PlacedOrder {
+  readonly order: { number: string; totalCents: number; currency: string };
+  readonly accessKey: string;
+  readonly payment: { mode: 'hosted'; url: string } | { mode: 'manual'; message: string };
+  readonly confirmationEmailed: boolean;
+}
+
 const fmt = (n: number) => '$' + n.toLocaleString('en-US');
 
 /** Slugify a track title into its audio filename stem. */
@@ -233,8 +263,9 @@ const ALBUM_MOVEMENTS = TRACKS.map((mv) => ({
   styleUrl: './store-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StorePageComponent implements OnDestroy {
+export class StorePageComponent implements OnInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly api = inject(ApiClient);
   private audioEl?: HTMLAudioElement;
 
   readonly products = PRODUCTS;
@@ -242,6 +273,7 @@ export class StorePageComponent implements OnDestroy {
   readonly preorderMode = true;
   readonly albumMovements = ALBUM_MOVEMENTS;
 
+  /** The bag, keyed by product id — or `id|size` for clothing, so two sizes are two lines. */
   readonly cart = signal<Record<string, number>>({});
   readonly cartOpen = signal(false);
   readonly playing = signal('');
@@ -249,17 +281,22 @@ export class StorePageComponent implements OnDestroy {
   readonly detailQty = signal(1);
   readonly detailSize = signal('M');
 
+  readonly live = signal<Record<string, LiveProduct>>({});
+  readonly cardCheckout = signal(false);
+
   readonly coOpen = signal(false);
   readonly coStep = signal(0);
-  readonly coDone = signal(false);
   readonly coName = signal('');
   readonly coEmail = signal('');
-  readonly coPlace = signal('');
-  readonly coShip = signal('pickup');
-  readonly coRail = signal('mpesa');
   readonly coPhone = signal('');
-  readonly coCard = signal('');
-  readonly orderNo = signal('');
+  readonly coAddress = signal('');
+  readonly coWebsite = signal('');
+  readonly coShip = signal<Fulfilment>('PICKUP');
+  readonly coRail = signal<Rail>('MOBILE_MONEY');
+  readonly coSending = signal(false);
+  readonly coError = signal<ApiError | null>(null);
+  readonly coResult = signal<PlacedOrder | null>(null);
+  private coRequestId = newRequestId();
 
   readonly regaliaIds = ['tee-navy', 'tee-colors', 'hoodie', 'scarf', 'tunic', 'gown', 'suit', 'robe'];
   readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-quiet-skin', 'bk-pan-african', 'bk-next-century', 'bk-god-ai', 'bk-governance', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
@@ -293,24 +330,91 @@ export class StorePageComponent implements OnDestroy {
     { dept: 'Arts', icon: 'fa-palette', color: '#7d4a9e', tint: 'rgba(125,74,158,0.10)', product: 'New Alkebulan Aesthetic', d: 'Student art, fashion, and music — royalties flow back to creators.', value: 'Cultural economy' },
   ];
 
-  readonly shipOptions = [
-    { id: 'pickup', label: 'Campus pickup — Mbarara', meta: 'Ready in 2 days · bring student ID', cost: 0 },
-    { id: 'courier', label: 'Continental courier', meta: '3–7 days · 54 states', cost: 6 },
-    { id: 'express', label: 'Diaspora express', meta: '5–10 days · worldwide', cost: 18 },
+  /** Mirrors the API's delivery prices; the API charges what it holds, not what this list says. */
+  readonly shipOptions: ReadonlyArray<{ id: Fulfilment; label: string; meta: string; cost: number }> = [
+    { id: 'PICKUP', label: 'Campus pickup — Mbarara', meta: 'Ready in 2 days · bring student ID', cost: 0 },
+    { id: 'COURIER', label: 'Continental courier', meta: '3–7 days · 54 states', cost: 6 },
+    { id: 'EXPRESS', label: 'Diaspora express', meta: '5–10 days · worldwide', cost: 18 },
   ];
 
-  readonly rails = [
-    { id: 'mpesa', label: 'M-Pesa', meta: 'Mobile money', icon: 'fa-mobile-screen', phone: true },
-    { id: 'flutterwave', label: 'Flutterwave', meta: 'Mobile + cards', icon: 'fa-bolt', phone: true },
-    { id: 'afropay', label: 'AfroPay', meta: 'Pan-African wallet', icon: 'fa-wallet', phone: true },
-    { id: 'card', label: 'Card', meta: 'Visa · Mastercard', icon: 'fa-credit-card', phone: false },
-  ];
+  readonly rails = computed(() => [
+    { id: 'MOBILE_MONEY' as Rail, label: 'Mobile money', meta: 'M-Pesa · MTN · Airtel', icon: 'fa-mobile-screen', phone: true },
+    {
+      id: 'CARD' as Rail,
+      label: 'Card',
+      meta: this.cardCheckout() ? 'Visa · Mastercard — on a secure Flutterwave page' : 'Visa · Mastercard — secure payment link by email',
+      icon: 'fa-credit-card',
+      phone: false,
+    },
+  ]);
 
   readonly stepLabels = ['Details', 'Delivery', 'Payment', 'Review'];
 
   readonly entries = computed(() => Object.entries(this.cart()));
   readonly cartCount = computed(() => this.entries().reduce((a, [, q]) => a + q, 0));
-  readonly cartSum = computed(() => this.entries().reduce((a, [id, q]) => a + PRODUCTS[id].p * q, 0));
+  readonly cartSum = computed(() => this.entries().reduce((a, [key, q]) => a + this.price(this.idOf(key)) * q, 0));
+
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    try {
+      const saved = JSON.parse(localStorage.getItem(BAG_KEY) || '{}') as Record<string, number>;
+      const valid = Object.entries(saved).filter(([key, qty]) => PRODUCTS[this.idOf(key)] && Number.isInteger(qty) && qty > 0);
+      this.cart.set(Object.fromEntries(valid));
+    } catch {
+      /* a corrupt bag is simply an empty bag */
+    }
+    void this.loadCatalog();
+  }
+
+  private async loadCatalog(): Promise<void> {
+    try {
+      const catalog = await this.api.get<Catalog>('/store/catalog');
+      this.live.set(Object.fromEntries(catalog.products.map((p) => [p.sku, p])));
+      this.cardCheckout.set(catalog.cardCheckout);
+    } catch {
+      // The storefront still shows its printed prices; checkout will confirm the real ones.
+    }
+  }
+
+  private saveBag(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    try {
+      localStorage.setItem(BAG_KEY, JSON.stringify(this.cart()));
+    } catch {
+      /* storage may be unavailable */
+    }
+  }
+
+  private idOf(key: string): string {
+    return key.split('|')[0];
+  }
+
+  private sizeOf(key: string): string | undefined {
+    return key.split('|')[1];
+  }
+
+  /** Dollars, from the live catalogue when it has loaded. */
+  price(id: string): number {
+    const live = this.live()[id];
+    return live ? live.priceCents / 100 : PRODUCTS[id].p;
+  }
+
+  isSoldOut(id: string): boolean {
+    return this.live()[id]?.status === 'SOLD_OUT';
+  }
+
+  /** "Only 3 left" for limited editions running low; nothing otherwise. */
+  stockNote(id: string): string {
+    const live = this.live()[id];
+    if (!live) return '';
+    if (live.status === 'SOLD_OUT') return 'Sold out';
+    if (live.stockRemaining !== null && live.stockRemaining <= 10) return `Only ${live.stockRemaining} left`;
+    return '';
+  }
 
   fmt(n: number): string {
     return fmt(n);
@@ -330,9 +434,12 @@ export class StorePageComponent implements OnDestroy {
   }
 
   get cartItems() {
-    return this.entries().map(([id, q]) => {
+    return this.entries().map(([key, q]) => {
+      const id = this.idOf(key);
+      const size = this.sizeOf(key);
       const p = PRODUCTS[id];
-      return { id, t: p.t, m: p.m || '', qty: q, line: fmt(p.p * q), hasImg: !!p.img, img: p.img, icon: p.icon || 'fa-bag-shopping' };
+      const meta = size ? `Size ${size}${p.m ? ' · ' + p.m : ''}` : p.m || '';
+      return { key, id, size, t: p.t, m: meta, qty: q, line: fmt(this.price(id) * q), hasImg: !!p.img, img: p.img, icon: p.icon || 'fa-bag-shopping' };
     });
   }
 
@@ -341,12 +448,22 @@ export class StorePageComponent implements OnDestroy {
   }
 
   priceLabel(id: string): string {
-    const p = PRODUCTS[id];
-    return p.p === 0 ? 'Free' : fmt(p.p);
+    const price = this.price(id);
+    return price === 0 ? 'Free' : fmt(price);
   }
 
-  add(id: string, open = true): void {
-    this.cart.update((c) => ({ ...c, [id]: (c[id] || 0) + 1 }));
+  /** Adds one of a bag line. Clothing needs a size, so it opens the product to choose one. */
+  add(key: string, open = true): void {
+    const id = this.idOf(key);
+    if (this.isSoldOut(id)) {
+      return;
+    }
+    if (PRODUCTS[id].sizes && !this.sizeOf(key)) {
+      this.openDetail(id);
+      return;
+    }
+    this.cart.update((c) => ({ ...c, [key]: (c[key] || 0) + 1 }));
+    this.saveBag();
     if (open) {
       this.cartOpen.set(true);
     }
@@ -357,16 +474,17 @@ export class StorePageComponent implements OnDestroy {
     this.add(id);
   }
 
-  dec(id: string): void {
+  dec(key: string): void {
     this.cart.update((c) => {
       const cart = { ...c };
-      if (cart[id] > 1) {
-        cart[id] -= 1;
+      if (cart[key] > 1) {
+        cart[key] -= 1;
       } else {
-        delete cart[id];
+        delete cart[key];
       }
       return cart;
     });
+    this.saveBag();
   }
 
   /** Play a 45-second sample of a track (or pause it if already playing). */
@@ -420,8 +538,8 @@ export class StorePageComponent implements OnDestroy {
   }
 
   get detailIsFree(): boolean {
-    const p = this.detailProduct;
-    return !!p && p.p === 0;
+    const id = this.detail();
+    return !!id && this.price(id) === 0;
   }
 
   get detailCrumb(): string {
@@ -455,8 +573,8 @@ export class StorePageComponent implements OnDestroy {
   }
 
   get detailTotal(): string {
-    const p = this.detailProduct;
-    return p ? fmt(p.p * this.detailQty()) : '';
+    const id = this.detail();
+    return id ? fmt(this.price(id) * this.detailQty()) : '';
   }
 
   get related() {
@@ -471,7 +589,7 @@ export class StorePageComponent implements OnDestroy {
       .slice(0, 3)
       .map((k) => {
         const r = PRODUCTS[k];
-        return { id: k, t: r.t, priceLabel: r.p === 0 ? 'Free' : fmt(r.p), hasImg: !!r.img, img: r.img, bg: r.bg || '#eef3f8' };
+        return { id: k, t: r.t, priceLabel: this.priceLabel(k), hasImg: !!r.img, img: r.img, bg: r.bg || '#eef3f8' };
       });
   }
 
@@ -485,31 +603,41 @@ export class StorePageComponent implements OnDestroy {
 
   detailAdd(): void {
     const id = this.detail();
-    if (!id) {
+    if (!id || this.isSoldOut(id)) {
       return;
     }
+    const key = PRODUCTS[id].sizes ? `${id}|${this.detailSize()}` : id;
     const qty = this.detailQty();
-    this.cart.update((c) => ({ ...c, [id]: (c[id] || 0) + qty }));
+    this.cart.update((c) => ({ ...c, [key]: (c[key] || 0) + qty }));
+    this.saveBag();
     this.detail.set('');
     this.cartOpen.set(true);
   }
 
   /* ---- Checkout ---- */
   get coAllDigital(): boolean {
-    return this.entries().every(
-      ([id]) => !PRODUCTS[id].img || PRODUCTS[id].kind === 'book' || DIGITAL_IDS.includes(id),
-    );
+    return this.entries().every(([key]) => {
+      const id = this.idOf(key);
+      const live = this.live()[id];
+      if (live) return live.isDigital;
+      const p = PRODUCTS[id];
+      return !p.img || p.kind === 'book' || DIGITAL_IDS.includes(id);
+    });
   }
 
   get activeShip(): { id: string; label: string; meta?: string; cost: number } {
     if (this.coAllDigital) {
-      return { id: 'digital', label: 'Instant delivery', cost: 0 };
+      return { id: 'DIGITAL', label: 'Delivered by email', cost: 0 };
     }
     return this.shipOptions.find((o) => o.id === this.coShip()) || this.shipOptions[0];
   }
 
   get activeRail() {
-    return this.rails.find((r) => r.id === this.coRail()) || this.rails[0];
+    return this.rails().find((r) => r.id === this.coRail()) || this.rails()[0];
+  }
+
+  get needsAddress(): boolean {
+    return !this.coAllDigital && (this.coShip() === 'COURIER' || this.coShip() === 'EXPRESS');
   }
 
   get coTotal(): number {
@@ -519,16 +647,19 @@ export class StorePageComponent implements OnDestroy {
   get coValid(): boolean {
     const step = this.coStep();
     if (step === 0) {
-      return this.coName().trim().length > 1 && this.coEmail().includes('@');
+      return this.coName().trim().length > 1 && /.+@.+\..+/.test(this.coEmail().trim());
+    }
+    if (step === 1) {
+      return !this.needsAddress || this.coAddress().trim().length >= 5;
     }
     if (step === 2) {
-      return this.activeRail.phone ? this.coPhone().trim().length > 6 : this.coCard().trim().length > 8;
+      return !this.activeRail.phone || this.coPhone().replace(/\D/g, '').length >= 7;
     }
     return true;
   }
 
   get coNextLabel(): string {
-    if (this.coDone()) {
+    if (this.coResult()) {
       return 'Keep shopping';
     }
     const step = this.coStep();
@@ -541,7 +672,7 @@ export class StorePageComponent implements OnDestroy {
     if (step === 2) {
       return 'Review order';
     }
-    return 'Place order — ' + fmt(this.coTotal);
+    return this.coSending() ? 'Placing order…' : 'Place order — ' + fmt(this.coTotal);
   }
 
   startCheckout(): void {
@@ -549,32 +680,68 @@ export class StorePageComponent implements OnDestroy {
       this.cartOpen.set(false);
       this.coOpen.set(true);
       this.coStep.set(0);
-      this.coDone.set(false);
+      this.coResult.set(null);
+      this.coError.set(null);
     }
   }
 
-  coNext(): void {
-    if (this.coDone()) {
+  async coNext(): Promise<void> {
+    if (this.coResult()) {
       this.coOpen.set(false);
       return;
     }
-    if (!this.coValid) {
+    if (!this.coValid || this.coSending()) {
       return;
     }
-    if (this.coStep() === 3) {
-      this.coDone.set(true);
-      this.cart.set({});
-      this.orderNo.set('SAU-' + String(Date.now()).slice(-6));
-    } else {
+    if (this.coStep() < 3) {
       this.coStep.update((s) => s + 1);
+      return;
+    }
+    await this.placeOrder();
+  }
+
+  private async placeOrder(): Promise<void> {
+    this.coSending.set(true);
+    this.coError.set(null);
+    try {
+      const placed = await this.api.post<PlacedOrder>('/store/orders', {
+        items: this.entries().map(([key, quantity]) => ({ sku: this.idOf(key), size: this.sizeOf(key), quantity })),
+        customer: {
+          name: this.coName(),
+          email: this.coEmail(),
+          phone: this.coPhone(),
+          address: this.needsAddress ? this.coAddress() : '',
+        },
+        fulfilment: this.coAllDigital ? 'DIGITAL' : this.coShip(),
+        rail: this.coRail(),
+        website: this.coWebsite(),
+        clientRequestId: this.coRequestId,
+      });
+      this.coResult.set(placed);
+      this.cart.set({});
+      this.saveBag();
+      this.coRequestId = newRequestId();
+      if (isPlatformBrowser(this.platformId)) {
+        // Lets the order page open this order after a trip to the payment page and back.
+        sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify({ number: placed.order.number, key: placed.accessKey }));
+      }
+    } catch (error) {
+      const apiError = ApiError.from(error);
+      this.coError.set(apiError);
+      if (['sold_out', 'insufficient_stock', 'unknown_product'].includes(apiError.code)) {
+        void this.loadCatalog();
+      }
+    } finally {
+      this.coSending.set(false);
     }
   }
 
   coBack(): void {
+    this.coError.set(null);
     this.coStep.update((s) => Math.max(0, s - 1));
   }
 
-  bind(target: 'coName' | 'coEmail' | 'coPlace' | 'coPhone' | 'coCard', event: Event): void {
+  bind(target: 'coName' | 'coEmail' | 'coPhone' | 'coAddress' | 'coWebsite', event: Event): void {
     this[target].set((event.target as HTMLInputElement).value);
   }
 

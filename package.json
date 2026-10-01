@@ -1,0 +1,11 @@
+{
+  "name": "sankofa-alkebulan-university",
+  "private": true,
+  "description": "Sankofa Alkebulan University: the public site (frontend/) and its API (server/), deployed together on Vercel.",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "build": "node scripts/vercel-build.mjs"
+  }
+}

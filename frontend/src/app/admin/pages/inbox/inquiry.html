@@ -1,0 +1,150 @@
+@if (inquiry(); as m) {
+  <article class="sc-card iq">
+    <header class="iq-head">
+      <a class="sc-btn sc-btn--quiet sc-btn--small iq-back" routerLink="/admin/inbox"><i class="pi pi-arrow-left" aria-hidden="true"></i> All messages</a>
+      <div class="iq-head__row">
+        <h2 class="iq-subject">{{ m.subject || 'No subject' }}</h2>
+        <sc-pill [label]="statusTerms[m.status].label" [tone]="statusTerms[m.status].tone" />
+      </div>
+      <p class="iq-from">
+        <strong>{{ m.name }}</strong>
+        <a [href]="'mailto:' + m.email">{{ m.email }}</a>
+        @if (m.origin) {
+          <span>· {{ m.origin }}</span>
+        }
+      </p>
+      <p class="iq-meta">
+        <span class="sc-ref">{{ m.reference }}</span>
+        <span>{{ sources[m.source] ?? m.source }}</span>
+        <time [attr.datetime]="m.createdAt">{{ m.createdAt | when: 'full' }}</time>
+        @if (m.firstRepliedAt) {
+          <span>First answered {{ m.firstRepliedAt | ago }}</span>
+        }
+      </p>
+    </header>
+
+    @if (canManage()) {
+      <div class="iq-controls" [class.is-saving]="saving()">
+        <div class="sc-field">
+          <label class="sc-label" for="iq-status">Status</label>
+          <select id="iq-status" class="sc-select sc-select--small" [value]="m.status" [disabled]="saving()"
+            (change)="setStatus($any($event.target).value)">
+            @for (status of statusChoices; track status) {
+              <option [value]="status" [selected]="status === m.status">{{ statusTerms[status].label }}</option>
+            }
+          </select>
+        </div>
+        <div class="sc-field">
+          <label class="sc-label" for="iq-office">Office</label>
+          <select id="iq-office" class="sc-select sc-select--small" [value]="m.office" [disabled]="saving()"
+            (change)="setOffice($any($event.target).value)">
+            @for (office of offices; track office) {
+              <option [value]="office" [selected]="office === m.office">{{ state.officeName(office) }}</option>
+            }
+          </select>
+        </div>
+        <div class="sc-field">
+          <label class="sc-label" for="iq-assignee">Assigned to</label>
+          <select id="iq-assignee" class="sc-select sc-select--small" [disabled]="saving()" (change)="setAssignee($any($event.target).value)">
+            <option value="" [selected]="!m.assignee">Nobody yet</option>
+            @for (person of state.directory(); track person.id) {
+              <option [value]="person.id" [selected]="person.id === m.assignee?.id">{{ person.name }}</option>
+            }
+          </select>
+        </div>
+        @if (!mine()) {
+          <button type="button" class="sc-btn sc-btn--small iq-take" [disabled]="saving()" (click)="takeIt()">
+            <i class="pi pi-user" aria-hidden="true"></i> Take it
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="iq-controls">
+        <p class="sc-muted">
+          {{ state.officeName(m.office) }} · {{ m.assignee ? 'Assigned to ' + m.assignee.name : 'Not assigned' }}
+        </p>
+      </div>
+    }
+
+    <div class="iq-body">
+      <div class="iq-message">{{ m.message }}</div>
+
+      @if (details().length) {
+        <dl class="sc-facts iq-details">
+          @for (detail of details(); track detail.label) {
+            <dt>{{ detail.label }}</dt>
+            <dd>{{ detail.value }}</dd>
+          }
+        </dl>
+      }
+    </div>
+
+    @if (canManage() && m.status !== 'SPAM') {
+      <form class="iq-composer" [formGroup]="composer" (ngSubmit)="send()">
+        <div class="iq-composer__tabs" role="group" aria-label="Write">
+          <button type="button" [attr.aria-pressed]="mode() === 'reply'" (click)="mode.set('reply')">
+            <i class="pi pi-send" aria-hidden="true"></i> Reply by email
+          </button>
+          <button type="button" [attr.aria-pressed]="mode() === 'note'" (click)="mode.set('note')">
+            <i class="pi pi-pencil" aria-hidden="true"></i> Note for colleagues
+          </button>
+        </div>
+
+        @if (mode() === 'reply' && !state.emailConfigured()) {
+          <div class="sc-alert sc-alert--gold">
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
+            <span>
+              Email sending is not switched on yet, so replies cannot leave from here.
+              <a [href]="mailto()">Reply from your own mail app</a> and leave a note below so colleagues know it was answered.
+            </span>
+          </div>
+        } @else {
+          <label class="visually-hidden" for="iq-text">{{ mode() === 'reply' ? 'Reply to ' + m.name : 'Note' }}</label>
+          <textarea id="iq-text" class="sc-textarea" formControlName="body" rows="6"
+            [placeholder]="mode() === 'reply' ? 'Dear ' + m.name.split(' ')[0] + ',' : 'Only the team sees notes. Record what you found out or what happens next.'"></textarea>
+          <div class="iq-composer__foot">
+            <p class="sc-hint">
+              @if (mode() === 'reply') {
+                Sent to {{ m.email }} from {{ state.officeName(m.office) }}, quoting {{ m.reference }}. Their answer comes back to
+                {{ state.system()?.email?.replyTo ?? 'the university mailbox' }}.
+              } @else {
+                Notes stay inside the console.
+              }
+            </p>
+            <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="sending()" [disabled]="sending()">
+              {{ mode() === 'reply' ? 'Send reply' : 'Add note' }}
+            </button>
+          </div>
+        }
+      </form>
+    }
+
+    <section class="iq-story" aria-labelledby="iq-story-title">
+      <h3 class="sc-section-title" id="iq-story-title">Conversation and history</h3>
+      <sc-timeline [notes]="m.notes" [activity]="m.activity" />
+    </section>
+
+    @if (m.history.length) {
+      <section class="iq-story" aria-labelledby="iq-history-title">
+        <h3 class="sc-section-title" id="iq-history-title">Earlier messages from {{ m.email }}</h3>
+        <ul class="iq-history">
+          @for (earlier of m.history; track earlier.id) {
+            <li>
+              <a [routerLink]="['/admin/inbox', earlier.id]">
+                <span>{{ earlier.subject || 'No subject' }}</span>
+                <span class="sc-muted">{{ earlier.reference }} · {{ state.officeName(earlier.office) }} · {{ earlier.createdAt | when: 'date' }}</span>
+              </a>
+              <sc-pill [label]="statusTerms[earlier.status].label" [tone]="statusTerms[earlier.status].tone" />
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </article>
+} @else if (failed()) {
+  <div class="sc-card sc-card__body">
+    <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ failed() }}</span></div>
+  </div>
+} @else {
+  <div class="sc-card"><sc-skeleton [lines]="10" /></div>
+}

@@ -1,0 +1,109 @@
+<header class="sc-head">
+  <div class="sc-head__text">
+    <p class="sc-eyebrow">Correspondence</p>
+    <h1 class="sc-title">Inbox</h1>
+    <p class="sc-lede">Every message sent from the website, addressed to one of seven offices. Move it to another door if it knocked on the wrong one.</p>
+  </div>
+</header>
+
+<nav class="ib-doors" aria-label="Offices">
+  <button type="button" class="ib-door" [attr.aria-pressed]="office() === null" (click)="chooseOffice(null)">
+    <span class="ib-door__name">All offices</span>
+    <span class="ib-door__count">{{ activeTotal() }}<span class="visually-hidden"> open</span></span>
+  </button>
+  @for (each of offices; track each) {
+    <button type="button" class="ib-door" [attr.aria-pressed]="office() === each" (click)="chooseOffice(each)">
+      <span class="ib-door__name">{{ state.officeName(each) }}</span>
+      <span class="ib-door__count" [class.is-zero]="officeCount(each) === 0">{{ officeCount(each) }}<span class="visually-hidden"> open</span></span>
+    </button>
+  }
+</nav>
+
+<div class="sc-toolbar">
+  <div class="sc-segments" role="group" aria-label="Status">
+    @for (option of views; track option.value) {
+      <button type="button" class="sc-segment" [attr.aria-pressed]="view() === option.value" (click)="chooseView(option.value)">
+        {{ option.label }}
+        @if (viewCount(option.value); as count) {
+          <span class="sc-segment__count">{{ count }}</span>
+        }
+      </button>
+    }
+  </div>
+  <span class="sc-toolbar__spacer"></span>
+  <label class="visually-hidden" for="ib-assignee">Assigned to</label>
+  <select id="ib-assignee" class="sc-select sc-select--small ib-assignee" [value]="assignee()" (change)="chooseAssignee($any($event.target).value)">
+    <option value="">Anyone</option>
+    <option value="me">Assigned to me</option>
+    <option value="unassigned">Not assigned</option>
+    @for (person of state.directory(); track person.id) {
+      <option [value]="person.id">{{ person.name }}</option>
+    }
+  </select>
+  <div class="sc-search">
+    <i class="pi pi-search" aria-hidden="true"></i>
+    <input class="sc-input" type="search" placeholder="Name, email, subject or reference" aria-label="Search messages"
+      [value]="query()" (input)="search($any($event.target).value)" />
+  </div>
+</div>
+
+<div class="ib-panes" [class.is-reading]="reading()">
+  <section class="sc-card ib-list" aria-label="Messages">
+    @if (loading()) {
+      <sc-skeleton [lines]="9" />
+    } @else if (items().length === 0) {
+      <sc-empty title="No messages here" icon="pi-inbox">
+        <p>Nothing matches this view. Try another office or status, or clear the search.</p>
+      </sc-empty>
+    } @else {
+      <ul>
+        @for (item of items(); track item.id) {
+          <li>
+            <a class="ib-item" [routerLink]="[item.id]" routerLinkActive="is-open" ariaCurrentWhenActive="page" [class.is-new]="item.status === 'NEW'">
+              <span class="ib-item__top">
+                <span class="ib-item__name">
+                  @if (item.status === 'NEW') {
+                    <span class="ib-item__dot" aria-hidden="true"></span><span class="visually-hidden">New: </span>
+                  }
+                  {{ item.name }}
+                </span>
+                <time class="ib-item__time" [attr.datetime]="item.createdAt" [title]="item.createdAt | when: 'full'">{{ item.createdAt | ago }}</time>
+              </span>
+              <span class="ib-item__subject">{{ item.subject || 'No subject' }}</span>
+              <span class="ib-item__preview">{{ item.preview }}</span>
+              <span class="ib-item__meta">
+                <span class="sc-tag">{{ state.officeName(item.office) }}</span>
+                @if (item.status !== 'NEW') {
+                  <sc-pill [label]="statusTerms[item.status].label" [tone]="statusTerms[item.status].tone" />
+                }
+                <span class="ib-item__spacer"></span>
+                @if (item.notes) {
+                  <span class="ib-item__notes" [title]="item.notes + ' notes and replies'"><i class="pi pi-comment" aria-hidden="true"></i> {{ item.notes }}</span>
+                }
+                @if (item.assignee) {
+                  <span class="sc-avatar sc-avatar--small" [title]="'Assigned to ' + item.assignee.name">{{ item.assignee.name | initials }}</span>
+                }
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+      @if (cursor()) {
+        <div class="sc-more">
+          <button type="button" class="sc-btn sc-btn--small" [class.is-busy]="loadingMore()" (click)="more()">Older messages</button>
+        </div>
+      }
+    }
+  </section>
+
+  <section class="ib-reader" aria-label="Message">
+    <router-outlet />
+    @if (!reading()) {
+      <div class="sc-card ib-placeholder">
+        <sc-empty title="Choose a message" icon="pi-envelope">
+          <p>Open a message to read it, reply by email, leave a note for colleagues, or route it to another office.</p>
+        </sc-empty>
+      </div>
+    }
+  </section>
+</div>

@@ -16,3 +16,6 @@ frontend/dev.log# Local database and scratch files
 backend/prisma/*.db
 backend/prisma/*.db-journal
 frontend/src/app/university/_tmp-test.txt
+
+# Vercel CLI state and local build output
+.vercel/
