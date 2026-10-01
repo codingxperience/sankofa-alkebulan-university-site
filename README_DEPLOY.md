@@ -39,7 +39,7 @@ Set these under **Project → Settings → Environment Variables**. Names match
 | --- | --- | --- |
 | `DATABASE_URL` | required | Supabase **transaction pooler** (port 6543) with `?pgbouncer=true` |
 | `DIRECT_URL` | required | Supabase **session pooler** (port 5432); used only by migrations during the build |
-| `APP_SECRET` | required | 32+ random characters; never change it once live (it signs stored hashes) |
+| `APP_SECRET` | required | 32+ random characters; keys the hashes of visitors' IP addresses. Changing it later only resets rate limits |
 | `PUBLIC_SITE_URL` | required | e.g. `https://your-domain` — links in every email use it |
 | `CRON_SECRET` | recommended | any long random string; Vercel sends it to the maintenance job |
 | `ADMIN_SETUP_KEY` | first deploy only | 24+ characters; lets you create the first owner at `/admin/sign-in`, then remove it |
@@ -60,11 +60,16 @@ and the name into *Key*; or use *Import .env* to paste whole `NAME=value`
 lines. Tick **Production** (and Preview only if previews have their own
 database). Quotes copied by accident are ignored.
 
-Generate secrets with:
+Generate `APP_SECRET`, `ADMIN_SETUP_KEY` and `CRON_SECRET` — a different
+value for each — in any of these ways:
 
-```sh
-node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
-```
+- **Any browser:** press F12, open *Console*, paste and press Enter:
+  `btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(48))))`
+- **macOS or Linux terminal:** `openssl rand -base64 48`
+- **Windows PowerShell:**
+  `$b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)`
+- **With Node.js:** `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`
+- **A password manager's generator**, set to 48+ characters.
 
 **Preview deployments** never run migrations. Give Preview its own database
 (a Supabase branch or a second project), or leave Preview without database
