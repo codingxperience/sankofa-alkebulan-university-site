@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ApiClient, ApiError, newRequestId } from '../core/api/api-client';
 
 interface RegForm {
   name: string;
@@ -24,29 +25,49 @@ interface RegForm {
   question: string;
   needs: string;
   consent: boolean;
+  website: string;
 }
 
+/** Consent starts unticked: people opt in to updates, they are never opted in for them. */
 const EMPTY: RegForm = {
   name: '', email: '', phone: '', place: '', org: '', role: '', cat: '', mode: '', days: '',
-  interests: [], question: '', needs: '', consent: true,
+  interests: [], question: '', needs: '', consent: false, website: '',
 };
 
-const CAT_OPTIONS = [
-  'Scholar / academic',
-  'Government / institutional partner',
-  'Student / prospective student',
-  'Diaspora',
-  'General public',
-  'Press / media',
-];
-const MODE_OPTIONS = ['In person — Speke Resort', 'Online — Zoom'];
-const DAY_OPTIONS = ['Fri 14 — Keynote', 'Sat 15 — Mini-conference', 'Both days'];
-const INTEREST_OPTIONS = ['Cultural identity', 'Indigenous knowledge', 'Intellectual cooperation'];
+const EVENT_SLUG = 'sankofa-convening-2026';
 const STORAGE_KEY = 'sau_convening_reg';
+
+interface EventOptions {
+  attendeeCategories: string[];
+  attendanceModes: string[];
+  days: string[];
+  interests: string[];
+}
+
+interface PublicEvent {
+  title: string;
+  startsAt: string;
+  registration: { open: true; waitlist: boolean } | { open: false; reason: 'not_published' | 'cancelled' | 'closed' | 'ended' };
+  options: EventOptions;
+  consentText: string;
+}
+
+interface RegistrationResult {
+  status: 'CONFIRMED' | 'WAITLISTED' | 'CANCELLED';
+  code?: string;
+  alreadyRegistered: boolean;
+  confirmationEmailed: boolean;
+}
+
+const CLOSED_MESSAGES: Record<string, string> = {
+  ended: 'The Convening took place on 14–15 August 2026. Thank you to everyone who joined us in Munyonyo and online.',
+  closed: 'Registration for the Convening has closed.',
+  cancelled: 'The Convening has been cancelled. We will share any new dates as soon as they are set.',
+  not_published: 'Registration for the Convening has not opened yet.',
+};
 
 @Component({
   selector: 'app-convening-register-page',
-  standalone: true,
   imports: [RouterLink],
   templateUrl: './convening-register-page.component.html',
   styleUrl: './convening-register-page.component.scss',
@@ -54,52 +75,29 @@ const STORAGE_KEY = 'sau_convening_reg';
 })
 export class ConveningRegisterPageComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly api = inject(ApiClient);
 
-  readonly catOptions = CAT_OPTIONS;
-  readonly modeOptions = MODE_OPTIONS;
-  readonly dayOptions = DAY_OPTIONS;
-  readonly interestOptions = INTEREST_OPTIONS;
-
+  readonly event = signal<PublicEvent | null>(null);
+  readonly loadError = signal('');
   readonly form = signal<RegForm>({ ...EMPTY });
-  readonly submitted = signal(false);
-  readonly error = signal('');
-  readonly copied = signal(false);
+  readonly sending = signal(false);
+  readonly result = signal<RegistrationResult | null>(null);
+  readonly error = signal<ApiError | null>(null);
+  private requestId = newRequestId();
 
-  readonly firstName = computed(() => this.form().name.trim().split(/\s+/)[0] || 'Friend');
-
-  readonly message = computed(() => {
-    const s = this.form();
-    const lines = [
-      'REGISTRATION — The Sankofa Convening 2026',
-      '14–15 August 2026 · Speke Resort, Munyonyo & Zoom',
-      '',
-      'Name: ' + s.name,
-      'Email: ' + s.email,
-    ];
-    if (s.phone) lines.push('WhatsApp/phone: ' + s.phone);
-    if (s.place) lines.push('Country & city: ' + s.place);
-    if (s.org || s.role) lines.push('Organisation & role: ' + [s.org, s.role].filter(Boolean).join(' — '));
-    lines.push('Attending as: ' + s.cat);
-    lines.push('Joining: ' + s.mode);
-    lines.push('Day(s): ' + s.days);
-    if (s.interests.length) lines.push('Mini-conference themes: ' + s.interests.join(', '));
-    if (s.question) lines.push('Question/topic: ' + s.question);
-    if (s.needs) lines.push('Access/dietary: ' + s.needs);
-    lines.push('Updates: ' + (s.consent ? 'yes, keep me informed' : 'no'));
-    return lines.join('\n');
+  readonly options = computed<EventOptions>(
+    () => this.event()?.options ?? { attendeeCategories: [], attendanceModes: [], days: [], interests: [] },
+  );
+  readonly closedMessage = computed(() => {
+    const registration = this.event()?.registration;
+    return registration && !registration.open ? CLOSED_MESSAGES[registration.reason] : '';
   });
-
-  readonly waHref = computed(
-    () => 'https://wa.me/256765871126?text=' + encodeURIComponent(this.message()),
-  );
-  readonly mailHref = computed(
-    () =>
-      'mailto:SanAlkeU@outlook.com?subject=' +
-      encodeURIComponent('Registration — The Sankofa Convening 2026') +
-      '&body=' +
-      encodeURIComponent(this.message()),
-  );
-  readonly copyLabel = computed(() => (this.copied() ? 'Copied' : 'Copy the message'));
+  readonly waitlistOnly = computed(() => {
+    const registration = this.event()?.registration;
+    return Boolean(registration?.open && registration.waitlist);
+  });
+  readonly fieldErrors = computed(() => this.error()?.fields ?? {});
+  readonly firstName = computed(() => this.form().name.trim().split(/\s+/)[0] || 'Friend');
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
@@ -108,10 +106,20 @@ export class ConveningRegisterPageComponent implements OnInit {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
       if (saved) {
-        this.form.set({ ...EMPTY, ...saved });
+        this.form.set({ ...EMPTY, ...saved, website: '' });
       }
     } catch {
       /* ignore corrupt storage */
+    }
+    void this.loadEvent();
+  }
+
+  async loadEvent(): Promise<void> {
+    this.loadError.set('');
+    try {
+      this.event.set(await this.api.get<PublicEvent>(`/events/${EVENT_SLUG}`));
+    } catch (error) {
+      this.loadError.set(ApiError.from(error).message);
     }
   }
 
@@ -120,7 +128,8 @@ export class ConveningRegisterPageComponent implements OnInit {
       return;
     }
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.form()));
+      const { website: _trap, ...answers } = this.form();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
     } catch {
       /* storage may be unavailable */
     }
@@ -129,22 +138,20 @@ export class ConveningRegisterPageComponent implements OnInit {
   onField(field: keyof RegForm, event: Event): void {
     const value = (event.target as HTMLInputElement | HTMLTextAreaElement).value;
     this.form.update((f) => ({ ...f, [field]: value }));
-    this.error.set('');
+    this.error.set(null);
     this.persist();
   }
 
   pickSingle(field: 'cat' | 'mode' | 'days', label: string): void {
     this.form.update((f) => ({ ...f, [field]: label }));
-    this.error.set('');
+    this.error.set(null);
     this.persist();
   }
 
   toggleInterest(label: string): void {
     this.form.update((f) => ({
       ...f,
-      interests: f.interests.includes(label)
-        ? f.interests.filter((i) => i !== label)
-        : [...f.interests, label],
+      interests: f.interests.includes(label) ? f.interests.filter((i) => i !== label) : [...f.interests, label],
     }));
     this.persist();
   }
@@ -158,36 +165,44 @@ export class ConveningRegisterPageComponent implements OnInit {
     return this.form().interests.includes(label);
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
+    if (this.sending()) {
+      return;
+    }
     const s = this.form();
-    const missing: string[] = [];
-    if (!s.name.trim()) missing.push('your full name');
-    if (!/.+@.+\..+/.test(s.email)) missing.push('a valid email');
-    if (!s.cat) missing.push('what you are attending as');
-    if (!s.mode) missing.push('how you will join');
-    if (!s.days) missing.push('which day(s)');
-    if (missing.length) {
-      this.error.set('Almost there — we still need ' + missing.join(', ') + '.');
-      return;
+    this.sending.set(true);
+    this.error.set(null);
+    try {
+      const result = await this.api.post<RegistrationResult>(`/events/${EVENT_SLUG}/registrations`, {
+        name: s.name,
+        email: s.email,
+        phone: s.phone,
+        place: s.place,
+        organisation: s.org,
+        role: s.role,
+        attendeeCategory: s.cat,
+        attendanceMode: s.mode,
+        days: s.days,
+        interests: s.interests,
+        question: s.question,
+        accessNeeds: s.needs,
+        wantsUpdates: s.consent,
+        website: s.website,
+        clientRequestId: this.requestId,
+      });
+      this.result.set(result);
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.scrollTo(0, 0);
+      }
+    } catch (error) {
+      const apiError = ApiError.from(error);
+      this.error.set(apiError);
+      if (apiError.code === 'registration_closed') {
+        void this.loadEvent();
+      }
+    } finally {
+      this.sending.set(false);
     }
-    this.error.set('');
-    this.submitted.set(true);
-    if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo(0, 0);
-    }
-  }
-
-  editAgain(): void {
-    this.submitted.set(false);
-  }
-
-  copyMessage(): void {
-    if (!isPlatformBrowser(this.platformId) || !navigator.clipboard) {
-      return;
-    }
-    navigator.clipboard.writeText(this.message()).then(() => {
-      this.copied.set(true);
-      setTimeout(() => this.copied.set(false), 2000);
-    });
   }
 }

@@ -459,3 +459,67 @@ textarea {
     animation-duration: 0.001ms !important;
   }
 }
+
+/* ---- Live registration states ---- */
+.rg-state {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding: 28px 32px;
+  border: 1px solid #e0ebf6;
+  border-radius: 20px;
+  background: #ffffff;
+
+  p {
+    margin: 0;
+    color: #4a647d;
+    font-size: 15px;
+  }
+}
+
+.rg-code {
+  display: grid;
+  gap: 6px;
+
+  .lbl {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8aa0b3;
+  }
+
+  strong {
+    font-family: 'Geist Mono', monospace;
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    color: #0a3254;
+  }
+}
+
+.rg-field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #b42318;
+}
+
+.rg-waitlist {
+  margin: 0;
+  font-size: 14px;
+  color: #7b5314;
+}
+
+.rg-btn[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.rg-trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

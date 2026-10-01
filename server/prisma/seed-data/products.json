@@ -1,0 +1,38 @@
+[
+  { "sku": "tee-navy", "name": "Sankofa Tee — Navy", "kind": "APPAREL", "status": "PREORDER", "priceCents": 2800, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "tee-colors", "name": "Sankofa Tee — Heritage", "kind": "APPAREL", "status": "PREORDER", "priceCents": 2800, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "hoodie", "name": "Alkebulan Hoodie", "kind": "APPAREL", "status": "PREORDER", "priceCents": 5400, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "scarf", "name": "Heritage Stole", "kind": "APPAREL", "status": "PREORDER", "priceCents": 3800, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+  { "sku": "tunic", "name": "Sankofa Tunic", "kind": "APPAREL", "status": "PREORDER", "priceCents": 9200, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "gown", "name": "Graduation Gown", "kind": "APPAREL", "status": "PREORDER", "priceCents": 14800, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "suit", "name": "Executive Suit", "kind": "APPAREL", "status": "PREORDER", "priceCents": 34000, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "robe", "name": "Academic Robe — Chancellor", "kind": "APPAREL", "status": "PREORDER", "priceCents": 18900, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+
+  { "sku": "cross", "name": "Ethiopian Cross", "kind": "ARTIFACT", "status": "AVAILABLE", "priceCents": 24000, "hasSizes": false, "isDigital": false, "stockRemaining": 25 },
+  { "sku": "benin", "name": "Benin Bronze Head", "kind": "ARTIFACT", "status": "AVAILABLE", "priceCents": 29000, "hasSizes": false, "isDigital": false, "stockRemaining": 50 },
+  { "sku": "ashanti", "name": "Ashanti Gold Mask", "kind": "ARTIFACT", "status": "AVAILABLE", "priceCents": 34000, "hasSizes": false, "isDigital": false, "stockRemaining": 25 },
+  { "sku": "kongo", "name": "Kongo Power Figure", "kind": "ARTIFACT", "status": "AVAILABLE", "priceCents": 26000, "hasSizes": false, "isDigital": false, "stockRemaining": 40 },
+  { "sku": "nok", "name": "Nok Terracotta Figure", "kind": "ARTIFACT", "status": "AVAILABLE", "priceCents": 22000, "hasSizes": false, "isDigital": false, "stockRemaining": 36 },
+
+  { "sku": "bk-black-futures", "name": "Black Futures and the Fourth Industrial Revolution", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-black-futures-el", "name": "Black Futures and the Fourth Industrial Revolution — Greek edition", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-quiet-skin", "name": "Beneath the Quiet Skin", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-pan-african", "name": "Pan-African Strategic Mobilization in the 21st Century", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-next-century", "name": "Africa's Next Century: A Grand Strategy", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 2200, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-god-ai", "name": "The God of AI: African Digital Futures", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 1800, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-governance", "name": "Reengineering Global Governance", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 1600, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-strategic-defense", "name": "Strategic Defense Mobilization in Africa", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 1500, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-ngugi", "name": "Decolonising the Mind", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-iliffe", "name": "Africans: The History of a Continent", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-aehn", "name": "The History of African Development", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "bk-fondad", "name": "Africa in the World Economy", "kind": "BOOK", "status": "AVAILABLE", "priceCents": 0, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+
+  { "sku": "album-digital", "name": "Liberation Frequency — Digital", "kind": "MEDIA", "status": "AVAILABLE", "priceCents": 1200, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "album-vinyl", "name": "Liberation Frequency — Vinyl", "kind": "MEDIA", "status": "AVAILABLE", "priceCents": 4500, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+
+  { "sku": "museum-pass", "name": "Sankofa Museum Pass", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 1800, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "language-pack", "name": "Alkebulan Language Pack", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 500, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "vault-cert", "name": "Alkebulan 101 — Certificate", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 2000, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "archive-vol1", "name": "Oral Archive Vol. 1", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 1000, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+  { "sku": "career-post", "name": "Career Link — Job Post", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 20000, "hasSizes": false, "isDigital": true, "stockRemaining": null }
+]

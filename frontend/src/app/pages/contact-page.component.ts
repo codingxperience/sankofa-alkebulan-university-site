@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ApiClient, ApiError, newRequestId } from '../core/api/api-client';
 
 interface Office {
   readonly key: string;
@@ -17,6 +18,25 @@ interface Department {
   readonly icon: string;
   readonly office: string;
 }
+
+/** The API's name for each office on this page. */
+const API_OFFICE: Record<string, string> = {
+  admissions: 'ADMISSIONS',
+  programmes: 'PROGRAMMES',
+  research: 'RESEARCH',
+  student: 'STUDENT_LIFE',
+  governance: 'GOVERNANCE',
+  media: 'MEDIA',
+  general: 'CENTRAL',
+};
+
+interface InquiryReceipt {
+  readonly reference: string;
+  readonly office: { readonly label: string; readonly responseTarget: string };
+  readonly acknowledgementEmailed: boolean;
+}
+
+type Field = 'name' | 'email' | 'origin' | 'message' | 'website';
 
 const OFFICES: readonly Office[] = [
   {
@@ -104,7 +124,7 @@ const FAQS = [
   {
     question: 'Which email should I use for official inquiries?',
     answer:
-      'Use SanAlkeU@outlook.com for admissions, documents, partnership letters, media requests, and administrative correspondence. Choosing a department above pre-addresses it for you.',
+      'Write through the form above: choosing an office sends your message straight to its team and gives you a reference number. You can also email SanAlkeU@outlook.com for documents, partnership letters, media requests, and administrative correspondence.',
   },
   {
     question: 'How do prospective students apply?',
@@ -137,7 +157,6 @@ const EMAIL = 'SanAlkeU@outlook.com';
 
 @Component({
   selector: 'app-contact-page',
-  standalone: true,
   imports: [RouterLink],
   templateUrl: './contact-page.component.html',
   styleUrl: './contact-page.component.scss',
@@ -148,11 +167,23 @@ export class ContactPageComponent {
   readonly departments = DEPARTMENTS;
   readonly universityEmail = EMAIL;
 
+  private readonly api = inject(ApiClient);
+
   readonly dept = signal('admissions');
-  readonly submitted = signal(false);
   readonly openFaq = signal(0);
 
-  readonly form = signal({ name: '', email: '', origin: '', message: '' });
+  readonly form = signal<Record<Field, string>>({ name: '', email: '', origin: '', message: '', website: '' });
+  readonly sending = signal(false);
+  readonly receipt = signal<InquiryReceipt | null>(null);
+  readonly error = signal<ApiError | null>(null);
+  readonly fieldErrors = computed(() => this.error()?.fields ?? {});
+  /** Errors that belong to no single field are shown above the button. */
+  readonly bannerError = computed(() => {
+    const error = this.error();
+    return error && Object.keys(error.fields).length === 0 ? error : null;
+  });
+  /** One id per message: a retry after a dropped connection cannot create a duplicate. */
+  private requestId = newRequestId();
 
   readonly channels = [
     {
@@ -219,46 +250,64 @@ export class ContactPageComponent {
 
   setDept(event: Event): void {
     this.dept.set((event.target as HTMLSelectElement).value);
-    this.submitted.set(false);
   }
 
-  setField(field: 'name' | 'email' | 'origin' | 'message', event: Event): void {
+  setField(field: Field, event: Event): void {
     const value = (event.target as HTMLInputElement | HTMLTextAreaElement).value;
     this.form.update((f) => ({ ...f, [field]: value }));
-    this.submitted.set(false);
+    if (this.fieldErrors()[field]) {
+      const { [field]: _cleared, ...rest } = this.fieldErrors();
+      const current = this.error();
+      this.error.set(current ? new ApiError(current.status, current.code, current.message, rest) : null);
+    }
   }
 
   toggleFaq(i: number): void {
     this.openFaq.update((open) => (open === i ? -1 : i));
   }
 
-  onSubmit(event: Event): void {
+  async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
+    if (this.sending()) {
+      return;
+    }
+    const f = this.form();
+    this.sending.set(true);
+    this.error.set(null);
+    try {
+      const receipt = await this.api.post<InquiryReceipt>('/inquiries', {
+        office: API_OFFICE[this.activeDepartment.key] ?? 'CENTRAL',
+        source: 'CONTACT_PAGE',
+        name: f.name,
+        email: f.email,
+        origin: f.origin,
+        message: f.message,
+        website: f.website,
+        clientRequestId: this.requestId,
+      });
+      this.receipt.set(receipt);
+    } catch (error) {
+      this.error.set(ApiError.from(error));
+    } finally {
+      this.sending.set(false);
+    }
+  }
+
+  writeAnother(): void {
+    this.receipt.set(null);
+    this.error.set(null);
+    this.requestId = newRequestId();
+    this.form.update((f) => ({ ...f, message: '', website: '' }));
+  }
+
+  /** Used only when the network is down: the same message, pre-addressed in the visitor's mail app. */
+  get mailtoFallback(): string {
     const dept = this.activeDepartment;
     const f = this.form();
-    const subject = encodeURIComponent(
-      '[' + dept.label + '] Enquiry — Sankofa Alkebulan University',
-    );
+    const subject = encodeURIComponent(`[${dept.label}] Enquiry — Sankofa Alkebulan University`);
     const body = encodeURIComponent(
-      'Department: ' +
-        dept.label +
-        '\n' +
-        'Name: ' +
-        (f.name || '') +
-        '\n' +
-        'Email: ' +
-        (f.email || '') +
-        '\n' +
-        'From: ' +
-        (f.origin || '') +
-        '\n\n' +
-        (f.message || ''),
+      `Office: ${dept.label}\nName: ${f.name}\nEmail: ${f.email}\nFrom: ${f.origin}\n\n${f.message}`,
     );
-    this.submitted.set(true);
-    try {
-      window.location.href = 'mailto:' + EMAIL + '?subject=' + subject + '&body=' + body;
-    } catch {
-      /* mailto unavailable in this environment */
-    }
+    return `mailto:${EMAIL}?subject=${subject}&body=${body}`;
   }
 }

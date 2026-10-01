@@ -16,19 +16,10 @@ import { TeamProfilePageComponent } from './pages/team-profile-page.component';
 import { DepartmentPageComponent } from './pages/department-page.component';
 import { ProgrammesLevelComponent } from './pages/programmes-level.component';
 import { ProgramDetailComponent } from './pages/program-detail.component';
-import { EssayDetailComponent } from './pages/essay-detail.component';
 import { MembershipComponent } from './pages/membership.component';
 import { ShopComponent } from './pages/shop.component';
 import { LibraryComponent } from './pages/library.component';
 import { PressPageComponent } from './pages/press-page.component';
-import { Articles } from './pages/articles/articles';
-import { Admin } from './pages/admin/admin';
-import { Login } from './login/login';
-import { Register } from './register/register';
-import { AdminLogin } from './admin-login/admin-login';
-import { Payment } from './payment/payment';
-import { CartComponent } from './cart/cart';
-import { authGuard, adminGuard } from './auth-guard';
 import { UniversitySectionPageComponent } from './pages/university-section-page.component';
 import { UNIVERSITY_PORTAL_PAGES } from './university/university-data';
 
@@ -112,18 +103,16 @@ const departmentShortcutRoutes: Routes = [
 ];
 
 export const routes: Routes = [
+  // The admin console is its own application, loaded only when someone opens it.
   {
-    path: 'login',
-    component: Login
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
-  {
-    path: 'admin-login',
-    component: AdminLogin
-  },
-  {
-    path: 'register',
-    component: Register
-  },
+  { path: 'admin-login', redirectTo: '/admin/sign-in', pathMatch: 'full' },
+  { path: 'admin-dashboard', redirectTo: '/admin', pathMatch: 'full' },
+  // Students sign in on the learning platform; applicants start on Admissions.
+  { path: 'login', redirectTo: '/digital-learning', pathMatch: 'full' },
+  { path: 'register', redirectTo: '/admissions', pathMatch: 'full' },
   {
     path: '',
     component: LayoutComponent,
@@ -214,6 +203,11 @@ export const routes: Routes = [
           import('./pages/store-page.component').then((m) => m.StorePageComponent),
       },
       {
+        path: 'store/orders/:number',
+        loadComponent: () =>
+          import('./pages/store-order-page.component').then((m) => m.StoreOrderPageComponent),
+      },
+      {
         path: 'career-link',
         loadComponent: () =>
           import('./pages/career-link-page.component').then((m) => m.CareerLinkPageComponent),
@@ -231,8 +225,15 @@ export const routes: Routes = [
           import('./pages/kahigiriza-page.component').then((m) => m.KahigirizaPageComponent),
       },
       ...universitySectionRoutes,
-      { path: 'articles', component: Articles },
-      { path: 'articles/:slug', component: EssayDetailComponent },
+      {
+        path: 'articles',
+        loadComponent: () => import('./pages/articles/articles').then((m) => m.Articles),
+      },
+      {
+        path: 'articles/:slug',
+        loadComponent: () =>
+          import('./pages/essay-detail.component').then((m) => m.EssayDetailComponent),
+      },
       { path: 'essays', redirectTo: '/articles', pathMatch: 'full' },
       { path: 'blog', redirectTo: '/articles', pathMatch: 'full' },
       { path: 'membership', component: MembershipComponent },
@@ -241,19 +242,10 @@ export const routes: Routes = [
       { path: 'legacy-library', component: LibraryComponent },
       { path: 'community', redirectTo: '/membership', pathMatch: 'full' },
       { path: 'workshops', redirectTo: '/library-repository', pathMatch: 'full' },
-      { path: 'payment', component: Payment, canActivate: [authGuard] },
-      { path: 'cart', component: CartComponent },
+      // Payments happen inside the store's checkout; there is no separate payment page.
+      { path: 'payment', redirectTo: '/store', pathMatch: 'full' },
+      { path: 'cart', redirectTo: '/store', pathMatch: 'full' },
     ]
-  },
-  {
-    path: 'admin',
-    component: Admin,
-    canActivate: [adminGuard]
-  },
-  {
-    path: 'admin-dashboard',
-    redirectTo: '/admin',
-    pathMatch: 'full'
   },
   {
     path: '**',

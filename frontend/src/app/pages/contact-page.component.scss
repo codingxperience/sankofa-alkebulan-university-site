@@ -877,3 +877,88 @@
     animation-duration: 0.001ms !important;
   }
 }
+
+/* ---- Submission states ---- */
+.ct-field.has-error {
+  input,
+  textarea {
+    border-bottom-color: #b42318;
+  }
+}
+
+.ct-field__error {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #b42318;
+}
+
+.ct-form__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #fdf3f2;
+  border: 1px solid #f4d4d0;
+  color: #7a271a;
+  font-size: 14px;
+  line-height: 1.5;
+
+  > i {
+    margin-top: 3px;
+    color: #b42318;
+  }
+
+  > div {
+    display: grid;
+    gap: 6px;
+  }
+
+  a {
+    color: #0f4c81;
+    font-weight: 600;
+  }
+}
+
+.ct-form__actions button[disabled] {
+  opacity: 0.72;
+  cursor: progress;
+  transform: none;
+  box-shadow: none;
+}
+
+.ct-dots::after {
+  content: '…';
+}
+
+.ct-form__done {
+  .ref {
+    font-family: 'Geist Mono', monospace;
+    color: #0a3254;
+    letter-spacing: 0.02em;
+  }
+
+  .ct-link {
+    justify-self: start;
+    margin-top: 6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #0f4c81;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* Visually removed, still in the DOM for bots to find. */
+.ct-trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
