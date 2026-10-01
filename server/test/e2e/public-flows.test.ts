@@ -186,7 +186,9 @@ describe('public flows', () => {
       assert.equal(stale.status, 409);
       assert.equal(stale.data.error.details.answers.personal.givenName, 'Kwame');
 
-      assert.equal((await new Client(api.url).get('/admissions/applications/current')).status, 401, 'another browser cannot see it');
+      assert.equal((await new Client(api.url).get('/admissions/applications/current')).status, 204, 'another browser cannot see it');
+      const forged = await new Client(api.url).get('/admissions/applications/current', { Cookie: 'sau_applicant=not-a-real-token-0123456789abcdef' });
+      assert.equal(forged.status, 401, 'an unknown link is refused');
     });
   });
 });

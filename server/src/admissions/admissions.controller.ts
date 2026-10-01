@@ -53,9 +53,15 @@ export class AdmissionsController {
     return this.admissions.resume(body.token, res);
   }
 
+  /** 204 when this device has no application yet — an ordinary first visit, not an error. */
   @Get('applications/current')
-  current(@Req() req: Request) {
-    return this.admissions.current(req);
+  async current(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const application = await this.admissions.current(req);
+    if (!application) {
+      res.status(204);
+      return;
+    }
+    return application;
   }
 
   @Put('applications/current')

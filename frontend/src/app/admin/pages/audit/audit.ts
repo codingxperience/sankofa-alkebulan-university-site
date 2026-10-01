@@ -19,9 +19,9 @@ const ENTITIES: ReadonlyArray<{ value: string; label: string }> = [
 ];
 
 /**
- * Every change anyone has made, in their own words, newest first. The log
- * is written in the same transaction as the change, so it cannot drift
- * from what actually happened.
+ * Every change anyone has made, described in plain words, newest first.
+ * Entries are written by the server as changes happen; the console can
+ * only read them.
  */
 @Component({
   selector: 'sc-audit',

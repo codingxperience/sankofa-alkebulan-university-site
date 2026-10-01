@@ -256,12 +256,17 @@ export class AdmissionsApplyPageComponent implements OnInit {
         }
       }
       try {
-        this.open(await this.api.get<ApplicationView>('/admissions/applications/current'));
+        // Nothing (204) means this device has not started an application yet.
+        const current = await this.api.get<ApplicationView | null>('/admissions/applications/current');
+        if (current) {
+          this.open(current);
+        } else {
+          this.welcome();
+        }
       } catch (error) {
         const apiError = ApiError.from(error);
         if (apiError.code === 'no_application') {
-          this.startIntake.set(this.options()?.intakes[0] ?? '');
-          this.phase.set('welcome');
+          this.welcome();
         } else {
           throw apiError;
         }
@@ -270,6 +275,18 @@ export class AdmissionsApplyPageComponent implements OnInit {
       this.error.set(ApiError.from(error).message);
       this.phase.set('error');
     }
+  }
+
+  /** "2 qualifications", counting only rows the applicant has actually started to fill in. */
+  protected qualificationSummary(): string {
+    const filled = this.drafts().academic.qualifications.filter((q) => q.institution.trim() || q.qualification.trim()).length;
+    return filled === 0 ? 'no qualifications yet' : `${filled} ${filled === 1 ? 'qualification' : 'qualifications'}`;
+  }
+
+  /** No application on this device: offer to start one. */
+  private welcome(): void {
+    this.startIntake.set(this.options()?.intakes[0] ?? '');
+    this.phase.set('welcome');
   }
 
   private open(view: ApplicationView): void {

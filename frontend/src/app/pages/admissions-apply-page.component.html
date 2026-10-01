@@ -448,7 +448,10 @@
                       <section class="ap-review__block" [class.is-incomplete]="!completed().has(s.key)">
                         <header>
                           <h3>{{ s.label }}</h3>
-                          <button type="button" class="v2-btn v2-btn--link" (click)="goTo(i)">{{ completed().has(s.key) ? 'Edit' : 'Complete' }}</button>
+                          <button type="button" class="v2-btn v2-btn--link" (click)="goTo(i)"
+                            [attr.aria-label]="(completed().has(s.key) ? 'Edit ' : 'Finish ') + s.label">
+                            {{ completed().has(s.key) ? 'Edit' : 'Finish this step' }}
+                          </button>
                         </header>
                         @switch (s.key) {
                           @case ('pathway') {
@@ -458,7 +461,7 @@
                             <p>{{ drafts().personal.givenName }} {{ drafts().personal.familyName }} &middot; {{ drafts().personal.email || 'no email yet' }} &middot; {{ drafts().personal.residence }}</p>
                           }
                           @case ('academic') {
-                            <p>{{ drafts().academic.firstChoice || 'No programme chosen' }} &middot; {{ drafts().academic.qualifications.length }} qualification(s)</p>
+                            <p>{{ drafts().academic.firstChoice || 'No programme chosen' }} &middot; {{ qualificationSummary() }}</p>
                           }
                           @case ('statement') {
                             <p>{{ statementWords() }}-word statement &middot; referees: {{ drafts().statement.referees[0].name || '—' }}, {{ drafts().statement.referees[1].name || '—' }}</p>

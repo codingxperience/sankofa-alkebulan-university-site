@@ -128,7 +128,11 @@ export class AdmissionsService {
     return this.view(application);
   }
 
-  async current(req: Request): Promise<ApplicationView> {
+  /** The application this device is working on, or null when it has never started one. */
+  async current(req: Request): Promise<ApplicationView | null> {
+    if (!readCookie(req, this.cookieName)) {
+      return null;
+    }
     return this.view(await this.fromCookie(req));
   }
 

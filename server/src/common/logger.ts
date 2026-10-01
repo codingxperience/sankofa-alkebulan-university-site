@@ -29,6 +29,9 @@ function redact(value: unknown, depth = 0): unknown {
  * One JSON object per line, which is what Vercel's log drains and most log
  * tools index best. Every line carries the request id when there is one.
  */
+/** Scopes Nest uses while wiring up modules, controllers and routes. */
+const FRAMEWORK_SCOPES = new Set(['NestFactory', 'InstanceLoader', 'RoutesResolver', 'RouterExplorer', 'NestApplication']);
+
 export class JsonLogger implements LoggerService {
   private threshold: number;
 
@@ -40,8 +43,10 @@ export class JsonLogger implements LoggerService {
     this.threshold = RANK[level];
   }
 
+  /** Nest's own start-up messages are detail, not news: they repeat on every cold start. */
   log(message: unknown, ...params: unknown[]): void {
-    this.write('info', message, params);
+    const scope = params[params.length - 1];
+    this.write(typeof scope === 'string' && FRAMEWORK_SCOPES.has(scope) ? 'debug' : 'info', message, params);
   }
 
   info(message: unknown, ...params: unknown[]): void {
