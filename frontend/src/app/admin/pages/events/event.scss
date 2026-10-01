@@ -53,7 +53,7 @@
 }
 
 .ev-check.is-in {
-  border-color: #bfe0cc;
+  border-color: rgba(121, 212, 166, 0.35);
   background: var(--sc-done-bg);
   color: var(--sc-done-fg);
 }
@@ -63,7 +63,7 @@
 }
 
 .ev-more td {
-  background: #fcfbf8;
+  background: rgba(255, 255, 255, 0.025);
   padding: 16px 20px 18px;
 }
 

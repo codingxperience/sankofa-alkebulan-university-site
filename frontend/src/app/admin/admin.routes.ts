@@ -27,8 +27,8 @@ export const ADMIN_ROUTES: Routes = [
           {
             path: '',
             pathMatch: 'full',
-            loadComponent: () => import('./pages/daybook/daybook').then((m) => m.DaybookPage),
-            title: title('Daybook'),
+            loadComponent: () => import('./pages/workspace/workspace').then((m) => m.WorkspacePage),
+            title: title('Workspace'),
           },
           {
             path: 'inbox',
