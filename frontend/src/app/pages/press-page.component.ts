@@ -144,7 +144,7 @@ export class PressPageComponent {
       title: 'Pan-African Mobilization in a Fragmented Global Order Enters the Archive',
       summary:
         'A 355-page work anchors the current press library around history, theory, governance, political economy, and future strategic pathways.',
-      href: '/assets/press/publications/pan-african-mobilization.pdf',
+      href: '/store#books',
     },
     {
       date: '08 Apr 2026',

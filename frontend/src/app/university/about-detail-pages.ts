@@ -96,7 +96,12 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     sections: [
       {
         heading: 'Current Membership',
-        items: ['Prof. Mubiru Kisekwa - Board Member', 'Prof. Mutabazi Mugisha - Board Member'],
+        items: [
+          'Prof. Mutabazi Mugisha - Board Member',
+          'Prof. Leslee Anne and Prof. Joseph - Advisory',
+          'Dr. Jude Ahimbisimbwe - Board Member',
+          'Prof. Yusuf Mubiru Kisekwa - Assistant Vice President',
+        ],
       },
     ],
   },
@@ -169,23 +174,23 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     summary: 'Senior administrative leadership responsible for implementation, operations, and institutional delivery.',
     intro: [
       'Executive Directors constitute the senior administrative leadership responsible for implementing institutional policies and managing operational activities.',
-      'Each Executive Director typically oversees a specific domain such as external relations, information technology, finance, or operations and human resources.',
+      'The executive team is led by Deputy Vice Chancellors for finance and planning, academic affairs, and administration, alongside the office for global engagement and strategic partnerships.',
       'They ensure that University strategy is translated into practical programs and systems that advance Sankofa\'s mission.',
     ],
     highlights: [
       'Lead key operational and administrative functions',
       'Translate policy into institutional delivery',
-      'Support finance, technology, partnerships, and administration',
+      'Lead finance, academic affairs, administration, and partnerships',
       'Report performance through governance structures',
     ],
     sections: [
       {
         heading: 'Current Executive Team',
         items: [
-          'Prof. Gumaritahigwa Bongobingiman Ruhinda - Executive Team',
-          'Mr. Masabe Michael Jackson - Executive Team',
-          'Alice Frimpong Sarkodie - Executive Team',
-          'Niyonzima Rogers Kabumba - Executive Team',
+          'Prof. Gumaritahigwa Bongobingiman Ruhinda - Global Engagement and Strategic Partnerships',
+          'Mr. Masabe Michael Jackson - Deputy Vice Chancellor, Finance and Planning',
+          'Musanjufu Benjamin Kavubu - Deputy Vice Chancellor, Academic Affairs',
+          'Musemeza Jonah - Deputy Vice Chancellor, Administration',
         ],
       },
     ],

@@ -208,7 +208,7 @@ export class AboutPageComponent implements AfterViewInit {
   private teamSummary(categoryId: string): string {
     switch (categoryId) {
       case 'executive':
-        return 'Operational leadership carrying policy, student systems, and institutional implementation.';
+        return 'Operational leadership across finance and planning, academic affairs, administration, and global partnerships.';
       case 'board':
         return 'Supervisory stewardship for institutional authority, compliance, and long-range stability.';
       case 'advisory':
