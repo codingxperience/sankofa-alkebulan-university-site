@@ -8,7 +8,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiClient, ApiError, newRequestId } from '../core/api/api-client';
 import { LAST_ORDER_KEY } from '../core/store-session';
@@ -21,8 +21,10 @@ interface ProductDef {
   readonly p: number;
   readonly ed?: string;
   readonly img?: string;
+  /** A second photograph for the product's own page, when it shows more than the card's. */
+  readonly detailImg?: string;
   readonly pos?: string;
-  readonly kind?: 'apparel' | 'artifact' | 'book';
+  readonly kind?: 'apparel' | 'merch' | 'artifact' | 'book';
   readonly sizes?: boolean;
   readonly bg?: string;
   readonly imprint?: string;
@@ -83,6 +85,48 @@ const PRODUCTS: Record<string, ProductDef> = {
     img: 'assets/store/academic-robe.jpg', pos: '50% 30%', kind: 'apparel', sizes: true,
     desc: 'The ceremonial line — black velvet-faced robe with gold-thread borders, the Sankofa bird at the collar, and the gold Alkebulan map across the chest. Worn with the banded cap.',
     specs: [['Cloth', 'Heavy drape · velvet facings'], ['Embroidery', 'Gold-thread borders · Sankofa collar'], ['Set', 'Robe + banded cap with tassel'], ['Line', 'Chancellor · Senate · Faculty variants']],
+  },
+  'bag-set': {
+    t: "Scholar's Bag Set", m: 'Satchel + backpack · crest on both', p: 140,
+    img: 'assets/store/bag-set.jpg', pos: '50% 55%', kind: 'merch',
+    desc: 'A matched pair for the working scholar: a tan satchel with a top handle and a black backpack, each carrying the university crest and Return · Restore · Reimagine.',
+    specs: [['Set', 'Satchel + backpack'], ['Crest', 'Full university crest on both'], ['Motto', 'Return · Restore · Reimagine'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  journal: {
+    t: 'Crest Journal', m: 'Black cover · gold crest and motto', p: 24,
+    img: 'assets/store/leather-journal.jpg', pos: '50% 50%', kind: 'merch',
+    desc: 'A black-bound journal with the crest and the motto in gold on the cover — for lecture notes, field notes, and the ideas in between.',
+    specs: [['Cover', 'Black · gold crest'], ['Motto', 'Return · Restore · Reimagine'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  bottle: {
+    t: 'Crest Water Bottle', m: 'Brushed metal · full-colour crest', p: 22,
+    img: 'assets/store/steel-bottle.jpg', pos: '50% 50%', kind: 'merch',
+    desc: 'A brushed-metal bottle carrying the full-colour crest — from the lecture hall to the field and back.',
+    specs: [['Finish', 'Brushed metal'], ['Crest', 'Full-colour university crest'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  cap: {
+    t: 'Crest Cap', m: 'White cap · crest and motto', p: 22,
+    img: 'assets/store/crest-cap.jpg', pos: '50% 50%', kind: 'merch',
+    desc: 'A white cap with the university name and crest on the front panel, and Return · Restore · Reimagine beneath.',
+    specs: [['Colour', 'White'], ['Front', 'Name, crest and motto'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  umbrella: {
+    t: 'Crest Umbrella', m: 'Cream canopy · wooden crook handle', p: 32,
+    img: 'assets/store/crest-umbrella.jpg', pos: '50% 50%', kind: 'merch',
+    desc: 'A full-size umbrella with a cream canopy, a wooden crook handle, and the university name, crest and motto across one panel.',
+    specs: [['Canopy', 'Cream · crest panel'], ['Handle', 'Wooden crook'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  varsity: {
+    t: 'Varsity Jacket', m: 'Navy body · white sleeves · crest', p: 95,
+    img: 'assets/store/varsity-jacket.jpg', pos: '50% 40%', kind: 'merch', sizes: true,
+    desc: 'The varsity jacket in university colours: a navy body, white sleeves, a striped collar, and the crest with Return · Restore · Reimagine on the chest.',
+    specs: [['Colours', 'Navy body · white sleeves'], ['Chest', 'Crest and motto'], ['Sizes', 'S to 2XL'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  bracelet: {
+    t: 'Crest Bracelet', m: 'Braided band · metal crest plate', p: 18,
+    img: 'assets/store/crest-bracelet.jpg', detailImg: 'assets/store/crest-bracelets.jpg', pos: '50% 50%', kind: 'merch',
+    desc: 'The full crest on a small metal plate, set on a braided band — the university, worn every day.',
+    specs: [['Band', 'Braided'], ['Plate', 'Metal · full-colour crest'], ['Orders', 'Pre-order · ships continent-wide']],
   },
   cross: {
     t: 'Ethiopian Cross', m: '3D-printed silver polymer · archival NFT documentation', p: 240, ed: 'Edition of 25',
@@ -258,7 +302,7 @@ const ALBUM_MOVEMENTS = TRACKS.map((mv) => ({
 @Component({
   selector: 'app-store-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgTemplateOutlet],
   templateUrl: './store-page.component.html',
   styleUrl: './store-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -299,6 +343,7 @@ export class StorePageComponent implements OnInit, OnDestroy {
   private coRequestId = newRequestId();
 
   readonly regaliaIds = ['tee-navy', 'tee-colors', 'hoodie', 'scarf', 'tunic', 'gown', 'suit', 'robe'];
+  readonly collectionIds = ['bag-set', 'journal', 'bottle', 'cap', 'umbrella', 'varsity', 'bracelet'];
   readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-next-century', 'bk-governance', 'bk-quiet-skin', 'bk-pan-african', 'bk-god-ai', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
   readonly artifactIds = ['cross', 'benin', 'ashanti', 'kongo', 'nok'];
   readonly movements = TRACKS;
@@ -429,6 +474,12 @@ export class StorePageComponent implements OnInit, OnDestroy {
     return this.preorderMode ? 'Pre-order' : 'Add to cart';
   }
 
+  /** The Campus Collection follows each product's status: pre-order until staff mark it in stock. */
+  collectionCta(id: string): string {
+    const status = this.live()[id]?.status;
+    return !status || status === 'PREORDER' ? 'Pre-order' : 'Add to cart';
+  }
+
   get cartCountLabel(): string {
     const count = this.cartCount();
     return count + (count === 1 ? ' item' : ' items');
@@ -551,6 +602,9 @@ export class StorePageComponent implements OnInit, OnDestroy {
     if (p.kind === 'apparel') {
       return 'Drop 01 — Sankofa Regalia';
     }
+    if (p.kind === 'merch') {
+      return 'Campus Collection';
+    }
     if (p.kind === 'artifact') {
       return 'Repatriation Editions';
     }
@@ -564,6 +618,9 @@ export class StorePageComponent implements OnInit, OnDestroy {
     }
     if (p.kind === 'apparel') {
       return 'Print-on-demand · margin funds scholarships';
+    }
+    if (p.kind === 'merch') {
+      return 'Made to order · margin funds scholarships';
     }
     if (p.kind === 'artifact') {
       return 'Every sale funds repatriation research + the Kahigiriza Memorial';

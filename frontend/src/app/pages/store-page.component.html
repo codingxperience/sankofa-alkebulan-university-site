@@ -8,6 +8,7 @@
     <div class="st-container st-subnav__inner">
       <nav aria-label="Store sections">
         <a href="#drop">Drop 01</a>
+        <a href="#collection">Campus</a>
         <a href="#flagship">Flagship</a>
         <a href="#books">Books</a>
         <a href="#repatriation">Repatriation</a>
@@ -79,30 +80,55 @@
         </div>
         <div class="st-drop-grid">
           @for (id of regaliaIds; track id) {
-            <article class="st-card" (click)="openDetail(id)">
-              <div class="st-card__media">
-                <div
-                  role="img"
-                  [attr.aria-label]="product(id).t"
-                  [style.background-image]="'url(' + product(id).img + ')'"
-                  [style.background-position]="product(id).pos"
-                ></div>
-              </div>
-              <div class="st-card__body">
-                <div class="row">
-                  <strong>{{ product(id).t }}</strong
-                  ><span class="price">{{ priceLabel(id) }}</span>
-                </div>
-                <span class="meta">{{ product(id).m }}</span>
-                @if (isSoldOut(id)) {
-                  <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
-                } @else {
-                  <button type="button" (click)="addFromCard($event, id)">
-                    {{ dropCta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
-                  </button>
-                }
-              </div>
-            </article>
+            <ng-container *ngTemplateOutlet="productCard; context: { $implicit: id, cta: dropCta }" />
+          }
+        </div>
+      </div>
+    </section>
+
+    <ng-template #productCard let-id let-cta="cta">
+      <article class="st-card" (click)="openDetail(id)">
+        <div class="st-card__media">
+          <div
+            role="img"
+            [attr.aria-label]="product(id).t"
+            [style.background-image]="'url(' + product(id).img + ')'"
+            [style.background-position]="product(id).pos"
+          ></div>
+        </div>
+        <div class="st-card__body">
+          <div class="row">
+            <strong>{{ product(id).t }}</strong
+            ><span class="price">{{ priceLabel(id) }}</span>
+          </div>
+          <span class="meta">{{ product(id).m }}</span>
+          @if (isSoldOut(id)) {
+            <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
+          } @else {
+            <button type="button" (click)="addFromCard($event, id)">
+              {{ cta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
+            </button>
+          }
+        </div>
+      </article>
+    </ng-template>
+
+    <section id="collection" class="st-section">
+      <div class="st-container">
+        <div class="st-split">
+          <div class="st-head">
+            <span class="st-eyebrow">New &mdash; the crest collection</span>
+            <h2>Campus Collection.</h2>
+            <p>
+              Bags, journals, bottles, caps, umbrellas, jackets and bracelets carrying the crest and
+              Return &middot; Restore &middot; Reimagine. Made to order; the margin funds scholarships.
+            </p>
+          </div>
+          <span class="st-badge st-badge--blue">Made to order</span>
+        </div>
+        <div class="st-drop-grid">
+          @for (id of collectionIds; track id) {
+            <ng-container *ngTemplateOutlet="productCard; context: { $implicit: id, cta: collectionCta(id) }" />
           }
         </div>
       </div>
@@ -523,7 +549,7 @@
             role="img"
             [attr.aria-label]="d.t"
             class="st-detail__media"
-            [style.background-image]="'url(' + d.img + ')'"
+            [style.background-image]="'url(' + (d.detailImg || d.img) + ')'"
             [style.background-position]="d.pos || '50% 50%'"
           ></div>
         }

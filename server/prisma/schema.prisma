@@ -424,6 +424,7 @@ enum ProductKind {
   BOOK
   DIGITAL
   MEDIA
+  MERCHANDISE
 }
 
 enum ProductStatus {

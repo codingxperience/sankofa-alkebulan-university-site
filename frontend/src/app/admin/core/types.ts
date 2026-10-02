@@ -328,7 +328,7 @@ export type OrderStatus =
   | 'REFUNDED';
 export type PaymentStatus = 'UNPAID' | 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
 export type ProductStatus = 'AVAILABLE' | 'PREORDER' | 'SOLD_OUT' | 'ARCHIVED';
-export type ProductKind = 'APPAREL' | 'ARTIFACT' | 'BOOK' | 'DIGITAL' | 'MEDIA';
+export type ProductKind = 'APPAREL' | 'ARTIFACT' | 'BOOK' | 'DIGITAL' | 'MEDIA' | 'MERCHANDISE';
 
 export interface OrderSummary {
   id: string;
