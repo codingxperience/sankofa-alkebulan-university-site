@@ -129,24 +129,23 @@ const PRODUCTS: Record<string, ProductDef> = {
     specs: [['Format', 'Free PDF · open access'], ['Edition', 'Greek translation · 2026'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-quiet-skin': {
-    t: 'Beneath the Quiet Skin', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    t: 'Beneath the Quiet Skin', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 22, kind: 'book', imprint: 'SAU Press',
     cover: 'assets/press/covers/beneath-the-quiet-skin.webp',
-    pdf: 'assets/press/publications/beneath-the-quiet-skin.pdf',
     desc: 'Understanding Mental Health in African Contexts — an exploration of mind, spirit, and society in Africa, holding indigenous healing traditions and clinical psychology in one frame.',
-    specs: [['Format', 'Free PDF · open access'], ['Field', 'Mental health · African contexts'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+    specs: [['Format', 'PDF edition'], ['Field', 'Mental health · African contexts'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-pan-african': {
-    t: 'Pan-African Strategic Mobilization in the 21st Century', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
+    t: 'Pan-African Strategic Mobilization in the 21st Century', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 22, kind: 'book', imprint: 'SAU Press',
     cover: 'assets/press/covers/pan-african-mobilization.webp',
-    pdf: 'assets/press/publications/pan-african-mobilization.pdf',
     desc: 'Youth power and the future of continental unity — a 355-page strategy for Pan-African mobilization in a fragmented global order, spanning history, theory, governance, and future pathways.',
-    specs: [['Format', 'Free PDF · open access'], ['Extent', '355 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+    specs: [['Format', 'PDF edition'], ['Extent', '355 pages'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-next-century': {
-    t: "Africa's Next Century: A Grand Strategy", au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 22, kind: 'book', imprint: 'SAU Press',
+    t: "Africa's Next Century: A Grand Strategy", au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
     cover: 'assets/press/covers/africas-next-century-grand-strategy.webp',
+    pdf: 'assets/press/publications/africas-next-century-grand-strategy.pdf',
     desc: 'A grand strategy for prosperity, peace, and global leadership — a framework for Africa’s political, economic, scientific, security, cultural, and institutional transformation across the twenty-first century.',
-    specs: [['Format', 'Print + PDF edition'], ['Field', 'Continental strategy'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+    specs: [['Format', 'Free PDF · open access'], ['Field', 'Continental strategy'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-god-ai': {
     t: 'The God of AI: African Digital Futures', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 18, kind: 'book', imprint: 'SAU Press',
@@ -155,10 +154,11 @@ const PRODUCTS: Record<string, ProductDef> = {
     specs: [['Format', 'Print + PDF edition'], ['Field', 'AI & digital futures'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-governance': {
-    t: 'Reengineering Global Governance', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 16, kind: 'book', imprint: 'SAU Press',
+    t: 'Reengineering Global Governance', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 0, kind: 'book', imprint: 'SAU Press',
     cover: 'assets/press/covers/reengineering-global-governance.webp',
+    pdf: 'assets/press/publications/reengineering-global-governance.pdf',
     desc: 'A data-driven reform framework for legitimacy, representation, and decision-making bottlenecks in the United Nations system — reengineering global governance for a multipolar world.',
-    specs: [['Format', 'Print + PDF edition'], ['Field', 'United Nations reform'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
+    specs: [['Format', 'Free PDF · open access'], ['Field', 'United Nations reform'], ['Imprint', 'SAU Press · Liberation Publishing'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-strategic-defense': {
     t: 'Strategic Defense Mobilization in Africa', au: 'Emmanuel Mihiingo Kaija', yr: 'SAU Press · 2026', p: 15, kind: 'book', imprint: 'SAU Press',
@@ -299,7 +299,7 @@ export class StorePageComponent implements OnInit, OnDestroy {
   private coRequestId = newRequestId();
 
   readonly regaliaIds = ['tee-navy', 'tee-colors', 'hoodie', 'scarf', 'tunic', 'gown', 'suit', 'robe'];
-  readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-quiet-skin', 'bk-pan-african', 'bk-next-century', 'bk-god-ai', 'bk-governance', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
+  readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-next-century', 'bk-governance', 'bk-quiet-skin', 'bk-pan-african', 'bk-god-ai', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
   readonly artifactIds = ['cross', 'benin', 'ashanti', 'kongo', 'nok'];
   readonly movements = TRACKS;
 
@@ -360,7 +360,8 @@ export class StorePageComponent implements OnInit, OnDestroy {
     }
     try {
       const saved = JSON.parse(localStorage.getItem(BAG_KEY) || '{}') as Record<string, number>;
-      const valid = Object.entries(saved).filter(([key, qty]) => PRODUCTS[this.idOf(key)] && Number.isInteger(qty) && qty > 0);
+      // A book that has since become free to read cannot be ordered, so it leaves the bag.
+      const valid = Object.entries(saved).filter(([key, qty]) => PRODUCTS[this.idOf(key)]?.p && Number.isInteger(qty) && qty > 0);
       this.cart.set(Object.fromEntries(valid));
     } catch {
       /* a corrupt bag is simply an empty bag */
