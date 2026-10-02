@@ -165,6 +165,7 @@ export const PRODUCT_KIND: Record<ProductKind, string> = {
   BOOK: 'Book',
   DIGITAL: 'Digital',
   MEDIA: 'Media',
+  MERCHANDISE: 'Merchandise',
 };
 
 export const ARTICLE_STATUS: Record<ArticleStatus | 'SCHEDULED', Term> = {

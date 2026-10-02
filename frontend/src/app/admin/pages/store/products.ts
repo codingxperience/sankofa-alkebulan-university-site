@@ -14,7 +14,7 @@ interface Draft {
   status: ProductStatus;
 }
 
-const KIND_ORDER: readonly ProductKind[] = ['ARTIFACT', 'APPAREL', 'BOOK', 'MEDIA', 'DIGITAL'];
+const KIND_ORDER: readonly ProductKind[] = ['ARTIFACT', 'APPAREL', 'MERCHANDISE', 'BOOK', 'MEDIA', 'DIGITAL'];
 
 /**
  * The commercial facts of each product — price, availability and stock.

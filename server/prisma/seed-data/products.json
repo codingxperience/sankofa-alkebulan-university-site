@@ -34,5 +34,13 @@
   { "sku": "language-pack", "name": "Alkebulan Language Pack", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 500, "hasSizes": false, "isDigital": true, "stockRemaining": null },
   { "sku": "vault-cert", "name": "Alkebulan 101 — Certificate", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 2000, "hasSizes": false, "isDigital": true, "stockRemaining": null },
   { "sku": "archive-vol1", "name": "Oral Archive Vol. 1", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 1000, "hasSizes": false, "isDigital": true, "stockRemaining": null },
-  { "sku": "career-post", "name": "Career Link — Job Post", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 20000, "hasSizes": false, "isDigital": true, "stockRemaining": null }
+  { "sku": "career-post", "name": "Career Link — Job Post", "kind": "DIGITAL", "status": "AVAILABLE", "priceCents": 20000, "hasSizes": false, "isDigital": true, "stockRemaining": null },
+
+  { "sku": "bag-set", "name": "Scholar's Bag Set", "kind": "MERCHANDISE", "status": "PREORDER", "priceCents": 14000, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+  { "sku": "journal", "name": "Crest Journal", "kind": "MERCHANDISE", "status": "PREORDER", "priceCents": 2400, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+  { "sku": "bottle", "name": "Crest Water Bottle", "kind": "MERCHANDISE", "status": "PREORDER", "priceCents": 2200, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+  { "sku": "cap", "name": "Crest Cap", "kind": "APPAREL", "status": "PREORDER", "priceCents": 2200, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+  { "sku": "umbrella", "name": "Crest Umbrella", "kind": "MERCHANDISE", "status": "PREORDER", "priceCents": 3200, "hasSizes": false, "isDigital": false, "stockRemaining": null },
+  { "sku": "varsity", "name": "Varsity Jacket", "kind": "APPAREL", "status": "PREORDER", "priceCents": 9500, "hasSizes": true, "isDigital": false, "stockRemaining": null },
+  { "sku": "bracelet", "name": "Crest Bracelet", "kind": "MERCHANDISE", "status": "PREORDER", "priceCents": 1800, "hasSizes": false, "isDigital": false, "stockRemaining": null }
 ]
