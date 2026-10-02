@@ -1963,184 +1963,806 @@
 
 /* ─── Sign-in and link pages ─────────────────────────────────────────── */
 
+/* A light page of its own: a white card over a field-note photograph, the
+   picture panel leaning in at its foot, and the form beside it in navy and gold. */
 .sc-auth {
+  --auth-ink: #0b1f33;
+  --auth-ink-2: #3c4f62;
+  --auth-ink-3: #5b6d7f;
+  --auth-line: #8494a5;
+  --auth-line-soft: #d5dbe2;
+  --auth-link: #8a6100;
+  --auth-gold: #d4a22f;
+  --auth-gold-hover: #e0b04a;
+  --auth-on-gold: #061e31;
+  --auth-night: #051b2c;
+  /* The frame around the card grows with the window's height: generous on tall screens, tight on laptops. */
+  --auth-pad-y: clamp(16px, calc(26vh - 196px), 165px);
+  --auth-pad-x: clamp(16px, 9vw, 165px);
+  --link-color: var(--auth-link);
+  --link-hover: var(--auth-ink);
+
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  place-items: center;
   min-height: 100vh;
   min-height: 100dvh;
+  padding: var(--auth-pad-y) var(--auth-pad-x);
+  overflow: hidden;
+  background: #efeae0;
+  color: var(--auth-ink);
+  color-scheme: light;
+
+  :where(a) {
+    color: var(--auth-link);
+  }
+
+  :where(a, button, input, [tabindex]):focus-visible {
+    outline: 2px solid #0f4c81;
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(212, 162, 47, 0.35);
+    color: var(--auth-ink);
+  }
+
+  code {
+    font-family: var(--sc-mono);
+    font-size: 0.92em;
+  }
 
   @media (max-width: 900px) {
-    grid-template-columns: minmax(0, 1fr);
+    padding: 12px;
   }
 }
 
+/* The same photograph, larger, behind the left of the card. */
+.sc-auth__backdrop {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 66.4%;
+  clip-path: polygon(0 0, 100% 0, 90.7% 100%, 0 100%);
+  background: var(--auth-night);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: sc-auth-in 600ms var(--sc-ease) both;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 27, 44, 0.7), rgba(5, 27, 44, 0.82));
+  }
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.sc-auth__card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 53fr) minmax(0, 47fr);
+  width: 100%;
+  max-width: 1470px;
+  min-height: min(1055px, calc(100dvh - 2 * var(--auth-pad-y)));
+  padding: 15px;
+  border-radius: clamp(28px, 3.9vw, 70px);
+  background: #fff;
+  box-shadow: 0 40px 90px rgba(5, 27, 44, 0.22);
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    padding: 10px;
+    border-radius: 28px;
+  }
+}
+
+/* ─ The picture panel ─ */
+
 .sc-auth__panel {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 40px;
-  margin: 14px 0 14px 14px;
-  padding: 44px clamp(28px, 5vw, 72px);
+  gap: 32px;
+  min-height: 480px;
+  padding: clamp(26px, 3.6vw, 64px);
   overflow: hidden;
-  border-radius: 32px;
-  background:
-    radial-gradient(120% 80% at 0% 0%, rgba(212, 162, 47, 0.2), transparent 55%),
-    radial-gradient(90% 70% at 100% 100%, rgba(15, 76, 129, 0.6), transparent 60%),
-    var(--sc-navy);
-  color: #dfe8f0;
+  border-radius: clamp(24px, 3vw, 55px);
+  background: var(--auth-night);
+  color: #fff;
 
-  &::after {
-    content: 'Sankofa';
-    position: absolute;
-    left: clamp(28px, 5vw, 72px);
-    bottom: -0.2em;
-    font-size: clamp(96px, 10vw, 168px);
-    white-space: nowrap;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    color: rgba(255, 255, 255, 0.04);
-    pointer-events: none;
+  :where(a, button):focus-visible {
+    outline-color: #fff;
   }
 
   @media (max-width: 900px) {
     gap: 24px;
-    margin: 12px 12px 0;
-    padding: 26px 24px;
-    border-radius: 26px;
+    min-height: 300px;
+    padding: 22px;
+    border-radius: 22px;
+  }
+}
 
-    &::after {
-      display: none;
+.sc-auth__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: sc-auth-in 600ms var(--sc-ease) both;
+}
+
+.sc-auth__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 27, 44, 0.82) 0%,
+      rgba(5, 27, 44, 0.32) 28%,
+      rgba(5, 27, 44, 0.28) 55%,
+      rgba(5, 27, 44, 0.92) 100%
+    ),
+    rgba(5, 27, 44, 0.2);
+}
+
+.sc-auth__panel-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+
+.sc-auth__panel-title {
+  font-size: clamp(19px, 1.6vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sc-auth__panel-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.6vw, 26px);
+
+  a {
+    color: #fff;
+    font-size: clamp(14px, 1vw, 16px);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: #fff;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+
+  .sc-auth__join {
+    display: inline-flex;
+    align-items: center;
+    min-height: clamp(44px, 3vw, 52px);
+    padding: 0 clamp(18px, 1.6vw, 26px);
+    border: 2px solid #fff;
+    border-radius: 999px;
+    transition:
+      background 160ms var(--sc-ease),
+      color 160ms var(--sc-ease);
+
+    &:hover {
+      background: #fff;
+      color: var(--auth-night);
+      text-decoration: none;
     }
   }
 }
 
-.sc-auth__mark {
+.sc-auth__panel-foot {
   display: flex;
   align-items: center;
-  gap: 14px;
-  color: #fff;
-  text-decoration: none;
+  justify-content: space-between;
+  gap: 20px;
+  /* Clear the leaning edge, which is furthest in at the foot. */
+  margin-right: var(--sc-lean, 0px);
+}
 
-  &:hover {
-    color: #fff;
-    text-decoration: none;
-  }
+.sc-auth__credit {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.2vw, 18px);
+  min-width: 0;
 
-  img {
-    width: 52px;
-    height: 52px;
+  > span:last-child {
+    display: grid;
+    min-width: 0;
   }
 
   strong {
-    display: block;
-    font-size: 17px;
-    font-weight: 600;
+    font-size: clamp(17px, 1.45vw, 24px);
+    font-weight: 700;
+    line-height: 1.2;
     letter-spacing: -0.01em;
   }
 
-  span {
-    display: block;
+  strong + span {
     margin-top: 3px;
-    font-family: var(--sc-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--sc-gold-ink);
+    font-size: clamp(13px, 1.05vw, 17px);
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.9);
   }
 }
 
-.sc-auth__words {
-  position: relative;
-  z-index: 1;
-  max-width: 460px;
+.sc-auth__avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 4.1vw, 74px);
+  height: clamp(52px, 4.1vw, 74px);
+  border-radius: 50%;
+  background: #f5f2ea;
+  box-shadow: 0 0 0 3px var(--auth-gold);
 
-  .sc-auth__headline {
-    font-size: clamp(30px, 3.4vw, 44px);
-    font-weight: 500;
-    line-height: 1.08;
-    letter-spacing: -0.035em;
+  img {
+    width: 72%;
+    height: auto;
+  }
+}
+
+.sc-auth__arrows {
+  flex: none;
+  display: flex;
+  gap: 10px;
+
+  button {
+    display: grid;
+    place-items: center;
+    width: clamp(42px, 2.9vw, 52px);
+    height: clamp(42px, 2.9vw, 52px);
+    border: 1.5px solid #fff;
+    border-radius: 50%;
+    background: transparent;
     color: #fff;
-  }
+    cursor: pointer;
+    transition:
+      background 160ms var(--sc-ease),
+      color 160ms var(--sc-ease);
 
-  p:not(.sc-auth__headline) {
-    margin-top: 16px;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #b9c9d8;
-  }
+    &:hover {
+      background: #fff;
+      color: var(--auth-night);
+    }
 
-  @media (max-width: 900px) {
-    display: none;
+    i {
+      font-size: 15px;
+    }
   }
 }
 
-.sc-auth__motto {
-  position: relative;
-  z-index: 1;
-  font-family: var(--sc-mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #9fb2c4;
+/* ─ The form side ─ */
+
+.sc-auth__side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(20px, 2.4vw, 42px) clamp(18px, 3.6vw, 64px) clamp(20px, 2.6vw, 48px) clamp(22px, 2.8vw, 50px);
 
   @media (max-width: 900px) {
-    display: none;
+    padding: 22px 12px 14px;
+  }
+}
+
+.sc-auth__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+.sc-auth__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  img {
+    width: clamp(34px, 2.6vw, 44px);
+    height: clamp(34px, 2.6vw, 44px);
+  }
+}
+
+.sc-auth__word {
+  display: inline-flex;
+  align-items: center;
+  font-size: clamp(24px, 1.85vw, 32px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--auth-ink);
+}
+
+/* The O of SANKOFA, as on the workspace: a gold ring with the sun at its centre. */
+.sc-auth__o {
+  position: relative;
+  display: inline-block;
+  width: 0.74em;
+  height: 0.74em;
+  margin: 0 0.04em;
+  border: 0.15em solid var(--auth-gold);
+  border-radius: 50%;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 0.18em;
+    height: 0.18em;
+    border-radius: 50%;
+    background: var(--auth-gold);
+  }
+}
+
+.sc-auth__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: clamp(44px, 3vw, 52px);
+  padding: 0 clamp(16px, 1.4vw, 22px);
+  border: 1px solid var(--auth-line-soft);
+  border-radius: 999px;
+  color: var(--auth-ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 160ms var(--sc-ease);
+
+  i {
+    font-size: 13px;
+    color: var(--auth-ink-2);
+  }
+
+  &:hover {
+    border-color: var(--auth-ink);
+    color: var(--auth-ink);
+    text-decoration: none;
+  }
+}
+
+.sc-auth__body {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: clamp(28px, 6vh, 80px) 0 clamp(24px, 4vh, 48px);
+
+  > * {
+    width: 100%;
+    max-width: 443px;
+  }
+}
+
+.sc-auth__intro {
+  margin-bottom: clamp(26px, 5vh, 58px);
+  text-align: center;
+
+  h1 {
+    font-size: clamp(46px, 4.4vw, 78px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--auth-ink);
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  p {
+    margin-top: clamp(14px, 2.3vh, 26px);
+    font-size: clamp(16px, 1.15vw, 20px);
+    color: var(--auth-ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  &--long h1 {
+    font-size: clamp(34px, 2.9vw, 48px);
+    line-height: 1.08;
+    text-wrap: balance;
   }
 }
 
 .sc-auth__form {
   display: grid;
-  align-content: center;
-  justify-items: center;
-  padding: 48px clamp(20px, 5vw, 64px);
+  gap: 18px;
 }
 
-.sc-auth__card {
+.sc-auth__field {
+  position: relative;
+
+  label {
+    position: absolute;
+    top: 50%;
+    left: 17px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--auth-ink-2);
+    pointer-events: none;
+    transition:
+      top 150ms var(--sc-ease),
+      font-size 150ms var(--sc-ease),
+      transform 150ms var(--sc-ease);
+  }
+
+  &--reveal .sc-auth__input {
+    padding-right: 58px;
+  }
+}
+
+.sc-auth__input {
   width: 100%;
-  max-width: 410px;
+  height: 60px;
+  padding: 22px 16px 6px;
+  border: 1px solid var(--auth-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--auth-ink);
+  font-size: 15px;
+  transition:
+    border-color 160ms var(--sc-ease),
+    box-shadow 160ms var(--sc-ease);
 
-  h1 {
-    font-size: 30px;
+  &:hover {
+    border-color: var(--auth-ink-3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--auth-ink);
+    box-shadow: 0 0 0 3px rgba(212, 162, 47, 0.38);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: #b42318;
+  }
+
+  /* The label rises out of the way once there is something in the box. */
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
+    top: 9px;
+    transform: none;
+    font-size: 11.5px;
     font-weight: 500;
-    letter-spacing: -0.03em;
   }
 
-  > p {
-    margin-top: 10px;
-    color: var(--sc-ink-3);
-    font-size: 14.5px;
-  }
-
-  .sc-form {
-    margin-top: 28px;
-  }
-
-  .sc-btn--primary {
-    width: 100%;
-    min-height: 48px;
-    font-size: 14.5px;
+  &:-webkit-autofill + label {
+    top: 9px;
+    transform: none;
+    font-size: 11.5px;
+    font-weight: 500;
   }
 }
 
-.sc-auth__links {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 22px;
-  font-size: 13.5px;
+.sc-auth__reveal {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--auth-ink-2);
+  cursor: pointer;
 
-  button,
-  a {
-    border: 0;
-    padding: 0;
-    background: none;
-    color: var(--sc-link);
-    cursor: pointer;
+  &:hover {
+    background: #f3f0e8;
+    color: var(--auth-ink);
+  }
+}
+
+.sc-auth__forgot {
+  justify-self: end;
+  margin-top: -4px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--auth-link);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
     text-decoration: underline;
-    text-decoration-thickness: 1px;
     text-underline-offset: 3px;
+  }
+}
+
+.sc-auth__or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-size: 14px;
+  color: var(--auth-ink-2);
+
+  &::before,
+  &::after {
+    content: '';
+    width: 38px;
+    height: 1px;
+    background: #b8c2cc;
+  }
+}
+
+.sc-auth__alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 60px;
+  border: 1px solid var(--auth-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--auth-ink);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 160ms var(--sc-ease),
+    background 160ms var(--sc-ease);
+
+  i {
+    font-size: 19px;
+    color: var(--auth-gold);
+  }
+
+  &:hover {
+    border-color: var(--auth-ink);
+    background: #faf8f3;
+  }
+}
+
+.sc-auth__submit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 60px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--auth-gold);
+  color: var(--auth-on-gold);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(212, 162, 47, 0.3);
+  transition:
+    background 160ms var(--sc-ease),
+    box-shadow 160ms var(--sc-ease);
+
+  &:hover {
+    background: var(--auth-gold-hover);
+    color: var(--auth-on-gold);
+    text-decoration: none;
+  }
+
+  &:disabled {
+    cursor: progress;
+  }
+
+  &.is-busy {
+    color: transparent;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(6, 30, 49, 0.25);
+      border-top-color: var(--auth-on-gold);
+      border-radius: 50%;
+      animation: sc-spin 700ms linear infinite;
+    }
+  }
+}
+
+.sc-auth__note {
+  margin-top: clamp(24px, 4.5vh, 40px);
+  text-align: center;
+  font-size: 14px;
+  color: var(--auth-ink-2);
+
+  a,
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--auth-link);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}
+
+.sc-auth__lede {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--auth-ink-2);
+}
+
+.sc-auth__copy {
+  display: grid;
+  gap: 14px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--auth-ink-2);
+}
+
+.sc-auth__hint,
+.sc-auth__error {
+  margin-top: -10px;
+  font-size: 12.5px;
+}
+
+.sc-auth__hint {
+  color: var(--auth-ink-3);
+}
+
+.sc-auth__error {
+  color: #b42318;
+}
+
+.sc-auth__alert {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid #f3b7af;
+  border-radius: 12px;
+  background: #fdecea;
+  color: #8a1c12;
+  font-size: 13.5px;
+  line-height: 1.5;
+
+  i {
+    margin-top: 3px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  &--gold {
+    border-color: #ecd398;
+    background: #fbf3df;
+    color: #6b4a00;
+  }
+
+  &--info {
+    border-color: #b8d3ee;
+    background: #e9f2fb;
+    color: #0a3254;
+  }
+}
+
+.sc-auth__social ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(10px, 1.4vw, 22px);
+
+  a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: var(--auth-ink-2);
+    font-size: 24px;
+    text-decoration: none;
+    transition:
+      background 160ms var(--sc-ease),
+      color 160ms var(--sc-ease);
+
+    &:hover {
+      background: #f3f0e8;
+      color: var(--auth-ink);
+    }
+  }
+}
+
+.sc-auth .sc-skeleton {
+  padding: 4px 0;
+
+  span {
+    background: linear-gradient(90deg, #ebe7de 0%, #f6f3ec 50%, #ebe7de 100%);
+    background-size: 200% 100%;
+  }
+}
+
+/* Laptop heights: the same layout, drawn tighter so the whole card fits the window. */
+@media (min-width: 901px) and (max-height: 960px) {
+  .sc-auth__side {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .sc-auth__body {
+    padding: 16px 0;
+  }
+
+  .sc-auth__intro {
+    margin-bottom: 24px;
+
+    &:not(.sc-auth__intro--long) h1 {
+      font-size: clamp(40px, 6.2vh, 64px);
+    }
+
+    p {
+      margin-top: 12px;
+    }
+  }
+
+  .sc-auth__form {
+    gap: 14px;
+  }
+
+  .sc-auth__input,
+  .sc-auth__alt {
+    height: 52px;
+  }
+
+  .sc-auth__input {
+    padding-top: 19px;
+  }
+
+  .sc-auth__submit {
+    height: 54px;
+    margin-top: 8px;
+  }
+
+  .sc-auth__note {
+    margin-top: 18px;
+  }
+}
+
+@keyframes sc-auth-in {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-auth__photo,
+  .sc-auth__backdrop img {
+    animation: none;
   }
 }
 
