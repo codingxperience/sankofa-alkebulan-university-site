@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiClient, ApiError } from '../../core/api/api-client';
 import { ConsoleState } from '../core/console-state';
 import { StaffSession } from '../core/staff-session';
-import { AuthPanel } from './auth-panel';
+import { AuthFrame } from './auth-frame';
 
-type Mode = 'sign-in' | 'setup' | 'forgot' | 'forgot-sent';
+type Mode = 'sign-in' | 'invited' | 'setup' | 'forgot' | 'forgot-sent';
 
 /** Only places inside the console are valid destinations after signing in. */
 function safeNext(value: string | null): string {
@@ -15,10 +15,9 @@ function safeNext(value: string | null): string {
 
 @Component({
   selector: 'sc-sign-in',
-  imports: [ReactiveFormsModule, AuthPanel],
+  imports: [ReactiveFormsModule, AuthFrame],
   templateUrl: './sign-in.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'sc-auth' },
 })
 export class SignIn {
   private readonly api = inject(ApiClient);
@@ -27,6 +26,8 @@ export class SignIn {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder).nonNullable;
+  private readonly injector = inject(Injector);
+  private readonly heading = viewChild<ElementRef<HTMLElement>>('heading');
 
   protected readonly mode = signal<Mode>('sign-in');
   protected readonly setupAvailable = signal(false);
@@ -39,6 +40,8 @@ export class SignIn {
   protected readonly fields = signal<Record<string, string>>({});
   protected readonly showPassword = signal(false);
   protected readonly ended = this.route.snapshot.queryParamMap.has('ended');
+  /** Where someone without an account asks for one: the university administration. */
+  protected readonly accountRequest = 'mailto:SanAlkeU@outlook.com?subject=Sankofa%20console%20account';
 
   protected readonly signInForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -78,6 +81,8 @@ export class SignIn {
     this.mode.set(mode);
     this.error.set('');
     this.fields.set({});
+    // The control that was pressed has gone with the old view; start keyboard users at the new heading.
+    afterNextRender(() => this.heading()?.nativeElement.focus(), { injector: this.injector });
     if (mode === 'forgot' && this.signInForm.controls.email.value) {
       this.forgotForm.controls.email.setValue(this.signInForm.controls.email.value);
     }

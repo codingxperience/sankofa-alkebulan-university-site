@@ -6,7 +6,7 @@ import { ConsoleState } from '../core/console-state';
 import { Toasts } from '../core/feedback';
 import { StaffSession } from '../core/staff-session';
 import { Skeleton } from '../ui/ui';
-import { AuthPanel } from './auth-panel';
+import { AuthFrame } from './auth-frame';
 
 type Purpose = 'invitation' | 'reset';
 
@@ -32,10 +32,9 @@ const COPY: Record<Purpose, { inspect: string; redeem: string; heading: string; 
  */
 @Component({
   selector: 'sc-link-page',
-  imports: [ReactiveFormsModule, RouterLink, AuthPanel, Skeleton],
+  imports: [ReactiveFormsModule, RouterLink, AuthFrame, Skeleton],
   templateUrl: './link-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'sc-auth' },
 })
 export class LinkPage {
   private readonly api = inject(ApiClient);

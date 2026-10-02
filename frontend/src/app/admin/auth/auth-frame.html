@@ -1,0 +1,80 @@
+<div class="sc-auth__backdrop" aria-hidden="true">
+  @for (shown of [note()]; track shown.image) {
+    <img [src]="shown.image" alt="" [style.object-position]="shown.position" />
+  }
+</div>
+
+<div class="sc-auth__card">
+  <section
+    #panel
+    class="sc-auth__panel"
+    [style.clip-path]="outline()"
+    [style.--sc-lean]="lean() + 'px'"
+    aria-roledescription="carousel"
+    aria-labelledby="sc-auth-notes"
+  >
+    @for (shown of [note()]; track shown.image) {
+      <img class="sc-auth__photo" [src]="shown.image" [alt]="shown.alt" [style.object-position]="shown.position" />
+    }
+    <div class="sc-auth__veil" aria-hidden="true"></div>
+
+    <div class="sc-auth__panel-top">
+      <p id="sc-auth-notes" class="sc-auth__panel-title">Field Notes</p>
+      <nav class="sc-auth__panel-nav" aria-label="Join the university">
+        <a href="/admissions">Apply</a>
+        <a class="sc-auth__join" href="/about/job-opportunities">Join Us</a>
+      </nav>
+    </div>
+
+    <div class="sc-auth__panel-foot">
+      <p class="sc-auth__credit" aria-live="polite">
+        <span class="sc-auth__avatar">
+          <img ngSrc="/assets/design/crest-112.png" width="56" height="56" alt="" />
+        </span>
+        <span>
+          <strong>{{ note().title }}</strong>
+          <span>{{ note().detail }}</span>
+        </span>
+      </p>
+      <div class="sc-auth__arrows">
+        <button type="button" (click)="step(-1)" aria-label="Previous field note">
+          <i class="pi pi-arrow-left" aria-hidden="true"></i>
+        </button>
+        <button type="button" (click)="step(1)" aria-label="Next field note">
+          <i class="pi pi-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <main class="sc-auth__side">
+    <header class="sc-auth__head">
+      <p class="sc-auth__brand">
+        <img ngSrc="/assets/design/crest-112.png" width="44" height="44" alt="" priority />
+        <span class="sc-auth__word" aria-hidden="true">Sank<span class="sc-auth__o"></span>fa</span>
+        <span class="visually-hidden">Sankofa Alkebulan University console</span>
+      </p>
+      <a class="sc-auth__chip" href="/">
+        <i class="pi pi-globe" aria-hidden="true"></i>
+        Website
+        <i class="pi pi-arrow-up-right" aria-hidden="true"></i>
+      </a>
+    </header>
+
+    <div class="sc-auth__body">
+      <ng-content />
+    </div>
+
+    <footer class="sc-auth__social">
+      <ul aria-label="Sankofa Alkebulan University on social media">
+        @for (account of social; track account.label) {
+          <li>
+            <a [href]="account.href" target="_blank" rel="noopener" [attr.aria-label]="account.label">
+              <i class="fa-brands {{ account.icon }}" aria-hidden="true"></i>
+            </a>
+          </li>
+        }
+      </ul>
+    </footer>
+  </main>
+</div>

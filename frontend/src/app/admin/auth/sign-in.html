@@ -1,154 +1,200 @@
-<sc-auth-panel />
+<sc-auth-frame>
+  @switch (mode()) {
+    @case ('sign-in') {
+      <div class="sc-auth__intro">
+        <h1 #heading tabindex="-1"><span lang="ak">Akwaaba</span></h1>
+        <p>Welcome to the Sankofa Console</p>
+      </div>
 
-<main class="sc-auth__form">
-  <div class="sc-auth__card">
-    @switch (mode()) {
-      @case ('sign-in') {
-        <h1>Sign in</h1>
-        <p>For university staff. Use the email address your invitation was sent to.</p>
-
-        <form class="sc-form" [formGroup]="signInForm" (ngSubmit)="signIn()" novalidate>
-          @if (unreachable()) {
-            <div class="sc-alert" role="alert">
-              <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
-              <span>
-                {{ unreachable() }} If you look after this site, open <a href="/api/health">/api/health</a> to see what the server
-                reports, and check the latest deployment in Vercel.
-              </span>
-            </div>
-          }
-          @if (awaitingSetupKey()) {
-            <div class="sc-alert sc-alert--gold" role="status">
-              <i class="pi pi-key" aria-hidden="true"></i>
-              <span>
-                No one has an account yet. To create the first one, add <code>ADMIN_SETUP_KEY</code> in Vercel
-                (Settings → Environment Variables, for Production), redeploy, then reload this page.
-              </span>
-            </div>
-          }
-          @if (ended && !error()) {
-            <div class="sc-alert sc-alert--info" role="status">
-              <i class="pi pi-clock" aria-hidden="true"></i>
-              <span>Your session ended. Sign in again to carry on where you were.</span>
-            </div>
-          }
-          @if (error()) {
-            <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
-          }
-
-          <div class="sc-field">
-            <label class="sc-label" for="si-email">Email address</label>
-            <input id="si-email" class="sc-input" type="email" formControlName="email" autocomplete="username" spellcheck="false"
-              [attr.aria-invalid]="!!fields()['email']" />
-            @if (fields()['email']; as message) {
-              <span class="sc-error">{{ message }}</span>
-            }
+      <form class="sc-auth__form" [formGroup]="signInForm" (ngSubmit)="signIn()" novalidate>
+        @if (unreachable()) {
+          <div class="sc-auth__alert" role="alert">
+            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+            <span>
+              {{ unreachable() }} If you look after this site, open <a href="/api/health">/api/health</a> to see what the server
+              reports, and check the latest deployment in Vercel.
+            </span>
           </div>
-
-          <div class="sc-field">
-            <label class="sc-label" for="si-password">Password</label>
-            <div class="sc-copy">
-              <input id="si-password" class="sc-input" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
-                autocomplete="current-password" />
-              <button type="button" class="sc-btn sc-btn--icon" (click)="showPassword.set(!showPassword())"
-                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword()">
-                <i class="pi" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()" aria-hidden="true"></i>
-              </button>
-            </div>
+        }
+        @if (awaitingSetupKey()) {
+          <div class="sc-auth__alert sc-auth__alert--gold" role="status">
+            <i class="pi pi-key" aria-hidden="true"></i>
+            <span>
+              No one has an account yet. To create the first one, add <code>ADMIN_SETUP_KEY</code> in Vercel
+              (Settings → Environment Variables, for Production), redeploy, then reload this page.
+            </span>
           </div>
+        }
+        @if (ended && !error()) {
+          <div class="sc-auth__alert sc-auth__alert--info" role="status">
+            <i class="pi pi-clock" aria-hidden="true"></i>
+            <span>Your session ended. Sign in again to carry on where you were.</span>
+          </div>
+        }
+        @if (error()) {
+          <div class="sc-auth__alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
+        }
 
-          <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="busy()" [disabled]="busy()">Sign in</button>
-        </form>
-
-        <div class="sc-auth__links">
-          <button type="button" (click)="switchTo('forgot')">Forgotten your password?</button>
-          @if (setupAvailable()) {
-            <button type="button" (click)="switchTo('setup')">First-time setup</button>
-          }
+        <div class="sc-auth__field">
+          <input id="si-email" class="sc-auth__input" type="email" formControlName="email" autocomplete="username" spellcheck="false"
+            placeholder=" " [attr.aria-invalid]="!!fields()['email']" [attr.aria-describedby]="fields()['email'] ? 'si-email-error' : null" />
+          <label for="si-email">Email</label>
         </div>
-      }
+        @if (fields()['email']; as message) {
+          <span id="si-email-error" class="sc-auth__error">{{ message }}</span>
+        }
 
-      @case ('setup') {
-        <h1>Set up the console</h1>
+        <div class="sc-auth__field sc-auth__field--reveal">
+          <input id="si-password" class="sc-auth__input" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+            autocomplete="current-password" placeholder=" " />
+          <label for="si-password">Password</label>
+          <button type="button" class="sc-auth__reveal" (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword()">
+            <i class="pi" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <button type="button" class="sc-auth__forgot" (click)="switchTo('forgot')">Forgot password?</button>
+
+        <p class="sc-auth__or"><span>or</span></p>
+
+        <button type="button" class="sc-auth__alt" (click)="switchTo('invited')">
+          I have an invitation
+          <i class="pi pi-envelope" aria-hidden="true"></i>
+        </button>
+
+        <button type="submit" class="sc-auth__submit" [class.is-busy]="busy()" [disabled]="busy()">Sign in</button>
+      </form>
+
+      <p class="sc-auth__note">
+        @if (setupAvailable()) {
+          No accounts yet? <button type="button" (click)="switchTo('setup')">Set up the console</button>
+        } @else {
+          Don’t have an account? <a [href]="accountRequest">Ask an administrator</a>
+        }
+      </p>
+    }
+
+    @case ('invited') {
+      <div class="sc-auth__intro">
+        <h1 #heading tabindex="-1">Invited?</h1>
+        <p>Your invitation email is the way in</p>
+      </div>
+
+      <div class="sc-auth__copy">
         <p>
-          No one has an account yet. Create the first owner account with the setup key from the server's configuration
-          (<code>ADMIN_SETUP_KEY</code>). Once it exists, this form disappears and everyone else joins by invitation.
+          Open the link in your invitation to choose a password for your account. From then on, you sign in here with that
+          email address and password.
         </p>
+        <p>
+          Invitations last seven days and work once. If yours has expired or never arrived, ask an administrator to send a
+          new one from the Team page.
+        </p>
+      </div>
 
-        <form class="sc-form" [formGroup]="setupForm" (ngSubmit)="setUp()" novalidate>
-          @if (error()) {
-            <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
-          }
+      <button type="button" class="sc-auth__submit" (click)="switchTo('sign-in')">Back to sign in</button>
 
-          <div class="sc-field">
-            <label class="sc-label" for="su-key">Setup key</label>
-            <input id="su-key" class="sc-input" type="password" formControlName="setupKey" autocomplete="off" spellcheck="false" />
-          </div>
-          <div class="sc-field">
-            <label class="sc-label" for="su-name">Your full name</label>
-            <input id="su-name" class="sc-input" type="text" formControlName="name" autocomplete="name"
-              [attr.aria-invalid]="!!fields()['name']" />
-            @if (fields()['name']; as message) {
-              <span class="sc-error">{{ message }}</span>
-            }
-          </div>
-          <div class="sc-field">
-            <label class="sc-label" for="su-email">Email address</label>
-            <input id="su-email" class="sc-input" type="email" formControlName="email" autocomplete="username" spellcheck="false"
-              [attr.aria-invalid]="!!fields()['email']" />
-            @if (fields()['email']; as message) {
-              <span class="sc-error">{{ message }}</span>
-            }
-          </div>
-          <div class="sc-field">
-            <label class="sc-label" for="su-password">Choose a password</label>
-            <input id="su-password" class="sc-input" type="password" formControlName="password" autocomplete="new-password"
-              aria-describedby="su-password-hint" [attr.aria-invalid]="!!fields()['password']" />
-            @if (fields()['password']; as message) {
-              <span class="sc-error">{{ message }}</span>
-            } @else {
-              <span id="su-password-hint" class="sc-hint">At least 12 characters. A short phrase of four or five words works well.</span>
-            }
-          </div>
+      <p class="sc-auth__note">Still stuck? <a [href]="accountRequest">Ask an administrator</a></p>
+    }
 
-          <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="busy()" [disabled]="busy()">Create the owner account</button>
-        </form>
+    @case ('setup') {
+      <div class="sc-auth__intro">
+        <h1 #heading tabindex="-1">Set up</h1>
+        <p>Create the first owner account</p>
+      </div>
 
-        <div class="sc-auth__links">
-          <button type="button" (click)="switchTo('sign-in')">I already have an account</button>
+      <form class="sc-auth__form" [formGroup]="setupForm" (ngSubmit)="setUp()" novalidate>
+        <p class="sc-auth__lede">
+          No one has an account yet. Use the setup key from the server's configuration (<code>ADMIN_SETUP_KEY</code>). Once
+          this account exists, this form disappears and everyone else joins by invitation.
+        </p>
+        @if (error()) {
+          <div class="sc-auth__alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
+        }
+
+        <div class="sc-auth__field">
+          <input id="su-key" class="sc-auth__input" type="password" formControlName="setupKey" autocomplete="off" spellcheck="false"
+            placeholder=" " />
+          <label for="su-key">Setup key</label>
         </div>
-      }
 
-      @case ('forgot') {
-        <h1>Reset your password</h1>
-        <p>Enter the address you sign in with. If it belongs to an active account, a reset link will arrive within a few minutes.</p>
-
-        <form class="sc-form" [formGroup]="forgotForm" (ngSubmit)="requestReset()" novalidate>
-          @if (error()) {
-            <div class="sc-alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
-          }
-          <div class="sc-field">
-            <label class="sc-label" for="fp-email">Email address</label>
-            <input id="fp-email" class="sc-input" type="email" formControlName="email" autocomplete="username" spellcheck="false" />
-          </div>
-          <button type="submit" class="sc-btn sc-btn--primary" [class.is-busy]="busy()" [disabled]="busy()">Send the reset link</button>
-        </form>
-
-        <div class="sc-auth__links">
-          <button type="button" (click)="switchTo('sign-in')">Back to sign in</button>
+        <div class="sc-auth__field">
+          <input id="su-name" class="sc-auth__input" type="text" formControlName="name" autocomplete="name" placeholder=" "
+            [attr.aria-invalid]="!!fields()['name']" [attr.aria-describedby]="fields()['name'] ? 'su-name-error' : null" />
+          <label for="su-name">Your full name</label>
         </div>
-      }
+        @if (fields()['name']; as message) {
+          <span id="su-name-error" class="sc-auth__error">{{ message }}</span>
+        }
 
-      @case ('forgot-sent') {
-        <h1>Check your inbox</h1>
+        <div class="sc-auth__field">
+          <input id="su-email" class="sc-auth__input" type="email" formControlName="email" autocomplete="username" spellcheck="false"
+            placeholder=" " [attr.aria-invalid]="!!fields()['email']" [attr.aria-describedby]="fields()['email'] ? 'su-email-error' : null" />
+          <label for="su-email">Email</label>
+        </div>
+        @if (fields()['email']; as message) {
+          <span id="su-email-error" class="sc-auth__error">{{ message }}</span>
+        }
+
+        <div class="sc-auth__field">
+          <input id="su-password" class="sc-auth__input" type="password" formControlName="password" autocomplete="new-password"
+            placeholder=" " [attr.aria-invalid]="!!fields()['password']" aria-describedby="su-password-hint" />
+          <label for="su-password">Choose a password</label>
+        </div>
+        @if (fields()['password']; as message) {
+          <span id="su-password-hint" class="sc-auth__error">{{ message }}</span>
+        } @else {
+          <span id="su-password-hint" class="sc-auth__hint">At least 12 characters. A short phrase of four or five words works well.</span>
+        }
+
+        <button type="submit" class="sc-auth__submit" [class.is-busy]="busy()" [disabled]="busy()">Create the owner account</button>
+      </form>
+
+      <p class="sc-auth__note">
+        Already have an account? <button type="button" (click)="switchTo('sign-in')">Sign in</button>
+      </p>
+    }
+
+    @case ('forgot') {
+      <div class="sc-auth__intro">
+        <h1 #heading tabindex="-1">Reset</h1>
+        <p>Choose a new password by email</p>
+      </div>
+
+      <form class="sc-auth__form" [formGroup]="forgotForm" (ngSubmit)="requestReset()" novalidate>
+        <p class="sc-auth__lede">
+          Enter the address you sign in with. If it belongs to an active account, a reset link will arrive within a few minutes.
+        </p>
+        @if (error()) {
+          <div class="sc-auth__alert" role="alert"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i><span>{{ error() }}</span></div>
+        }
+        <div class="sc-auth__field">
+          <input id="fp-email" class="sc-auth__input" type="email" formControlName="email" autocomplete="username" spellcheck="false"
+            placeholder=" " />
+          <label for="fp-email">Email</label>
+        </div>
+        <button type="submit" class="sc-auth__submit" [class.is-busy]="busy()" [disabled]="busy()">Send the reset link</button>
+      </form>
+
+      <p class="sc-auth__note">
+        Remembered it? <button type="button" (click)="switchTo('sign-in')">Back to sign in</button>
+      </p>
+    }
+
+    @case ('forgot-sent') {
+      <div class="sc-auth__intro sc-auth__intro--long">
+        <h1 #heading tabindex="-1">Check your inbox</h1>
+        <p>A reset link is on its way</p>
+      </div>
+
+      <div class="sc-auth__copy">
         <p>
           If that address belongs to an active account, a link to choose a new password is on its way. It works once and
           expires after an hour. If nothing arrives, ask an administrator to send you a sign-in link from the Team page.
         </p>
-        <div class="sc-auth__links">
-          <button type="button" (click)="switchTo('sign-in')">Back to sign in</button>
-        </div>
-      }
+      </div>
+
+      <button type="button" class="sc-auth__submit" (click)="switchTo('sign-in')">Back to sign in</button>
     }
-  </div>
-</main>
+  }
+</sc-auth-frame>
