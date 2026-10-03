@@ -1,18 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-client';
 import { ConsoleApi } from '../../core/console-api';
 import { Confirmations, Toasts } from '../../core/feedback';
 import { AgoPipe, WhenPipe } from '../../core/format';
+import { PhotoUploads, type UploadedPhoto, carriesFiles, imageFiles } from '../../core/photos';
 import { StaffSession } from '../../core/staff-session';
 import type { Article, ArticleStatus } from '../../core/types';
 import { ARTICLE_STATUS } from '../../core/vocabulary';
 import { fromZonedInput, toZonedInput } from '../../core/zones';
 import { Pill, Skeleton } from '../../ui/ui';
+import { PhotoDrop } from './photo-drop';
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const LOCAL_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+/** Put in each new photo's alt text, selected, so the editor types the description straight over it. */
+const DESCRIBE = 'Describe the photo';
 
 function slugify(text: string): string {
   return text
@@ -32,7 +36,7 @@ const list = (text: string) =>
 
 @Component({
   selector: 'sc-article-editor',
-  imports: [ReactiveFormsModule, RouterLink, Pill, Skeleton, AgoPipe, WhenPipe],
+  imports: [ReactiveFormsModule, RouterLink, Pill, Skeleton, AgoPipe, WhenPipe, PhotoDrop],
   templateUrl: './article-editor.html',
   styleUrl: './article-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +48,8 @@ export class ArticleEditorPage {
   private readonly confirmations = inject(Confirmations);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder).nonNullable;
+  private readonly photos = inject(PhotoUploads);
+  private readonly bodyField = viewChild<ElementRef<HTMLTextAreaElement>>('bodyField');
   protected readonly session = inject(StaffSession);
 
   protected readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
@@ -57,6 +63,12 @@ export class ArticleEditorPage {
   protected readonly fields = signal<Record<string, string>>({});
   protected readonly stale = signal(false);
   protected readonly preview = signal(false);
+  protected readonly cover = signal('');
+  private readonly body = signal('');
+  protected readonly bodyOver = signal(false);
+  protected readonly bodyUploads = signal(0);
+  protected readonly bodyPhotoError = signal('');
+  protected readonly undescribed = computed(() => this.body().includes(`alt="${DESCRIBE}"`));
   private slugEdited = Boolean(this.id);
 
   protected readonly canManage = computed(() => this.session.can('journal.manage'));
@@ -93,6 +105,8 @@ export class ArticleEditorPage {
     if (!this.canManage()) {
       this.form.disable();
     }
+    this.form.controls.coverImageUrl.valueChanges.subscribe((url) => this.cover.set(url.trim()));
+    this.form.controls.bodyHtml.valueChanges.subscribe((html) => this.body.set(html));
     this.form.controls.title.valueChanges.subscribe((title) => {
       if (!this.slugEdited) {
         this.form.controls.slug.setValue(slugify(title), { emitEvent: false });
@@ -102,6 +116,81 @@ export class ArticleEditorPage {
 
   protected slugTyped(): void {
     this.slugEdited = true;
+  }
+
+  protected setCover(url: string): void {
+    this.form.controls.coverImageUrl.setValue(url);
+    this.form.controls.coverImageUrl.markAsDirty();
+  }
+
+  /* ─── Photos in the body: dropped, pasted or chosen ─── */
+
+  protected bodyDragOver(event: DragEvent): void {
+    if (!this.canManage() || !carriesFiles(event.dataTransfer)) {
+      return;
+    }
+    event.preventDefault();
+    this.bodyOver.set(true);
+  }
+
+  protected bodyDrop(event: DragEvent): void {
+    this.bodyOver.set(false);
+    if (!this.canManage() || !carriesFiles(event.dataTransfer)) {
+      return;
+    }
+    event.preventDefault();
+    // Put the photo where it was dropped, not where the caret happened to be.
+    this.bodyField()?.nativeElement.focus();
+    void this.addBodyPhotos(imageFiles(event.dataTransfer?.files));
+  }
+
+  protected bodyPaste(event: ClipboardEvent): void {
+    const files = imageFiles(event.clipboardData?.files);
+    if (files.length && this.canManage()) {
+      event.preventDefault();
+      void this.addBodyPhotos(files);
+    }
+  }
+
+  protected bodyChosen(event: Event): void {
+    const field = event.target as HTMLInputElement;
+    void this.addBodyPhotos(imageFiles(field.files));
+    field.value = '';
+  }
+
+  private async addBodyPhotos(files: File[]): Promise<void> {
+    if (!files.length) {
+      this.bodyPhotoError.set('That is not a photo. Choose a JPEG, PNG, WebP or GIF file.');
+      return;
+    }
+    this.bodyPhotoError.set('');
+    for (const file of files) {
+      this.bodyUploads.update((count) => count + 1);
+      try {
+        this.insertPhoto(await this.photos.upload(file));
+      } catch (error) {
+        this.bodyPhotoError.set(error instanceof Error && !(error instanceof ApiError) ? error.message : ApiError.from(error).message);
+      } finally {
+        this.bodyUploads.update((count) => count - 1);
+      }
+    }
+  }
+
+  private insertPhoto(photo: UploadedPhoto): void {
+    const control = this.form.controls.bodyHtml;
+    const field = this.bodyField()?.nativeElement;
+    const text = control.value;
+    const at = field ? field.selectionEnd : text.length;
+    const before = text.slice(0, at);
+    const lead = before && !before.endsWith('\n') ? '\n' : '';
+    const figure = `${lead}<figure>\n  <img src="${photo.url}" alt="${DESCRIBE}" width="${photo.width}" height="${photo.height}" />\n</figure>\n`;
+    control.setValue(before + figure + text.slice(at));
+    control.markAsDirty();
+    if (field) {
+      const start = before.length + figure.indexOf(DESCRIBE);
+      field.focus();
+      field.setSelectionRange(start, start + DESCRIBE.length);
+    }
   }
 
   protected warnIfUnsaved(event: BeforeUnloadEvent): void {
@@ -224,5 +313,7 @@ export class ArticleEditorPage {
       },
       { emitEvent: false },
     );
+    this.cover.set(article.coverImageUrl ?? '');
+    this.body.set(article.bodyHtml);
   }
 }

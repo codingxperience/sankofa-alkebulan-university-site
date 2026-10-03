@@ -76,17 +76,39 @@
           <div class="sc-field">
             <div class="ae-body-head">
               <label class="sc-label" for="ae-body">Body <small>HTML: paragraphs, headings, lists, links, quotes and images</small></label>
-              <div class="sc-segments" role="group" aria-label="Body view">
-                <button type="button" class="sc-segment" [attr.aria-pressed]="!preview()" (click)="preview.set(false)">Write</button>
-                <button type="button" class="sc-segment" [attr.aria-pressed]="preview()" (click)="preview.set(true)">Preview</button>
+              <div class="ae-body-tools">
+                @if (!preview() && canManage()) {
+                  <button type="button" class="sc-btn sc-btn--small" [class.is-busy]="bodyUploads() > 0" [disabled]="bodyUploads() > 0"
+                    (click)="bodyPicker.click()">
+                    <i class="pi pi-image" aria-hidden="true"></i>Add photo
+                  </button>
+                  <input #bodyPicker type="file" accept="image/*" multiple hidden (change)="bodyChosen($event)"
+                    aria-label="Choose photos to add to the article" />
+                }
+                <div class="sc-segments" role="group" aria-label="Body view">
+                  <button type="button" class="sc-segment" [attr.aria-pressed]="!preview()" (click)="preview.set(false)">Write</button>
+                  <button type="button" class="sc-segment" [attr.aria-pressed]="preview()" (click)="preview.set(true)">Preview</button>
+                </div>
               </div>
             </div>
             @if (preview()) {
               <div class="sc-prose" [innerHTML]="form.controls.bodyHtml.value"></div>
               <span class="sc-hint">Scripts, styles and unknown tags are removed when the article is saved.</span>
             } @else {
-              <textarea id="ae-body" class="sc-textarea sc-textarea--code" formControlName="bodyHtml" spellcheck="true"
-                [attr.aria-invalid]="!!fields()['bodyHtml']"></textarea>
+              <textarea #bodyField id="ae-body" class="sc-textarea sc-textarea--code" formControlName="bodyHtml" spellcheck="true"
+                [class.is-drop-target]="bodyOver()" [attr.aria-invalid]="!!fields()['bodyHtml']" aria-describedby="ae-body-photos"
+                (dragover)="bodyDragOver($event)" (dragleave)="bodyOver.set(false)" (drop)="bodyDrop($event)" (paste)="bodyPaste($event)"></textarea>
+              <span id="ae-body-photos" class="sc-hint" role="status" aria-live="polite">
+                @if (bodyUploads() > 0) {
+                  Uploading {{ bodyUploads() === 1 ? 'a photo' : bodyUploads() + ' photos' }}…
+                } @else if (bodyPhotoError()) {
+                  <span class="sc-error">{{ bodyPhotoError() }}</span>
+                } @else if (undescribed()) {
+                  Replace each “Describe the photo” with a few words about that photo, for readers who use screen readers.
+                } @else if (canManage()) {
+                  Drag photos into the text, paste them, or use Add photo. Each goes in where the cursor is.
+                }
+              </span>
             }
             @if (fields()['bodyHtml']; as message) {
               <span class="sc-error">{{ message }}</span>
@@ -140,14 +162,17 @@
               <input id="ae-tags" class="sc-input" formControlName="tags" placeholder="ubuntu, archives" />
             </div>
             <div class="sc-field">
-              <label class="sc-label" for="ae-cover">Cover image <small>site path or https:// address</small></label>
-              <input id="ae-cover" class="sc-input sc-mono" formControlName="coverImageUrl" spellcheck="false"
-                placeholder="/assets/journal/cover.jpg" [attr.aria-invalid]="!!fields()['coverImageUrl']" />
+              <span class="sc-label">Cover image</span>
+              <sc-photo-drop label="Cover image" [url]="cover()" [disabled]="!canManage()" (uploaded)="setCover($event)"
+                (removed)="setCover('')" />
+              <details class="ae-address" [open]="!!fields()['coverImageUrl']">
+                <summary>Or use an address</summary>
+                <label class="visually-hidden" for="ae-cover">Cover image address</label>
+                <input id="ae-cover" class="sc-input sc-mono" formControlName="coverImageUrl" spellcheck="false"
+                  placeholder="/assets/journal/cover.jpg or https://…" [attr.aria-invalid]="!!fields()['coverImageUrl']" />
+              </details>
               @if (fields()['coverImageUrl']; as message) {
                 <span class="sc-error">{{ message }}</span>
-              }
-              @if (article()?.coverImageUrl; as cover) {
-                <img class="ae-cover" [src]="cover" alt="Current cover image" loading="lazy" />
               }
             </div>
           </div>
