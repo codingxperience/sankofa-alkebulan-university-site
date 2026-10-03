@@ -1109,6 +1109,8 @@ export class HeaderComponent implements OnInit {
     { label: 'Academics', path: '/academics', kind: 'academics' },
     { label: 'Admissions', path: '/admissions' },
     { label: 'Research', path: '/research-innovation' },
+    // Shown, but not linked, until the digital campus opens.
+    { label: 'Digital Campus', path: '/digital-learning', disabled: true },
     { label: 'Student Life', path: '/student-life' },
     { label: 'Library', path: '/library-repository' },
     { label: 'Store', path: '/store' },
