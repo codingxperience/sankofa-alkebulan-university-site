@@ -34,6 +34,10 @@ export class ConsoleApi {
     return this.guard(this.api.delete<T>(`/admin${path}`));
   }
 
+  upload<T>(path: string, file: Blob, headers?: Record<string, string>): Promise<T> {
+    return this.guard(this.api.upload<T>(`/admin${path}`, file, headers));
+  }
+
   /** A link the browser downloads itself; the session cookie travels with it. */
   url(path: string, query?: Query): string {
     return this.api.url(`/admin${path}`, query);

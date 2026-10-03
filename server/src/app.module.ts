@@ -8,6 +8,7 @@ import { EventsModule } from './events/events.module';
 import { HealthController } from './health/health.controller';
 import { InquiriesModule } from './inquiries/inquiries.module';
 import { JournalModule } from './journal/journal.module';
+import { MediaModule } from './media/media.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MaintenanceController } from './operations/maintenance.controller';
 import { OverviewModule } from './overview/overview.module';
@@ -33,6 +34,7 @@ import { StoreModule } from './store/store.module';
     EventsModule,
     StoreModule,
     JournalModule,
+    MediaModule,
     OverviewModule,
   ],
   controllers: [HealthController, MaintenanceController],

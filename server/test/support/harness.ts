@@ -56,16 +56,17 @@ export class Client {
   ) {}
 
   async request<T = any>(method: string, path: string, body?: unknown, headers: Record<string, string> = {}) {
+    const raw = body instanceof Uint8Array;
     const response = await fetch(`${this.base}${path}`, {
       method,
       headers: {
         'X-Real-IP': this.address,
         ...this.defaults,
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(body !== undefined && !raw ? { 'Content-Type': 'application/json' } : {}),
         ...(this.cookies.size ? { Cookie: [...this.cookies].map(([k, v]) => `${k}=${v}`).join('; ') } : {}),
         ...headers,
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : raw ? body : JSON.stringify(body),
     });
     for (const header of response.headers.getSetCookie()) {
       const [pair] = header.split(';');
@@ -94,6 +95,11 @@ export class Client {
 
   post<T = any>(path: string, body?: unknown, headers?: Record<string, string>) {
     return this.request<T>('POST', path, body ?? {}, headers);
+  }
+
+  /** Sends a file as the request body, the way the console uploads a photo. */
+  upload<T = any>(path: string, bytes: Uint8Array, contentType: string, headers: Record<string, string> = {}) {
+    return this.request<T>('POST', path, bytes, { 'Content-Type': contentType, ...headers });
   }
 
   put<T = any>(path: string, body: unknown) {

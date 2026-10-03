@@ -86,6 +86,7 @@ model StaffMember {
   applicationNotes     ApplicationNote[]
   articlesCreated      Article[]         @relation("ArticleCreatedBy")
   articlesUpdated      Article[]         @relation("ArticleUpdatedBy")
+  mediaUploaded        MediaFile[]
   officeRoutesUpdated  OfficeRoute[]
 
   @@map("staff_members")
@@ -598,6 +599,24 @@ model Article {
   @@index([categories], type: Gin)
   @@index([tags], type: Gin)
   @@map("articles")
+}
+
+/// A photograph uploaded from the console, kept in the database so the site
+/// needs no separate file store. Served at /api/media/{id}; never changed once
+/// stored, so it can be cached for good. Identical uploads share one row.
+model MediaFile {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  contentType  String   @map("content_type")
+  bytes        Bytes
+  byteSize     Int      @map("byte_size")
+  sha256       String   @unique
+  fileName     String?  @map("file_name")
+  uploadedById String?  @map("uploaded_by_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  uploadedBy StaffMember? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@map("media_files")
 }
 
 // ─── Audience ─────────────────────────────────────────────────────────────

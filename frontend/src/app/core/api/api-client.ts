@@ -70,6 +70,13 @@ export class ApiClient {
     return this.send(this.http.delete<T>(this.url(path)));
   }
 
+  /** Sends a file as the request body, exactly as it is, labelled with its own type. */
+  upload<T>(path: string, file: Blob, headers?: Record<string, string>): Promise<T> {
+    return this.send(
+      this.http.post<T>(this.url(path), file, { headers: new HttpHeaders({ 'Content-Type': file.type, ...headers }) }),
+    );
+  }
+
   /** Absolute path for links the browser follows itself, such as CSV downloads. */
   url(path: string, query?: Query): string {
     const base = `/api${path.startsWith('/') ? path : `/${path}`}`;

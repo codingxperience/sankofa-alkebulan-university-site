@@ -62,11 +62,32 @@
   flex-basis: 100%;
 }
 
-.ae-cover {
-  width: 100%;
-  max-height: 180px;
-  margin-top: 8px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid var(--sc-line);
+.ae-body-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sc-textarea.is-drop-target {
+  border-color: var(--sc-gold-bright);
+  border-style: dashed;
+  background: var(--sc-gold-soft);
+}
+
+.ae-address {
+  font-size: 13px;
+
+  summary {
+    width: fit-content;
+    color: var(--sc-ink-3);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--sc-ink-2);
+    }
+  }
+
+  .sc-input {
+    margin-top: 8px;
+  }
 }

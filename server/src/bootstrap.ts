@@ -82,11 +82,19 @@ export async function createApp(): Promise<{ app: NestExpressApplication; server
 
   // 4. Bodies: JSON only, small, strict. Parser failures become API errors
   //    here, before Nest would flatten them into a generic 400.
+  //    The one exception: a photo uploaded from the console arrives as the raw
+  //    file. Its route checks what the bytes really are before keeping them.
+  server.use(
+    '/api/admin/media',
+    express.raw({ limit: '4mb', type: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] }),
+  );
   server.use(express.json({ limit: '128kb', strict: true, type: ['application/json'] }));
-  server.use((error: unknown, _req: Request, _res: Response, next: NextFunction) => {
+  server.use((error: unknown, req: Request, _res: Response, next: NextFunction) => {
     const type = (error as { type?: unknown } | null)?.type;
     if (type === 'entity.parse.failed') {
       next(new ApiError(HttpStatus.BAD_REQUEST, 'invalid_json', 'The request body is not valid JSON.'));
+    } else if (type === 'entity.too.large' && req.path.startsWith('/api/admin/media')) {
+      next(new ApiError(HttpStatus.PAYLOAD_TOO_LARGE, 'file_too_large', 'That photo is larger than 4 MB.'));
     } else if (type === 'entity.too.large') {
       next(new ApiError(HttpStatus.PAYLOAD_TOO_LARGE, 'payload_too_large', 'That request is too large.'));
     } else {

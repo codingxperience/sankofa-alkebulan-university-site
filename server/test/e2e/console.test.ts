@@ -87,6 +87,41 @@ describe('console behaviour', () => {
     }
   });
 
+  it('keeps an uploaded photo once and serves it to anyone, cached for good', async () => {
+    const editor = await signedInStaff(api.prisma, api.url, 'photos@example.org', ['COMMUNICATIONS']);
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
+
+    const uploaded = await editor.upload('/admin/media', png, 'image/png', { 'X-File-Name': encodeURIComponent('cover photo.png') });
+    assert.equal(uploaded.status, 201);
+    assert.match(uploaded.data.url, /^\/api\/media\/[0-9a-f-]{36}$/);
+    assert.equal(uploaded.data.contentType, 'image/png');
+
+    const again = await editor.upload('/admin/media', png, 'image/png');
+    assert.equal(again.data.id, uploaded.data.id, 'the same bytes are stored once');
+    assert.equal(await api.prisma.auditEvent.count({ where: { action: 'media.uploaded' } }), 1);
+
+    const served = await fetch(`${api.url}${uploaded.data.url.replace(/^\/api/, '')}`);
+    assert.equal(served.status, 200);
+    assert.equal(served.headers.get('content-type'), 'image/png');
+    assert.match(served.headers.get('cache-control') ?? '', /immutable/);
+    assert.deepEqual(Buffer.from(await served.arrayBuffer()), png);
+    assert.equal((await new Client(api.url).get('/media/0190a5b0-0000-7000-8000-000000000000')).status, 404);
+  });
+
+  it('refuses uploads that are not photos, or from people who cannot edit the journal', async () => {
+    const editor = await signedInStaff(api.prisma, api.url, 'editor2@example.org', ['COMMUNICATIONS']);
+    const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>');
+    const disguised = await editor.upload('/admin/media', svg, 'image/png');
+    assert.equal(disguised.status, 422);
+    assert.equal(disguised.data.error.code, 'unsupported_image');
+    assert.equal((await editor.post('/admin/media', { photo: 'not a file' })).status, 400);
+
+    const viewer = await signedInStaff(api.prisma, api.url, 'viewer2@example.org', ['VIEWER']);
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
+    assert.equal((await viewer.upload('/admin/media', png, 'image/png')).status, 403);
+    assert.equal(await api.prisma.mediaFile.count(), 0);
+  });
+
   it('writes a fresh excerpt when an editor empties it', async () => {
     const editor = await signedInStaff(api.prisma, api.url, 'editor@example.org', ['COMMUNICATIONS']);
     const body = `<p>${'Memory is a discipline as much as a gift. '.repeat(12)}</p>`;
