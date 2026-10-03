@@ -89,29 +89,17 @@ export class AboutPageComponent implements AfterViewInit {
     {
       num: '02',
       h: 'Board of Governance',
-      p: 'The highest supervisory authority of the university. Approves major policy, oversees financial stewardship, and ensures compliance with legal and ethical standards.',
+      p: 'The highest supervisory authority of the university, with advisory members among it. Approves major policy, oversees financial stewardship, and ensures compliance with legal and ethical standards.',
       role: 'Supervisory authority',
     },
     {
       num: '03',
-      h: 'Advisory Council',
-      p: 'Distinguished scholars, intellectuals, and policy experts who provide independent counsel on academic direction, international collaboration, and strategic planning.',
-      role: 'Advisory body',
-    },
-    {
-      num: '04',
-      h: 'University Council',
-      p: 'The central governing body responsible for institutional administration. Translates strategic direction into operational frameworks across the university.',
-      role: 'Governing body',
-    },
-    {
-      num: '05',
       h: 'Academic Senate',
       p: 'The highest authority on academic matters. Approves programmes and curricula, sets research priorities, and maintains academic quality and freedom.',
       role: 'Academic authority',
     },
     {
-      num: '06',
+      num: '04',
       h: 'Executive Directors',
       p: 'The senior administrative leadership responsible for implementing policies and managing operations across research, academic affairs, and institutional development.',
       role: 'Executive leadership',
@@ -181,10 +169,6 @@ export class AboutPageComponent implements AfterViewInit {
         return '/about/executive-team';
       case 'board':
         return '/about/board-of-governance';
-      case 'advisory':
-        return '/about/advisory-council';
-      case 'research-scholarly':
-        return '/about/research-scholarly-team';
       default:
         return '/about';
     }
@@ -196,10 +180,6 @@ export class AboutPageComponent implements AfterViewInit {
         return 'fa-compass-drafting';
       case 'board':
         return 'fa-building-shield';
-      case 'advisory':
-        return 'fa-people-arrows';
-      case 'research-scholarly':
-        return 'fa-book-open-reader';
       default:
         return 'fa-users';
     }
@@ -210,11 +190,7 @@ export class AboutPageComponent implements AfterViewInit {
       case 'executive':
         return 'Operational leadership across finance and planning, academic affairs, administration, and global partnerships.';
       case 'board':
-        return 'Supervisory stewardship for institutional authority, compliance, and long-range stability.';
-      case 'advisory':
-        return 'Independent counsel strengthening academic direction, partnerships, and public judgement.';
-      case 'research-scholarly':
-        return 'Scholarly contributors supporting inquiry, documentation, and knowledge-system formation.';
+        return 'Supervisory stewardship and advisory counsel for institutional authority, compliance, and long-range stability.';
       default:
         return 'Leadership directory.';
     }

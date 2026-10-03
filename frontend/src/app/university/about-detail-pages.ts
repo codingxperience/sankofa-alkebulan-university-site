@@ -30,7 +30,6 @@ export interface AboutDetailPage {
 export const ABOUT_SECTION_LINKS: readonly AboutNavLink[] = [
   { label: 'History of Sankofa', path: '/about/history-of-sankofa' },
   { label: 'Governance Structure', path: '/about/governance-structure' },
-  { label: 'University Council', path: '/about/university-council' },
   { label: 'Academic Senate', path: '/about/academic-senate' },
 ] as const;
 
@@ -72,9 +71,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     ],
     highlights: [
       'Founder and Chancellor',
-      'Board of Governance',
-      'Advisory Council',
-      'University Council',
+      'Board of Governance, with its advisory members',
       'Academic Senate',
       'Executive Directors and Academic Offices',
     ],
@@ -101,6 +98,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
           'Prof. Leslee Anne and Prof. Joseph - Advisory',
           'Dr. Jude Ahimbisimbwe - Board Member',
           'Prof. Yusuf Mubiru Kisekwa - Assistant Vice President',
+          'Obi Onyeigwe - Advisory',
         ],
       },
     ],
@@ -125,22 +123,6 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
         heading: 'Current Office Holder',
         items: ['Diana Kaija - Founder', 'Emmanuel Mihiingo Kaija - Founder and Chancellor'],
       },
-    ],
-  },
-  {
-    slug: 'university-council',
-    title: 'University Council',
-    summary: 'The central governing body responsible for administration, institutional planning, and policy implementation.',
-    intro: [
-      'The University Council serves as the central governing body responsible for institutional administration and policy implementation.',
-      'It translates the strategic direction established by the Board of Governance into operational frameworks that guide the University\'s activities.',
-      'The Council supervises planning, coordinates major administrative units, and ensures that the University functions effectively in accordance with its statutes.',
-    ],
-    highlights: [
-      'Implements institutional policy',
-      'Coordinates planning and operational oversight',
-      'Aligns administration with the Charter and Statutes',
-      'Supports accountability, performance, and compliance',
     ],
   },
   {
@@ -174,7 +156,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     summary: 'Senior administrative leadership responsible for implementation, operations, and institutional delivery.',
     intro: [
       'Executive Directors constitute the senior administrative leadership responsible for implementing institutional policies and managing operational activities.',
-      'The executive team is led by Deputy Vice Chancellors for finance and planning, academic affairs, and administration, alongside the office for global engagement and strategic partnerships.',
+      'The executive team is led by Deputy Vice Chancellors for global engagement and strategic partnerships, finance and planning, academic affairs, and administration.',
       'They ensure that University strategy is translated into practical programs and systems that advance Sankofa\'s mission.',
     ],
     highlights: [
@@ -187,10 +169,13 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
       {
         heading: 'Current Executive Team',
         items: [
-          'Prof. Gumaritahigwa Bongobingiman Ruhinda - Global Engagement and Strategic Partnerships',
+          'Prof. Gumaritahigwa Bongobingiman Ruhinda - Deputy Vice Chancellor, Global Engagement and Strategic Partnerships',
           'Mr. Masabe Michael Jackson - Deputy Vice Chancellor, Finance and Planning',
           'Musanjufu Benjamin Kavubu - Deputy Vice Chancellor, Academic Affairs',
           'Musemeza Jonah - Deputy Vice Chancellor, Administration',
+          'Maguru Zagyenda - Executive Team',
+          'Alice Frimpong Sarkodie - Executive Team',
+          'Am. Mukashema Winnie - Executive Team',
         ],
       },
     ],
@@ -306,7 +291,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
         heading: '6. Governance Structure',
         groups: [
           {
-            heading: '6.1 University Council (Supreme Authority)',
+            heading: '6.1 Board of Governance (Supreme Authority)',
             paragraphs: ['Mandate:', 'Powers:'],
             items: [
               'Institutional governance and oversight',
@@ -495,7 +480,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
         heading: '17. Amendment of the Charter',
         paragraphs: ['This Charter may be amended by:'],
         items: [
-          'University Council',
+          'Board of Governance',
           'Upon recommendation of Senate',
           'In compliance with national regulatory requirements',
         ],
@@ -524,7 +509,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
     summary: 'The principal legal advisory and oversight body of the University.',
     intro: [
       'The Law Council ensures that Sankofa Alkebulan University operates within the law, maintains compliance with national and international regulations, and upholds the highest standards of governance and institutional integrity.',
-      'It works closely with the Board, Chancellor, and University Council so that institutional decisions remain legally sound, ethically guided, and mission aligned.',
+      'It works closely with the Board of Governance and the Chancellor so that institutional decisions remain legally sound, ethically guided, and mission aligned.',
     ],
     highlights: [
       'Legal oversight of statutes and governance frameworks',

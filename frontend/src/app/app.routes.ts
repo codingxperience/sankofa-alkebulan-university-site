@@ -122,8 +122,11 @@ export const routes: Routes = [
       { path: 'about', component: AboutPageComponent },
       { path: 'about/executive-team', component: TeamCategoryPageComponent, data: { categoryId: 'executive' } },
       { path: 'about/board-of-governance', component: TeamCategoryPageComponent, data: { categoryId: 'board' } },
-      { path: 'about/advisory-council', component: TeamCategoryPageComponent, data: { categoryId: 'advisory' } },
-      { path: 'about/research-scholarly-team', component: TeamCategoryPageComponent, data: { categoryId: 'research-scholarly' } },
+      // The Advisory Council sits within the Board of Governance, the University Council is the Board by another
+      // name, and the Research & Scholarly Team works under the Deputy Vice Chancellor for Research and Innovation.
+      { path: 'about/advisory-council', redirectTo: '/about/board-of-governance', pathMatch: 'full' },
+      { path: 'about/university-council', redirectTo: '/about/board-of-governance', pathMatch: 'full' },
+      { path: 'about/research-scholarly-team', redirectTo: '/about/executive-team', pathMatch: 'full' },
       { path: 'about/team/:slug', component: TeamProfilePageComponent },
       { path: 'about/:slug', component: AboutDetailPageComponent },
       { path: 'academics', component: AcademicsPageComponent },

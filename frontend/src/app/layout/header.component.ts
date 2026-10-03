@@ -1109,7 +1109,6 @@ export class HeaderComponent implements OnInit {
     { label: 'Academics', path: '/academics', kind: 'academics' },
     { label: 'Admissions', path: '/admissions' },
     { label: 'Research', path: '/research-innovation' },
-    { label: 'Digital Campus', path: '/digital-learning' },
     { label: 'Student Life', path: '/student-life' },
     { label: 'Library', path: '/library-repository' },
     { label: 'Store', path: '/store' },
@@ -1152,11 +1151,6 @@ export class HeaderComponent implements OnInit {
       description: 'How authority and accountability are organized.',
     },
     {
-      label: 'University Council',
-      path: '/about/university-council',
-      description: 'Administration, planning, and policy implementation.',
-    },
-    {
       label: 'Academic Senate',
       path: '/about/academic-senate',
       description: 'Academic standards, curricula, research, and quality assurance.',
@@ -1170,16 +1164,6 @@ export class HeaderComponent implements OnInit {
       label: 'Board of Governance',
       path: '/about/board-of-governance',
       description: 'Supervisory stewardship and institutional authority.',
-    },
-    {
-      label: 'Advisory Council',
-      path: '/about/advisory-council',
-      description: 'Independent counsel for scholarship and public direction.',
-    },
-    {
-      label: 'Research & Scholarly Team',
-      path: '/about/research-scholarly-team',
-      description: 'Contributors supporting inquiry and knowledge formation.',
     },
     {
       label: 'University Policies',

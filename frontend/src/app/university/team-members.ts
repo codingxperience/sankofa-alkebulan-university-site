@@ -42,16 +42,6 @@ export const TEAM_CATEGORIES: readonly TeamCategory[] = [
     anchor: 'board-governance-team',
     label: 'Board of Governance',
   },
-  {
-    id: 'advisory',
-    anchor: 'advisory-council-team',
-    label: 'Advisory Council',
-  },
-  {
-    id: 'research-scholarly',
-    anchor: 'research-scholarly-team',
-    label: 'Research & Scholarly Team',
-  },
 ] as const;
 
 export const TEAM_MEMBERS: readonly TeamMember[] = [
@@ -86,12 +76,12 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
   {
     slug: 'prof-gumaritahigwa-bongobingiman-ruhinda',
     name: 'Prof. Gumaritahigwa Bongobingiman Ruhinda',
-    role: 'Global Engagement and Strategic Partnerships',
+    role: 'Deputy Vice Chancellor, Global Engagement and Strategic Partnerships',
     image: '/assets/team/prof-gumaritahigwa-bongobingiman-ruhinda.jpeg',
     categories: ['executive'],
-    summary: 'Leads the University\'s global engagement and strategic partnerships.',
+    summary: 'Deputy Vice Chancellor leading the University\'s global engagement and strategic partnerships.',
     profile: [
-      'Leads Sankofa\'s global engagement and strategic partnerships, building the institutional, international, and community relationships that carry the University\'s academic and cultural mission beyond its campus.',
+      'As Deputy Vice Chancellor, leads Sankofa\'s global engagement and strategic partnerships, building the institutional, international, and community relationships that carry the University\'s academic and cultural mission beyond its campus.',
     ],
     objectPosition: '50% 24%',
   },
@@ -132,6 +122,45 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
     objectPosition: '50% 10%',
   },
   {
+    slug: 'maguru-zagyenda',
+    name: 'Maguru Zagyenda',
+    role: 'Executive Team',
+    image: '/assets/team/maguru-zagyenda.jpeg',
+    categories: ['executive'],
+    summary: 'Executive team member supporting institutional operations, public coordination, and implementation readiness.',
+    profile: [
+      'Supports Sankofa Alkebulan University through executive coordination, operational follow-through, and the disciplined implementation needed for an emerging university system.',
+    ],
+    objectPosition: '50% 24%',
+  },
+  {
+    slug: 'alice-frimpong-sarkodie',
+    name: 'Alice Frimpong Sarkodie',
+    role: 'Executive Team',
+    image: '/assets/team/alice-frimpong-sarkodie.jpeg',
+    categories: ['executive'],
+    summary: 'Executive team member advancing institutional presence, coordination, and engagement.',
+    profile: [
+      'Contributes to Sankofa\'s executive work through brand presence, engagement, and the disciplined coordination needed to move an emerging university from vision to operating reality.',
+    ],
+    objectPosition: '50% 22%',
+  },
+  {
+    slug: 'mukashema-winnie',
+    name: 'Am. Mukashema Winnie',
+    role: 'Executive Team',
+    image: '/assets/team/mukashema-winnie.jpeg',
+    categories: ['executive'],
+    summary: 'Executive team member supporting academic coordination and knowledge development.',
+    profile: [
+      'Supports Sankofa\'s executive work through academic coordination, knowledge development, and contributor engagement.',
+    ],
+    contacts: [
+      { label: 'Email', value: 'mukashemawinnie69@gmail.com', href: 'mailto:mukashemawinnie69@gmail.com' },
+    ],
+    objectPosition: '50% 24%',
+  },
+  {
     slug: 'prof-mutabazi-mugisha',
     name: 'Prof. Mutabazi Mugisha',
     role: 'Board of Governance',
@@ -148,7 +177,7 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
     name: 'Prof. Leslee Anne and Prof. Joseph',
     role: 'Board of Governance (Advisory)',
     image: '/assets/team/prof-lessee-and-joseph.jpeg',
-    categories: ['board', 'advisory'],
+    categories: ['board'],
     summary: 'Advisory members of the Board of Governance, bringing academic perspective and partnership wisdom.',
     profile: [
       'Serve in an advisory capacity on the Board of Governance, strengthening Sankofa\'s academic direction, partnership culture, and international scholarly relationships.',
@@ -182,54 +211,15 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
   {
     slug: 'obi-onyeigwe',
     name: 'Obi Onyeigwe',
-    role: 'Advisory Council',
+    role: 'Board of Governance (Advisory)',
     image: '/assets/team/obi-onyeigwe.jpeg',
-    categories: ['advisory'],
+    categories: ['board'],
     summary: 'Peacebuilder, development practitioner, and researcher working across policy, youth leadership, gender justice, and community resilience.',
     profile: [
       'Obi Onyeigwe is a devoted African, multidisciplinary peacebuilder, development practitioner, and researcher committed to advancing peace, social justice, and inclusive development across Africa.',
       'He works at the intersection of research, policy, and grassroots transformation, with experience spanning youth leadership, interfaith dialogue, governance, public health advocacy, gender justice, and community resilience.',
       'He is Co-Founder and leader of Youths for Peacebuilding & Development in Africa (YOUPEDA), a youth-driven organization focused on peacebuilding, conflict prevention, youth empowerment, women\'s leadership, and innovative responses to emerging social challenges.',
       'His intellectual interests center on how African-led solutions, youth innovation, and local languages can transform education, research, leadership, and scientific breakthroughs.',
-    ],
-    objectPosition: '50% 24%',
-  },
-  {
-    slug: 'mukashema-winnie',
-    name: 'Am. Mukashema Winnie',
-    role: 'Research & Scholarly Team',
-    image: '/assets/team/mukashema-winnie.jpeg',
-    categories: ['research-scholarly'],
-    summary: 'Research and scholarly team member supporting academic coordination and knowledge development.',
-    profile: [
-      'Supports Sankofa\'s research and scholarly work through academic coordination, knowledge development, and contributor engagement.',
-    ],
-    contacts: [
-      { label: 'Email', value: 'mukashemawinnie69@gmail.com', href: 'mailto:mukashemawinnie69@gmail.com' },
-    ],
-    objectPosition: '50% 24%',
-  },
-  {
-    slug: 'chinaza-ekeoma',
-    name: 'Chinaza Ekeoma',
-    role: 'Research & Scholarly Team',
-    image: '/assets/team/chinaza-ekeoma.jpeg',
-    categories: ['research-scholarly'],
-    summary: 'Research and scholarly team member supporting inquiry, documentation, and institutional knowledge work.',
-    profile: [
-      'Supports Sankofa\'s research culture through inquiry, documentation, and the careful development of institutional scholarly records.',
-    ],
-    objectPosition: '50% 24%',
-  },
-  {
-    slug: 'kabala-hardpiece',
-    name: 'Kabala Hardpiece',
-    role: 'Research & Scholarly Team',
-    image: '/assets/team/kabala-hardpiece.jpeg',
-    categories: ['research-scholarly'],
-    summary: 'Research and scholarly team member supporting academic inquiry, documentation, and knowledge-system development.',
-    profile: [
-      'Supports Sankofa\'s research and scholarly formation through inquiry, academic documentation, and the careful development of African-centered knowledge systems.',
     ],
     objectPosition: '50% 24%',
   },

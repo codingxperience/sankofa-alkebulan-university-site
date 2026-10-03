@@ -28,10 +28,6 @@ export class TeamProfilePageComponent {
         return { label: 'Back to Executive Team', path: '/about/executive-team', fragment: null };
       case 'board':
         return { label: 'Back to Board of Governance', path: '/about/board-of-governance', fragment: null };
-      case 'advisory':
-        return { label: 'Back to Advisory Council', path: '/about/advisory-council', fragment: null };
-      case 'research-scholarly':
-        return { label: 'Back to Research & Scholarly Team', path: '/about/research-scholarly-team', fragment: null };
       default:
         return { label: 'Back to Founders & Chancellor', path: '/about', fragment: 'leadership' };
     }
