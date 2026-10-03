@@ -1,187 +1,167 @@
 <div class="cv-shell">
-  <section class="cv-hero">
-    <div class="cv-hero__dots" aria-hidden="true"></div>
-    <div class="cv-hero__topline" aria-hidden="true"></div>
-    <div class="cv-container cv-hero__grid">
-      <div class="cv-hero__copy">
-        <span class="cv-eyebrow"
-          ><span class="dash" aria-hidden="true"></span>Sankofa Alkebulan University &mdash; public
-          launch event</span
-        >
-        <h1>The Sankofa<br />Convening 2026</h1>
-        <p class="cv-hero__lead">
-          The university launches its two flagship programmes: the Chancellor&rsquo;s founding
-          keynote, and a mini-conference on cultural identity, indigenous knowledge, and
-          intellectual cooperation. <strong>Free and open to all</strong> &mdash; in Kampala and
+  <!-- Theme -->
+  <section class="cv-hero" aria-labelledby="cv-theme">
+    <div class="cv-hero__inner">
+      <p class="cv-hero__edition">The Sankofa Convening 2026</p>
+      <h1 id="cv-theme">Theme: Cultural Identity, Indigenous Knowledge and Intellectual Cooperation</h1>
+      <div class="cv-hero__actions">
+        @if (ended) {
+          <a [href]="'mailto:' + email" class="cv-btn cv-btn--solid"
+            >Contact the convening desk<i class="fa-regular fa-envelope" aria-hidden="true"></i
+          ></a>
+          <a routerLink="/about" class="cv-btn cv-btn--outline"
+            >About the university<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+          ></a>
+        } @else {
+          <a routerLink="/convening/register" class="cv-btn cv-btn--solid"
+            >Register free<i class="fa-regular fa-pen-to-square" aria-hidden="true"></i
+          ></a>
+          <a [href]="zoomLink" target="_blank" rel="noopener" class="cv-btn cv-btn--outline"
+            >Join on Zoom<i class="fa-solid fa-video" aria-hidden="true"></i
+          ></a>
+        }
+      </div>
+      <p class="cv-hero__meta">
+        <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Speke Resort, Munyonyo, Kampala, Uganda</span>
+        <span class="cv-hero__rule" aria-hidden="true"></span>
+        <span><i class="fa-regular fa-calendar" aria-hidden="true"></i>14th &ndash; 15th August 2026 &middot; and on Zoom</span>
+      </p>
+      @if (ended) {
+        <p class="cv-hero__held">The 2026 Convening has taken place. Details of the next one will be published here.</p>
+      }
+    </div>
+  </section>
+
+  <!-- Background -->
+  <section class="cv-section" aria-labelledby="cv-background">
+    <div class="cv-container cv-background">
+      <div class="cv-background__copy">
+        <h2 id="cv-background">Convening 2026 Background</h2>
+        <p>
+          Sankofa Alkebulan University is founded on the Akan principle of Sankofa &mdash; to go back and
+          retrieve what has been lost &mdash; as a method for building a stronger and more enlightened future.
+          The Sankofa Convening is where the university first opens that work to the public. In 2026 it
+          launches two flagship programmes: the Chancellor&rsquo;s founding keynote, which sets out the
+          university&rsquo;s vision, mission and academic philosophy and its strategic role in advancing
+          African civilisational studies; and a mini-conference on practical pathways for strengthening
+          cultural identity, indigenous knowledge and intellectual cooperation &mdash; across institutions,
+          borders and generations. The Convening is free and open to all, at Speke Resort, Munyonyo, and
           online.
         </p>
-        <div class="cv-hero__meta">
-          <span class="cv-datepill"
-            ><i class="fa-regular fa-calendar" aria-hidden="true"></i>Fri 14 &ndash; Sat 15 August
-            2026 &middot; 5:00 PM EAT · 10:00 AM EDT</span
-          >
-          <span class="cv-place"
-            ><i class="fa-solid fa-location-dot" aria-hidden="true" style="color: #b35c2a"></i>Speke
-            Resort, Munyonyo &mdash; Kampala&nbsp;&nbsp;<span class="sep">&middot;</span
-            >&nbsp;&nbsp;<i class="fa-solid fa-video" aria-hidden="true" style="color: #0f4c81"></i
-            >Live on Zoom</span
-          >
-        </div>
-        <div class="cv-hero__actions">
-          <a routerLink="/convening/register" class="cv-btn cv-btn--dark"
-            >Register free<span aria-hidden="true">&rarr;</span></a
-          >
-          <a [href]="zoomLink" target="_blank" rel="noopener" class="cv-btn cv-btn--ghost cv-btn--zoom"
-            ><i class="fa-solid fa-video" aria-hidden="true"></i>Join on Zoom</a
-          >
-          <a [href]="whatsapp" target="_blank" rel="noopener" class="cv-btn cv-btn--ghost cv-btn--wa"
-            ><i class="fa-brands fa-whatsapp" aria-hidden="true"></i>WhatsApp us</a
-          >
-        </div>
-        <span class="cv-hero__fine"
-          >No ticket needed &middot; RSVP takes two minutes &middot; All are welcome</span
-        >
+        <a routerLink="/about" class="cv-btn cv-btn--solid cv-btn--small"
+          >Learn more<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+        ></a>
       </div>
-      <div class="cv-hero__speaker">
-        <div class="cv-arch">
-          <div class="cv-arch__frame">
-            <img
-              src="assets/event/founder.jpg"
-              alt="Emmanuel Mihiingo Kaija, Founder and Chancellor"
-            />
-          </div>
-          <span class="cv-arch__badge">Keynote speaker</span>
-        </div>
-        <div class="cv-speaker__name">
-          <strong>Emmanuel Mihiingo Kaija</strong>
-          <span>Founder &amp; Chancellor</span>
-        </div>
-      </div>
+      <figure class="cv-background__figure">
+        <img src="assets/event/founder.jpg" alt="Emmanuel Mihiingo Kaija, Founder and Chancellor" />
+        <figcaption><strong>Keynote speaker</strong> Emmanuel Mihiingo Kaija, Founder &amp; Chancellor</figcaption>
+      </figure>
     </div>
   </section>
 
-  <section class="cv-section">
+  <!-- Dates -->
+  <section class="cv-dates" aria-labelledby="cv-dates-title">
     <div class="cv-container">
-      <div class="cv-head">
-        <span class="cv-label">What is being launched</span>
-        <h2>Two flagship programmes. Two days. One purpose.</h2>
-      </div>
-      <div class="cv-days">
-        <article class="cv-day cv-day--gold">
-          <div class="cv-day__top">
-            <span class="tag">Programme 01 &mdash; Keynote</span>
-            <span class="when">Fri 14 Aug &middot; 5:00 PM EAT · 10:00 AM EDT</span>
-          </div>
-          <h3>The founding keynote: vision, mission &amp; academic philosophy</h3>
-          <p>
-            Emmanuel Mihiingo Kaija, Founder &amp; Chancellor, sets out the university&rsquo;s
-            vision, mission, and academic philosophy &mdash; and its strategic role in advancing
-            African civilisational studies.
-          </p>
-          <div class="cv-day__foot">
-            <span
-              ><i class="fa-solid fa-location-dot" aria-hidden="true" style="color: #b35c2a"></i
-              >Speke Resort, Munyonyo</span
-            >
-            <span
-              ><i class="fa-solid fa-video" aria-hidden="true" style="color: #0f4c81"></i>Streamed
-              live on Zoom</span
-            >
-          </div>
-        </article>
-        <article class="cv-day cv-day--blue">
-          <div class="cv-day__top">
-            <span class="tag">Programme 02 &mdash; Mini-conference</span>
-            <span class="when">Sat 15 Aug &middot; 5:00 PM EAT · 10:00 AM EDT</span>
-          </div>
-          <h3>Pathways for identity, knowledge &amp; cooperation</h3>
-          <p>
-            A working conference on practical pathways for strengthening cultural identity,
-            indigenous knowledge, and intellectual cooperation &mdash; across institutions, borders,
-            and generations.
-          </p>
-          <div class="cv-day__chips">
-            <span>Cultural identity</span><span>Indigenous knowledge</span
-            ><span>Intellectual cooperation</span>
-          </div>
-        </article>
-      </div>
+      <h2 id="cv-dates-title">Important Dates</h2>
+      <table class="cv-dates__table">
+        <thead>
+          <tr>
+            <th scope="col">Scheduled activities</th>
+            <th scope="col">Scheduled dates</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of schedule; track row.activity) {
+            <tr>
+              <td>{{ row.activity }}</td>
+              <td>{{ row.when }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </section>
 
-  <section class="cv-section cv-section--attend">
-    <div class="cv-container">
-      <div class="cv-head">
-        <span class="cv-label">How to take part</span>
-        <h2>Three simple ways in.</h2>
-      </div>
-      <div class="cv-attend">
-        <div class="cv-way">
-          <span class="cv-way__icon cv-way__icon--gold"
-            ><i class="fa-solid fa-location-dot" aria-hidden="true"></i
-          ></span>
-          <h4>Come in person</h4>
-          <p>
-            Speke Resort, Munyonyo &mdash; Kampala, Uganda. Both days begin at 5:00 PM EAT · 10:00 AM
-            EDT. Entry is free; registering helps us seat you.
-          </p>
-        </div>
-        <div class="cv-way">
-          <span class="cv-way__icon cv-way__icon--blue"
-            ><i class="fa-solid fa-video" aria-hidden="true"></i
-          ></span>
-          <h4>Join online</h4>
-          <p>
-            Both programmes stream live on Zoom. One link for both days &mdash; the passcode is built
-            into it.
-          </p>
-          <span class="cv-way__id">Meeting ID: 919 4628 4908</span>
-          <a [href]="zoomLink" target="_blank" rel="noopener" class="cv-way__link"
-            >Open the Zoom link<span aria-hidden="true">&rarr;</span></a
-          >
-        </div>
-        <div class="cv-way">
-          <span class="cv-way__icon cv-way__icon--green"
-            ><i class="fa-regular fa-envelope" aria-hidden="true"></i
-          ></span>
-          <h4>RSVP &amp; questions</h4>
-          <p>Register with the form, or reach the convening desk directly:</p>
-          <a [href]="'mailto:' + email" class="cv-way__link cv-way__link--muted"
-            ><i class="fa-regular fa-envelope" aria-hidden="true" style="color: #8aa0b3"></i
-            >{{ email }}</a
-          >
-          <a [href]="whatsapp" target="_blank" rel="noopener" class="cv-way__link cv-way__link--wa"
-            ><i class="fa-brands fa-whatsapp" aria-hidden="true" style="color: #128c4a"></i>+256 765
-            871 126</a
-          >
-        </div>
-      </div>
-      <div class="cv-audience">
-        <span class="cv-label">Who it is for</span>
-        <div class="chips">
-          @for (a of audience; track a) {
-            <span>{{ a }}</span>
+  <!-- Programmes -->
+  <section class="cv-section" aria-labelledby="cv-programme-title">
+    <div class="cv-container cv-programme">
+      <div>
+        <h2 id="cv-programme-title" class="cv-red">The Sankofa Convening 2026 launches two flagship programmes, open in person and online:</h2>
+        <div class="cv-accordion">
+          @for (item of programme; track item.title; let first = $first) {
+            <details name="cv-programme" [open]="first">
+              <summary>
+                <span>{{ item.title }}</span>
+                <span class="cv-accordion__sign" aria-hidden="true"></span>
+              </summary>
+              <ul>
+                @for (point of item.points; track point) {
+                  <li>{{ point }}</li>
+                }
+              </ul>
+              @if (item.links?.length) {
+                <p class="cv-accordion__links">
+                  @for (link of item.links; track link.href) {
+                    <a [href]="link.href" [attr.target]="link.external ? '_blank' : null" [attr.rel]="link.external ? 'noopener' : null"
+                      >{{ link.label }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+                    ></a>
+                  }
+                </p>
+              }
+            </details>
           }
         </div>
       </div>
+
+      <aside class="cv-notes" aria-label="Notes for attendees">
+        <p>
+          The Convening is <strong>free and open to all</strong>, at Speke Resort, Munyonyo, in Kampala, and live on
+          Zoom for everyone joining from elsewhere.
+        </p>
+        <p class="cv-notes__title">Notes:</p>
+        <ul>
+          @if (ended) {
+            <li>Registration for the 2026 Convening has closed.</li>
+          } @else {
+            <li>No ticket is needed. <a routerLink="/convening/register">Registering</a> takes two minutes and helps us seat you.</li>
+          }
+          <li>Both days begin at 5:00 PM East Africa Time, which is 10:00 AM on the United States East Coast.</li>
+          <li>
+            <strong>Who it is for:</strong>
+            @for (who of audience; track who; let last = $last) {
+              {{ who }}{{ last ? '.' : ', ' }}
+            }
+          </li>
+          <li><a [href]="posterShare" target="_blank" rel="noopener">Share the poster on WhatsApp</a></li>
+        </ul>
+      </aside>
     </div>
   </section>
 
-  <section class="cv-section cv-section--cta">
-    <div class="cv-container">
-      <div class="cv-cta">
-        <div class="cv-cta__topline" aria-hidden="true"></div>
-        <span class="cv-cta__eyebrow">14 &ndash; 15 August 2026 &middot; Kampala &amp; online</span>
-        <h2>Be in the room when the work begins.</h2>
-        <div class="cv-cta__actions">
-          <a routerLink="/convening/register" class="cv-btn cv-btn--gold"
-            >Register free<span aria-hidden="true">&rarr;</span></a
-          >
-          <a [href]="posterShare" target="_blank" rel="noopener" class="cv-btn cv-btn--gold-outline"
-            ><i class="fa-brands fa-whatsapp" aria-hidden="true"></i>Get the shareable poster</a
-          >
+  <!-- News -->
+  @if (news().length) {
+    <section class="cv-news" aria-labelledby="cv-news-title">
+      <div class="cv-container">
+        <h2 id="cv-news-title" class="cv-red">Sankofa News</h2>
+        <div class="cv-news__grid">
+          @for (post of news(); track post.slug) {
+            <article class="cv-card">
+              <a class="cv-card__media" [routerLink]="['/articles', post.slug]" tabindex="-1" aria-hidden="true">
+                @if (post.featured_image) {
+                  <img [src]="post.featured_image" alt="" loading="lazy" />
+                } @else {
+                  <span class="cv-card__placeholder"><i class="fa-solid fa-feather" aria-hidden="true"></i></span>
+                }
+              </a>
+              <time [attr.datetime]="post.published_at">{{ post.published_at | date: 'MMMM d, y' }}</time>
+              <h3><a [routerLink]="['/articles', post.slug]">{{ post.title }}</a></h3>
+              <a class="cv-card__more" [routerLink]="['/articles', post.slug]" [attr.aria-label]="'Read more: ' + post.title"
+                >Read More<i class="fa-solid fa-arrow-right" aria-hidden="true"></i
+              ></a>
+            </article>
+          }
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  }
 </div>

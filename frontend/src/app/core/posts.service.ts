@@ -71,6 +71,12 @@ export class PostsService {
     );
   }
 
+  /** The newest published articles, for pages that show a few. */
+  async getLatest(limit: number): Promise<Post[]> {
+    const page = await this.api.get<ArticlePage>('/journal/articles', { limit });
+    return page.items.map(toPost);
+  }
+
   getFacets(): Promise<JournalFacets> {
     return this.api.get<JournalFacets>('/journal/facets');
   }
