@@ -114,7 +114,7 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
       {
         heading: 'Governance Bodies',
         items: [
-          'Board of Trustees, University Council, Academic Senate',
+          'Board of Governance, Academic Senate',
           'Research Ethics Board and oversight committees',
           'Executive leadership offices and registrar secretariat',
         ],
