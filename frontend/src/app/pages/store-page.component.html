@@ -102,23 +102,35 @@
             ><span class="price">{{ priceLabel(id) }}</span>
           </div>
           <span class="meta">{{ product(id).m }}</span>
-          @if (isRequestOnly(id)) {
-            <div class="st-card__contacts" aria-label="Ask about this item on WhatsApp">
-              @for (contact of storeContacts; track contact.phone) {
-                <a [href]="whatsappHref(id, contact.name, contact.phone)" target="_blank" rel="noopener noreferrer" (click)="stopEvent($event)">
-                  Chat with {{ contact.name }}
-                </a>
-              }
-            </div>
-          } @else if (isSoldOut(id)) {
-            <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
-          } @else {
-            <button type="button" (click)="addFromCard($event, id)">
-              {{ cta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
-            </button>
+          @if (!isRequestOnly(id)) {
+            @if (isSoldOut(id)) {
+              <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
+            } @else {
+              <button type="button" (click)="addFromCard($event, id)">
+                {{ cta }}<i class="fa-solid fa-plus" aria-hidden="true"></i>
+              </button>
+            }
           }
+          <ng-container *ngTemplateOutlet="whatsappContacts; context: { $implicit: id }" />
         </div>
       </article>
+    </ng-template>
+
+    <ng-template #whatsappContacts let-id>
+      <div class="st-card__contacts" aria-label="Ask for this product's price on WhatsApp">
+        <span class="heading">Ask for price on WhatsApp</span>
+        @for (contact of storeContacts; track contact.phone) {
+          <a
+            [href]="whatsappHref(id, contact.name, contact.phone)"
+            [attr.aria-label]="'Ask ' + contact.name + ' about ' + product(id).t + ' on WhatsApp'"
+            target="_blank"
+            rel="noopener noreferrer"
+            (click)="stopEvent($event)"
+          >
+            {{ contact.cardName }}
+          </a>
+        }
+      </div>
     </ng-template>
 
     <section id="collection" class="st-section">
@@ -223,6 +235,7 @@
                   >{{ product(id).requestOnly ? 'Ask the Press' : product(id).p === 0 ? 'Open access' : 'SAU Press' }}</span
                 >
               </div>
+              <ng-container *ngTemplateOutlet="whatsappContacts; context: { $implicit: id }" />
             </article>
           }
         </div>
@@ -278,6 +291,7 @@
                     </button>
                   }
                 </div>
+                <ng-container *ngTemplateOutlet="whatsappContacts; context: { $implicit: id }" />
               </div>
             </article>
           }

@@ -119,14 +119,22 @@ export class AboutPageComponent implements AfterViewInit {
 
   readonly teamGateways = TEAM_CATEGORY_GROUPS
     .filter((group) => group.id !== 'founders')
-    .map((group) => ({
-      label: group.label,
-      count: group.members.length,
-      route: this.teamRoute(group.id),
-      icon: this.teamIcon(group.id),
-      summary: this.teamSummary(group.id),
-      preview: group.members.slice(0, 4),
-    }));
+    .map((group) => {
+      const communicationsDirector = group.members.find(
+        (member) => member.role === 'Communications, Publicity and Marketing Director',
+      );
+      const preview = communicationsDirector
+        ? [communicationsDirector, ...group.members.filter((member) => member !== communicationsDirector).slice(0, 3)]
+        : group.members.slice(0, 4);
+      return {
+        label: group.label,
+        count: group.members.length,
+        route: this.teamRoute(group.id),
+        icon: this.teamIcon(group.id),
+        summary: this.teamSummary(group.id),
+        preview,
+      };
+    });
   readonly identityDocs = [
     { icon: 'fa-solid fa-scroll', b: 'Institutional charter', s: '2025' },
     { icon: 'fa-regular fa-compass', b: 'Strategic plan', s: '2026-2031' },

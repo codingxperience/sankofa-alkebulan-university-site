@@ -42,14 +42,14 @@ const SIZES = ['S', 'M', 'L', 'XL', '2XL'] as const;
 const PRODUCTS: Record<string, ProductDef> = {
   'bk-research-cultures': {
     t: 'How Universities Can Build Research Cultures', au: 'Emmanuel Mihiingo Kaija', p: 0, kind: 'book', requestOnly: true, imprint: 'SAU Press',
-    cover: 'assets/press/covers/how-universities-can-build-research-cultures-cover.jpg',
-    desc: 'A work on building research culture in universities, published by SAU Press.',
+    cover: 'assets/press/covers/how-universities-can-build-research-cultures-cover.webp',
+    desc: 'Institutional transformation, intellectual infrastructure, and the future of knowledge production.',
     specs: [['Format', 'Contact SAU Press for available editions'], ['Ordering', 'Price and availability confirmed by WhatsApp'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'bk-republic-shadows': {
     t: 'The Republic of Shadows', au: 'Emmanuel Mihiingo Kaija', p: 0, kind: 'book', requestOnly: true, imprint: 'SAU Press',
-    cover: 'assets/press/covers/the-republic-of-shadows-cover.jpg',
-    desc: 'A novel by Emmanuel Mihiingo Kaija, published by SAU Press.',
+    cover: 'assets/press/covers/the-republic-of-shadows-cover.webp',
+    desc: 'A novel of power, memory, and Uganda by Emmanuel Mihiingo Kaija.',
     specs: [['Format', 'Contact SAU Press for available editions'], ['Ordering', 'Price and availability confirmed by WhatsApp'], ['Author', 'Emmanuel Mihiingo Kaija']],
   },
   'tee-navy': {
@@ -356,8 +356,8 @@ export class StorePageComponent implements OnInit, OnDestroy {
   readonly preorderMode = true;
   readonly albumMovements = ALBUM_MOVEMENTS;
   readonly storeContacts = [
-    { name: 'Mrs. Vique Oceans', phone: '256753617061', displayPhone: '+256 753 617061' },
-    { name: 'Emmanuel', phone: '256765871126', displayPhone: '+256 765 871126' },
+    { name: 'Mrs. Vique Oceans', cardName: 'Mrs. Vique', phone: '256753617061', displayPhone: '+256 753 617061' },
+    { name: 'Emmanuel', cardName: 'Emmanuel', phone: '256765871126', displayPhone: '+256 765 871126' },
   ] as const;
 
   /** The bag, keyed by product id — or `id|size` for clothing, so two sizes are two lines. */
@@ -558,8 +558,7 @@ export class StorePageComponent implements OnInit, OnDestroy {
   }
 
   showWhatsapp(id: string): boolean {
-    const product = PRODUCTS[id];
-    return product.kind !== 'book' || product.requestOnly === true || product.p > 0;
+    return !!PRODUCTS[id];
   }
 
   whatsappHref(id: string, name: string, phone: string): string {
