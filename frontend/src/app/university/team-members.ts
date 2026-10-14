@@ -75,7 +75,7 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
   },
   {
     slug: 'prof-gumaritahigwa-bongobingiman-ruhinda',
-    name: 'Prof. Gumaritahigwa Bongobingiman Ruhinda',
+    name: 'Prof. Gumarutahigwa Bongobingiman Ruhinda',
     role: 'Deputy Vice Chancellor, Global Engagement and Strategic Partnerships',
     image: '/assets/team/prof-gumaritahigwa-bongobingiman-ruhinda.jpeg',
     categories: ['executive'],

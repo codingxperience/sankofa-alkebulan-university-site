@@ -118,7 +118,7 @@
 
     <ng-template #whatsappContacts let-id>
       <div class="st-card__contacts" aria-label="Ask for this product's price on WhatsApp">
-        <span class="heading">Ask for price on WhatsApp</span>
+        <span class="heading"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Ask for price on WhatsApp</span>
         @for (contact of storeContacts; track contact.phone) {
           <a
             [href]="whatsappHref(id, contact.name, contact.phone)"
@@ -127,7 +127,7 @@
             rel="noopener noreferrer"
             (click)="stopEvent($event)"
           >
-            {{ contact.cardName }}
+            Chat with {{ contact.cardName }}
           </a>
         }
       </div>

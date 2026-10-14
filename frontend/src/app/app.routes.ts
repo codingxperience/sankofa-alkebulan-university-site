@@ -129,6 +129,16 @@ export const routes: Routes = [
       { path: 'about/research-scholarly-team', redirectTo: '/about/executive-team', pathMatch: 'full' },
       { path: 'about/team/:slug', component: TeamProfilePageComponent },
       { path: 'about/:slug', component: AboutDetailPageComponent },
+      // Keep the editorial namespace ahead of parameterized programme routes.
+      {
+        path: 'articles',
+        loadComponent: () => import('./pages/articles/articles').then((m) => m.Articles),
+      },
+      {
+        path: 'articles/:slug',
+        loadComponent: () =>
+          import('./pages/essay-detail.component').then((m) => m.EssayDetailComponent),
+      },
       { path: 'academics', component: AcademicsPageComponent },
       { path: 'academics/colleges', component: AcademicDirectoryPageComponent, data: { mode: 'colleges' } },
       { path: 'academics/colleges/:slug/schools/:schoolSlug/departments/:departmentSlug', component: AcademicStructureDetailPageComponent },
@@ -228,15 +238,6 @@ export const routes: Routes = [
           import('./pages/kahigiriza-page.component').then((m) => m.KahigirizaPageComponent),
       },
       ...universitySectionRoutes,
-      {
-        path: 'articles',
-        loadComponent: () => import('./pages/articles/articles').then((m) => m.Articles),
-      },
-      {
-        path: 'articles/:slug',
-        loadComponent: () =>
-          import('./pages/essay-detail.component').then((m) => m.EssayDetailComponent),
-      },
       { path: 'essays', redirectTo: '/articles', pathMatch: 'full' },
       { path: 'blog', redirectTo: '/articles', pathMatch: 'full' },
       { path: 'membership', component: MembershipComponent },

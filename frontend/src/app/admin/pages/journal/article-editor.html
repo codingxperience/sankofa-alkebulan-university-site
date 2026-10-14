@@ -16,7 +16,7 @@
         <sc-pill [label]="statusTerms[a.status].label" [tone]="statusTerms[a.status].tone" />
       }
       @if (live()) {
-        <a class="sc-btn sc-btn--small" [href]="'/articles/' + a.slug" target="_blank" rel="noopener">
+        <a class="sc-btn sc-btn--small" [routerLink]="['/articles', a.slug]" target="_blank" rel="noopener noreferrer">
           View on the site <i class="pi pi-external-link" aria-hidden="true"></i>
         </a>
       }

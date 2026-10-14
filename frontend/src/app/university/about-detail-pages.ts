@@ -169,7 +169,7 @@ export const ABOUT_DETAIL_PAGES: readonly AboutDetailPage[] = [
       {
         heading: 'Current Executive Team',
         items: [
-          'Prof. Gumaritahigwa Bongobingiman Ruhinda - Deputy Vice Chancellor, Global Engagement and Strategic Partnerships',
+          'Prof. Gumarutahigwa Bongobingiman Ruhinda - Deputy Vice Chancellor, Global Engagement and Strategic Partnerships',
           'Mr. Masabe Michael Jackson - Deputy Vice Chancellor, Finance and Planning',
           'Musanjufu Benjamin Kavubu - Deputy Vice Chancellor, Academic Affairs',
           'Musemeza Jonah - Deputy Vice Chancellor, Administration',

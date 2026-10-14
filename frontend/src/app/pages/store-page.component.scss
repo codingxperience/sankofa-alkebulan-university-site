@@ -586,15 +586,27 @@
 .st-card__contacts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #d4e6d9;
+  border-radius: 14px;
+  background: #f3f8f4;
 
   .heading {
     grid-column: 1 / -1;
-    color: #58728b;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #194b34;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+
+    i {
+      color: #087443;
+      font-size: 15px;
+    }
   }
 
   a {
@@ -602,36 +614,55 @@
     align-items: center;
     justify-content: center;
     min-width: 0;
-    min-height: 36px;
-    padding: 5px 8px;
-    border: 1px solid #d9e8df;
-    border-radius: 999px;
-    color: #1d6847;
-    font-size: 11px;
-    font-weight: 600;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #087443;
+    border-radius: 10px;
+    background: #087443;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
     line-height: 1.25;
     text-align: center;
-    transition: background 160ms ease, border-color 160ms ease;
+    box-shadow: 0 2px 5px rgba(8, 116, 67, 0.16);
+    transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 
     &:hover {
-      background: #f0f7f2;
-      border-color: #a9cdb7;
+      background: #075c36;
+      border-color: #075c36;
+      box-shadow: 0 4px 10px rgba(8, 75, 45, 0.22);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 3px solid #b6e4c8;
+      outline-offset: 2px;
     }
   }
 }
 
+.st-card__contacts .heading i {
+  font-family: 'Font Awesome 6 Brands';
+}
+
 .st-artifact__body .st-card__contacts a {
-  border-color: rgba(241, 207, 131, 0.38);
-  color: #f1cf83;
+  border-color: #087443;
+  background: #087443;
+  color: #ffffff;
 
   &:hover {
-    background: rgba(241, 207, 131, 0.1);
-    border-color: rgba(241, 207, 131, 0.72);
+    background: #075c36;
+    border-color: #075c36;
   }
 }
 
 .st-artifact__body .st-card__contacts .heading {
-  color: #c6d5e0;
+  color: #e6f1ea;
+}
+
+.st-artifact__body .st-card__contacts {
+  border-color: rgba(181, 222, 196, 0.24);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .st-book__img {
