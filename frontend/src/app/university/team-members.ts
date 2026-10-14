@@ -136,12 +136,12 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
   {
     slug: 'alice-frimpong-sarkodie',
     name: 'Alice Frimpong Sarkodie',
-    role: 'Executive Team',
+    role: 'Communications, Publicity and Marketing Director',
     image: '/assets/team/alice-frimpong-sarkodie.jpeg',
     categories: ['executive'],
-    summary: 'Executive team member advancing institutional presence, coordination, and engagement.',
+    summary: 'Leads the university’s communications, publicity, and marketing, supporting clear institutional messaging and public engagement.',
     profile: [
-      'Contributes to Sankofa\'s executive work through brand presence, engagement, and the disciplined coordination needed to move an emerging university from vision to operating reality.',
+      'As Communications, Publicity and Marketing Director, Alice supports Sankofa Alkebulan University’s institutional voice, publicity, and public engagement.',
     ],
     objectPosition: '50% 22%',
   },

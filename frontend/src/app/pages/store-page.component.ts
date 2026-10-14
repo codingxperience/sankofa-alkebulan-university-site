@@ -33,11 +33,25 @@ interface ProductDef {
   readonly specs?: readonly (readonly [string, string])[];
   readonly cover?: string;
   readonly pdf?: string;
+  /** Items ordered directly with the store team rather than through online checkout. */
+  readonly requestOnly?: boolean;
 }
 
 const SIZES = ['S', 'M', 'L', 'XL', '2XL'] as const;
 
 const PRODUCTS: Record<string, ProductDef> = {
+  'bk-research-cultures': {
+    t: 'How Universities Can Build Research Cultures', au: 'Emmanuel Mihiingo Kaija', p: 0, kind: 'book', requestOnly: true, imprint: 'SAU Press',
+    cover: 'assets/press/covers/how-universities-can-build-research-cultures-cover.jpg',
+    desc: 'A work on building research culture in universities, published by SAU Press.',
+    specs: [['Format', 'Contact SAU Press for available editions'], ['Ordering', 'Price and availability confirmed by WhatsApp'], ['Author', 'Emmanuel Mihiingo Kaija']],
+  },
+  'bk-republic-shadows': {
+    t: 'The Republic of Shadows', au: 'Emmanuel Mihiingo Kaija', p: 0, kind: 'book', requestOnly: true, imprint: 'SAU Press',
+    cover: 'assets/press/covers/the-republic-of-shadows-cover.jpg',
+    desc: 'A novel by Emmanuel Mihiingo Kaija, published by SAU Press.',
+    specs: [['Format', 'Contact SAU Press for available editions'], ['Ordering', 'Price and availability confirmed by WhatsApp'], ['Author', 'Emmanuel Mihiingo Kaija']],
+  },
   'tee-navy': {
     t: 'Sankofa Tee — Navy', m: 'Adinkra sleeves · gold Alkebulan map', p: 28,
     img: 'assets/store/tshirt-navy.jpg', pos: '50% 40%', kind: 'apparel', sizes: true,
@@ -121,6 +135,31 @@ const PRODUCTS: Record<string, ProductDef> = {
     img: 'assets/store/varsity-jacket.jpg', pos: '50% 40%', kind: 'merch', sizes: true,
     desc: 'The varsity jacket in university colours: a navy body, white sleeves, a striped collar, and the crest with Return · Restore · Reimagine on the chest.',
     specs: [['Colours', 'Navy body · white sleeves'], ['Chest', 'Crest and motto'], ['Sizes', 'S to 2XL'], ['Orders', 'Pre-order · ships continent-wide']],
+  },
+  'athletic-shorts': {
+    t: 'Sankofa Athletic Shorts', m: 'Navy · university crest', p: 0, kind: 'apparel', requestOnly: true,
+    img: 'assets/store/products/sankofa-athletic-shorts.jpg', pos: '50% 50%',
+    desc: 'Navy athletic shorts featuring the Sankofa Alkebulan University crest.',
+    specs: [['Colour', 'Navy'], ['Detail', 'University crest'], ['Ordering', 'Confirm size, availability, and price by WhatsApp']],
+  },
+  'boxer-shorts': {
+    t: 'Sankofa Boxer Shorts', m: 'Navy · university name and crest', p: 0, kind: 'apparel', requestOnly: true,
+    img: 'assets/store/products/sankofa-boxer-shorts.jpg', pos: '50% 50%',
+    desc: 'Navy boxer shorts featuring the university name and crest.',
+    specs: [['Colour', 'Navy'], ['Detail', 'University name and crest'], ['Ordering', 'Confirm size, availability, and price by WhatsApp']],
+  },
+  'slide-sandals': {
+    t: 'Sankofa Slide Sandals', m: 'Navy · university crest', p: 0, kind: 'apparel', requestOnly: true,
+    img: 'assets/store/products/sankofa-slide-sandals.jpg', pos: '50% 50%',
+    desc: 'Navy slide sandals featuring the Sankofa Alkebulan University crest.',
+    specs: [['Colour', 'Navy'], ['Detail', 'University crest'], ['Ordering', 'Confirm size, availability, and price by WhatsApp']],
+  },
+  sneakers: {
+    t: 'Sankofa Sneakers', m: 'Navy · university crest', p: 0, kind: 'apparel', requestOnly: true,
+    img: 'assets/store/products/sankofa-sneakers-angle-one.jpg',
+    detailImg: 'assets/store/products/sankofa-sneakers-angle-two.jpg', pos: '50% 50%',
+    desc: 'Navy sneakers featuring the Sankofa Alkebulan University crest.',
+    specs: [['Colour', 'Navy with white sole'], ['Detail', 'University crest'], ['Ordering', 'Confirm size, availability, and price by WhatsApp']],
   },
   bracelet: {
     t: 'Crest Bracelet', m: 'Braided band · metal crest plate', p: 18,
@@ -316,6 +355,10 @@ export class StorePageComponent implements OnInit, OnDestroy {
   readonly sizes = SIZES;
   readonly preorderMode = true;
   readonly albumMovements = ALBUM_MOVEMENTS;
+  readonly storeContacts = [
+    { name: 'Mrs. Vique Oceans', phone: '256753617061', displayPhone: '+256 753 617061' },
+    { name: 'Emmanuel', phone: '256765871126', displayPhone: '+256 765 871126' },
+  ] as const;
 
   /** The bag, keyed by product id — or `id|size` for clothing, so two sizes are two lines. */
   readonly cart = signal<Record<string, number>>({});
@@ -343,8 +386,8 @@ export class StorePageComponent implements OnInit, OnDestroy {
   private coRequestId = newRequestId();
 
   readonly regaliaIds = ['tee-navy', 'tee-colors', 'hoodie', 'scarf', 'tunic', 'gown', 'suit', 'robe'];
-  readonly collectionIds = ['bag-set', 'journal', 'bottle', 'cap', 'umbrella', 'varsity', 'bracelet'];
-  readonly bookIds = ['bk-black-futures', 'bk-black-futures-el', 'bk-next-century', 'bk-governance', 'bk-quiet-skin', 'bk-pan-african', 'bk-god-ai', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
+  readonly collectionIds = ['bag-set', 'journal', 'bottle', 'cap', 'umbrella', 'varsity', 'bracelet', 'athletic-shorts', 'boxer-shorts', 'slide-sandals', 'sneakers'];
+  readonly bookIds = ['bk-research-cultures', 'bk-republic-shadows', 'bk-black-futures', 'bk-black-futures-el', 'bk-next-century', 'bk-governance', 'bk-quiet-skin', 'bk-pan-african', 'bk-god-ai', 'bk-strategic-defense', 'bk-ngugi', 'bk-iliffe', 'bk-aehn', 'bk-fondad'];
   readonly artifactIds = ['cross', 'benin', 'ashanti', 'kongo', 'nok'];
   readonly movements = TRACKS;
 
@@ -406,7 +449,10 @@ export class StorePageComponent implements OnInit, OnDestroy {
     try {
       const saved = JSON.parse(localStorage.getItem(BAG_KEY) || '{}') as Record<string, number>;
       // A book that has since become free to read cannot be ordered, so it leaves the bag.
-      const valid = Object.entries(saved).filter(([key, qty]) => PRODUCTS[this.idOf(key)]?.p && Number.isInteger(qty) && qty > 0);
+      const valid = Object.entries(saved).filter(([key, qty]) => {
+        const product = PRODUCTS[this.idOf(key)];
+        return product?.p && !product.requestOnly && Number.isInteger(qty) && qty > 0;
+      });
       this.cart.set(Object.fromEntries(valid));
     } catch {
       /* a corrupt bag is simply an empty bag */
@@ -500,14 +546,32 @@ export class StorePageComponent implements OnInit, OnDestroy {
   }
 
   priceLabel(id: string): string {
+    if (PRODUCTS[id].requestOnly) {
+      return 'Price on request';
+    }
     const price = this.price(id);
     return price === 0 ? 'Free' : fmt(price);
+  }
+
+  isRequestOnly(id: string): boolean {
+    return PRODUCTS[id]?.requestOnly === true;
+  }
+
+  showWhatsapp(id: string): boolean {
+    const product = PRODUCTS[id];
+    return product.kind !== 'book' || product.requestOnly === true || product.p > 0;
+  }
+
+  whatsappHref(id: string, name: string, phone: string): string {
+    const title = PRODUCTS[id]?.t || 'this item';
+    const message = `Hello ${name}, I am interested in ${title}. Please share the price and availability.`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   }
 
   /** Adds one of a bag line. Clothing needs a size, so it opens the product to choose one. */
   add(key: string, open = true): void {
     const id = this.idOf(key);
-    if (this.isSoldOut(id)) {
+    if (PRODUCTS[id].requestOnly || this.isSoldOut(id)) {
       return;
     }
     if (PRODUCTS[id].sizes && !this.sizeOf(key)) {
@@ -591,13 +655,16 @@ export class StorePageComponent implements OnInit, OnDestroy {
 
   get detailIsFree(): boolean {
     const id = this.detail();
-    return !!id && this.price(id) === 0;
+    return !!id && !PRODUCTS[id].requestOnly && this.price(id) === 0;
   }
 
   get detailCrumb(): string {
     const p = this.detailProduct;
     if (!p) {
       return '';
+    }
+    if (p.requestOnly) {
+      return p.kind === 'book' ? 'The Bookshop — SAU Press' : 'Campus Collection · WhatsApp orders';
     }
     if (p.kind === 'apparel') {
       return 'Drop 01 — Sankofa Regalia';
@@ -615,6 +682,9 @@ export class StorePageComponent implements OnInit, OnDestroy {
     const p = this.detailProduct;
     if (!p) {
       return '';
+    }
+    if (p.requestOnly) {
+      return 'Price and availability are confirmed directly with the store team';
     }
     if (p.kind === 'apparel') {
       return 'Print-on-demand · margin funds scholarships';
@@ -641,9 +711,9 @@ export class StorePageComponent implements OnInit, OnDestroy {
     if (!p) {
       return [];
     }
-    const free = p.p === 0;
+    const free = p.p === 0 && !p.requestOnly;
     return Object.keys(PRODUCTS)
-      .filter((k) => k !== id && PRODUCTS[k].kind === p.kind && !(p.kind === 'book' && (PRODUCTS[k].p === 0) !== free))
+      .filter((k) => k !== id && PRODUCTS[k].kind === p.kind && !(p.kind === 'book' && (PRODUCTS[k].p === 0 && !PRODUCTS[k].requestOnly) !== free))
       .slice(0, 3)
       .map((k) => {
         const r = PRODUCTS[k];
@@ -661,7 +731,7 @@ export class StorePageComponent implements OnInit, OnDestroy {
 
   detailAdd(): void {
     const id = this.detail();
-    if (!id || this.isSoldOut(id)) {
+    if (!id || PRODUCTS[id].requestOnly || this.isSoldOut(id)) {
       return;
     }
     const key = PRODUCTS[id].sizes ? `${id}|${this.detailSize()}` : id;

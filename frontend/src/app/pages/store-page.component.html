@@ -102,7 +102,15 @@
             ><span class="price">{{ priceLabel(id) }}</span>
           </div>
           <span class="meta">{{ product(id).m }}</span>
-          @if (isSoldOut(id)) {
+          @if (isRequestOnly(id)) {
+            <div class="st-card__contacts" aria-label="Ask about this item on WhatsApp">
+              @for (contact of storeContacts; track contact.phone) {
+                <a [href]="whatsappHref(id, contact.name, contact.phone)" target="_blank" rel="noopener noreferrer" (click)="stopEvent($event)">
+                  Chat with {{ contact.name }}
+                </a>
+              }
+            </div>
+          } @else if (isSoldOut(id)) {
             <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
           } @else {
             <button type="button" (click)="addFromCard($event, id)">
@@ -118,13 +126,13 @@
         <div class="st-split">
           <div class="st-head">
             <span class="st-eyebrow">New &mdash; the crest collection</span>
-            <h2>Campus Collection.</h2>
+            <h2>Campus &amp; Everyday Collection.</h2>
             <p>
-              Bags, journals, bottles, caps, umbrellas, jackets and bracelets carrying the crest and
-              Return &middot; Restore &middot; Reimagine. Made to order; the margin funds scholarships.
+              Bags, journals, bottles, caps, umbrellas, jackets, apparel, and footwear carrying the
+              university crest. Ask the store team about sizes, availability, and prices.
             </p>
           </div>
-          <span class="st-badge st-badge--blue">Made to order</span>
+          <span class="st-badge st-badge--blue">Online checkout + WhatsApp orders</span>
         </div>
         <div class="st-drop-grid">
           @for (id of collectionIds; track id) {
@@ -187,7 +195,7 @@
               <i>Animal Farm</i>. The used-copy market opens with the Marketplace beta.
             </p>
           </div>
-          <span class="st-badge st-badge--blue">PDF + EPUB &middot; DRM-free</span>
+          <span class="st-badge st-badge--blue">SAU Press + open-access titles</span>
         </div>
         <div class="st-book-grid">
           @for (id of bookIds; track id) {
@@ -210,9 +218,9 @@
                 <span class="price">{{ priceLabel(id) }}</span>
                 <span
                   class="tag"
-                  [style.color]="product(id).p === 0 ? '#1f7a4d' : '#b35c2a'"
-                  [style.border-color]="product(id).p === 0 ? '#d9ecdf' : '#ecd9c8'"
-                  >{{ product(id).p === 0 ? 'Open access' : 'SAU Press' }}</span
+                  [style.color]="product(id).requestOnly ? '#0f4c81' : product(id).p === 0 ? '#1f7a4d' : '#b35c2a'"
+                  [style.border-color]="product(id).requestOnly ? '#dbe6ef' : product(id).p === 0 ? '#d9ecdf' : '#ecd9c8'"
+                  >{{ product(id).requestOnly ? 'Ask the Press' : product(id).p === 0 ? 'Open access' : 'SAU Press' }}</span
                 >
               </div>
             </article>
@@ -564,7 +572,7 @@
           </div>
           <div class="titles">
             <h3>{{ d.t }}</h3>
-            <span class="price">{{ detailIsFree ? 'Free · open access' : fmt(price(detail())) }}</span>
+            <span class="price">{{ isRequestOnly(detail()) ? priceLabel(detail()) : detailIsFree ? 'Free · open access' : priceLabel(detail()) }}</span>
           </div>
           <p class="desc">{{ d.desc }}</p>
           <div class="specs">
@@ -587,7 +595,9 @@
               </div>
             </div>
           }
-          @if (d.pdf) {
+          @if (d.requestOnly) {
+            <p class="st-request-note">Contact the store team to confirm the available sizes or editions and current price.</p>
+          } @else if (d.pdf) {
             <div class="book-cta">
               <a [href]="d.pdf" target="_blank" rel="noopener" class="free-cta"
                 >Read the PDF<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i
@@ -617,6 +627,17 @@
                 <button type="button" class="add" (click)="detailAdd()">
                   Add to cart &mdash; {{ detailTotal }}
                 </button>
+              }
+            </div>
+          }
+          @if (showWhatsapp(detail())) {
+            <div class="st-detail__contacts" aria-label="Contact the store on WhatsApp">
+              <span class="label">Questions or custom orders</span>
+              @for (contact of storeContacts; track contact.phone) {
+                <a [href]="whatsappHref(detail(), contact.name, contact.phone)" target="_blank" rel="noopener noreferrer">
+                  <span>Chat with {{ contact.name }}</span>
+                  <span class="phone">{{ contact.displayPhone }}</span>
+                </a>
               }
             </div>
           }
