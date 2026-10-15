@@ -35,7 +35,7 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/research-innovation">Institutes</a>
             <a routerLink="/research-innovation">Projects</a>
             <a routerLink="/university-press">Publications</a>
-            <a routerLink="/events-conferences">Open science</a>
+            <a routerLink="/research-innovation">Open science</a>
             <a routerLink="/services">Funding portal</a>
           </section>
 
@@ -44,7 +44,7 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/about">About</a>
             <a routerLink="/about/executive-team">Leadership</a>
             <a routerLink="/about/sankofa-charter">Charter</a>
-            <a routerLink="/events-conferences">Annual reports</a>
+            <a routerLink="/about/annual-reports">Annual reports</a>
             <a routerLink="/clubs-societies">Clubs & societies</a>
             <a routerLink="/university-press">Press</a>
           </section>

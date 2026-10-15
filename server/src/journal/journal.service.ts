@@ -110,16 +110,7 @@ export class JournalService {
     if (!article) {
       throw notFound('We could not find that article.');
     }
-    const related = await this.prisma.article.findMany({
-      where: {
-        ...PUBLISHED(),
-        id: { not: article.id },
-        OR: [{ tags: { hasSome: article.tags } }, { categories: { hasSome: article.categories } }],
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: 3,
-    });
-    return { ...summary(article), bodyHtml: article.bodyHtml, related: related.map(summary) };
+    return { ...summary(article), bodyHtml: article.bodyHtml };
   }
 
   /** Topics with how many published articles carry each, most used first. */

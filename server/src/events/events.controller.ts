@@ -36,12 +36,6 @@ const RegisterBody = z.object({
 export class PublicEventsController {
   constructor(private readonly events: EventsService) {}
 
-  @Get()
-  @Header('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300')
-  list() {
-    return this.events.publicList();
-  }
-
   @Get(':slug')
   @Header('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300')
   event(@Param('slug', validate(slugParam)) slug: string) {

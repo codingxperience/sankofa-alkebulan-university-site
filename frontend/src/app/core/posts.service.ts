@@ -63,11 +63,11 @@ export class PostsService {
     return from(this.fetchAll());
   }
 
-  getPost(slug: string): Observable<Post & { related: Post[] }> {
+  getPost(slug: string): Observable<Post> {
     return from(
       this.api
-        .get<ArticleSummary & { bodyHtml: string; related: ArticleSummary[] }>(`/journal/articles/${encodeURIComponent(slug)}`)
-        .then((article) => ({ ...toPost(article), related: article.related.map(toPost) })),
+        .get<ArticleSummary & { bodyHtml: string }>(`/journal/articles/${encodeURIComponent(slug)}`)
+        .then(toPost),
     );
   }
 

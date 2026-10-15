@@ -42,10 +42,10 @@ export const UNIVERSITY_HERO_BANNERS: readonly HeroBanner[] = [
     ctaPath: '/research-innovation',
   },
   {
-    title: 'Global Conferences and Hybrid Learning',
-    subtitle: 'Join virtual and on-campus events designed for continental and global scholars.',
-    ctaLabel: 'View Events',
-    ctaPath: '/events-conferences',
+    title: 'The Sankofa Convening 2026',
+    subtitle: 'Cultural identity, indigenous knowledge, and intellectual cooperation.',
+    ctaLabel: 'Explore the Convening',
+    ctaPath: '/convening',
   },
   {
     title: 'Strategic Partnerships Across Africa and Beyond',
@@ -453,45 +453,6 @@ export const UNIVERSITY_PORTAL_PAGES: readonly PortalPage[] = [
       { label: 'HR Maturity', value: 'Digital and Data-Driven' },
       { label: 'Workload Intelligence', value: 'AI Optimized' },
       { label: 'Research Operations', value: 'Integrated Tooling' },
-    ],
-  },
-  {
-    slug: 'events-conferences',
-    path: 'events-conferences',
-    navLabel: 'Events',
-    title: 'Events and Conferences',
-    description:
-      'A full event lifecycle platform for physical, hybrid, and VR conferences with scholar-focused personalization.',
-    modules: [
-      {
-        heading: 'Event Management',
-        items: [
-          'University calendar and event system',
-          'Online and on-campus conference registration',
-          'Speaker profiles and program guides',
-        ],
-      },
-      {
-        heading: 'Hybrid Delivery',
-        items: [
-          'VR and hybrid conference platforms',
-          'Archives of past events and media coverage',
-          'Digital participation analytics',
-        ],
-      },
-      {
-        heading: 'Smart Recommendations',
-        items: [
-          'AI recommendations for attendees and researchers',
-          'Session personalization by interests',
-          'Cross-event networking intelligence',
-        ],
-      },
-    ],
-    highlights: [
-      { label: 'Event Modes', value: 'On-Campus + Online + VR' },
-      { label: 'Audience Intelligence', value: 'AI Matching' },
-      { label: 'Knowledge Archive', value: 'Continuously Searchable' },
     ],
   },
   {

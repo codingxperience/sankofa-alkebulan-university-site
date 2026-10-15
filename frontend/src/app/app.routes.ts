@@ -21,7 +21,6 @@ import { ShopComponent } from './pages/shop.component';
 import { LibraryComponent } from './pages/library.component';
 import { PressPageComponent } from './pages/press-page.component';
 import { UniversitySectionPageComponent } from './pages/university-section-page.component';
-import { EventsPageComponent } from './pages/events-page.component';
 import { UNIVERSITY_PORTAL_PAGES } from './university/university-data';
 
 const universitySectionRoutes: Routes = UNIVERSITY_PORTAL_PAGES.map((section) => ({
@@ -161,9 +160,7 @@ export const routes: Routes = [
       { path: 'cultural-societies', component: StudentOrganizationsPageComponent, data: { system: 'cultural' } },
       { path: 'press', component: PressPageComponent },
       { path: 'university-press', component: PressPageComponent },
-      { path: 'events', component: EventsPageComponent },
-      { path: 'events/:slug', component: EventsPageComponent },
-      { path: 'events-conferences', redirectTo: '/events', pathMatch: 'full' },
+      { path: 'events-conferences', redirectTo: '/convening', pathMatch: 'full' },
       {
         path: 'convening/register',
         loadComponent: () =>
@@ -176,7 +173,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/convening-page.component').then((m) => m.ConveningPageComponent),
       },
-      { path: 'events/convening', redirectTo: '/convening', pathMatch: 'full' },
       ...departmentShortcutRoutes,
       { path: 'home/:level/:programSlug', component: ProgramDetailComponent },
       { path: 'home/:level', component: ProgrammesLevelComponent },

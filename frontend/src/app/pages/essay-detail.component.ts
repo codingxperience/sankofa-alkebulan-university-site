@@ -1,15 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 import { PostsService, Post } from '../core/posts.service';
-
-interface ArticlePage {
-  post: Post;
-  related: Post[];
-}
 
 @Component({
   selector: 'app-essay-detail',
@@ -17,6 +12,7 @@ interface ArticlePage {
   imports: [CommonModule, RouterLink],
   templateUrl: './essay-detail.component.html',
   styleUrl: './essay-detail.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EssayDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -26,34 +22,65 @@ export class EssayDetailComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly fallbackImage = '/assets/hero/hero-campus-africa.jpg';
-  post: Post | null = null;
-  related: Post[] = [];
-  loading = true;
-  shareMessage = '';
+  readonly post = signal<Post | null>(null);
+  readonly related = signal<Post[]>([]);
+  readonly openingContent = signal('');
+  readonly continuationContent = signal('');
+  readonly loading = signal(true);
+  readonly shareMessage = signal('');
 
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
         switchMap((params) => {
           const slug = params.get('slug');
-          this.loading = true;
-          this.post = null;
-          this.related = [];
-          this.shareMessage = '';
+          this.loading.set(true);
+          this.post.set(null);
+          this.related.set([]);
+          this.openingContent.set('');
+          this.continuationContent.set('');
+          this.shareMessage.set('');
           if (!slug) return of(null);
 
-          return this.postsService.getPost(slug).pipe(
-            map(({ related, ...post }): ArticlePage => ({ post, related })),
-            catchError(() => of(null)),
-          );
+          return this.postsService.getPost(slug).pipe(catchError(() => of(null)));
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((page) => {
-        this.post = page?.post ?? null;
-        this.related = page?.related ?? [];
-        this.loading = false;
-        if (this.post) this.updateMetadata(this.post);
+      .subscribe((post) => {
+        this.post.set(post);
+        this.loading.set(false);
+        if (post) {
+          const story = this.splitStory(post.content);
+          this.openingContent.set(story.opening);
+          this.continuationContent.set(story.continuation);
+          this.updateMetadata(post);
+          this.loadRelated(post.slug);
+        }
+      });
+  }
+
+  private splitStory(content: string): { opening: string; continuation: string } {
+    const paragraphs = [...content.matchAll(/<\/p\s*>/gi)];
+    const end = paragraphs[2];
+    if (!end || end.index === undefined) return { opening: content, continuation: '' };
+
+    const splitAt = end.index + end[0].length;
+    return {
+      opening: content.slice(0, splitAt),
+      continuation: content.slice(splitAt).trim(),
+    };
+  }
+
+  private loadRelated(slug: string): void {
+    this.postsService
+      .getLatest(8)
+      .then((posts) => {
+        if (this.post()?.slug === slug) {
+          this.related.set(posts.filter((post) => post.slug !== slug).slice(0, 4));
+        }
+      })
+      .catch(() => {
+        if (this.post()?.slug === slug) this.related.set([]);
       });
   }
 
@@ -73,7 +100,7 @@ export class EssayDetailComponent implements OnInit {
   }
 
   async shareArticle(): Promise<void> {
-    const post = this.post;
+    const post = this.post();
     if (!post || typeof window === 'undefined') return;
 
     const shareData = { title: post.title, text: post.excerpt, url: window.location.href };
@@ -88,9 +115,19 @@ export class EssayDetailComponent implements OnInit {
 
     try {
       await navigator.clipboard.writeText(shareData.url);
-      this.shareMessage = 'Article link copied to your clipboard.';
+      this.shareMessage.set('Article link copied to your clipboard.');
     } catch {
-      this.shareMessage = 'Copy the page address from your browser to share this article.';
+      this.shareMessage.set('Copy the page address from your browser to share this article.');
+    }
+  }
+
+  async copyArticleLink(): Promise<void> {
+    if (!this.post() || typeof window === 'undefined') return;
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      this.shareMessage.set('Article link copied to your clipboard.');
+    } catch {
+      this.shareMessage.set('Copy the page address from your browser to share this article.');
     }
   }
 

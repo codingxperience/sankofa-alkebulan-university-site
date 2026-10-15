@@ -30,8 +30,6 @@
   background: #fff;
   z-index: 3;
 }
-.cv-rail__brand { display: grid; width: 42px; height: 42px; place-items: center; }
-.cv-rail__brand img { display: block; width: 38px; height: 38px; object-fit: contain; }
 .cv-rail__label {
   position: absolute;
   top: 50%;
@@ -45,9 +43,6 @@
   white-space: nowrap;
   transform: translate(-50%, -50%) rotate(-90deg);
 }
-.cv-rail__back { display: grid; justify-items: center; gap: 7px; margin-top: auto; color: #76817c; font-size: 9px; font-weight: 700; text-decoration: none; }
-.cv-rail__back i { font-size: 13px; }
-.cv-rail a:hover { color: var(--cv-gold); }
 
 .cv-index {
   align-self: start;
