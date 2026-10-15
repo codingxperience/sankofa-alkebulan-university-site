@@ -9,6 +9,7 @@
       <nav aria-label="Store sections">
         <a href="#drop">Drop 01</a>
         <a href="#collection">Campus</a>
+        <a href="#marketplace">Marketplace</a>
         <a href="#flagship">Flagship</a>
         <a href="#books">Books</a>
         <a href="#repatriation">Repatriation</a>
@@ -33,13 +34,13 @@
           <span class="st-eyebrow st-eyebrow--rust">The University Store &mdash; one platform, two doors</span>
           <h1>The cultural economy of Alkebulan.</h1>
           <p class="lead">
-            Regalia, repatriated heritage, languages, careers, and music &mdash; produced by
-            SAU&rsquo;s institutes and students. Every purchase moves margin into scholarships and
-            repatriation.
+            University regalia, publications, heritage editions, and thoughtfully sourced everyday
+            goods share one storefront. Supplier-sourced items are quoted and confirmed by the store
+            team before an order is placed.
           </p>
           <div class="st-hero__actions">
-            <a href="#drop" class="st-pill st-pill--dark"
-              >Shop Drop 01<i class="fa-solid fa-arrow-down" aria-hidden="true"></i
+            <a href="#marketplace" class="st-pill st-pill--dark"
+              >Browse the marketplace<i class="fa-solid fa-arrow-down" aria-hidden="true"></i
             ></a>
             <a href="#repatriation" class="st-pill st-pill--gold-outline">Repatriation Editions</a>
           </div>
@@ -52,7 +53,10 @@
         </div>
         <div class="st-hero__art">
           <img
-            src="assets/store/hero-columns.jpg"
+            ngSrc="assets/store/hero-columns.jpg"
+            width="1200"
+            height="900"
+            priority
             alt="3D render of classical stone columns from repatriated heritage collection"
           />
           <div class="st-hero__chip">
@@ -89,12 +93,15 @@
     <ng-template #productCard let-id let-cta="cta">
       <article class="st-card" (click)="openDetail(id)">
         <div class="st-card__media">
-          <div
-            role="img"
-            [attr.aria-label]="product(id).t"
-            [style.background-image]="'url(' + product(id).img + ')'"
-            [style.background-position]="product(id).pos"
-          ></div>
+          @if (product(id).cover; as cover) {
+            <img [ngSrc]="cover" width="600" height="800" [alt]="product(id).t + ' cover'" loading="lazy" sizes="(max-width: 680px) 100vw, (max-width: 1120px) 50vw, 25vw" />
+          } @else if (product(id).img; as image) {
+            <img [ngSrc]="image" width="800" height="600" [alt]="product(id).t" [style.object-position]="product(id).pos || '50% 50%'" loading="lazy" sizes="(max-width: 680px) 100vw, (max-width: 1120px) 50vw, 25vw" />
+          } @else {
+            <div class="st-card__symbol" [style.background]="product(id).bg || 'linear-gradient(145deg, #153c4a, #2c7580)'" aria-hidden="true">
+              <i class="fa-solid {{ product(id).icon || 'fa-box-open' }}"></i>
+            </div>
+          }
         </div>
         <div class="st-card__body">
           <div class="row">
@@ -102,6 +109,9 @@
             ><span class="price">{{ priceLabel(id) }}</span>
           </div>
           <span class="meta">{{ product(id).m }}</span>
+          @if (product(id).kind === 'marketplace') {
+            <span class="st-marketplace__estimate">Indicative · confirm details on WhatsApp</span>
+          }
           @if (!isRequestOnly(id)) {
             @if (isSoldOut(id)) {
               <button type="button" disabled (click)="stopEvent($event)">Sold out</button>
@@ -154,6 +164,67 @@
       </div>
     </section>
 
+    <section id="marketplace" class="st-section st-marketplace">
+      <div class="st-container">
+        <div class="st-split">
+          <div class="st-head">
+            <span class="st-eyebrow st-eyebrow--live"><span class="dot" aria-hidden="true"></span>Supplier-sourced · WhatsApp orders</span>
+            <h2>Useful things, thoughtfully sourced.</h2>
+            <p>
+              Browse learning technology, home and campus essentials, office supplies, research tools,
+              and goods from African makers. The photos are representative examples; the store team
+              confirms the exact model, supplier, price, stock, and delivery before you order.
+            </p>
+          </div>
+          <span class="st-badge st-badge--blue">Indicative estimates · USD</span>
+        </div>
+
+        <div class="st-marketplace__note">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <p>Prices are sourcing estimates, not live quotes. Ask for the current price and confirm the item's make, specification, availability, and delivery with either store contact.</p>
+        </div>
+
+        <div class="st-marketplace__links" aria-label="More store categories">
+          <span>Also browse</span>
+          <a href="#drop">University apparel &amp; regalia <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+          <a href="#books">Books &amp; academic resources <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+              <a href="#repatriation">African heritage &amp; cultural products <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+        </div>
+
+        <nav class="st-marketplace__filters" aria-label="Filter marketplace products">
+          <button
+            type="button"
+            [class.is-active]="marketplaceFilter() === 'all'"
+            [attr.aria-pressed]="marketplaceFilter() === 'all'"
+            (click)="marketplaceFilter.set('all')"
+          >All items <span>{{ marketplaceIdsCount }}</span></button>
+          @for (category of marketplaceCategories; track category.id) {
+            <button
+              type="button"
+              [class.is-active]="marketplaceFilter() === category.id"
+              [attr.aria-pressed]="marketplaceFilter() === category.id"
+              (click)="marketplaceFilter.set(category.id)"
+            >{{ category.shortLabel }}</button>
+          }
+        </nav>
+
+        @if (marketplaceFilter() === 'all') {
+          <p class="st-marketplace__result">{{ marketplaceIdsCount }} items to browse · open a card for details and a direct WhatsApp inquiry.</p>
+        } @else {
+          <p class="st-marketplace__result">
+            {{ marketplaceFilterIntro() }}
+            {{ visibleMarketplaceIds().length }} items shown.
+          </p>
+        }
+
+        <div class="st-drop-grid st-marketplace__grid" aria-live="polite">
+          @for (id of visibleMarketplaceIds(); track id) {
+            <ng-container *ngTemplateOutlet="productCard; context: { $implicit: id, cta: 'Ask for a quote' }" />
+          }
+        </div>
+      </div>
+    </section>
+
     <section id="flagship" class="st-section st-section--quiet">
       <div class="st-container">
         <div class="st-head st-head--wide">
@@ -164,8 +235,8 @@
         <div class="st-list-card">
           @for (f of flagship; track f.n; let i = $index) {
             <div class="st-flag" [class.first]="i === 0">
-              @if (f.img) {
-                <div class="st-flag__thumb" aria-hidden="true" [style.background-image]="'url(' + f.img + ')'"></div>
+              @if (f.img; as image) {
+                <img class="st-flag__thumb" [ngSrc]="image" width="128" height="128" alt="" loading="lazy" />
               } @else {
                 <div class="st-flag__icon"><i class="fa-solid {{ f.icon }}" aria-hidden="true"></i></div>
               }
@@ -204,7 +275,7 @@
             <h2>Read Africa on its own terms.</h2>
             <p>
               SAU Press originals beside open-access classics &mdash; <i>Things Fall Apart</i> over
-              <i>Animal Farm</i>. The used-copy market opens with the Marketplace beta.
+              <i>Animal Farm</i>. Ask the store team about print editions and current availability.
             </p>
           </div>
           <span class="st-badge st-badge--blue">SAU Press + open-access titles</span>
@@ -212,9 +283,9 @@
         <div class="st-book-grid">
           @for (id of bookIds; track id) {
             <article class="st-card" (click)="openDetail(id)">
-              @if (product(id).cover) {
+              @if (product(id).cover; as cover) {
                 <div class="st-book__img">
-                  <img [src]="product(id).cover" [alt]="product(id).t" loading="lazy" />
+                  <img [ngSrc]="cover" width="600" height="800" [alt]="product(id).t" loading="lazy" sizes="(max-width: 680px) 100vw, (max-width: 1120px) 50vw, 25vw" />
                 </div>
               } @else {
                 <div class="st-book__cover" [style.background]="product(id).bg">
@@ -264,12 +335,9 @@
           @for (id of artifactIds; track id) {
             <article class="st-artifact" (click)="openDetail(id)">
               <div class="st-artifact__media">
-                <div
-                  role="img"
-                  [attr.aria-label]="product(id).t"
-                  [style.background-image]="'url(' + product(id).img + ')'"
-                  [style.background-position]="product(id).pos"
-                ></div>
+                @if (product(id).img; as image) {
+                  <img [ngSrc]="image" width="800" height="940" [alt]="product(id).t" [style.object-position]="product(id).pos || '50% 50%'" loading="lazy" sizes="(max-width: 560px) 100vw, (max-width: 880px) 50vw, (max-width: 1120px) 33vw, 20vw" />
+                }
               </div>
               <div class="st-artifact__body">
                 <strong>{{ product(id).t }}</strong>
@@ -484,8 +552,11 @@
           </div>
           <div class="art">
             <img
-              src="assets/store/museum-pass-poster.jpg"
+              ngSrc="assets/store/museum-pass-poster.jpg"
+              width="1200"
+              height="800"
               alt="Sankofa Museum Pass — Kahigiriza Memorial and virtual tours"
+              loading="lazy"
             />
           </div>
         </div>
@@ -515,8 +586,8 @@
           }
           @for (c of cartItems; track c.key) {
             <div class="st-cart__row">
-              @if (c.hasImg) {
-                <div class="thumb" aria-hidden="true" [style.background-image]="'url(' + c.img + ')'"></div>
+              @if (c.img; as image) {
+                <img class="thumb" [ngSrc]="image" width="112" height="112" alt="" loading="lazy" />
               } @else {
                 <div class="thumb thumb--icon"><i class="fa-solid {{ c.icon }}" aria-hidden="true"></i></div>
               }
@@ -555,7 +626,7 @@
       <div role="dialog" aria-label="Product details" class="st-detail" (click)="stopEvent($event)">
         @if (d.kind === 'book' && d.cover) {
           <div class="st-detail__bookwrap">
-            <div class="st-detail__bookimg"><img [src]="d.cover" [alt]="d.t" /></div>
+            <div class="st-detail__bookimg"><img [ngSrc]="d.cover" width="600" height="800" [alt]="d.t" sizes="(max-width: 860px) 82vw, 280px" /></div>
           </div>
         } @else if (d.kind === 'book') {
           <div class="st-detail__bookwrap">
@@ -568,14 +639,14 @@
               </div>
             </div>
           </div>
+        } @else if (d.img; as image) {
+          <div class="st-detail__media">
+            <img [ngSrc]="d.detailImg || image" width="1000" height="1200" [alt]="d.t" [style.object-position]="d.pos || '50% 50%'" loading="lazy" sizes="(max-width: 860px) 100vw, 50vw" />
+          </div>
         } @else {
-          <div
-            role="img"
-            [attr.aria-label]="d.t"
-            class="st-detail__media"
-            [style.background-image]="'url(' + (d.detailImg || d.img) + ')'"
-            [style.background-position]="d.pos || '50% 50%'"
-          ></div>
+          <div class="st-detail__media st-detail__media--symbol" [style.background]="d.bg || 'linear-gradient(145deg, #153c4a, #2c7580)'" aria-hidden="true">
+            <i class="fa-solid {{ d.icon || 'fa-box-open' }}"></i>
+          </div>
         }
         <div class="st-detail__body">
           <div class="top">
@@ -610,7 +681,13 @@
             </div>
           }
           @if (d.requestOnly) {
-            <p class="st-request-note">Contact the store team to confirm the available sizes or editions and current price.</p>
+            <p class="st-request-note">
+              @if (d.kind === 'marketplace') {
+                The displayed USD amount is an estimate. Confirm the exact model or specification, current price, supplier availability, and delivery with the store team.
+              } @else {
+                Contact the store team to confirm the available sizes or editions and current price.
+              }
+            </p>
           } @else if (d.pdf) {
             <div class="book-cta">
               <a [href]="d.pdf" target="_blank" rel="noopener" class="free-cta"
@@ -661,8 +738,8 @@
             <div class="items">
               @for (rl of related; track rl.id) {
                 <button type="button" (click)="openDetail(rl.id)">
-                  @if (rl.hasImg) {
-                    <span class="dot-img" aria-hidden="true" [style.background-image]="'url(' + rl.img + ')'"></span>
+                  @if (rl.img; as image) {
+                    <img class="dot-img" [ngSrc]="image" width="68" height="68" alt="" loading="lazy" />
                   } @else {
                     <span class="dot-img" [style.background]="rl.bg" aria-hidden="true"></span>
                   }
