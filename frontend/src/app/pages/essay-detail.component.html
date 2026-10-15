@@ -1,0 +1,124 @@
+<main class="article-detail">
+  @if (loading) {
+    <div class="article-loading" aria-label="Loading article" aria-busy="true">
+      <div class="article-loading__hero"><span></span><i></i></div>
+      <div class="article-loading__body"><span></span><i></i><b></b></div>
+    </div>
+  } @else if (!post) {
+    <section class="article-not-found">
+      <p class="article-kicker">Sankofa Journal</p>
+      <h1>This article is unavailable</h1>
+      <p>It may have been unpublished or moved. Browse the journal for the latest writing and research.</p>
+      <a class="article-button article-button--dark" routerLink="/articles">Browse articles <span aria-hidden="true">→</span></a>
+    </section>
+  } @else {
+    <article>
+      <header class="article-lead">
+        <div class="article-lead__copy">
+          <nav class="article-breadcrumb" aria-label="Breadcrumb">
+            <a routerLink="/home">Home</a><span aria-hidden="true">/</span><a routerLink="/articles">Journal</a>
+          </nav>
+          <p class="article-kicker">Sankofa Alkebulan University · Journal</p>
+          <h1>{{ post.title }}</h1>
+          @if (post.excerpt) {
+            <p class="article-lead__summary">{{ post.excerpt }}</p>
+          }
+
+          <div class="article-byline">
+            <span class="article-byline__avatar" aria-hidden="true">{{ authorInitials(post.author) }}</span>
+            <span class="article-byline__details">
+              <strong>{{ post.author || 'Sankofa Alkebulan University' }}</strong>
+              <span>Published <time [attr.datetime]="post.published_at">{{ post.published_at | date: 'MMMM d, y' }}</time></span>
+            </span>
+          </div>
+
+          <div class="article-lead__bottom">
+            <div class="article-lead__taxonomy">
+              @for (category of post.categories; track category) {
+                <span>{{ category }}</span>
+              }
+              @if (post.readingMinutes) {
+                <span>{{ post.readingMinutes }} min read</span>
+              }
+            </div>
+            <button class="article-share" type="button" (click)="shareArticle()">
+              <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> Share article
+            </button>
+          </div>
+          @if (shareMessage) {
+            <p class="article-share-message" role="status">{{ shareMessage }}</p>
+          }
+        </div>
+
+        <figure class="article-lead__image">
+          <img
+            [src]="post.featured_image || fallbackImage"
+            [alt]="post.featured_image ? post.title : 'Sankofa Alkebulan University campus'"
+            fetchpriority="high"
+            (error)="onImageError($event)"
+          />
+          <figcaption>{{ post.featured_image ? post.title : 'Sankofa Alkebulan University' }}</figcaption>
+        </figure>
+      </header>
+
+      <div class="article-reading">
+        <aside class="article-aside" aria-label="Article information">
+          <a class="article-aside__back" routerLink="/articles"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All articles</a>
+          <div class="article-aside__rule"></div>
+          <p class="article-kicker">From the journal</p>
+          @if (post.categories.length) {
+            <h2>Filed under</h2>
+            <ul class="article-aside__terms">
+              @for (category of post.categories; track category) {
+                <li>{{ category }}</li>
+              }
+            </ul>
+          }
+          @if (post.tags.length) {
+            <h2>Topics</h2>
+            <div class="article-aside__topics">
+              @for (tag of post.tags; track tag) {
+                <span>{{ tag }}</span>
+              }
+            </div>
+          }
+        </aside>
+
+        <div class="article-reading__main">
+          @if (post.content) {
+            <div class="article-content" [innerHTML]="post.content"></div>
+          } @else if (post.excerpt) {
+            <div class="article-content"><p>{{ post.excerpt }}</p></div>
+          }
+          <div class="article-reading__share">
+            <span>Continue the conversation</span>
+            <button class="article-button article-button--outline" type="button" (click)="shareArticle()">
+              Share this article <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      @if (related.length) {
+        <section class="article-related" aria-labelledby="article-related-title">
+          <div class="article-related__heading">
+            <div><p class="article-kicker">Keep exploring</p><h2 id="article-related-title">More from the journal</h2></div>
+            <a routerLink="/articles">View all articles <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="article-related__grid">
+            @for (item of related; track item.slug) {
+              <article class="article-related-card">
+                <a class="article-related-card__image" [routerLink]="['/articles', item.slug]" [attr.aria-label]="'Read ' + item.title">
+                  <img [src]="item.featured_image || fallbackImage" [alt]="item.featured_image ? item.title : 'Sankofa Alkebulan University journal'" loading="lazy" (error)="onImageError($event)" />
+                </a>
+                <p class="article-related-card__meta">{{ item.categories[0] || 'Journal' }} <span aria-hidden="true">·</span> {{ item.published_at | date: 'mediumDate' }}</p>
+                <h3><a [routerLink]="['/articles', item.slug]">{{ item.title }}</a></h3>
+                <a class="article-related-card__read" [routerLink]="['/articles', item.slug]">Read article <span aria-hidden="true">→</span></a>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </article>
+  }
+</main>

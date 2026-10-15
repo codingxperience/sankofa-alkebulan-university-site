@@ -1,220 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Meta, Title } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { catchError, map, of, switchMap } from 'rxjs';
 import { PostsService, Post } from '../core/posts.service';
+
+interface ArticlePage {
+  post: Post;
+  related: Post[];
+}
 
 @Component({
   selector: 'app-essay-detail',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  template: `
-    <div class="essay-detail" *ngIf="post">
-      <div class="container">
-        <div class="section">
-          <nav class="essay-detail__nav">
-            <a routerLink="/articles" class="btn btn--secondary">
-              ← Back to Articles
-            </a>
-          </nav>
-
-          <article class="essay-article">
-            <header class="essay-article__header">
-              <h1 class="essay-article__title">{{ post.title }}</h1>
-              <p class="essay-article__excerpt">{{ post.excerpt }}</p>
-              <div class="essay-article__meta">
-                <span class="essay-article__date">{{ post.published_at | date:'longDate' }}</span>
-                <span class="essay-article__categories" *ngIf="post.categories && post.categories.length">
-                  <span class="essay-article__category" *ngFor="let category of post.categories">
-                    {{ category }}
-                  </span>
-                </span>
-              </div>
-            </header>
-
-            <div class="essay-article__content" [innerHTML]="post.content"></div>
-          </article>
-
-          <aside class="essay-related" *ngIf="related.length">
-            <h2 class="essay-related__title">Keep reading</h2>
-            <ul>
-              <li *ngFor="let item of related">
-                <a [routerLink]="['/articles', item.slug]">{{ item.title }}</a>
-                <time>{{ item.published_at | date : 'mediumDate' }}</time>
-              </li>
-            </ul>
-          </aside>
-        </div>
-      </div>
-    </div>
-
-    <div class="essay-detail" *ngIf="!post && !loading">
-      <div class="container">
-        <div class="section">
-          <div class="text-center">
-            <h1>Essay Not Found</h1>
-            <p>The essay you're looking for doesn't exist.</p>
-            <a routerLink="/articles" class="btn btn--primary">Browse All Articles</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .essay-detail {
-      background-color: var(--background-color);
-      min-height: 50vh;
-    }
-
-    .essay-detail__nav {
-      margin-bottom: var(--spacing-xl);
-    }
-
-    .essay-article {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .essay-article__header {
-      margin-bottom: var(--spacing-3xl);
-      padding-bottom: var(--spacing-xl);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .essay-article__title {
-      font-size: var(--font-size-4xl);
-      line-height: 1.1;
-      margin-bottom: var(--spacing-lg);
-      color: var(--primary-color);
-    }
-
-    .essay-article__excerpt {
-      font-size: var(--font-size-xl);
-      color: var(--text-secondary);
-      line-height: 1.4;
-      margin-bottom: var(--spacing-lg);
-      font-style: italic;
-    }
-
-    .essay-article__meta {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-lg);
-      font-size: var(--font-size-sm);
-      color: var(--text-secondary);
-    }
-
-    .essay-article__categories {
-      display: flex;
-      gap: var(--spacing-sm);
-    }
-
-    .essay-article__category {
-      background-color: var(--accent-color);
-      color: var(--primary-color);
-      padding: var(--spacing-xs) var(--spacing-sm);
-      border-radius: 0.25rem;
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-size-xs);
-    }
-
-    .essay-article__content {
-      font-size: var(--font-size-base);
-      line-height: 1.8;
-      color: var(--text-color);
-    }
-
-    .essay-article__content h2,
-    .essay-article__content h3,
-    .essay-article__content h4 {
-      margin-top: var(--spacing-2xl);
-      margin-bottom: var(--spacing-lg);
-      color: var(--primary-color);
-    }
-
-    .essay-article__content p {
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .essay-article__content img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 0.5rem;
-      margin: var(--spacing-lg) 0;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .essay-article__content blockquote {
-      border-left: 4px solid var(--accent-color);
-      padding-left: var(--spacing-lg);
-      margin: var(--spacing-xl) 0;
-      font-style: italic;
-      color: var(--text-secondary);
-      background-color: var(--surface-color);
-      padding: var(--spacing-lg);
-      border-radius: 0 0.5rem 0.5rem 0;
-    }
-
-    .essay-article__content a {
-      color: var(--link-color);
-      text-decoration: underline;
-    }
-
-    .essay-article__content a:hover {
-      color: var(--link-hover);
-    }
-
-    @media (max-width: 768px) {
-      .essay-article__title {
-        font-size: var(--font-size-3xl);
-      }
-
-      .essay-article__excerpt {
-        font-size: var(--font-size-lg);
-      }
-
-      .essay-article__meta {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-sm);
-      }
-    }
-
-    .essay-related {
-      max-width: 800px;
-      margin: var(--spacing-3xl, 48px) auto 0;
-      padding-top: var(--spacing-xl, 24px);
-      border-top: 1px solid var(--border-color);
-    }
-
-    .essay-related__title {
-      font-size: var(--font-size-xl, 1.25rem);
-      margin-bottom: var(--spacing-md, 16px);
-      color: var(--primary-color);
-    }
-
-    .essay-related ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 12px;
-    }
-
-    .essay-related li {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: baseline;
-    }
-
-    .essay-related time {
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm, 0.875rem);
-      white-space: nowrap;
-    }
-  `]
+  templateUrl: './essay-detail.component.html',
+  styleUrl: './essay-detail.component.scss',
 })
 export class EssayDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -223,33 +25,81 @@ export class EssayDetailComponent implements OnInit {
   private readonly meta = inject(Meta);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly fallbackImage = '/assets/hero/hero-campus-africa.jpg';
   post: Post | null = null;
   related: Post[] = [];
   loading = true;
+  shareMessage = '';
 
-  ngOnInit() {
-    // Re-runs when following a "keep reading" link from one essay to another.
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const slug = params.get('slug');
-      if (!slug) {
-        this.loading = false;
-        return;
-      }
-      this.loading = true;
-      this.postsService.getPost(slug).subscribe({
-        next: ({ related, ...post }) => {
-          this.post = post;
-          this.related = related;
-          this.loading = false;
-          this.title.setTitle(`${post.title} | Sankofa Alkebulan University`);
-          this.meta.updateTag({ name: 'description', content: post.excerpt });
-        },
-        error: () => {
+  ngOnInit(): void {
+    this.route.paramMap
+      .pipe(
+        switchMap((params) => {
+          const slug = params.get('slug');
+          this.loading = true;
           this.post = null;
           this.related = [];
-          this.loading = false;
-        },
+          this.shareMessage = '';
+          if (!slug) return of(null);
+
+          return this.postsService.getPost(slug).pipe(
+            map(({ related, ...post }): ArticlePage => ({ post, related })),
+            catchError(() => of(null)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((page) => {
+        this.post = page?.post ?? null;
+        this.related = page?.related ?? [];
+        this.loading = false;
+        if (this.post) this.updateMetadata(this.post);
       });
-    });
+  }
+
+  authorInitials(author: string): string {
+    return author
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0]?.toLocaleUpperCase() ?? '')
+      .join('');
+  }
+
+  onImageError(event: Event): void {
+    const image = event.target as HTMLImageElement;
+    image.onerror = null;
+    if (!image.src.endsWith(this.fallbackImage)) image.src = this.fallbackImage;
+  }
+
+  async shareArticle(): Promise<void> {
+    const post = this.post;
+    if (!post || typeof window === 'undefined') return;
+
+    const shareData = { title: post.title, text: post.excerpt, url: window.location.href };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareData.url);
+      this.shareMessage = 'Article link copied to your clipboard.';
+    } catch {
+      this.shareMessage = 'Copy the page address from your browser to share this article.';
+    }
+  }
+
+  private updateMetadata(post: Post): void {
+    this.title.setTitle(`${post.title} | Sankofa Alkebulan University`);
+    this.meta.updateTag({ name: 'description', content: post.excerpt });
+    this.meta.updateTag({ property: 'og:type', content: 'article' });
+    this.meta.updateTag({ property: 'og:title', content: post.title });
+    this.meta.updateTag({ property: 'og:description', content: post.excerpt });
+    if (post.featured_image) this.meta.updateTag({ property: 'og:image', content: post.featured_image });
   }
 }

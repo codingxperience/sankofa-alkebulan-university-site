@@ -5,16 +5,21 @@ import { type Post, PostsService } from '../core/posts.service';
 
 interface ProgrammeItem {
   readonly title: string;
+  readonly when: string;
   readonly points: readonly string[];
-  readonly links?: readonly { readonly label: string; readonly href: string; readonly external?: boolean }[];
 }
 
-const ZOOM = 'https://byupw.zoom.us/j/91946284908?pwd=fO2ZnoeUVM7GJu7KpWAKeWBMxHcZbv.1';
-const WHATSAPP = 'https://wa.me/256765871126';
 const EMAIL = 'SanAlkeU@outlook.com';
+const STARTS_AT = '2026-08-14T17:00:00+03:00';
+const ENDS_AT = '2026-08-15T21:00:00+03:00';
 
-/** When the second day's programme is over; after it, the page speaks of the Convening in the past. */
-const ENDS_AT = Date.parse('2026-08-15T21:00:00+03:00');
+function escapeCalendarText(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+}
+
+function calendarDate(date: Date): string {
+  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
 
 @Component({
   selector: 'app-convening-page',
@@ -25,91 +30,88 @@ const ENDS_AT = Date.parse('2026-08-15T21:00:00+03:00');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConveningPageComponent {
-  private readonly posts = inject(PostsService);
+  private readonly postsService = inject(PostsService);
 
-  readonly zoomLink = ZOOM;
-  readonly whatsapp = WHATSAPP;
   readonly email = EMAIL;
-  readonly ended = Date.now() > ENDS_AT;
+  readonly startsAt = STARTS_AT;
+  readonly endsAt = ENDS_AT;
+  readonly ended = Date.now() > Date.parse(ENDS_AT);
+  readonly news = signal<Post[]>([]);
 
-  readonly posterShare =
-    'https://wa.me/?text=' +
-    encodeURIComponent(
-      'The Sankofa Convening 2026 — 14–15 August, Speke Resort Munyonyo (Kampala) & online. ' +
-        'Two flagship programmes launch: the Chancellor’s founding keynote and a mini-conference on ' +
-        'cultural identity, indigenous knowledge, and intellectual cooperation. Free and open to all. ' +
-        'Register: https://sankofa-alkebulan.university/convening',
-    );
+  readonly background =
+    'Sankofa Alkebulan University is founded on the Akan principle of Sankofa — to go back and retrieve what has been lost — as a method for building a stronger and more enlightened future. The Sankofa Convening opens that work to the public. Its 2026 programme brought together the university’s founding vision and a public conversation on cultural identity, indigenous knowledge and intellectual cooperation across institutions, borders and generations.';
 
-  readonly schedule = [
-    { activity: 'Founding keynote — Emmanuel Mihiingo Kaija', when: 'Fri 14 August 2026 · 5:00 PM EAT' },
-    { activity: 'Mini-conference — identity, knowledge and cooperation', when: 'Sat 15 August 2026 · 5:00 PM EAT' },
-    { activity: 'Online start for the United States East Coast', when: '10:00 AM EDT, both days' },
-    { activity: 'Registration closes', when: 'Sat 15 August 2026 · 5:00 PM EAT' },
-    { activity: 'Convening dates', when: '14th – 15th August 2026' },
+  readonly audience = [
+    'Scholars and academics',
+    'Government and institutional partners',
+    'Students and prospective students',
+    'The diaspora',
+    'The general public',
+    'Press and media',
   ];
 
   readonly programme: readonly ProgrammeItem[] = [
     {
-      title: 'Programme 1: The founding keynote — vision, mission and academic philosophy',
+      title: 'The founding keynote — vision, mission and academic philosophy',
+      when: 'Friday 14 August 2026 · 5:00 PM EAT',
       points: [
-        'Delivered by Emmanuel Mihiingo Kaija, Founder & Chancellor',
+        'Delivered by Emmanuel Mihiingo Kaija, Founder and Chancellor',
         'The university’s vision, mission and academic philosophy',
-        'Its strategic role in advancing African civilisational studies',
-        'Friday 14 August · 5:00 PM EAT (10:00 AM EDT)',
-        'At Speke Resort, Munyonyo, and streamed live on Zoom',
+        'The university’s strategic role in advancing African civilisational studies',
+        'Held at Speke Resort, Munyonyo, with an online audience',
       ],
     },
     {
-      title: 'Programme 2: Mini-conference — pathways for identity, knowledge and cooperation',
+      title: 'Mini-conference — pathways for identity, knowledge and cooperation',
+      when: 'Saturday 15 August 2026 · 5:00 PM EAT',
       points: [
         'Strengthening cultural identity',
-        'Indigenous knowledge',
+        'Recognising and advancing indigenous knowledge',
         'Intellectual cooperation across institutions, borders and generations',
-        'Saturday 15 August · 5:00 PM EAT (10:00 AM EDT)',
-      ],
-    },
-    {
-      title: 'Attend in person: Speke Resort, Munyonyo',
-      points: [
-        'Speke Resort, Munyonyo — Kampala, Uganda',
-        'Both days begin at 5:00 PM EAT (10:00 AM EDT)',
-        'Entry is free; registering helps us seat you',
-      ],
-    },
-    {
-      title: 'Join online: live on Zoom',
-      points: ['Both programmes stream live on Zoom', 'One link for both days — the passcode is built into it', 'Meeting ID: 919 4628 4908'],
-      links: [{ label: 'Open the Zoom link', href: ZOOM, external: true }],
-    },
-    {
-      title: 'RSVP and questions',
-      points: ['Write to the convening desk, or message us on WhatsApp'],
-      links: [
-        { label: EMAIL, href: `mailto:${EMAIL}` },
-        { label: 'WhatsApp +256 765 871 126', href: WHATSAPP, external: true },
+        'Held at Speke Resort, Munyonyo, with an online audience',
       ],
     },
   ];
-
-  readonly audience = [
-    'Scholars & academics',
-    'Government & institutional partners',
-    'Students & prospective students',
-    'The diaspora',
-    'General public',
-    'Press & media',
-  ];
-
-  /** The newest journal articles, fetched in the browser; the section stays hidden without them. */
-  readonly news = signal<Post[]>([]);
 
   constructor() {
     if (isPlatformBrowser(inject(PLATFORM_ID))) {
-      this.posts
-        .getLatest(3)
+      this.postsService
+        .getLatest(4)
         .then((posts) => this.news.set(posts))
         .catch(() => this.news.set([]));
     }
+  }
+
+  addToCalendar(): void {
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Sankofa Alkebulan University//Events//EN',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      'UID:sankofa-convening-2026@sankofa-alkebulan-university',
+      `DTSTAMP:${calendarDate(new Date())}`,
+      `DTSTART:${calendarDate(new Date(this.startsAt))}`,
+      `DTEND:${calendarDate(new Date(this.endsAt))}`,
+      'SUMMARY:The Sankofa Convening 2026',
+      'LOCATION:Speke Resort, Munyonyo, Kampala, Uganda',
+      `DESCRIPTION:${escapeCalendarText('Cultural Identity, Indigenous Knowledge and Intellectual Cooperation')}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ];
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sankofa-convening-2026.ics';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  shareOnWhatsApp(): void {
+    const text = encodeURIComponent(
+      `The Sankofa Convening 2026 — Cultural Identity, Indigenous Knowledge and Intellectual Cooperation. ${window.location.href}`,
+    );
+    window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer');
   }
 }
