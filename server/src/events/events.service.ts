@@ -70,6 +70,50 @@ export class EventsService {
 
   // ─── Public ───────────────────────────────────────────────────────────
 
+  async publicList() {
+    const now = new Date();
+    const visible = { status: { not: 'DRAFT' as const } };
+    const [upcoming, archive] = await Promise.all([
+      this.prisma.event.findMany({
+        where: { ...visible, startsAt: { gte: now } },
+        orderBy: { startsAt: 'asc' },
+        take: 30,
+      }),
+      this.prisma.event.findMany({
+        where: { ...visible, startsAt: { lt: now } },
+        orderBy: { startsAt: 'desc' },
+        take: 12,
+      }),
+    ]);
+    const events = [...upcoming, ...archive];
+    const confirmed = events.length
+      ? await this.prisma.eventRegistration.groupBy({
+          by: ['eventId'],
+          where: { eventId: { in: events.map((event) => event.id) }, status: 'CONFIRMED' },
+          _count: { _all: true },
+        })
+      : [];
+    const counts = new Map(confirmed.map((row) => [row.eventId, row._count._all]));
+    const present = (event: Event) => ({
+      slug: event.slug,
+      title: event.title,
+      summary: event.summary,
+      venue: event.venue,
+      timezone: event.timezone,
+      startsAt: event.startsAt,
+      endsAt: event.endsAt,
+      registrationClosesAt: event.registrationClosesAt ?? event.startsAt,
+      registration: registrationState(event, counts.get(event.id) ?? 0),
+      options: readOptions(event.options),
+      consentText: updatesConsent(event.title),
+    });
+
+    return {
+      upcoming: upcoming.map(present),
+      archive: archive.map(present),
+    };
+  }
+
   async publicEvent(slug: string) {
     const event = await this.prisma.event.findUnique({ where: { slug } });
     if (!event || event.status === 'DRAFT') {

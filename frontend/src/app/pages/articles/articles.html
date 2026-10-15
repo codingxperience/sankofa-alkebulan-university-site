@@ -1,428 +1,176 @@
-<div class="articles">
-  <div class="container">
-    <!-- Hero Section -->
-    <section class="articles__hero">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">Articles & Blog</h1>
-          <p class="hero-subtitle">
-            Exploring African scholarship, cultural heritage, and contemporary discourse through
-            rigorous academic inquiry and thoughtful analysis.
-          </p>
-        </div>
-        <div class="hero-visual">
-          <div class="hero-pattern">
-            <svg
-              width="120"
-              height="120"
-              viewBox="0 0 120 120"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M60 10 L90 40 L60 70 L30 40 Z"
-                stroke="var(--accent-color)"
-                stroke-width="2"
-                fill="none"
-                opacity="0.3"
-              />
-              <circle
-                cx="60"
-                cy="40"
-                r="25"
-                stroke="var(--primary-color)"
-                stroke-width="1"
-                fill="none"
-                opacity="0.2"
-              />
-              <path
-                d="M45 35 Q60 25 75 35"
-                stroke="var(--accent-color)"
-                stroke-width="1"
-                fill="none"
-              />
-            </svg>
-          </div>
-        </div>
+<main class="journal-page">
+  <section class="journal-titlebar" aria-labelledby="journal-title">
+    <div class="journal-shell journal-titlebar__inner">
+      <div>
+        <p class="journal-eyebrow">Sankofa Alkebulan University · Journal</p>
+        <h1 id="journal-title">Articles &amp; ideas</h1>
       </div>
-    </section>
-
-    <!-- Navigation Tabs -->
-    <nav class="articles__nav">
-      <div class="nav-tabs">
-        <button
-          class="nav-tab"
-          [class.active]="activeSection === 'articles'"
-          (click)="setActiveSection('articles')"
-        >
-          <span class="tab-text">Articles</span>
-        </button>
-        <button
-          class="nav-tab"
-          [class.active]="activeSection === 'publications'"
-          (click)="setActiveSection('publications')"
-        >
-          <span class="tab-text">Publications</span>
-        </button>
-        <button
-          class="nav-tab"
-          [class.active]="activeSection === 'blogs'"
-          (click)="setActiveSection('blogs')"
-        >
-          <span class="tab-text">Blogs</span>
-        </button>
-      </div>
-    </nav>
-
-    <!-- Content Area -->
-    <div class="articles__content">
-      <!-- View Controls -->
-      <div class="view-controls" *ngIf="activeSection === 'articles'">
-        <div class="view-modes">
-          <button
-            class="view-mode"
-            [class.active]="viewMode === 'timeline'"
-            (click)="setViewMode('timeline')"
-          >
-            <span>Timeline</span>
-          </button>
-          <button
-            class="view-mode"
-            [class.active]="viewMode === 'academic'"
-            (click)="setViewMode('academic')"
-          >
-            <span>Academic</span>
-          </button>
-          <button
-            class="view-mode"
-            [class.active]="viewMode === 'blog'"
-            (click)="setViewMode('blog')"
-          >
-            <span>Modern</span>
-          </button>
-        </div>
-
-        <!-- Archive Toggle -->
-        <button
-          class="archive-toggle"
-          (click)="showArchive = !showArchive"
-          [class.active]="showArchive"
-        >
-          <span>Archive</span>
-        </button>
-      </div>
-
-      <!-- Archive Panel -->
-      <div class="archive-panel" *ngIf="showArchive && activeSection === 'articles'" [@slideInOut]>
-        <div class="archive-header">
-          <h3 class="archive-title">Publication Archive</h3>
-          <div class="archive-filters">
-            <select [(ngModel)]="archiveYear" (change)="filterByYear()" class="filter-select" aria-label="Year">
-              <option value="all">All years</option>
-              <option *ngFor="let year of archiveYears" [value]="year">{{ year }}</option>
-            </select>
-            <select [(ngModel)]="archiveMonth" (change)="filterByMonth()" class="filter-select">
-              <option value="all">All Months</option>
-              <option value="01">January</option>
-              <option value="02">February</option>
-              <option value="03">March</option>
-              <option value="04">April</option>
-              <option value="05">May</option>
-              <option value="06">June</option>
-              <option value="07">July</option>
-              <option value="08">August</option>
-              <option value="09">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-            </select>
-          </div>
-        </div>
-        <div class="archive-grid">
-          <article class="archive-item" *ngFor="let post of archivedPosts" [@fadeInOut]>
-            <div class="archive-item__meta">
-              <time class="archive-date">{{ formatDate(post.published_at) }}</time>
-              <span class="archive-category" *ngIf="post.categories.length">{{
-                post.categories[0]
-              }}</span>
-            </div>
-            <h4 class="archive-title">
-              <a [routerLink]="['/articles', post.slug]">{{ post.title }}</a>
-            </h4>
-            <p class="archive-excerpt">{{ post.excerpt }}</p>
-            <div class="archive-tags" *ngIf="post.tags">
-              <span class="tag" *ngFor="let tag of post.tags.slice(0, 2)">{{ tag }}</span>
-            </div>
-          </article>
-        </div>
-      </div>
-
-      <!-- Search and Filters -->
-      <div class="content-controls">
-        <div class="search-bar">
-          <input
-            type="text"
-            placeholder="Search publications..."
-            [(ngModel)]="searchQuery"
-            (input)="onSearchChange()"
-            class="search-input"
-          />
-          <div class="search-icon">🔍</div>
-        </div>
-
-        <div class="filters">
-          <select [(ngModel)]="selectedTag" (change)="setTag(selectedTag)" class="filter-select">
-            <option value="all">All Topics</option>
-            <option *ngFor="let tag of tags" [value]="tag">{{ tag }}</option>
-          </select>
-
-          <div class="filter-buttons">
-            <button
-              class="filter-btn"
-              [class.active]="activeFilter === 'all'"
-              (click)="setFilter('all')"
-            >
-              All
-            </button>
-            <button
-              class="filter-btn"
-              [class.active]="activeFilter === 'editors pick'"
-              (click)="setFilter('editors pick')"
-            >
-              Featured
-            </button>
-            <button
-              class="filter-btn"
-              [class.active]="activeFilter === 'trends'"
-              (click)="setFilter('trends')"
-            >
-              Trending
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Featured Post (Blog Mode) -->
-      <div class="articles__featured" *ngIf="viewMode === 'blog' && featuredPost">
-        <div class="featured-post card">
-          <div class="featured-post__content">
-            <div class="featured-post__meta">
-              <span class="featured-post__badge">Featured</span>
-              <span class="featured-post__date">{{
-                featuredPost.published_at | date : 'longDate'
-              }}</span>
-            </div>
-            <h2 class="featured-post__title">
-              <a [routerLink]="['/articles', featuredPost.slug]" class="featured-post__link">
-                {{ featuredPost.title }}
-              </a>
-            </h2>
-            <p class="featured-post__excerpt">{{ featuredPost.excerpt }}</p>
-            <a [routerLink]="['/articles', featuredPost.slug]" class="btn btn--primary"
-              >Read Full Article</a
-            >
-          </div>
-          <div class="featured-post__image">
-            <img
-              src="/wp-content/uploads/2025/10/1000625693.jpg"
-              alt="Featured post"
-              class="img-responsive"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Content Grid -->
-      <div class="content-grid">
-        <!-- Timeline View -->
-        <div class="posts-timeline" *ngIf="viewMode === 'timeline'">
-          <article
-            class="post-card"
-            *ngFor="let post of filteredPosts; let i = index; trackBy: trackBySlug"
-          >
-            <div class="post-card__content">
-              <div class="post-meta">
-                <time class="post-date">{{ post.published_at | date : 'mediumDate' }}</time>
-                <span class="post-category" *ngIf="post.categories && post.categories.length">
-                  {{ post.categories[0] }}
-                </span>
-              </div>
-              <h3 class="post-title">
-                <a [routerLink]="['/articles', post.slug]" class="post-link">{{ post.title }}</a>
-              </h3>
-              <p class="post-excerpt">{{ post.excerpt }}</p>
-              <div class="post-tags" *ngIf="post.tags">
-                <span class="tag" *ngFor="let tag of post.tags.slice(0, 3)">{{ tag }}</span>
-              </div>
-              <a [routerLink]="['/articles', post.slug]" class="read-more">Read Article →</a>
-            </div>
-          </article>
-        </div>
-
-        <!-- Academic View -->
-        <div class="posts-academic" *ngIf="viewMode === 'academic'">
-          <div class="academic-header">
-            <h2>Academic Publications</h2>
-            <p>Peer-reviewed research and scholarly analysis</p>
-          </div>
-          <div class="academic-grid">
-            <article
-              class="academic-paper"
-              *ngFor="let post of filteredPosts; trackBy: trackBySlug"
-            >
-              <div class="paper-content">
-                <div class="paper-citation">
-                  <span class="paper-author">{{ post.author }}</span>
-                  <span class="paper-year">({{ post.published_at | date : 'yyyy' }})</span>
-                </div>
-                <h3 class="paper-title">
-                  <a [routerLink]="['/articles', post.slug]" class="paper-link">{{ post.title }}</a>
-                </h3>
-                <p class="paper-abstract">{{ post.excerpt }}</p>
-                <div class="paper-subjects" *ngIf="post.tags">
-                  <span class="subject-tag" *ngFor="let tag of post.tags.slice(0, 3)">{{
-                    tag
-                  }}</span>
-                </div>
-                <a [routerLink]="['/articles', post.slug]" class="paper-cta">Access Paper</a>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <!-- Modern/Blog View -->
-        <div class="posts-modern" *ngIf="viewMode === 'blog'">
-          <!-- Featured Article -->
-          <div class="featured-article" *ngIf="featuredPost">
-            <div class="featured-layout">
-              <div class="featured-content">
-                <div class="featured-meta">
-                  <span class="featured-badge">Featured Publication</span>
-                  <time class="featured-date">{{
-                    featuredPost.published_at | date : 'longDate'
-                  }}</time>
-                </div>
-                <h2 class="featured-title">
-                  <a [routerLink]="['/articles', featuredPost.slug]">{{ featuredPost.title }}</a>
-                </h2>
-                <p class="featured-excerpt">{{ featuredPost.excerpt }}</p>
-                <div class="featured-actions">
-                  <a [routerLink]="['/articles', featuredPost.slug]" class="btn-primary"
-                    >Read Full Article</a
-                  >
-                  <div class="article-stats" *ngIf="featuredPost.readingMinutes">
-                    <span class="stat">{{ featuredPost.readingMinutes }} min read</span>
-                  </div>
-                </div>
-              </div>
-              <div class="featured-image">
-                <img [src]="imageFor(featuredPost)" [alt]="featuredPost.title" class="img-fluid" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Article Grid -->
-          <div class="modern-grid">
-            <article
-              class="modern-card"
-              *ngFor="let post of filteredPosts; let i = index; trackBy: trackBySlug"
-            >
-              <div class="card-image">
-                <img [src]="imageFor(post)" [alt]="post.title" class="img-fluid" loading="lazy" />
-                <div class="card-overlay"></div>
-              </div>
-              <div class="card-content">
-                <div class="card-meta">
-                  <time class="card-date">{{ post.published_at | date : 'mediumDate' }}</time>
-                  <span class="card-category" *ngIf="post.categories.length">{{
-                    post.categories[0]
-                  }}</span>
-                </div>
-                <h3 class="card-title">
-                  <a [routerLink]="['/articles', post.slug]">{{ post.title }}</a>
-                </h3>
-                <p class="card-excerpt">{{ post.excerpt }}</p>
-                <div class="card-footer">
-                  <a [routerLink]="['/articles', post.slug]" class="read-link">Continue Reading</a>
-                  <div class="card-stats" *ngIf="post.readingMinutes">
-                    <span>{{ post.readingMinutes }} min read</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <aside class="content-sidebar" *ngIf="viewMode === 'blog'">
-        <div class="sidebar-section">
-          <h3 class="sidebar-title">Categories</h3>
-          <ul class="category-list">
-            <li *ngFor="let category of categories">
-              <a href="#" class="category-link" (click)="setFilter(category.name, $event)"
-                >{{ category.name }} <span class="count">({{ category.count }})</span></a
-              >
-            </li>
-          </ul>
-        </div>
-
-        <div class="sidebar-section">
-          <h3 class="sidebar-title">Recent Articles</h3>
-          <div class="popular-articles">
-            <div class="popular-item" *ngFor="let post of recentPosts">
-              <img [src]="imageFor(post)" [alt]="post.title" class="popular-image" loading="lazy" />
-              <div class="popular-content">
-                <h4>
-                  <a [routerLink]="['/articles', post.slug]" class="popular-link">{{ post.title }}</a>
-                </h4>
-                <time class="popular-date">{{ post.published_at | date : 'mediumDate' }}</time>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <h3 class="sidebar-title">Research Topics</h3>
-          <div class="topic-cloud">
-            <span class="topic-tag" *ngFor="let tag of tags" (click)="setTag(tag)">{{ tag }}</span>
-          </div>
-        </div>
-      </aside>
+      <nav class="journal-breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/home">Home</a><span aria-hidden="true">/</span><span>Journal</span>
+      </nav>
     </div>
+  </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter-section">
-      <div class="newsletter-card">
-        <div class="newsletter-content">
-          <h3>Stay Informed</h3>
-          <p>
-            Receive the latest scholarly publications and research insights directly in your inbox.
-          </p>
-          <p class="newsletter-done" *ngIf="newsletterState === 'done'" role="status">
-            Thank you — you are on the list.
-          </p>
-          <form class="newsletter-form" *ngIf="newsletterState !== 'done'" (submit)="subscribe($event)">
-            <label class="visually-hidden" for="newsletter-email">Email address</label>
-            <input
-              id="newsletter-email"
-              type="email"
-              name="email"
-              autocomplete="email"
-              required
-              placeholder="Enter your email address"
-              class="newsletter-input"
-              [(ngModel)]="newsletterEmail"
-            />
-            <input class="newsletter-trap" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" [(ngModel)]="newsletterTrap" />
-            <button class="newsletter-btn" type="submit" [disabled]="newsletterState === 'sending'">
-              {{ newsletterState === 'sending' ? 'Subscribing…' : 'Subscribe' }}
-            </button>
-          </form>
-          <p class="newsletter-consent" *ngIf="newsletterConsent && newsletterState !== 'done'">{{ newsletterConsent }}</p>
-          <p class="newsletter-error" *ngIf="newsletterError" role="alert">{{ newsletterError }}</p>
+  <div class="journal-shell journal-layout">
+    <aside class="journal-sidebar" aria-label="Browse the journal">
+      <form class="journal-search" role="search" (submit)="$event.preventDefault()">
+        <label class="visually-hidden" for="journal-search">Search articles</label>
+        <input
+          id="journal-search"
+          type="search"
+          placeholder="Search articles..."
+          [value]="searchQuery"
+          (input)="setSearch($any($event.target).value)"
+        />
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      </form>
+
+      <section class="journal-side-card" aria-labelledby="journal-categories">
+        <div class="journal-side-card__heading">
+          <p class="journal-eyebrow">Find your subject</p>
+          <h2 id="journal-categories">Categories</h2>
         </div>
-      </div>
+        <ul class="journal-category-list">
+          <li>
+            <button type="button" [class.is-active]="activeCategory === 'all'" (click)="setCategory('all')">
+              <span>All articles</span><span class="journal-category-count">{{ posts.length }}</span>
+            </button>
+          </li>
+          @for (category of categories; track category.name) {
+            <li>
+              <button type="button" [class.is-active]="activeCategory === category.name" (click)="setCategory(category.name)">
+                <span>{{ category.name }}</span><span class="journal-category-count">{{ category.count }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+
+      @if (recentPosts.length) {
+        <section class="journal-side-card journal-recent" aria-labelledby="journal-recent">
+          <div class="journal-side-card__heading">
+            <p class="journal-eyebrow">Fresh from the journal</p>
+            <h2 id="journal-recent">Recently published</h2>
+          </div>
+          <ol class="journal-recent-list">
+            @for (post of recentPosts; track post.slug; let index = $index) {
+              <li>
+                <span class="journal-recent-number" aria-hidden="true">{{ (index + 1).toString().padStart(2, '0') }}</span>
+                <div>
+                  <a [routerLink]="['/articles', post.slug]">{{ post.title }}</a>
+                  <time [attr.datetime]="post.published_at">{{ post.published_at | date: 'mediumDate' }}</time>
+                </div>
+              </li>
+            }
+          </ol>
+        </section>
+      }
+
+      @if (tags.length) {
+        <section class="journal-side-card" aria-labelledby="journal-topics">
+          <div class="journal-side-card__heading">
+            <p class="journal-eyebrow">Explore across disciplines</p>
+            <h2 id="journal-topics">Topics</h2>
+          </div>
+          <div class="journal-topic-list">
+            @for (tag of tags; track tag) {
+              <button type="button" [class.is-active]="activeTag === tag" (click)="setTag(tag)">{{ tag }}</button>
+            }
+          </div>
+        </section>
+      }
+    </aside>
+
+    <section class="journal-results" aria-label="Articles">
+      <header class="journal-results__header">
+        <div>
+          <p class="journal-eyebrow">Research, culture &amp; public thought</p>
+          <h2>Read the latest</h2>
+        </div>
+        @if (!loading && !loadError) {
+          <p class="journal-result-count">{{ resultStart }}–{{ resultEnd }} of {{ filteredPosts.length }}</p>
+        }
+      </header>
+
+      @if (activeCategory !== 'all' || activeTag || searchQuery) {
+        <div class="journal-active-filters" aria-label="Active filters">
+          @if (activeCategory !== 'all') {
+            <button type="button" (click)="setCategory('all')">{{ activeCategory }} <span aria-hidden="true">×</span></button>
+          }
+          @if (activeTag) {
+            <button type="button" (click)="setTag(activeTag)">{{ activeTag }} <span aria-hidden="true">×</span></button>
+          }
+          @if (searchQuery) {
+            <button type="button" (click)="setSearch('')">“{{ searchQuery }}” <span aria-hidden="true">×</span></button>
+          }
+          <button type="button" class="journal-clear-filters" (click)="setCategory('all'); setSearch(''); activeTag = ''">Clear filters</button>
+        </div>
+      }
+
+      @if (loading) {
+        <div class="journal-card-grid" aria-label="Loading articles" aria-busy="true">
+          @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+            <div class="journal-card-skeleton"><span></span><i></i><b></b><em></em></div>
+          }
+        </div>
+      } @else if (loadError) {
+        <div class="journal-empty" role="alert">
+          <span class="journal-empty__mark"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
+          <h3>The journal could not be loaded</h3>
+          <p>{{ loadError }}</p>
+          <button type="button" class="journal-button" (click)="retry()">Try again</button>
+        </div>
+      } @else if (!filteredPosts.length) {
+        <div class="journal-empty">
+          <span class="journal-empty__mark"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
+          <h3>No articles match that search</h3>
+          <p>Try another phrase or clear the filters to browse the full journal.</p>
+          <button type="button" class="journal-button" (click)="setCategory('all'); setSearch(''); activeTag = ''">Show all articles</button>
+        </div>
+      } @else {
+        <div class="journal-card-grid">
+          @for (post of visiblePosts; track post.slug) {
+            <article class="journal-card">
+              <a class="journal-card__image" [routerLink]="['/articles', post.slug]" [attr.aria-label]="'Read ' + post.title">
+                <img [src]="imageFor(post)" [alt]="post.featured_image ? post.title : 'Sankofa Alkebulan University journal'" loading="lazy" (error)="imageFailed($event)" />
+                <span class="journal-card__image-mark"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+              </a>
+              <div class="journal-card__body">
+                <div class="journal-card__meta">
+                  @if (post.categories.length) {
+                    <span>{{ post.categories[0] }}</span><i aria-hidden="true"></i>
+                  }
+                  <time [attr.datetime]="post.published_at">{{ post.published_at | date: 'mediumDate' }}</time>
+                </div>
+                <h3><a [routerLink]="['/articles', post.slug]">{{ post.title }}</a></h3>
+                <p class="journal-card__excerpt">{{ post.excerpt }}</p>
+                <div class="journal-card__footer">
+                  <a [routerLink]="['/articles', post.slug]">Read article <span aria-hidden="true">→</span></a>
+                  @if (post.readingMinutes) {
+                    <span>{{ post.readingMinutes }} min read</span>
+                  }
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+
+        @if (pageCount > 1) {
+          <nav class="journal-pagination" aria-label="Article pages">
+            <button type="button" aria-label="Previous page" [disabled]="page === 1" (click)="selectPage(page - 1)">
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>Previous</span>
+            </button>
+            <div class="journal-pagination__pages">
+              @for (number of pageNumbers; track number) {
+                <button type="button" [attr.aria-current]="number === page ? 'page' : null" [attr.aria-label]="'Page ' + number" (click)="selectPage(number)">{{ number }}</button>
+              }
+            </div>
+            <button type="button" aria-label="Next page" [disabled]="page === pageCount" (click)="selectPage(page + 1)">
+              <span>Next</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </nav>
+        }
+      }
     </section>
   </div>
-</div>
+</main>

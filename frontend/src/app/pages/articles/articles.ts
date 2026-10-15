@@ -1,229 +1,140 @@
-import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ApiError } from '../../core/api/api-client';
 import { PostsService, Post } from '../../core/posts.service';
+
+interface ArticleCategory {
+  name: string;
+  count: number;
+}
 
 @Component({
   selector: 'app-articles',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './articles.html',
   styleUrl: './articles.scss',
-  animations: [
-    trigger('slideInOut', [
-      state('in', style({ height: '*', opacity: 1 })),
-      transition('void => *', [
-        style({ height: 0, opacity: 0 }),
-        animate('300ms ease-in')
-      ]),
-      transition('* => void', [
-        animate('300ms ease-out', style({ height: 0, opacity: 0 }))
-      ])
-    ]),
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('300ms ease-in', style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
-      ])
-    ])
-  ]
 })
 export class Articles implements OnInit {
-  posts: Post[] = [];
-  featuredPost: Post | null = null;
-  filteredPosts: Post[] = [];
-  viewMode: 'timeline' | 'academic' | 'blog' = 'timeline';
-  activeFilter = 'all';
-  searchQuery = '';
-  selectedTag: string = 'all';
-  activeSection: 'articles' | 'publications' | 'blogs' = 'articles';
-
-  // Archive properties
-  archiveYear: string = 'all';
-  archiveMonth: string = 'all';
-  archivedPosts: Post[] = [];
-  showArchive: boolean = false;
-
-  /** Real counts from the journal, filled in once loaded. */
-  categories: Array<{ name: string; count: number }> = [];
-  tags: string[] = [];
-  /** The three most recent articles, shown in the sidebar. */
-  recentPosts: Post[] = [];
-  loading = true;
-  loadError = '';
-
-  newsletterEmail = '';
-  newsletterTrap = '';
-  newsletterConsent = '';
-  newsletterState: 'idle' | 'sending' | 'done' = 'idle';
-  newsletterError = '';
-
   private readonly postsService = inject(PostsService);
   private readonly platformId = inject(PLATFORM_ID);
 
-  ngOnInit() {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
+  readonly pageSize = 6;
+  readonly fallbackImage = '/assets/logo-crest.png';
+  posts: Post[] = [];
+  categories: ArticleCategory[] = [];
+  recentPosts: Post[] = [];
+  tags: string[] = [];
+  searchQuery = '';
+  activeCategory = 'all';
+  activeTag = '';
+  page = 1;
+  loading = true;
+  loadError = '';
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadPosts();
+      this.postsService
+        .getFacets()
+        .then((facets) => {
+          this.categories = facets.categories
+            .filter((category) => category.value.trim())
+            .slice(0, 8)
+            .map((category) => ({ name: category.value, count: category.count }));
+          this.tags = facets.tags.slice(0, 12).map((tag) => tag.value);
+        })
+        .catch(() => undefined);
     }
+  }
+
+  get filteredPosts(): Post[] {
+    const query = this.searchQuery.trim().toLocaleLowerCase();
+    return this.posts.filter((post) => {
+      const matchesCategory =
+        this.activeCategory === 'all' || post.categories.some((category) => category === this.activeCategory);
+      const matchesTag = !this.activeTag || post.tags.includes(this.activeTag);
+      const matchesQuery =
+        !query ||
+        [post.title, post.excerpt, post.content, post.author, ...post.categories, ...post.tags]
+          .filter(Boolean)
+          .some((value) => value.toLocaleLowerCase().includes(query));
+      return matchesCategory && matchesTag && matchesQuery;
+    });
+  }
+
+  get visiblePosts(): Post[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.filteredPosts.slice(start, start + this.pageSize);
+  }
+
+  get pageCount(): number {
+    return Math.ceil(this.filteredPosts.length / this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    const last = this.pageCount;
+    const first = Math.max(1, Math.min(this.page - 2, last - 4));
+    return Array.from({ length: Math.min(5, last) }, (_, index) => first + index);
+  }
+
+  get resultStart(): number {
+    return this.filteredPosts.length ? (this.page - 1) * this.pageSize + 1 : 0;
+  }
+
+  get resultEnd(): number {
+    return Math.min(this.page * this.pageSize, this.filteredPosts.length);
+  }
+
+  setSearch(value: string): void {
+    this.searchQuery = value;
+    this.page = 1;
+  }
+
+  setCategory(name: string): void {
+    this.activeCategory = name;
+    this.activeTag = '';
+    this.page = 1;
+  }
+
+  setTag(tag: string): void {
+    this.activeTag = this.activeTag === tag ? '' : tag;
+    this.page = 1;
+  }
+
+  selectPage(page: number): void {
+    this.page = Math.max(1, Math.min(page, this.pageCount));
+  }
+
+  imageFor(post: Post): string {
+    return post.featured_image || this.fallbackImage;
+  }
+
+  imageFailed(event: Event): void {
+    const image = event.target as HTMLImageElement;
+    if (image.src !== new URL(this.fallbackImage, document.baseURI).href) {
+      image.src = this.fallbackImage;
+    }
+  }
+
+  private loadPosts(): void {
+    this.loading = true;
+    this.loadError = '';
     this.postsService.getPosts().subscribe({
       next: (posts) => {
         this.posts = posts;
-        this.featuredPost = posts[0] ?? null;
-        this.recentPosts = posts.slice(0, 3);
+        this.recentPosts = posts.slice(0, 5);
         this.loading = false;
-        this.updateFilteredPosts();
-        this.updateArchivedPosts();
       },
       error: (error: unknown) => {
         this.loading = false;
         this.loadError = ApiError.from(error).message;
       },
     });
-    this.postsService
-      .getFacets()
-      .then((facets) => {
-        this.categories = facets.categories.map((c) => ({ name: c.value, count: c.count }));
-        this.tags = facets.tags.slice(0, 16).map((t) => t.value);
-      })
-      .catch(() => undefined);
-    this.postsService
-      .getNewsletterConsent()
-      .then((result) => (this.newsletterConsent = result.consentText))
-      .catch(() => undefined);
   }
 
-  async subscribe(event: Event) {
-    event.preventDefault();
-    if (this.newsletterState === 'sending') {
-      return;
-    }
-    this.newsletterState = 'sending';
-    this.newsletterError = '';
-    try {
-      await this.postsService.subscribe(this.newsletterEmail, this.newsletterTrap);
-      this.newsletterState = 'done';
-    } catch (error) {
-      this.newsletterState = 'idle';
-      this.newsletterError = ApiError.from(error).message;
-    }
-  }
-
-  setViewMode(mode: 'timeline' | 'academic' | 'blog') {
-    this.viewMode = mode;
-    this.updateFilteredPosts();
-  }
-
-  setActiveSection(section: 'articles' | 'publications' | 'blogs') {
-    this.activeSection = section;
-    // Filter posts based on section
-    this.updateFilteredPosts();
-  }
-
-  setFilter(filter: string, event?: Event) {
-    event?.preventDefault();
-    this.activeFilter = filter;
-    this.updateFilteredPosts();
-  }
-
-  setTag(tag: string) {
-    this.selectedTag = tag || 'all';
-    this.updateFilteredPosts();
-  }
-
-  onSearchChange() {
-    this.updateFilteredPosts();
-  }
-
-  private updateFilteredPosts() {
-    let filtered = [...this.posts];
-
-    // Remove featured post from regular list if in blog mode
-    if (this.viewMode === 'blog' && this.featuredPost) {
-      filtered = filtered.filter(p => p.slug !== this.featuredPost?.slug);
-    }
-
-    // Apply category filter
-    if (this.activeFilter !== 'all') {
-      filtered = filtered.filter(p => (p.categories || []).some(cat =>
-        cat.toLowerCase().includes(this.activeFilter.toLowerCase())
-      ));
-    }
-
-    // Apply search filter
-    const q = this.searchQuery.trim().toLowerCase();
-    if (q) {
-      filtered = filtered.filter(p =>
-        (p.title && p.title.toLowerCase().includes(q)) ||
-        (p.excerpt && p.excerpt.toLowerCase().includes(q)) ||
-        (p.content && p.content.toLowerCase().includes(q))
-      );
-    }
-
-    // Apply tag filter
-    if (this.selectedTag && this.selectedTag !== 'all') {
-      filtered = filtered.filter(p => p.tags && p.tags.includes(this.selectedTag));
-    }
-
-    this.filteredPosts = filtered;
-  }
-
-  /** The article's own cover image, or the journal's emblem when it has none. */
-  imageFor(post: Post): string {
-    return post.featured_image || '/assets/logo-crest.png';
-  }
-
-  /** Years that actually have articles, newest first. */
-  get archiveYears(): string[] {
-    return [...new Set(this.posts.map((post) => post.published_at.slice(0, 4)))].sort().reverse();
-  }
-
-  // Archive methods
-  filterByYear() {
-    this.updateArchivedPosts();
-  }
-
-  filterByMonth() {
-    this.updateArchivedPosts();
-  }
-
-  private updateArchivedPosts() {
-    let filtered = [...this.posts];
-
-    if (this.archiveYear !== 'all') {
-      filtered = filtered.filter(post => {
-        const postYear = new Date(post.published_at).getFullYear().toString();
-        return postYear === this.archiveYear;
-      });
-    }
-
-    if (this.archiveMonth !== 'all') {
-      filtered = filtered.filter(post => {
-        const postMonth = (new Date(post.published_at).getMonth() + 1).toString().padStart(2, '0');
-        return postMonth === this.archiveMonth;
-      });
-    }
-
-    this.archivedPosts = filtered.sort((a, b) =>
-      new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-    );
-  }
-
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
-
-  trackBySlug(index: number, post: Post): string {
-    return post.slug;
+  retry(): void {
+    this.loadPosts();
   }
 }

@@ -1,37 +1,77 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { ApiClient, newRequestId } from './core/api/api-client';
+
+export interface EventOptions {
+  attendeeCategories: string[];
+  attendanceModes: string[];
+  days: string[];
+  interests: string[];
+}
+
+export type EventRegistrationState =
+  | { open: true; waitlist: boolean }
+  | { open: false; reason: 'not_published' | 'cancelled' | 'closed' | 'ended' };
 
 export interface PublicEvent {
-  id: string;
+  slug: string;
   title: string;
-  description: string;
+  summary: string | null;
+  venue: string | null;
+  timezone: string;
   startsAt: string;
-  endsAt?: string | null;
-  location: string;
-  attendees: number;
-  status: string;
+  endsAt: string | null;
+  registrationClosesAt: string;
+  registration: EventRegistrationState;
+  options: EventOptions;
+  consentText: string;
+}
+
+export interface PublicEventList {
+  upcoming: PublicEvent[];
+  archive: PublicEvent[];
 }
 
 export interface EventRegistrationPayload {
   name: string;
   email: string;
   phone?: string;
+  place?: string;
+  organisation?: string;
+  role?: string;
+  attendeeCategory?: string;
+  attendanceMode?: string;
+  days?: string;
+  interests: string[];
+  question?: string;
+  accessNeeds?: string;
+  wantsUpdates: boolean;
+  clientRequestId: string;
+  website: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+export interface EventRegistrationResult {
+  status: 'CONFIRMED' | 'WAITLISTED';
+  code?: string;
+  alreadyRegistered: boolean;
+  confirmationEmailed: boolean;
+}
+
+@Injectable({ providedIn: 'root' })
 export class EventsService {
-  private readonly apiUrl = 'http://localhost:3000/events';
+  private readonly api = inject(ApiClient);
 
-  constructor(private readonly http: HttpClient) {}
-
-  getUpcomingEvents(): Observable<PublicEvent[]> {
-    return this.http.get<PublicEvent[]>(`${this.apiUrl}/upcoming`);
+  getPublicEvents(): Promise<PublicEventList> {
+    return this.api.get<PublicEventList>('/events');
   }
 
-  registerForEvent(eventId: string, payload: EventRegistrationPayload): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${eventId}/register`, payload);
+  getPublicEvent(slug: string): Promise<PublicEvent> {
+    return this.api.get<PublicEvent>(`/events/${encodeURIComponent(slug)}`);
+  }
+
+  registerForEvent(slug: string, payload: Omit<EventRegistrationPayload, 'clientRequestId'> & { clientRequestId?: string }): Promise<EventRegistrationResult> {
+    return this.api.post<EventRegistrationResult>(`/events/${encodeURIComponent(slug)}/registrations`, {
+      ...payload,
+      clientRequestId: payload.clientRequestId ?? newRequestId(),
+    });
   }
 }
