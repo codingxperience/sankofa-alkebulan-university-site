@@ -296,12 +296,12 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
-  transition: transform 320ms ease;
+  object-fit: contain;
+  transition: opacity 200ms ease;
 }
 
 .journal-card__image:hover img {
-  transform: scale(1.035);
+  opacity: 0.92;
 }
 
 .journal-card__image:hover::after {
@@ -497,6 +497,27 @@
   border-color: #d8b44e;
   background: #edcb69;
   color: #1b2732;
+}
+
+.journal-loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0 0;
+  color: #64737a;
+  font-size: 12px;
+}
+
+.journal-loading-more button {
+  border: 0;
+  background: transparent;
+  color: #164466;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
 
 .journal-empty {

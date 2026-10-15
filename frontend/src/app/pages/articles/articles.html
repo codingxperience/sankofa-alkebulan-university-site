@@ -18,8 +18,8 @@
         <input
           id="journal-search"
           type="search"
-          placeholder="Search articles..."
-          [value]="searchQuery"
+          placeholder="Search journal (2+ characters)…"
+          [value]="searchQuery()"
           (input)="setSearch($any($event.target).value)"
         />
         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -32,13 +32,13 @@
         </div>
         <ul class="journal-category-list">
           <li>
-            <button type="button" [class.is-active]="activeCategory === 'all'" (click)="setCategory('all')">
-              <span>All articles</span><span class="journal-category-count">{{ posts.length }}</span>
+            <button type="button" [class.is-active]="activeCategory() === 'all'" (click)="setCategory('all')">
+              <span>All articles</span><span class="journal-category-count">{{ facets()?.total ?? '—' }}</span>
             </button>
           </li>
-          @for (category of categories; track category.name) {
+          @for (category of categories(); track category.name) {
             <li>
-              <button type="button" [class.is-active]="activeCategory === category.name" (click)="setCategory(category.name)">
+              <button type="button" [class.is-active]="activeCategory() === category.name" (click)="setCategory(category.name)">
                 <span>{{ category.name }}</span><span class="journal-category-count">{{ category.count }}</span>
               </button>
             </li>
@@ -46,14 +46,14 @@
         </ul>
       </section>
 
-      @if (recentPosts.length) {
+      @if (recentPosts().length) {
         <section class="journal-side-card journal-recent" aria-labelledby="journal-recent">
           <div class="journal-side-card__heading">
             <p class="journal-eyebrow">Fresh from the journal</p>
             <h2 id="journal-recent">Recently published</h2>
           </div>
           <ol class="journal-recent-list">
-            @for (post of recentPosts; track post.slug; let index = $index) {
+            @for (post of recentPosts(); track post.slug; let index = $index) {
               <li>
                 <span class="journal-recent-number" aria-hidden="true">{{ (index + 1).toString().padStart(2, '0') }}</span>
                 <div>
@@ -66,15 +66,15 @@
         </section>
       }
 
-      @if (tags.length) {
+      @if (tags().length) {
         <section class="journal-side-card" aria-labelledby="journal-topics">
           <div class="journal-side-card__heading">
             <p class="journal-eyebrow">Explore across disciplines</p>
             <h2 id="journal-topics">Topics</h2>
           </div>
           <div class="journal-topic-list">
-            @for (tag of tags; track tag) {
-              <button type="button" [class.is-active]="activeTag === tag" (click)="setTag(tag)">{{ tag }}</button>
+            @for (tag of tags(); track tag) {
+              <button type="button" [class.is-active]="activeTag() === tag" (click)="setTag(tag)">{{ tag }}</button>
             }
           </div>
         </section>
@@ -87,49 +87,49 @@
           <p class="journal-eyebrow">Research, culture &amp; public thought</p>
           <h2>Read the latest</h2>
         </div>
-        @if (!loading && !loadError) {
-          <p class="journal-result-count">{{ resultStart }}–{{ resultEnd }} of {{ filteredPosts.length }}</p>
+        @if (!loading() && !loadError()) {
+          <p class="journal-result-count">{{ resultStart() }}–{{ resultEnd() }} of {{ resultTotalLabel() }} articles</p>
         }
       </header>
 
-      @if (activeCategory !== 'all' || activeTag || searchQuery) {
+      @if (activeCategory() !== 'all' || activeTag() || searchQuery().trim().length >= 2) {
         <div class="journal-active-filters" aria-label="Active filters">
-          @if (activeCategory !== 'all') {
-            <button type="button" (click)="setCategory('all')">{{ activeCategory }} <span aria-hidden="true">×</span></button>
+          @if (activeCategory() !== 'all') {
+            <button type="button" (click)="setCategory('all')">{{ activeCategory() }} <span aria-hidden="true">×</span></button>
           }
-          @if (activeTag) {
-            <button type="button" (click)="setTag(activeTag)">{{ activeTag }} <span aria-hidden="true">×</span></button>
+          @if (activeTag()) {
+            <button type="button" (click)="setTag(activeTag())">{{ activeTag() }} <span aria-hidden="true">×</span></button>
           }
-          @if (searchQuery) {
-            <button type="button" (click)="setSearch('')">“{{ searchQuery }}” <span aria-hidden="true">×</span></button>
+          @if (searchQuery().trim().length >= 2) {
+            <button type="button" (click)="setSearch('')">“{{ searchQuery() }}” <span aria-hidden="true">×</span></button>
           }
-          <button type="button" class="journal-clear-filters" (click)="setCategory('all'); setSearch(''); activeTag = ''">Clear filters</button>
+          <button type="button" class="journal-clear-filters" (click)="clearFilters()">Clear filters</button>
         </div>
       }
 
-      @if (loading) {
+      @if (loading()) {
         <div class="journal-card-grid" aria-label="Loading articles" aria-busy="true">
           @for (item of [1, 2, 3, 4, 5, 6]; track item) {
             <div class="journal-card-skeleton"><span></span><i></i><b></b><em></em></div>
           }
         </div>
-      } @else if (loadError) {
+      } @else if (loadError()) {
         <div class="journal-empty" role="alert">
           <span class="journal-empty__mark"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
           <h3>The journal could not be loaded</h3>
-          <p>{{ loadError }}</p>
+          <p>{{ loadError() }}</p>
           <button type="button" class="journal-button" (click)="retry()">Try again</button>
         </div>
-      } @else if (!filteredPosts.length) {
+      } @else if (!filteredPosts().length) {
         <div class="journal-empty">
           <span class="journal-empty__mark"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
           <h3>No articles match that search</h3>
           <p>Try another phrase or clear the filters to browse the full journal.</p>
-          <button type="button" class="journal-button" (click)="setCategory('all'); setSearch(''); activeTag = ''">Show all articles</button>
+          <button type="button" class="journal-button" (click)="clearFilters()">Show all articles</button>
         </div>
       } @else {
         <div class="journal-card-grid">
-          @for (post of visiblePosts; track post.slug) {
+          @for (post of visiblePosts(); track post.slug) {
             <article class="journal-card">
               <a class="journal-card__image" [routerLink]="['/articles', post.slug]" [attr.aria-label]="'Read ' + post.title">
                 <img [src]="imageFor(post)" [alt]="post.featured_image ? post.title : 'Sankofa Alkebulan University journal'" loading="lazy" (error)="imageFailed($event)" />
@@ -155,20 +155,26 @@
           }
         </div>
 
-        @if (pageCount > 1) {
+        @if (pageCount() > 1) {
           <nav class="journal-pagination" aria-label="Article pages">
-            <button type="button" aria-label="Previous page" [disabled]="page === 1" (click)="selectPage(page - 1)">
+            <button type="button" aria-label="Previous page" [disabled]="page() === 1 || loadingMore()" (click)="selectPage(page() - 1)">
               <i class="fa-solid fa-arrow-left" aria-hidden="true"></i><span>Previous</span>
             </button>
             <div class="journal-pagination__pages">
-              @for (number of pageNumbers; track number) {
-                <button type="button" [attr.aria-current]="number === page ? 'page' : null" [attr.aria-label]="'Page ' + number" (click)="selectPage(number)">{{ number }}</button>
+              @for (number of pageNumbers(); track number) {
+                <button type="button" [disabled]="loadingMore()" [attr.aria-current]="number === page() ? 'page' : null" [attr.aria-label]="'Page ' + number" (click)="selectPage(number)">{{ number }}</button>
               }
             </div>
-            <button type="button" aria-label="Next page" [disabled]="page === pageCount" (click)="selectPage(page + 1)">
+            <button type="button" aria-label="Next page" [disabled]="page() === pageCount() || loadingMore()" (click)="selectPage(page() + 1)">
               <span>Next</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </button>
           </nav>
+        }
+        @if (loadingMore()) {
+          <p class="journal-loading-more" role="status">Loading more articles…</p>
+        }
+        @if (loadMoreError()) {
+          <p class="journal-loading-more" role="alert">{{ loadMoreError() }} <button type="button" (click)="retryMore()">Try again</button></p>
         }
       }
     </section>

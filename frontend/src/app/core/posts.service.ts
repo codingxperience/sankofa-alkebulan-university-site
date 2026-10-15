@@ -39,6 +39,20 @@ interface ArticlePage {
   nextCursor: string | null;
 }
 
+export interface JournalPageQuery {
+  [key: string]: string | number | boolean | null | undefined;
+  limit: number;
+  cursor?: string;
+  q?: string;
+  category?: string;
+  tag?: string;
+}
+
+export interface JournalPage {
+  items: Post[];
+  nextCursor: string | null;
+}
+
 function toPost(article: ArticleSummary & { bodyHtml?: string }): Post {
   return {
     title: article.title,
@@ -58,11 +72,6 @@ function toPost(article: ArticleSummary & { bodyHtml?: string }): Post {
 export class PostsService {
   private readonly api = inject(ApiClient);
 
-  /** Every published article, newest first, gathered page by page. */
-  getPosts(): Observable<Post[]> {
-    return from(this.fetchAll());
-  }
-
   getPost(slug: string): Observable<Post> {
     return from(
       this.api
@@ -77,6 +86,12 @@ export class PostsService {
     return page.items.map(toPost);
   }
 
+  /** A bounded slice of the public archive, optionally narrowed by its facets. */
+  async getPage(query: JournalPageQuery): Promise<JournalPage> {
+    const page = await this.api.get<ArticlePage>('/journal/articles', query);
+    return { items: page.items.map(toPost), nextCursor: page.nextCursor };
+  }
+
   getFacets(): Promise<JournalFacets> {
     return this.api.get<JournalFacets>('/journal/facets');
   }
@@ -89,18 +104,4 @@ export class PostsService {
     return this.api.post<{ ok: true }>('/audience/subscribe', { email, website });
   }
 
-  private async fetchAll(): Promise<Post[]> {
-    const posts: Post[] = [];
-    let cursor: string | null = null;
-    // A generous ceiling keeps one slow archive from turning into an endless loop.
-    for (let page = 0; page < 20; page += 1) {
-      const result: ArticlePage = await this.api.get<ArticlePage>('/journal/articles', { limit: 50, cursor: cursor ?? undefined });
-      posts.push(...result.items.map(toPost));
-      cursor = result.nextCursor;
-      if (!cursor) {
-        break;
-      }
-    }
-    return posts;
-  }
 }

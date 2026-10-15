@@ -54,7 +54,7 @@ export class JournalService {
 
   async list(query: { q?: string; category?: string; tag?: string; cursor?: string; limit: number }) {
     if (query.q) {
-      return this.search(query.q, query.limit);
+      return this.search(query.q, query.limit, query.category, query.tag);
     }
     const where: Prisma.ArticleWhereInput = PUBLISHED();
     if (query.category) where.categories = { has: query.category };
@@ -86,13 +86,15 @@ export class JournalService {
    * Full-text search, ranked. `websearch_to_tsquery` accepts what people
    * naturally type — quoted phrases, OR, a leading minus — and never errors.
    */
-  private async search(q: string, limit: number) {
+  private async search(q: string, limit: number, category?: string, tag?: string) {
     const rows = await this.prisma.$queryRaw<Array<{ id: string }>>`
       SELECT "id"
       FROM ${table('articles')}
       WHERE "status" = 'PUBLISHED'
         AND "published_at" <= now()
         AND "search_vector" @@ websearch_to_tsquery('simple', ${q})
+        AND (${category ?? ''} = '' OR ${category ?? ''} = ANY("categories"))
+        AND (${tag ?? ''} = '' OR ${tag ?? ''} = ANY("tags"))
       ORDER BY ts_rank_cd("search_vector", websearch_to_tsquery('simple', ${q})) DESC, "published_at" DESC
       LIMIT ${Math.min(limit, 50)}
     `;

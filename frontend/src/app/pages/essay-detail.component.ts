@@ -60,15 +60,85 @@ export class EssayDetailComponent implements OnInit {
   }
 
   private splitStory(content: string): { opening: string; continuation: string } {
-    const paragraphs = [...content.matchAll(/<\/p\s*>/gi)];
-    const end = paragraphs[2];
-    if (!end || end.index === undefined) return { opening: content, continuation: '' };
+    const story = content.trim();
+    if (!story) return { opening: '', continuation: '' };
 
-    const splitAt = end.index + end[0].length;
-    return {
-      opening: content.slice(0, splitAt),
-      continuation: content.slice(splitAt).trim(),
-    };
+    const splitLimit = 1050;
+    const minimumOpening = 360;
+    const paragraphEnds = [...story.matchAll(/<\/p\s*>/gi)];
+    const textLength = (html: string) =>
+      html
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&(?:nbsp|amp|lt|gt|quot|#39|#\d+|#x[\da-f]+);/gi, 'x')
+        .replace(/\s+/g, ' ')
+        .trim().length;
+
+    const boundary = paragraphEnds.find((match) => {
+      const end = (match.index ?? 0) + match[0].length;
+      const length = textLength(story.slice(0, end));
+      return length >= minimumOpening && length <= splitLimit;
+    });
+
+    if (boundary?.index !== undefined) {
+      const splitAt = boundary.index + boundary[0].length;
+      return { opening: story.slice(0, splitAt), continuation: story.slice(splitAt).trim() };
+    }
+
+    if (textLength(story) <= splitLimit) return { opening: story, continuation: '' };
+    return this.splitHtmlAtTextLength(story, splitLimit);
+  }
+
+  /** Split one long editor block while keeping any open HTML elements balanced. */
+  private splitHtmlAtTextLength(html: string, target: number): { opening: string; continuation: string } {
+    const tokens = html.match(/<[^>]*>|[^<]+/g) ?? [html];
+    const stack: Array<{ name: string; opening: string }> = [];
+    const voidTags = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+    let opening = '';
+    let characters = 0;
+
+    for (let index = 0; index < tokens.length; index += 1) {
+      const token = tokens[index];
+      if (!token.startsWith('<')) {
+        if (characters + token.length >= target) {
+          const desired = Math.max(1, target - characters);
+          let splitAt = token.lastIndexOf(' ', desired);
+          if (splitAt < desired - 120) {
+            const nextSpace = token.indexOf(' ', desired);
+            if (nextSpace >= 0 && nextSpace - desired < 120) splitAt = nextSpace;
+          }
+          if (splitAt <= 0) splitAt = Math.min(desired, token.length);
+          opening += token.slice(0, splitAt);
+          const closeOpenTags = [...stack].reverse().map(({ name }) => `</${name}>`).join('');
+          const reopenTags = stack.map(({ opening: tag }) => tag).join('');
+          const remainder = token.slice(splitAt) + tokens.slice(index + 1).join('');
+          return {
+            opening: `${opening}${closeOpenTags}`.trim(),
+            continuation: `${reopenTags}${remainder}`.trim(),
+          };
+        }
+        opening += token;
+        characters += token.length;
+        continue;
+      }
+
+      opening += token;
+      const closing = token.match(/^<\/\s*([a-z0-9]+)/i);
+      const openingTag = token.match(/^<\s*([a-z0-9]+)/i);
+      if (closing) {
+        const name = closing[1].toLowerCase();
+        for (let stackIndex = stack.length - 1; stackIndex >= 0; stackIndex -= 1) {
+          if (stack[stackIndex].name === name) {
+            stack.splice(stackIndex, 1);
+            break;
+          }
+        }
+      } else if (openingTag) {
+        const name = openingTag[1].toLowerCase();
+        if (!voidTags.has(name) && !/\/\s*>$/.test(token)) stack.push({ name, opening: token });
+      }
+    }
+
+    return { opening: html, continuation: '' };
   }
 
   private loadRelated(slug: string): void {
